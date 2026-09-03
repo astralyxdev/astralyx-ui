@@ -24,15 +24,19 @@ const SOURCES = [
 const PEERS = new Set(['react', 'react-dom'])
 
 /**
- * Source files that exist for this site and no one else.
+ * Source files that exist for this site and no one else, by registry name.
  *
- * `logo` is the Astralyx wordmark. It lives in `components/ui` because the docs
- * site and the examples import it like any other component, but shipping it
- * would put our brand mark in someone else's repo behind an `add logo` they
- * cannot have wanted. Nothing in the registry depends on it, so dropping it
- * leaves the graph closed.
+ * - `logo` is the Astralyx wordmark. It lives in `components/ui` because the
+ *   docs site and the examples import it like any other component, but shipping
+ *   it would put our brand mark in someone else's repo behind an `add logo`
+ *   they cannot have wanted.
+ * - `lib-seo` writes this site's document head and hardcodes its canonical
+ *   domain. In a consumer's project it is wrong on its face.
+ *
+ * Nothing in the registry depends on either, so dropping them leaves the graph
+ * closed — `check-registry.mjs` fails the build if that ever stops being true.
  */
-const PRIVATE = new Set(['logo'])
+const PRIVATE = new Set(['logo', 'lib-seo'])
 
 function itemNameFor(specifier) {
   for (const source of SOURCES) {
@@ -103,8 +107,8 @@ for (const source of SOURCES) {
   for (const file of fs.readdirSync(dir).sort()) {
     if (!/\.tsx?$/.test(file)) continue
     const base = file.replace(/\.tsx?$/, '')
-    if (source.prefix === '' && PRIVATE.has(base)) continue
     const name = source.prefix + base
+    if (PRIVATE.has(name)) continue
     const content = fs.readFileSync(path.join(dir, file), 'utf8')
 
     const registryDependencies = []
