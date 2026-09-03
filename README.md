@@ -1,6 +1,6 @@
 # astralyx-ui
 
-**254 accessible React components you copy into your repo** — with a CLI and a
+**253 accessible React components you copy into your repo** — with a CLI and a
 registry that work out what each one needs and bring that too.
 
 Not a dependency. There is no package to upgrade and nothing to fight when a
@@ -14,7 +14,7 @@ npx astralyx-ui add button
 
 ## What you get
 
-- **254 components** across 28 categories — forms, data, overlays, commerce,
+- **253 components** across 28 categories — forms, data, overlays, commerce,
   auth, AI, crypto, observability, developer tooling.
 - **12 primitives** underneath them. Slot, Popper, FocusTrap, Dismissable and
   friends — no headless-UI dependency.

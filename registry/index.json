@@ -1772,15 +1772,6 @@
       ]
     },
     {
-      "name": "logo",
-      "type": "registry:ui",
-      "title": "logo",
-      "dependencies": [],
-      "registryDependencies": [
-        "lib-utils"
-      ]
-    },
-    {
       "name": "map-embed",
       "type": "registry:ui",
       "title": "Map Embed",

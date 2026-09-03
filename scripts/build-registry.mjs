@@ -23,6 +23,17 @@ const SOURCES = [
 /** Peer dependencies — the consumer already has these; never install them. */
 const PEERS = new Set(['react', 'react-dom'])
 
+/**
+ * Source files that exist for this site and no one else.
+ *
+ * `logo` is the Astralyx wordmark. It lives in `components/ui` because the docs
+ * site and the examples import it like any other component, but shipping it
+ * would put our brand mark in someone else's repo behind an `add logo` they
+ * cannot have wanted. Nothing in the registry depends on it, so dropping it
+ * leaves the graph closed.
+ */
+const PRIVATE = new Set(['logo'])
+
 function itemNameFor(specifier) {
   for (const source of SOURCES) {
     const alias = '@/' + source.dir.replace(/^src\//, '')
@@ -92,6 +103,7 @@ for (const source of SOURCES) {
   for (const file of fs.readdirSync(dir).sort()) {
     if (!/\.tsx?$/.test(file)) continue
     const base = file.replace(/\.tsx?$/, '')
+    if (source.prefix === '' && PRIVATE.has(base)) continue
     const name = source.prefix + base
     const content = fs.readFileSync(path.join(dir, file), 'utf8')
 
