@@ -40,7 +40,7 @@ const server = await createServer({ server: { middlewareMode: true }, appType: '
 const { ENTRIES, componentPath, findCategory } = await server.ssrLoadModule('/src/registry/index.ts')
 const { DOCS } = await server.ssrLoadModule('/src/docs/pages.tsx')
 const { EXAMPLES, examplePath } = await server.ssrLoadModule('/src/examples/index.ts')
-const { clampDescription, pageTitle } = await server.ssrLoadModule('/src/lib/seo.ts')
+const { canonicalUrl, clampDescription, pageTitle } = await server.ssrLoadModule('/src/lib/seo.ts')
 // Doc bodies contain `Link`, which reads router context and throws without a
 // provider. Same wrapper the SSR audit uses.
 const { Router } = await server.ssrLoadModule('/src/components/primitives/router.tsx')
@@ -112,7 +112,7 @@ function setMeta(html, attribute, key, content) {
 function pageHtml(route) {
   const title = pageTitle(route.title)
   const description = clampDescription(route.description)
-  const url = `${SITE}${route.path}`
+  const url = canonicalUrl(route.path)
 
   let html = shell.replace(/<title>[^<]*<\/title>/, `<title>${escapeHtml(title)}</title>`)
   html = html.replace(
@@ -330,7 +330,7 @@ write(
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
     ...routes.map(
       (route) =>
-        `  <url><loc>${SITE}${route.path}</loc><lastmod>${today}</lastmod>` +
+        `  <url><loc>${canonicalUrl(route.path)}</loc><lastmod>${today}</lastmod>` +
         `<priority>${route.priority}</priority></url>`,
     ),
     '</urlset>',

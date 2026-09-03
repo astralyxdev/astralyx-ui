@@ -18,6 +18,19 @@ import { useEffect } from 'react'
 export const SITE = 'https://ui.astralyx.dev'
 export const SITE_NAME = 'Astralyx UI'
 
+/**
+ * The absolute URL to advertise for a route.
+ *
+ * GitHub Pages serves `/components/button/index.html` for `/components/button`
+ * by way of a 301 to the trailing-slash form, so the bare path is not the URL
+ * that answers 200. A canonical naming a redirect is a smell worth not having;
+ * the app's own links stay slash-free, since those navigate via pushState and
+ * never hit the server.
+ */
+export function canonicalUrl(path: string) {
+  return path === '/' ? `${SITE}/` : `${SITE}${path}/`
+}
+
 /** The one place the title suffix is decided. */
 export function pageTitle(title?: string) {
   return title ? `${title} — ${SITE_NAME}` : `${SITE_NAME} — React components you own`
@@ -81,7 +94,7 @@ function upsertCanonical(href: string) {
 export function useSeo({ title, description, path }: SeoInput) {
   useEffect(() => {
     const fullTitle = pageTitle(title)
-    const url = `${SITE}${path}`
+    const url = canonicalUrl(path)
     const text = clampDescription(description)
 
     document.title = fullTitle
