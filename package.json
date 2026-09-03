@@ -51,7 +51,7 @@
   "sideEffects": false,
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && node scripts/build-seo.mjs",
     "lint": "oxlint",
     "preview": "vite preview",
     "build:registry": "node scripts/build-registry.mjs",

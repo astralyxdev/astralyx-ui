@@ -33,19 +33,23 @@ const ago = (minutes: number) => new Date(NOW.getTime() - minutes * 60_000)
 /**
  * The landing page.
  *
- * Full-bleed: it escapes the app shell's padding with negative margins so bands
- * can run edge to edge, and the shell's `overflow-x: hidden` is what lets the
- * rails overhang the viewport without the page ever scrolling sideways.
+ * Every component here is the real one, wired to real props. A screenshot of a
+ * component library tells you nothing a design file would not; the argument is
+ * that you can type into these, open their menus and drag their handles.
  *
- * Every component on this page is the real one, wired up. A screenshot of a
- * component library tells you nothing a design file would not; the argument
- * here is that you can type into it, drag it and open its menus.
+ * Which is also the trap. Components have intrinsic minimum widths — the uptime
+ * strip is 90 buckets at a 3px floor, so it cannot render below ~470px no
+ * matter what box you put it in — and a showcase that sizes cells by eye will
+ * eventually put one in a box too small and have it burst out the side. So the
+ * showcase is a grid whose cells are sized against those minimums, every cell
+ * clips as a backstop, and anything with a hard floor gets a span wide enough
+ * for it at every breakpoint. See `Showcase`.
  */
 function Home() {
   return (
     <div className="-mx-4 -mt-4 sm:-mx-6 sm:-mt-6 lg:-mx-8 lg:-mt-8">
       <Hero />
-      <Marquee />
+      <Showcase />
       <Install />
       <Anatomy />
       <Breadth />
@@ -67,13 +71,7 @@ function Bleed({
   tint?: boolean
 }) {
   return (
-    <section
-      className={cn(
-        'w-full px-4 sm:px-6 lg:px-8',
-        tint && 'bg-[var(--group)] border-border border-y',
-        className,
-      )}
-    >
+    <section className={cn('w-full px-4 sm:px-6 lg:px-8', tint && 'bg-muted/40', className)}>
       <div className="mx-auto w-full max-w-[104rem]">{children}</div>
     </section>
   )
@@ -81,37 +79,44 @@ function Bleed({
 
 /* ------------------------------------------------------------------- hero */
 
+/**
+ * One column, left-aligned, with air around it.
+ *
+ * The previous hero put the copy in a left column and left the right half
+ * empty, which reads as a layout waiting for an illustration that never
+ * arrived. Components belong below the fold-line in a grid built for them, not
+ * wedged into the negative space beside a headline.
+ */
 function Hero() {
   return (
-    <header className="relative w-full overflow-hidden px-4 pt-24 pb-20 sm:px-6 lg:px-8 lg:pt-36 lg:pb-28">
-      {/* Decorative only. A dot grid drawn from a token, faded out with a mask
-          so it never competes with the type sitting on it. */}
+    <div className="relative overflow-hidden">
+      {/* Dot grid, faded out before it reaches the text so it never competes
+          with it. Decorative, so it is hidden from assistive tech. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-40"
+        className="pointer-events-none absolute inset-0 opacity-[0.35] dark:opacity-25"
         style={{
-          backgroundImage:
-            'radial-gradient(circle at 1px 1px, var(--border) 1px, transparent 0)',
-          backgroundSize: '32px 32px',
-          maskImage:
-            'radial-gradient(ellipse 70% 55% at 50% 0%, #000 30%, transparent 100%)',
+          backgroundImage: 'radial-gradient(currentColor 1px, transparent 1px)',
+          backgroundSize: '28px 28px',
+          color: 'var(--muted-foreground)',
+          maskImage: 'radial-gradient(120% 80% at 50% 0%, #000 20%, transparent 70%)',
         }}
       />
 
-      <div className="relative mx-auto w-full max-w-[104rem]">
-        <Logo className="h-7" />
+      <Bleed className="relative pt-20 pb-16 sm:pt-28 lg:pt-36 lg:pb-24">
+        <p className="text-muted-foreground text-[11px] font-medium tracking-[0.18em] uppercase">
+          React 19 · Tailwind v4 · MIT
+        </p>
 
-        <h1 className="mt-10 max-w-[16ch] text-5xl leading-[0.95] font-semibold tracking-[-0.03em] text-balance sm:text-7xl lg:text-[5.5rem]">
-          Components you
-          <br />
-          actually own.
+        <h1 className="mt-7 max-w-4xl text-5xl leading-[0.95] font-semibold tracking-[-0.035em] text-balance sm:text-6xl lg:text-7xl">
+          Components you actually own.
         </h1>
 
-        <p className="text-muted-foreground mt-8 max-w-lg text-base leading-relaxed">
-          {ENTRIES.length} React components with no headless-UI dependency
-          underneath them. A CLI copies the source into your repo and stops
-          there. Nothing phones home, nothing to upgrade, nothing that breaks
-          the week you change your mind about a border radius.
+        <p className="text-muted-foreground mt-8 max-w-xl text-base leading-relaxed text-pretty">
+          {ENTRIES.length} components with no headless-UI dependency underneath
+          them. A CLI copies the source into your repo and stops there — nothing
+          phones home, nothing to upgrade, nothing that breaks the week you
+          change your mind about a border radius.
         </p>
 
         <div className="mt-10 flex flex-wrap items-center gap-3">
@@ -123,32 +128,62 @@ function Hero() {
           <Button asChild variant="ghost" size="lg">
             <Link to="/components">Browse all {ENTRIES.length}</Link>
           </Button>
+          <InstallPill command="npm i -D astralyx-ui" />
         </div>
-      </div>
-    </header>
+      </Bleed>
+    </div>
   )
 }
 
-/* ---------------------------------------------------------------- marquee */
+/** The install line as a single copyable chip, sitting with the buttons. */
+function InstallPill({ command }: { command: string }) {
+  const { copy, copied } = useClipboard()
+
+  return (
+    <button
+      type="button"
+      onClick={() => void copy(command)}
+      aria-label={copied ? 'Copied' : `Copy: ${command}`}
+      className={cn(
+        surface,
+        radius.control,
+        focusRing,
+        'hover:bg-accent flex h-11 items-center gap-3 px-4 font-mono text-sm',
+        'transition-colors duration-150 ease-out motion-reduce:transition-none',
+      )}
+    >
+      <span className="text-muted-foreground/60 select-none">$</span>
+      {command}
+      {copied ? (
+        <Check className="size-3.5 shrink-0" />
+      ) : (
+        <Copy className="text-muted-foreground size-3.5 shrink-0" />
+      )}
+    </button>
+  )
+}
+
+/* --------------------------------------------------------------- showcase */
 
 /**
- * A rail of live components, wider than the viewport on purpose.
+ * The breadth argument, as a grid of live components.
  *
- * It overhangs both edges and is clipped rather than scrolled: the page must
- * never gain a horizontal scrollbar. Edges are masked so the cut reads as
- * deliberate instead of truncated.
+ * Spans are chosen from each component's measured minimum width, not by eye:
+ *
+ * - `QueueMonitor` lays its counters out at `sm:grid-cols-4`, a *viewport*
+ *   breakpoint, so between 640px and the two-column layout it wants roughly
+ *   360px of its own or the labels collide. It takes the full row on `md`.
+ * - `UptimeStrip` is 90 buckets with a 3px floor — about 470px, more than a
+ *   sixth of the grid — so it runs at 45 buckets across two columns.
+ *
+ * `Frame` clips as a backstop. A caption naming the component is the point of
+ * the section: this is a catalogue, and an unlabelled screenshot is decoration.
  */
-function Marquee() {
+function Showcase() {
   return (
-    <div className="border-border relative w-full overflow-hidden border-y py-12">
-      <div
-        className="flex w-max items-start gap-4 px-4"
-        style={{
-          maskImage:
-            'linear-gradient(to right, transparent, #000 7%, #000 93%, transparent)',
-        }}
-      >
-        <Tile className="w-[17rem]">
+    <Bleed tint className="border-border border-y py-16 lg:py-20">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-6">
+        <Frame name="Stat · Sparkline" className="lg:col-span-2">
           <Stat
             label="Monthly revenue"
             value="$128,400"
@@ -158,34 +193,30 @@ function Marquee() {
               <Sparkline
                 values={[42, 48, 45, 61, 58, 72, 69, 84, 91, 88, 104, 118]}
                 variant="area"
-                className="h-9"
+                className="h-10"
               />
             }
           />
-        </Tile>
+        </Frame>
 
-        <Tile className="w-[16rem]">
-          <p className="text-muted-foreground mb-2.5 text-xs font-medium">Uptime, 90 days</p>
-          <UptimeStrip
-            summary="99.94%"
-            buckets={Array.from({ length: 90 }, (_, i) => ({
-              label: `Day ${90 - i}`,
-              status:
-                i === 63 ? ('down' as const) : i === 12 || i === 41 ? ('degraded' as const) : ('up' as const),
-            }))}
-          />
-        </Tile>
-
-        <Tile className="w-[17rem]">
+        <Frame name="Price Ticker" className="lg:col-span-2">
           <PriceTicker
             symbol="BTC"
             price={67_240}
             change={2.41}
             history={[62, 63, 61, 64, 66, 65, 67]}
           />
-        </Tile>
+        </Frame>
 
-        <Tile className="w-[20rem]">
+        <Frame name="HTTP Status" className="lg:col-span-2">
+          <div className="flex flex-wrap gap-1.5">
+            {[200, 201, 204, 301, 400, 401, 404, 409, 422, 429, 500, 503].map((code) => (
+              <HttpStatus key={code} status={code} showPhrase={false} />
+            ))}
+          </div>
+        </Frame>
+
+        <Frame name="Risk Score" className="lg:col-span-2">
           <RiskScore
             score={82}
             factors={[
@@ -194,9 +225,9 @@ function Marquee() {
               { label: 'Identity verified', weight: -12 },
             ]}
           />
-        </Tile>
+        </Frame>
 
-        <Tile className="w-[23rem]">
+        <Frame name="Queue Monitor" className="md:col-span-2 lg:col-span-2">
           <QueueMonitor
             name="emails.outbound"
             depth={1_920}
@@ -207,24 +238,61 @@ function Marquee() {
             completionRate={61}
             now={NOW}
           />
-        </Tile>
+        </Frame>
 
-        <Tile className="w-[16rem]">
-          <p className="text-muted-foreground mb-2.5 text-xs font-medium">Responses</p>
-          <div className="flex flex-wrap gap-1.5">
-            {[200, 201, 204, 301, 400, 401, 404, 409, 422, 429, 500, 503].map((code) => (
-              <HttpStatus key={code} status={code} showPhrase={false} />
-            ))}
-          </div>
-        </Tile>
+        <Frame name="Uptime Strip" className="md:col-span-2 lg:col-span-2">
+          <p className="text-muted-foreground mb-3 text-xs font-medium">
+            api.astralyx.dev — 45 days
+          </p>
+          <UptimeStrip
+            summary="99.94%"
+            buckets={Array.from({ length: 45 }, (_, index) => ({
+              label: `Day ${45 - index}`,
+              status:
+                index === 31
+                  ? ('down' as const)
+                  : index === 6 || index === 20
+                    ? ('degraded' as const)
+                    : ('up' as const),
+            }))}
+          />
+        </Frame>
       </div>
-    </div>
+    </Bleed>
   )
 }
 
-function Tile({ className, children }: { className?: string; children: React.ReactNode }) {
+/**
+ * One showcase cell.
+ *
+ * `min-w-0` stops a wide child from forcing the grid track open — without it a
+ * single component pushes its column past its share and the whole row skews.
+ * `overflow-hidden` is the backstop for the same class of bug: if a component
+ * ever does exceed its cell, it gets clipped at the card edge rather than
+ * drawn across its neighbour.
+ */
+function Frame({
+  name,
+  className,
+  children,
+}: {
+  name: string
+  className?: string
+  children: React.ReactNode
+}) {
   return (
-    <div className={cn(surface, radius.surface, 'shrink-0 p-5', className)}>{children}</div>
+    <div className={cn('flex min-w-0 flex-col gap-2.5', className)}>
+      <div
+        className={cn(
+          surface,
+          radius.surface,
+          'flex min-w-0 flex-1 items-center overflow-hidden p-5',
+        )}
+      >
+        <div className="min-w-0 flex-1">{children}</div>
+      </div>
+      <p className="text-muted-foreground/60 px-1 text-[11px] tracking-wide">{name}</p>
+    </div>
   )
 }
 
@@ -244,7 +312,7 @@ const STEPS = [
  */
 function Install() {
   return (
-    <Bleed tint className="py-20 lg:py-28">
+    <Bleed className="py-20 lg:py-28">
       <div className="grid gap-12 lg:grid-cols-[22rem_minmax(0,1fr)] lg:gap-20">
         <div>
           <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
@@ -325,7 +393,7 @@ const CART_LINES = [
  */
 function Anatomy() {
   return (
-    <Bleed className="py-20 lg:py-28">
+    <Bleed tint className="py-20 lg:py-28">
       <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
         <div className="max-w-xl">
           <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
@@ -403,7 +471,7 @@ const SESSIONS = [
  */
 function Breadth() {
   return (
-    <Bleed tint className="py-20 lg:py-28">
+    <Bleed className="py-20 lg:py-28">
       <div className="mb-12 max-w-xl">
         <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
           Built for the screens that are hard.
@@ -487,7 +555,7 @@ function Panel({ label, children }: { label: string; children: React.ReactNode }
       <p className="text-muted-foreground/70 text-[11px] font-medium tracking-[0.14em] uppercase">
         {label}
       </p>
-      <div className="space-y-4">{children}</div>
+      <div className="min-w-0 space-y-4">{children}</div>
     </div>
   )
 }
@@ -496,7 +564,7 @@ function Panel({ label, children }: { label: string; children: React.ReactNode }
 
 function Examples() {
   return (
-    <Bleed className="py-20 lg:py-28">
+    <Bleed tint className="py-20 lg:py-28">
       <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
         <div className="max-w-xl">
           <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
@@ -547,7 +615,7 @@ function Examples() {
 
 function Catalogue() {
   return (
-    <Bleed tint className="py-20 lg:py-28">
+    <Bleed className="py-20 lg:py-28">
       <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
         <div className="max-w-xl">
           <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
@@ -602,7 +670,7 @@ function Catalogue() {
 
 function Footer() {
   return (
-    <footer className="w-full px-4 py-16 sm:px-6 lg:px-8">
+    <footer className="border-border bg-muted/40 w-full border-t px-4 py-16 sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-[104rem]">
         <div className="flex flex-wrap items-start justify-between gap-10">
           <div className="max-w-sm">

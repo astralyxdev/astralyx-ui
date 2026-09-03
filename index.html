@@ -8,22 +8,46 @@
     <title>Astralyx UI — React components you own</title>
     <meta
       name="description"
-      content="253 accessible React components and 12 primitives for React 19 and Tailwind v4. Installed as source into your repo by a CLI, not imported from a package."
+      content="253 accessible React components and 12 primitives for React 19 and Tailwind v4. A CLI copies the source into your repo — nothing is imported from a package at runtime."
     />
     <link rel="canonical" href="https://ui.astralyx.dev/" />
     <meta name="theme-color" content="#09090b" />
+    <meta name="color-scheme" content="dark light" />
 
-    <!-- Link previews. No og:image yet: a broken one renders worse in Slack
-         and X than none at all, which fall back to the favicon. -->
+    <!-- Link previews. The card is a real 1200x630 render of the wordmark and
+         headline, so an unfurl in Slack or X shows the product, not a favicon. -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Astralyx UI" />
     <meta property="og:title" content="Astralyx UI — React components you own" />
     <meta
       property="og:description"
-      content="253 accessible React components and 12 primitives for React 19 and Tailwind v4. Installed as source into your repo by a CLI, not imported from a package."
+      content="253 accessible React components and 12 primitives for React 19 and Tailwind v4. Installed as source by a CLI, not imported from a package."
     />
     <meta property="og:url" content="https://ui.astralyx.dev/" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content="https://ui.astralyx.dev/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Astralyx UI — components you actually own" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Astralyx UI — React components you own" />
+    <meta
+      name="twitter:description"
+      content="253 accessible React components and 12 primitives for React 19 and Tailwind v4."
+    />
+    <meta name="twitter:image" content="https://ui.astralyx.dev/og.png" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareSourceCode",
+        "name": "Astralyx UI",
+        "description": "253 accessible React components and 12 primitives for React 19 and Tailwind v4, installed as source by a CLI.",
+        "url": "https://ui.astralyx.dev/",
+        "codeRepository": "https://github.com/astralyxdev/astralyx-ui",
+        "programmingLanguage": "TypeScript",
+        "license": "https://opensource.org/licenses/MIT"
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
