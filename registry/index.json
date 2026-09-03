@@ -1,7 +1,7 @@
 {
   "name": "astralyx-ui",
   "version": "0.1.0",
-  "homepage": "https://github.com/astralyx/astralyx-ui#readme",
+  "homepage": "https://ui.astralyx.dev",
   "items": [
     {
       "name": "accordion",
