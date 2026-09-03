@@ -1,0 +1,18 @@
+{
+  "name": "label",
+  "type": "registry:ui",
+  "title": "Label",
+  "description": "A form label. htmlFor is the point — clicking it focuses the control, and a screen reader announces the two together.",
+  "category": "Forms",
+  "dependencies": [],
+  "registryDependencies": [
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/label.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps } from 'react'\nimport { cn } from '@/lib/utils'\n\n/**\n * A form label. `htmlFor` is the point — clicking it focuses the control, and a\n * screen reader announces the two together.\n */\nfunction Label({\n  className,\n  required,\n  children,\n  ...props\n}: ComponentProps<'label'> & { required?: boolean }) {\n  return (\n    <label\n      data-slot=\"label\"\n      className={cn(\n        'flex items-center gap-1 text-sm leading-none font-medium select-none',\n        'has-[+_:disabled]:opacity-60',\n        className,\n      )}\n      {...props}\n    >\n      {children}\n      {required && (\n        <span aria-hidden=\"true\" className=\"text-destructive\">\n          *\n        </span>\n      )}\n    </label>\n  )\n}\n\nexport { Label }\n"
+    }
+  ]
+}

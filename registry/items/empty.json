@@ -1,0 +1,19 @@
+{
+  "name": "empty",
+  "type": "registry:ui",
+  "title": "Empty",
+  "description": "The state a list is in before it has anything in it. An icon, a reason and a next action are what make the empty case useful rather than merely honest.",
+  "category": "Display",
+  "dependencies": [],
+  "registryDependencies": [
+    "lib-styles",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/empty.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps, ReactNode } from 'react'\nimport { radius } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * The state a list is in before it has anything in it.\n *\n * Worth a component because the empty case is the one most often left as a bare\n * sentence — an icon, a reason and a next action are what make it useful rather\n * than merely honest.\n */\nfunction Empty({\n  className,\n  icon,\n  title,\n  description,\n  action,\n  bordered = true,\n  ...props\n}: ComponentProps<'div'> & {\n  icon?: ReactNode\n  title?: ReactNode\n  description?: ReactNode\n  action?: ReactNode\n  bordered?: boolean\n}) {\n  return (\n    <div\n      data-slot=\"empty\"\n      className={cn(\n        'flex flex-col items-center justify-center gap-3 px-6 py-12 text-center',\n        bordered && `border-border border border-dashed ${radius.panel}`,\n        className,\n      )}\n      {...props}\n    >\n      {icon && (\n        <div className=\"bg-secondary text-muted-foreground grid size-10 place-items-center rounded-full [&_svg]:size-5\">\n          {icon}\n        </div>\n      )}\n      <div className=\"space-y-1\">\n        {title && <p className=\"text-sm font-medium\">{title}</p>}\n        {description && (\n          <p className=\"text-muted-foreground mx-auto max-w-sm text-xs\">\n            {description}\n          </p>\n        )}\n      </div>\n      {action && <div className=\"pt-1\">{action}</div>}\n    </div>\n  )\n}\n\nexport { Empty }\n"
+    }
+  ]
+}

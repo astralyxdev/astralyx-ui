@@ -1,0 +1,16 @@
+{
+  "name": "live-announcer",
+  "type": "registry:ui",
+  "title": "Live Announcer",
+  "description": "Imperative screen-reader announcements for things with no visible region of their own — a background save finishing, a filter narrowing a list.",
+  "category": "Utility",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/ui/live-announcer.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  createContext,\n  use,\n  useCallback,\n  useMemo,\n  useRef,\n  useState,\n  type ReactNode,\n} from 'react'\n\n/**\n * Imperative screen-reader announcements.\n *\n * For things that happen without a visible change a reader would notice: a\n * background save finishing, a filter narrowing a list, a shortcut taking\n * effect. Anything with a visible region of its own should carry `aria-live`\n * there instead — this is the fallback, not the default.\n *\n * Two regions, not one. Politeness cannot be changed on a live region after the\n * fact in any reliable way, so `polite` and `assertive` each get their own and\n * the message goes to the matching one.\n *\n * Repeating an identical message is the classic failure here: setting the same\n * text twice is not a mutation, so nothing is announced the second time. The\n * counter appended below forces a change the observer will see.\n */\ntype Politeness = 'polite' | 'assertive'\n\ntype Announce = (message: string, politeness?: Politeness) => void\n\nconst AnnouncerContext = createContext<Announce | null>(null)\n\nfunction useAnnouncer() {\n  const announce = use(AnnouncerContext)\n  if (!announce) {\n    throw new Error('useAnnouncer must be used inside a <LiveAnnouncer>')\n  }\n  return announce\n}\n\nfunction LiveAnnouncer({ children }: { children: ReactNode }) {\n  const [polite, setPolite] = useState('')\n  const [assertive, setAssertive] = useState('')\n  const nonce = useRef(0)\n\n  const announce = useCallback<Announce>((message, politeness = 'polite') => {\n    // A zero-width space count, so an identical message still reads as a\n    // change to the live region without altering what is spoken.\n    nonce.current += 1\n    const text = message + '​'.repeat(nonce.current % 2)\n    if (politeness === 'assertive') setAssertive(text)\n    else setPolite(text)\n  }, [])\n\n  const value = useMemo(() => announce, [announce])\n\n  return (\n    <AnnouncerContext value={value}>\n      {children}\n      <div\n        aria-live=\"polite\"\n        aria-atomic=\"true\"\n        data-slot=\"live-region\"\n        className=\"sr-only\"\n      >\n        {polite}\n      </div>\n      <div\n        aria-live=\"assertive\"\n        aria-atomic=\"true\"\n        data-slot=\"live-region\"\n        className=\"sr-only\"\n      >\n        {assertive}\n      </div>\n    </AnnouncerContext>\n  )\n}\n\nexport { LiveAnnouncer, useAnnouncer }\nexport type { Politeness }\n"
+    }
+  ]
+}

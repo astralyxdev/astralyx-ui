@@ -1,0 +1,57 @@
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# The deploy needs to write a Pages artefact and mint an OIDC token for it.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One live site, so a queued run supersedes a waiting one — but never cancels a
+# deploy already in flight.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: SPA fallback and custom domain
+        # Pages has no rewrite rules: a deep link like /docs/theming is a 404 as
+        # far as the server is concerned. Serving index.html as the 404 body
+        # boots the app, and the router then reads the real pathname.
+        #
+        # CNAME has to be part of the artefact. Setting the domain in the repo
+        # UI writes the file to a branch this workflow never publishes from, so
+        # an artefact deploy without it drops the domain on the next run.
+        run: |
+          cp dist/index.html dist/404.html
+          echo 'ui.astralyx.dev' > dist/CNAME
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

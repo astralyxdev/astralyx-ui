@@ -1,0 +1,21 @@
+{
+  "name": "textarea",
+  "type": "registry:ui",
+  "title": "Textarea",
+  "description": "The multi-line sibling of Input. Same variants, same padding rule, with a resize control and no icon slot.",
+  "category": "Forms",
+  "dependencies": [
+    "class-variance-authority@^0.7.1"
+  ],
+  "registryDependencies": [
+    "lib-styles",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/textarea.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  useCallback,\n  useLayoutEffect,\n  useRef,\n  type ComponentProps,\n} from 'react'\nimport { cva, type VariantProps } from 'class-variance-authority'\nimport { fieldBase, fieldInput } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * The multi-line sibling of Input, and monochrome for the same reason.\n *\n * It styles the `<textarea>` directly rather than wrapping it: there is no icon\n * slot to place and no padding to click past, so a wrapper would add nothing.\n * Padding follows the same rule as a field — the leading side is the vertical\n * inset plus 4px — with the vertical inset applied literally, since height here\n * is content-driven rather than fixed.\n */\nconst textareaVariants = cva(\n  [fieldBase, 'items-stretch', fieldInput, 'block'].join(' '),\n  {\n    variants: {\n      variant: {\n        default: 'border-border bg-background border',\n        secondary: 'bg-secondary border border-transparent',\n        ghost: 'hover:bg-accent border border-transparent bg-transparent',\n      },\n      size: {\n        sm: 'min-h-16 py-1.5 ps-2.5 pe-1.5 text-sm rounded-[var(--radius-control-sm)]',\n        default:\n          'min-h-20 py-2 ps-3 pe-2 text-sm rounded-[var(--radius-control-md)]',\n        lg: 'min-h-24 py-2.5 ps-3.5 pe-2.5 text-sm rounded-[var(--radius-control-lg)]',\n      },\n      // The native grip is never drawn — see `[data-slot='textarea']` in\n      // index.css. Dragging the edge still works where the browser allows it.\n      resize: {\n        none: 'resize-none',\n        vertical: 'resize-y',\n        both: 'resize',\n      },\n      error: {\n        true: 'border-destructive focus-within:border-destructive',\n        false: '',\n      },\n    },\n    defaultVariants: {\n      variant: 'default',\n      size: 'default',\n      resize: 'none',\n      error: false,\n    },\n  },\n)\n\ntype TextareaProps = Omit<ComponentProps<'textarea'>, 'size'> &\n  VariantProps<typeof textareaVariants> & {\n    /** Grow with the content instead of scrolling. Forces `resize=\"none\"`. */\n    autoResize?: boolean\n  }\n\nfunction Textarea({\n  className,\n  variant,\n  size,\n  resize,\n  error,\n  autoResize = false,\n  value,\n  onChange,\n  ref,\n  ...props\n}: TextareaProps) {\n  const innerRef = useRef<HTMLTextAreaElement>(null)\n\n  const fit = useCallback(() => {\n    const element = innerRef.current\n    if (!element || !autoResize) return\n\n    // Collapse first: scrollHeight only shrinks once the box is smaller than\n    // its content, so measuring without this makes the field grow-only.\n    element.style.height = 'auto'\n    element.style.height = `${element.scrollHeight}px`\n  }, [autoResize])\n\n  // Layout effect, not effect: resizing after paint shows a one-frame jump.\n  // Runs on mount and whenever a controlled value changes underneath us.\n  useLayoutEffect(fit, [fit, value])\n\n  return (\n    <textarea\n      data-slot=\"textarea\"\n      ref={(node) => {\n        innerRef.current = node\n        if (typeof ref === 'function') ref(node)\n        else if (ref) ref.current = node\n      }}\n      aria-invalid={error || undefined}\n      value={value}\n      onChange={(event) => {\n        onChange?.(event)\n        // Uncontrolled fields never change `value`, so measure here too.\n        if (!onChange || value === undefined) fit()\n      }}\n      className={cn(\n        textareaVariants({\n          variant,\n          size,\n          resize: autoResize ? 'none' : resize,\n          error,\n        }),\n        autoResize && 'overflow-hidden',\n        className,\n      )}\n      {...props}\n    />\n  )\n}\n\nexport { Textarea, textareaVariants }\nexport type { TextareaProps }\n"
+    }
+  ]
+}

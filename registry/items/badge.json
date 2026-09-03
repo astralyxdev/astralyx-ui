@@ -1,0 +1,22 @@
+{
+  "name": "badge",
+  "type": "registry:ui",
+  "title": "Badge",
+  "description": "A short status or category marker. Unlike a field, a badge exists to be noticed, so it keeps the full colour system and the tint escape hatch.",
+  "category": "Display",
+  "dependencies": [
+    "class-variance-authority@^0.7.1"
+  ],
+  "registryDependencies": [
+    "lib-styles",
+    "lib-utils",
+    "primitive-slot"
+  ],
+  "files": [
+    {
+      "path": "components/ui/badge.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps, ReactNode } from 'react'\nimport { cva, type VariantProps } from 'class-variance-authority'\nimport { Slot } from '@/components/primitives/slot'\nimport {\n  badgeSize,\n  colorSet,\n  iconChild,\n  tintStyle,\n  type ColorSet,\n} from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * A short status or category marker.\n *\n * Unlike a field, a badge exists to be noticed, so it keeps the full colour\n * system — the same `--ui-*` sets and `tint` escape hatch a Button uses.\n *\n * `secondary` is the default because it is the right answer nearly every time:\n * tinted enough to read as a badge, quiet enough to sit in a table row or a\n * heading without shouting. Reach for `default` only when a badge has to be the\n * loudest thing on screen, and for `outline` only on an already-tinted surface\n * where a second fill would compete. Meaning belongs in `color`, not `variant`.\n */\nconst badgeVariants = cva(\n  [\n    'inline-flex w-fit shrink-0 items-center justify-center',\n    'font-medium whitespace-nowrap',\n    'transition-colors duration-150 ease-out motion-reduce:transition-none',\n    iconChild,\n  ].join(' '),\n  {\n    variants: {\n      variant: {\n        /** Solid fill in the current colour set. */\n        default: 'bg-[var(--ui)] text-[var(--ui-fg)]',\n        /** Tinted fill, saturated text — the quiet default for most labels. */\n        secondary: 'bg-[var(--ui-soft)] text-[var(--ui-soft-fg)]',\n        outline:\n          'border border-[var(--ui-soft-fg)] text-[var(--ui-soft-fg)] bg-transparent',\n        ghost: 'text-[var(--ui-soft-fg)] bg-transparent',\n      },\n      color: colorSet,\n      size: {\n        sm: badgeSize.sm,\n        default: badgeSize.default,\n        lg: badgeSize.lg,\n      },\n      shape: {\n        pill: 'rounded-full [corner-shape:round]',\n        rounded: 'rounded-[var(--radius-check-lg)]',\n      },\n    },\n    defaultVariants: {\n      variant: 'secondary',\n      color: 'neutral',\n      size: 'default',\n      shape: 'pill',\n    },\n  },\n)\n\ntype BadgeProps = Omit<ComponentProps<'span'>, 'color'> &\n  VariantProps<typeof badgeVariants> & {\n    /** Any CSS colour, used instead of a named `color` set. */\n    tint?: string\n    /** Rendered inside the badge, before or after the text. */\n    icon?: ReactNode\n    iconPosition?: 'start' | 'end'\n    /** Render the child element instead of a `<span>`, keeping the styles. */\n    asChild?: boolean\n  }\n\nfunction Badge({\n  className,\n  variant,\n  color,\n  size,\n  shape,\n  tint,\n  icon,\n  iconPosition = 'start',\n  asChild = false,\n  style,\n  children,\n  ...props\n}: BadgeProps) {\n  const Comp = asChild ? Slot : 'span'\n\n  // With `asChild` the caller owns the children entirely, so an icon prop would\n  // have nowhere to go without cloning their element.\n  const content =\n    icon && !asChild ? (\n      <>\n        {iconPosition === 'start' && icon}\n        {children}\n        {iconPosition === 'end' && icon}\n      </>\n    ) : (\n      children\n    )\n\n  return (\n    <Comp\n      data-slot=\"badge\"\n      className={cn(badgeVariants({ variant, color, size, shape }), className)}\n      style={tint ? { ...tintStyle(tint), ...style } : style}\n      {...props}\n    >\n      {content}\n    </Comp>\n  )\n}\n\nexport { Badge, badgeVariants }\nexport type { BadgeProps, ColorSet }\n"
+    }
+  ]
+}

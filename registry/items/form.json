@@ -1,0 +1,21 @@
+{
+  "name": "form",
+  "type": "registry:ui",
+  "title": "Form",
+  "description": "A thin bridge between React Hook Form and Field. Field owns the accessibility wiring and knows nothing about any form library; this adds only state and validation.",
+  "category": "Forms",
+  "dependencies": [
+    "react-hook-form@^7.87.0"
+  ],
+  "registryDependencies": [
+    "field",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/form.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps, ReactNode } from 'react'\nimport {\n  Controller,\n  FormProvider,\n  useFormContext,\n  type ControllerRenderProps,\n  type FieldPath,\n  type FieldValues,\n  type UseFormReturn,\n} from 'react-hook-form'\nimport { Field, FieldLabel, useFieldControl } from '@/components/ui/field'\nimport { cn } from '@/lib/utils'\n\n/**\n * A thin bridge between React Hook Form and this kit's `Field`.\n *\n * The split is deliberate: `Field` owns the accessibility wiring — id,\n * `aria-describedby`, `aria-invalid` — and knows nothing about any form\n * library, so it keeps working with `useState`, a server action, or nothing at\n * all. This file adds only state and validation on top.\n *\n * React Hook Form was chosen on the numbers: 241M downloads a month against\n * 10.6M for the nearest actively maintained alternative, zero runtime\n * dependencies, and 26 releases in 2026. Formik has more downloads than\n * TanStack Form but shipped nothing at all in 2026.\n */\nfunction Form<\n  TFieldValues extends FieldValues,\n  TContext = unknown,\n  // A resolver can transform values on the way out (a Zod schema with\n  // coercions, say), so the submitted type is not always the field type.\n  // Mirroring all three of React Hook Form's parameters keeps inference working\n  // instead of collapsing to `FieldValues`.\n  TTransformed extends FieldValues = TFieldValues,\n>({\n  form,\n  onSubmit,\n  className,\n  children,\n  ...props\n}: Omit<ComponentProps<'form'>, 'onSubmit'> & {\n  form: UseFormReturn<TFieldValues, TContext, TTransformed>\n  onSubmit: (values: TTransformed) => void | Promise<void>\n}) {\n  return (\n    <FormProvider {...form}>\n      <form\n        data-slot=\"form\"\n        // `noValidate` hands validation to the resolver: the browser's own\n        // bubbles cannot be styled and would fire before the schema runs.\n        noValidate\n        onSubmit={form.handleSubmit(onSubmit)}\n        className={cn('space-y-5', className)}\n        {...props}\n      >\n        {children}\n      </form>\n    </FormProvider>\n  )\n}\n\n/**\n * One controlled field, wired to both the form and the accessibility plumbing.\n *\n * `children` is a render prop rather than a cloned element: half the controls\n * in this kit take `value`/`onValueChange` and half take `checked`/`onChange`,\n * so mapping is the caller's job and guessing would be wrong half the time.\n */\nfunction FormField<\n  T extends FieldValues,\n  N extends FieldPath<T> = FieldPath<T>,\n>({\n  name,\n  label,\n  description,\n  required,\n  className,\n  children,\n}: {\n  name: N\n  label?: ReactNode\n  description?: ReactNode\n  required?: boolean\n  className?: string\n  children: (\n    field: ControllerRenderProps<T, N> & ReturnType<typeof useFieldControl>,\n  ) => ReactNode\n}) {\n  const form = useFormContext<T>()\n  const error = form.formState.errors[name]\n\n  return (\n    <Field\n      className={className}\n      description={description}\n      // Passing the message here is what makes Field flip to invalid; there is\n      // no second flag to keep in step with it.\n      error={error?.message as ReactNode}\n    >\n      {label && <FieldLabel required={required}>{label}</FieldLabel>}\n      <Controller\n        name={name}\n        control={form.control}\n        render={({ field }) => <FieldControl field={field}>{children}</FieldControl>}\n      />\n    </Field>\n  )\n}\n\n/** Merges the Field's a11y props into the controller's field props. */\nfunction FieldControl<T extends FieldValues, N extends FieldPath<T>>({\n  field,\n  children,\n}: {\n  field: ControllerRenderProps<T, N>\n  children: (\n    field: ControllerRenderProps<T, N> & ReturnType<typeof useFieldControl>,\n  ) => ReactNode\n}) {\n  return children({ ...field, ...useFieldControl() })\n}\n\nexport { Form, FormField }\n"
+    }
+  ]
+}

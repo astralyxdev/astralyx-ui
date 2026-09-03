@@ -1,0 +1,21 @@
+{
+  "name": "alert",
+  "type": "registry:ui",
+  "title": "Alert",
+  "description": "A prominent message that stays on the page. Keeps the colour system, and picks its ARIA role from severity — a destructive alert interrupts, the rest wait their turn.",
+  "category": "Feedback",
+  "dependencies": [
+    "class-variance-authority@^0.7.1"
+  ],
+  "registryDependencies": [
+    "lib-styles",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/alert.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps, ReactNode } from 'react'\nimport { cva, type VariantProps } from 'class-variance-authority'\nimport { colorSet, radius, tintStyle, type ColorSet } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * A prominent message that stays on the page.\n *\n * Like Badge, an alert is meant to be noticed, so it keeps the colour system.\n * `role` follows severity: a destructive alert is announced immediately, the\n * rest are announced when the user gets to them.\n */\nconst alertVariants = cva(\n  ['flex w-full gap-3', \"[&_svg:not([class*='size-'])]:size-4\"].join(' '),\n  {\n    variants: {\n      variant: {\n        /** Tinted panel — the readable default for a long message. */\n        default: 'bg-[var(--ui-soft)] text-[var(--ui-soft-fg)]',\n        outline:\n          'border border-[color-mix(in_oklab,var(--ui),transparent_70%)] text-[var(--ui-soft-fg)]',\n        /** Solid, for a message that must not be missed. */\n        solid: 'bg-[var(--ui)] text-[var(--ui-fg)]',\n      },\n      color: colorSet,\n      size: {\n        sm: 'p-3 text-xs',\n        default: 'p-4 text-sm',\n      },\n    },\n    defaultVariants: { variant: 'default', color: 'neutral', size: 'default' },\n  },\n)\n\ntype AlertProps = Omit<ComponentProps<'div'>, 'color' | 'title'> &\n  VariantProps<typeof alertVariants> & {\n    icon?: ReactNode\n    title?: ReactNode\n    /** Any CSS colour, used instead of a named `color` set. */\n    tint?: string\n  }\n\nfunction Alert({\n  className,\n  variant,\n  color,\n  size,\n  icon,\n  title,\n  tint,\n  style,\n  children,\n  ...props\n}: AlertProps) {\n  return (\n    <div\n      // A destructive message interrupts; anything else waits its turn.\n      role={color === 'destructive' ? 'alert' : 'status'}\n      data-slot=\"alert\"\n      className={cn(alertVariants({ variant, color, size }), radius.surface, className)}\n      style={tint ? { ...tintStyle(tint), ...style } : style}\n      {...props}\n    >\n      {icon && <span className=\"mt-0.5 shrink-0\">{icon}</span>}\n      <div className=\"min-w-0 flex-1 space-y-1\">\n        {title && <div className=\"font-medium\">{title}</div>}\n        {children && <div className=\"opacity-90\">{children}</div>}\n      </div>\n    </div>\n  )\n}\n\nfunction AlertTitle({ className, ...props }: ComponentProps<'div'>) {\n  return (\n    <div\n      data-slot=\"alert-title\"\n      className={cn('font-medium', className)}\n      {...props}\n    />\n  )\n}\n\nfunction AlertDescription({ className, ...props }: ComponentProps<'div'>) {\n  return (\n    <div\n      data-slot=\"alert-description\"\n      className={cn('opacity-90', className)}\n      {...props}\n    />\n  )\n}\n\nexport { Alert, AlertDescription, AlertTitle, alertVariants }\nexport type { AlertProps, ColorSet }\n"
+    }
+  ]
+}

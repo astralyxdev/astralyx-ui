@@ -1,0 +1,21 @@
+{
+  "name": "group",
+  "type": "registry:ui",
+  "title": "Group",
+  "description": "A recessed container that holds a set of cards. Padding and gap are the same value, and the corner radius is concentric with the cards inside it.",
+  "category": "Display",
+  "dependencies": [
+    "class-variance-authority@^0.7.1"
+  ],
+  "registryDependencies": [
+    "lib-styles",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/group.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps } from 'react'\nimport { cva, type VariantProps } from 'class-variance-authority'\nimport { type Responsive } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * A recessed container that holds a set of cards.\n *\n * The padding and the gap are the same value at every size, so the space\n * between two cards matches the space between a card and the container edge.\n *\n * The radius is concentric: the group's corner is the card's corner plus the\n * padding between them (`--radius-group-*` in index.css). Reusing the card's own\n * radius would make the gap between the two curves pinch at the corners.\n *\n * A horizontal group stacks below `responsive` — three cards side by side on a\n * phone gives each of them about a hundred pixels, which is not a layout.\n */\nconst groupVariants = cva(\n  [\n    'flex bg-[var(--group)]',\n    // Cards inside a group lose their outline: the recess already separates\n    // them from the page, and a border on top of that reads as a double edge.\n    '[&>[data-slot=card]]:border-transparent',\n  ].join(' '),\n  {\n    variants: {\n      orientation: {\n        vertical: 'flex-col',\n        horizontal: 'flex-row flex-wrap items-stretch',\n      },\n      size: {\n        sm: 'gap-3 p-3 rounded-[var(--radius-group-sm)]',\n        default: 'gap-4.5 p-4.5 rounded-[var(--radius-group-md)]',\n        lg: 'gap-6 p-6 rounded-[var(--radius-group-lg)]',\n      },\n      /** Give every child an equal share of the main axis. */\n      even: {\n        true: '[&>*]:min-w-0 [&>*]:flex-1',\n        false: '',\n      },\n    },\n    defaultVariants: {\n      orientation: 'vertical',\n      size: 'default',\n      even: false,\n    },\n  },\n)\n\n/**\n * A horizontal group written so it only becomes a row at the breakpoint.\n *\n * Spelled out per breakpoint rather than composed, because Tailwind scans\n * source text — a prefix built by interpolation produces no CSS.\n */\nconst RESPONSIVE_ROW = {\n  sm: 'flex-col sm:flex-row sm:flex-wrap sm:items-stretch',\n  md: 'flex-col md:flex-row md:flex-wrap md:items-stretch',\n  lg: 'flex-col lg:flex-row lg:flex-wrap lg:items-stretch',\n} as const\n\ntype GroupProps = ComponentProps<'div'> &\n  VariantProps<typeof groupVariants> & {\n    /** Breakpoint a horizontal group becomes a row at. `false` never stacks. */\n    responsive?: Responsive\n  }\n\nfunction Group({\n  className,\n  orientation = 'vertical',\n  size,\n  even,\n  responsive = 'sm',\n  ...props\n}: GroupProps) {\n  const stacks = orientation === 'horizontal' && responsive !== false\n  const rows = stacks ? RESPONSIVE_ROW[responsive] : undefined\n\n  return (\n    <div\n      data-slot=\"group\"\n      data-orientation={orientation}\n      className={cn(\n        // `orientation` is passed as vertical while stacking so the row classes\n        // do not fight the responsive ones.\n        groupVariants({ orientation: stacks ? 'vertical' : orientation, size, even }),\n        rows,\n        className,\n      )}\n      {...props}\n    />\n  )\n}\n\nexport { Group, groupVariants }\nexport type { GroupProps }\n"
+    }
+  ]
+}

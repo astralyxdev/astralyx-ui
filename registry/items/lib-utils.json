@@ -1,0 +1,16 @@
+{
+  "name": "lib-utils",
+  "type": "registry:lib",
+  "title": "utils",
+  "dependencies": [
+    "cn@^0.2.4"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "lib/utils.ts",
+      "type": "registry:lib",
+      "content": "import { cn as merge, type ClassValue } from 'cn'\n\n/**\n * Merge class names, resolving conflicting Tailwind utilities in favour of the\n * last one passed. Use it in every component that accepts a `className` prop.\n *\n * Backed by `cn`, a compiled merge engine that replaces `clsx` + `tailwind-merge`\n * behind the same API. The swap was checked rather than assumed: every class\n * string in this repo — 2,633 of them, including the arbitrary values and\n * `max-*` variants Tailwind v4 lets us write — plus 400 two-argument merges\n * produce byte-identical output under both engines.\n *\n * Re-exported through this module rather than imported directly at each call\n * site, so the engine stays one line to change.\n */\nexport function cn(...inputs: ClassValue[]) {\n  return merge(...inputs)\n}\n\nexport type { ClassValue }\n"
+    }
+  ]
+}

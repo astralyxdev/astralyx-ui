@@ -1,0 +1,18 @@
+{
+  "name": "curl-command",
+  "type": "registry:ui",
+  "title": "Curl Command",
+  "description": "A request as a runnable curl command, shell-quoted and with secrets masked. This output gets pasted into tickets, and an Authorization header pasted into a ticket is a leaked credential.",
+  "category": "API",
+  "dependencies": [],
+  "registryDependencies": [
+    "code-block"
+  ],
+  "files": [
+    {
+      "path": "components/ui/curl-command.tsx",
+      "type": "registry:ui",
+      "content": "import { useMemo, type ComponentProps } from 'react'\nimport { CodeBlock } from '@/components/ui/code-block'\n\n/**\n * A request rendered as a runnable curl command.\n *\n * Every value is shell-quoted with single quotes and an escape for embedded\n * ones. A JSON body pasted straight into a command line is the classic way to\n * produce a command that looks right and silently truncates at the first\n * apostrophe in someone's surname.\n *\n * Headers matching `redact` are masked. The whole point of this component is\n * that the output gets pasted into a terminal, a ticket, or a chat — and an\n * Authorization header pasted into a ticket is a leaked credential.\n *\n * Long commands are broken across lines with a trailing backslash, which is\n * what makes the difference between something a reader can check and a\n * 400-character single line.\n */\nexport type CurlHeader = { name: string; value: string }\n\n/** POSIX single-quoting: end the quote, escape the quote, reopen. */\nfunction shellQuote(value: string) {\n  return `'${value.replace(/'/g, `'\\\\''`)}'`\n}\n\nfunction CurlCommand({\n  method = 'GET',\n  url,\n  headers = [],\n  body,\n  redact = [/^authorization$/i, /^cookie$/i, /api[-_]?key/i, /^x-.*-token$/i],\n  mask = '••••••••',\n  insecure = false,\n  title = 'curl',\n  className,\n  ...props\n}: Omit<ComponentProps<'div'>, 'title'> & {\n  method?: string\n  url: string\n  headers?: CurlHeader[]\n  /** Sent with `--data`. An object is JSON-encoded. */\n  body?: string | object\n  /** Header names whose values are masked. */\n  redact?: RegExp[]\n  mask?: string\n  /** Adds `-k`. Worth showing when it is genuinely in play. */\n  insecure?: boolean\n  title?: string\n}) {\n  const command = useMemo(() => {\n    const parts = [`curl -X ${method.toUpperCase()}`]\n    if (insecure) parts.push('-k')\n    parts.push(shellQuote(url))\n\n    for (const header of headers) {\n      // Masked before quoting, so the mask itself is quoted safely.\n      const secret = redact.some((pattern) => pattern.test(header.name))\n      parts.push(`-H ${shellQuote(`${header.name}: ${secret ? mask : header.value}`)}`)\n    }\n\n    if (body !== undefined) {\n      const text = typeof body === 'string' ? body : JSON.stringify(body, null, 2)\n      parts.push(`--data ${shellQuote(text)}`)\n    }\n\n    // Backslash continuations: a 400-character line cannot be reviewed.\n    return parts.join(' \\\\\\n  ')\n  }, [method, url, headers, body, redact, mask, insecure])\n\n  return (\n    <div data-slot=\"curl-command\" className={className} {...props}>\n      <CodeBlock code={command} language=\"bash\" title={title} />\n    </div>\n  )\n}\n\nexport { CurlCommand, shellQuote }\n"
+    }
+  ]
+}

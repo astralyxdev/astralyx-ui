@@ -1,0 +1,16 @@
+{
+  "name": "primitive-radio-group",
+  "type": "registry:primitive",
+  "title": "Radio Group",
+  "description": "One choice out of several. Built on native radio inputs, so arrow-key roving, form submission and the single-selection invariant come from the platform.",
+  "category": "Forms",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/primitives/radio-group.tsx",
+      "type": "registry:primitive",
+      "content": "import {\n  createContext,\n  use,\n  useId,\n  useMemo,\n  useState,\n  type ReactNode,\n} from 'react'\n\n/**\n * Headless radio group. Native `<input type=\"radio\">` elements already give\n * roving focus, arrow-key movement and form submission for free, so this only\n * has to share the group's name, value and change handler — and own the\n * controlled/uncontrolled split so items stay dumb.\n */\n\ntype RadioGroupContextValue = {\n  name: string\n  value: string | undefined\n  select: (value: string) => void\n  disabled: boolean\n}\n\nconst RadioGroupContext = createContext<RadioGroupContextValue | null>(null)\n\nexport function useRadioGroup() {\n  const context = use(RadioGroupContext)\n  if (!context) throw new Error('<Radio> must be used inside <RadioGroup>')\n  return context\n}\n\ntype RadioGroupProviderProps = {\n  name?: string\n  value?: string\n  defaultValue?: string\n  onValueChange?: (value: string) => void\n  disabled?: boolean\n  children: ReactNode\n}\n\nexport function RadioGroupProvider({\n  name,\n  value: valueProp,\n  defaultValue,\n  onValueChange,\n  disabled = false,\n  children,\n}: RadioGroupProviderProps) {\n  const generated = useId()\n  const controlled = valueProp !== undefined\n  const [uncontrolled, setUncontrolled] = useState(defaultValue)\n  const value = controlled ? valueProp : uncontrolled\n\n  const context = useMemo<RadioGroupContextValue>(\n    () => ({\n      name: name ?? generated,\n      value,\n      disabled,\n      select: (next) => {\n        if (!controlled) setUncontrolled(next)\n        onValueChange?.(next)\n      },\n    }),\n    [name, generated, value, disabled, controlled, onValueChange],\n  )\n\n  return <RadioGroupContext value={context}>{children}</RadioGroupContext>\n}\n"
+    }
+  ]
+}

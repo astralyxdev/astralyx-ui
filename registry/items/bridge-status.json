@@ -1,0 +1,24 @@
+{
+  "name": "bridge-status",
+  "type": "registry:ui",
+  "title": "Bridge Status",
+  "description": "A cross-chain transfer as its two legs. Not one progress bar: the legs fail independently and the second cannot begin until the first is final, so a single bar implies a state that does not exist.",
+  "category": "Crypto",
+  "dependencies": [
+    "lucide-react@^1.39.0"
+  ],
+  "registryDependencies": [
+    "fmt",
+    "lib-styles",
+    "lib-utils",
+    "progress",
+    "spinner"
+  ],
+  "files": [
+    {
+      "path": "components/ui/bridge-status.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps, ReactNode } from 'react'\nimport { ArrowRight, Check, TriangleAlert } from 'lucide-react'\nimport { Progress } from '@/components/ui/progress'\nimport { Spinner } from '@/components/ui/spinner'\nimport { Fmt } from '@/components/ui/fmt'\nimport { radius, surface } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * A cross-chain transfer, shown as its two legs.\n *\n * Two legs, not one progress bar, because they fail independently and the\n * second cannot begin until the first is final. A single bar implies a transfer\n * that can be at 60% — it cannot; it is either waiting on source finality or\n * waiting on destination execution, and those have very different remedies.\n *\n * The waiting state names what is being waited on. \"Pending\" for twenty minutes\n * with no explanation is the most common bridge support ticket; \"waiting for 64\n * source confirmations\" is the same wait with the anxiety removed.\n */\nexport type BridgeLeg = {\n  chain: ReactNode\n  state: 'pending' | 'active' | 'done' | 'failed'\n  /** e.g. \"12 / 64 confirmations\" */\n  detail?: ReactNode\n  progress?: number\n  href?: string\n}\n\nfunction BridgeStatus({\n  source,\n  destination,\n  amount,\n  startedAt,\n  now,\n  estimate,\n  error,\n  className,\n  ...props\n}: Omit<ComponentProps<'div'>, 'children'> & {\n  source: BridgeLeg\n  destination: BridgeLeg\n  amount?: ReactNode\n  startedAt?: Date\n  now?: Date\n  /** Expected total time, e.g. \"~14 min\". */\n  estimate?: ReactNode\n  error?: ReactNode\n}) {\n  const Leg = ({ leg, label }: { leg: BridgeLeg; label: string }) => (\n    <div className={cn('bg-secondary/60 flex flex-1 flex-col gap-2 p-3', radius.control)}>\n      <div className=\"flex items-center gap-2\">\n        <span\n          className={cn(\n            'flex size-5 shrink-0 items-center justify-center rounded-full [corner-shape:round]',\n            leg.state === 'done' && 'bg-[var(--green)] text-[var(--green-foreground)]',\n            leg.state === 'failed' && 'bg-[var(--destructive)] text-[var(--destructive-foreground)]',\n            leg.state === 'pending' && 'bg-border text-muted-foreground',\n          )}\n        >\n          {leg.state === 'done' ? (\n            <Check className=\"size-3\" />\n          ) : leg.state === 'failed' ? (\n            <TriangleAlert className=\"size-3\" />\n          ) : leg.state === 'active' ? (\n            <Spinner size=\"xs\" label={label} />\n          ) : null}\n        </span>\n        <span className=\"min-w-0 flex-1 truncate text-sm font-medium\">{leg.chain}</span>\n      </div>\n\n      <p className=\"text-muted-foreground text-xs\">{label}</p>\n\n      {/* Name the wait — \"pending\" with no explanation is the support ticket. */}\n      {leg.detail && (\n        <p className=\"text-xs tabular-nums\">{leg.detail}</p>\n      )}\n      {leg.progress !== undefined && leg.state === 'active' && (\n        <Progress value={leg.progress * 100} className=\"h-1\" />\n      )}\n    </div>\n  )\n\n  return (\n    <div\n      data-slot=\"bridge-status\"\n      className={cn(surface, radius.surface, 'flex flex-col gap-3 p-4', className)}\n      {...props}\n    >\n      <div className=\"flex flex-wrap items-baseline justify-between gap-2\">\n        <span className=\"text-sm font-medium\">Bridging {amount}</span>\n        {estimate && (\n          <span className=\"text-muted-foreground text-xs\">{estimate} expected</span>\n        )}\n      </div>\n\n      <div className=\"flex items-stretch gap-2\">\n        <Leg leg={source} label=\"Source\" />\n        <span className=\"text-muted-foreground/40 flex shrink-0 items-center\" aria-hidden=\"true\">\n          <ArrowRight className=\"size-4\" />\n        </span>\n        <Leg leg={destination} label=\"Destination\" />\n      </div>\n\n      {error && (\n        <p className=\"text-[var(--destructive-soft-foreground)] text-xs\">{error}</p>\n      )}\n\n      {startedAt && (\n        <p className=\"text-muted-foreground/80 text-xs\">\n          Started <Fmt type=\"relative\" value={startedAt} now={now} />\n        </p>\n      )}\n    </div>\n  )\n}\n\nexport { BridgeStatus }\n"
+    }
+  ]
+}

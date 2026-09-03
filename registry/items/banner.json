@@ -1,0 +1,22 @@
+{
+  "name": "banner",
+  "type": "registry:ui",
+  "title": "Banner",
+  "description": "A page-level announcement strip. Distinct from Alert, which belongs to the content around it — a banner spans the page and belongs to the session.",
+  "category": "Feedback",
+  "dependencies": [
+    "lucide-react@^1.39.0"
+  ],
+  "registryDependencies": [
+    "button",
+    "lib-styles",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/banner.tsx",
+      "type": "registry:ui",
+      "content": "import { useState, type ComponentProps, type ReactNode } from 'react'\nimport { Info, TriangleAlert, X, CircleCheck, CircleAlert } from 'lucide-react'\nimport { Button } from '@/components/ui/button'\nimport { focusRing, radius } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * A page-level announcement strip: maintenance windows, trial expiry, an\n * outage notice.\n *\n * Distinct from `Alert`, which sits inside a layout and belongs to the content\n * around it. A banner spans the page and belongs to the session, so it is full\n * bleed, dismissible, and does not steal focus.\n *\n * `role=\"status\"` rather than `role=\"alert\"`. An assertive alert interrupts\n * whatever a screen reader is saying, which is right for a form error and\n * wrong for \"scheduled maintenance on Sunday\".\n */\nconst TONE = {\n  info: {\n    Icon: Info,\n    surface: 'bg-[color-mix(in_oklab,var(--blue),transparent_88%)] text-foreground',\n    icon: 'text-[var(--blue-soft-foreground)]',\n  },\n  success: {\n    Icon: CircleCheck,\n    surface: 'bg-[color-mix(in_oklab,var(--green),transparent_88%)] text-foreground',\n    icon: 'text-[var(--green-soft-foreground)]',\n  },\n  warning: {\n    Icon: TriangleAlert,\n    surface: 'bg-[color-mix(in_oklab,var(--amber),transparent_88%)] text-foreground',\n    icon: 'text-[var(--amber-soft-foreground)]',\n  },\n  danger: {\n    Icon: CircleAlert,\n    surface: 'bg-[color-mix(in_oklab,var(--destructive),transparent_88%)] text-foreground',\n    icon: 'text-[var(--destructive-soft-foreground)]',\n  },\n  neutral: {\n    Icon: Info,\n    surface: 'bg-secondary text-foreground',\n    icon: 'text-muted-foreground',\n  },\n} as const\n\nfunction Banner({\n  tone = 'info',\n  title,\n  children,\n  action,\n  dismissible = false,\n  onDismiss,\n  icon,\n  sticky = false,\n  dismissLabel = 'Dismiss',\n  className,\n  ...props\n}: Omit<ComponentProps<'div'>, 'title'> & {\n  tone?: keyof typeof TONE\n  title?: ReactNode\n  action?: ReactNode\n  dismissible?: boolean\n  onDismiss?: () => void\n  icon?: ReactNode\n  sticky?: boolean\n  /** Accessible name for the dismiss button. */\n  dismissLabel?: string\n}) {\n  const [open, setOpen] = useState(true)\n  if (!open) return null\n\n  const { Icon, surface, icon: iconTone } = TONE[tone]\n\n  return (\n    <div\n      role=\"status\"\n      data-slot=\"banner\"\n      data-tone={tone}\n      className={cn(\n        'flex w-full items-center gap-3 p-4 text-sm',\n        surface,\n        sticky && 'sticky top-0 z-40',\n        className,\n      )}\n      {...props}\n    >\n      <span className={cn('shrink-0', iconTone)} aria-hidden=\"true\">\n        {icon ?? <Icon className=\"size-4\" />}\n      </span>\n\n      <div className=\"min-w-0 flex-1\">\n        {title && <span className=\"font-medium\">{title} </span>}\n        <span className=\"text-muted-foreground\">{children}</span>\n      </div>\n\n      {action && <div className=\"shrink-0\">{action}</div>}\n\n      {dismissible && (\n        <Button\n          variant=\"ghost\"\n          size=\"icon-xs\"\n          aria-label={dismissLabel}\n          className={cn('shrink-0', radius.xs, focusRing)}\n          onClick={() => {\n            setOpen(false)\n            onDismiss?.()\n          }}\n        >\n          <X />\n        </Button>\n      )}\n    </div>\n  )\n}\n\nexport { Banner }\n"
+    }
+  ]
+}

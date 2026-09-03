@@ -1,0 +1,21 @@
+{
+  "name": "branch-select",
+  "type": "registry:ui",
+  "title": "Branch Select",
+  "description": "A branch and tag picker. A Combobox underneath — repositories routinely have hundreds of branches, so search is not optional — with the default branch pinned first and tags labelled.",
+  "category": "Development",
+  "dependencies": [
+    "lucide-react@^1.39.0"
+  ],
+  "registryDependencies": [
+    "combobox",
+    "lib-styles"
+  ],
+  "files": [
+    {
+      "path": "components/ui/branch-select.tsx",
+      "type": "registry:ui",
+      "content": "import { useMemo, type ComponentProps } from 'react'\nimport { GitBranch, Tag } from 'lucide-react'\nimport { Combobox } from '@/components/ui/combobox'\nimport type { fieldSize } from '@/lib/styles'\n\n/**\n * A branch and tag picker.\n *\n * A Combobox underneath — repositories routinely have hundreds of branches, so\n * search is not optional — with the domain knowledge on top: the default branch\n * is pinned first, protected branches are marked, and tags are labelled so they\n * are not mistaken for branches.\n */\nexport type BranchOption = {\n  name: string\n  kind?: 'branch' | 'tag'\n  isDefault?: boolean\n  protected?: boolean\n}\n\nfunction BranchSelect({\n  branches,\n  value,\n  defaultValue,\n  onValueChange,\n  size = 'sm',\n  placeholder = 'Switch branch',\n  ...props\n}: Omit<ComponentProps<typeof Combobox>, 'options' | 'size'> & {\n  branches: BranchOption[]\n  size?: keyof typeof fieldSize\n}) {\n  const options = useMemo(() => {\n    // Default first, then branches, then tags — the order people scan in.\n    const ranked = [...branches].sort((a, b) => {\n      if (a.isDefault !== b.isDefault) return a.isDefault ? -1 : 1\n      const kind = (x: BranchOption) => (x.kind === 'tag' ? 1 : 0)\n      if (kind(a) !== kind(b)) return kind(a) - kind(b)\n      return a.name.localeCompare(b.name)\n    })\n\n    return ranked.map((branch) => ({\n      value: branch.name,\n      label: [\n        branch.name,\n        branch.isDefault ? '· default' : '',\n        branch.protected ? '· protected' : '',\n        branch.kind === 'tag' ? '· tag' : '',\n      ]\n        .filter(Boolean)\n        .join(' '),\n    }))\n  }, [branches])\n\n  return (\n    <Combobox\n      options={options}\n      value={value}\n      defaultValue={defaultValue}\n      onValueChange={onValueChange}\n      size={size}\n      placeholder={placeholder}\n      searchPlaceholder=\"Find a branch or tag…\"\n      emptyMessage=\"Nothing matches\"\n      {...props}\n    />\n  )\n}\n\n/** The icon that belongs beside a ref of this kind. */\nfunction RefIcon({ kind }: { kind?: 'branch' | 'tag' }) {\n  return kind === 'tag' ? <Tag /> : <GitBranch />\n}\n\nexport { BranchSelect, RefIcon }\n"
+    }
+  ]
+}

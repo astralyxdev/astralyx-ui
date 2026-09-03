@@ -1,0 +1,18 @@
+{
+  "name": "scroll-area",
+  "type": "registry:ui",
+  "title": "Scroll Area",
+  "description": "A scrollable region with a themed scrollbar, styled through the standard scrollbar properties rather than a JavaScript overlay — so native momentum and keyboard scrolling stay intact.",
+  "category": "Navigation",
+  "dependencies": [],
+  "registryDependencies": [
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/scroll-area.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps } from 'react'\nimport { cn } from '@/lib/utils'\n\n/**\n * A bounded scrollable region.\n *\n * The scrollbar itself is styled globally in `index.css`, so this only decides\n * which axis scrolls — it exists to make that intent explicit at the call site\n * rather than to restyle anything.\n */\nfunction ScrollArea({\n  className,\n  orientation = 'vertical',\n  ...props\n}: ComponentProps<'div'> & {\n  orientation?: 'vertical' | 'horizontal' | 'both'\n}) {\n  return (\n    <div\n      data-slot=\"scroll-area\"\n      data-orientation={orientation}\n      className={cn(\n        'relative',\n        orientation === 'vertical' && 'overflow-y-auto',\n        orientation === 'horizontal' && 'overflow-x-auto',\n        orientation === 'both' && 'overflow-auto',\n        className,\n      )}\n      {...props}\n    />\n  )\n}\n\nexport { ScrollArea }\n"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "table",
+  "type": "registry:ui",
+  "title": "Table",
+  "description": "Rows and columns of structured data. The wrapper scrolls rather than the page, so a wide table never forces horizontal scroll on the whole document.",
+  "category": "Display",
+  "dependencies": [],
+  "registryDependencies": [
+    "lib-styles",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/table.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps } from 'react'\nimport { radius, surface } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * Rows and columns of structured data.\n *\n * The wrapper scrolls rather than the page, so a wide table never forces\n * horizontal scroll on the whole document — the single most common table bug.\n */\nfunction Table({\n  className,\n  containerClassName,\n  ...props\n}: ComponentProps<'table'> & { containerClassName?: string }) {\n  return (\n    <div\n      data-slot=\"table-container\"\n      className={cn(\n        surface,\n        radius.panel,\n        'w-full overflow-x-auto',\n        containerClassName,\n      )}\n    >\n      <table\n        data-slot=\"table\"\n        className={cn('w-full caption-bottom text-sm', className)}\n        {...props}\n      />\n    </div>\n  )\n}\n\nfunction TableHeader({ className, ...props }: ComponentProps<'thead'>) {\n  return (\n    <thead\n      data-slot=\"table-header\"\n      className={cn('[&_tr]:border-border [&_tr]:border-b', className)}\n      {...props}\n    />\n  )\n}\n\nfunction TableBody({ className, ...props }: ComponentProps<'tbody'>) {\n  return (\n    <tbody\n      data-slot=\"table-body\"\n      className={cn(\n        'border-border [&_tr]:border-b [&_tr:last-child]:border-0',\n        className,\n      )}\n      {...props}\n    />\n  )\n}\n\nfunction TableFooter({ className, ...props }: ComponentProps<'tfoot'>) {\n  return (\n    <tfoot\n      data-slot=\"table-footer\"\n      className={cn(\n        'border-border bg-muted/40 border-t font-medium [&>tr]:last:border-b-0',\n        className,\n      )}\n      {...props}\n    />\n  )\n}\n\nfunction TableRow({ className, ...props }: ComponentProps<'tr'>) {\n  return (\n    <tr\n      data-slot=\"table-row\"\n      className={cn(\n        'border-border hover:bg-muted/40 data-[state=selected]:bg-muted transition-colors duration-150 ease-out motion-reduce:transition-none',\n        className,\n      )}\n      {...props}\n    />\n  )\n}\n\nfunction TableHead({ className, ...props }: ComponentProps<'th'>) {\n  return (\n    <th\n      data-slot=\"table-head\"\n      className={cn(\n        'text-muted-foreground h-10 px-4 text-start align-middle text-xs font-medium whitespace-nowrap',\n        className,\n      )}\n      {...props}\n    />\n  )\n}\n\nfunction TableCell({ className, ...props }: ComponentProps<'td'>) {\n  return (\n    <td\n      data-slot=\"table-cell\"\n      className={cn('px-4 py-2.5 align-middle', className)}\n      {...props}\n    />\n  )\n}\n\nfunction TableCaption({ className, ...props }: ComponentProps<'caption'>) {\n  return (\n    <caption\n      data-slot=\"table-caption\"\n      className={cn('text-muted-foreground mt-3 px-4 pb-3 text-xs', className)}\n      {...props}\n    />\n  )\n}\n\nexport {\n  Table,\n  TableBody,\n  TableCaption,\n  TableCell,\n  TableFooter,\n  TableHead,\n  TableHeader,\n  TableRow,\n}\n"
+    }
+  ]
+}

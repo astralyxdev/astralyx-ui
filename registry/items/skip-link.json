@@ -1,0 +1,19 @@
+{
+  "name": "skip-link",
+  "type": "registry:ui",
+  "title": "Skip Link",
+  "description": "The first tab stop: jump past the navigation to the content. Invisible until focused, which is the whole design.",
+  "category": "Utility",
+  "dependencies": [],
+  "registryDependencies": [
+    "lib-styles",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/skip-link.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps } from 'react'\nimport { radius } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * The first tab stop: jump straight to the main content.\n *\n * Visible only while focused, which is the whole design — it is there for\n * someone tabbing through, and invisible to everyone else.\n *\n * `sr-only` plus `focus:not-sr-only` rather than moving it off-screen with a\n * transform: an element positioned off-screen and animated back in is a\n * position change, and this kit does not move things. Appearing on focus is a\n * state change, not motion.\n *\n * The target needs `tabindex=\"-1\"`, or clicking the link scrolls the page but\n * leaves focus on the link and the next Tab starts from the top again.\n */\nfunction SkipLink({\n  href = '#main',\n  children = 'Skip to content',\n  className,\n  ...props\n}: ComponentProps<'a'>) {\n  return (\n    <a\n      href={href}\n      data-slot=\"skip-link\"\n      className={cn(\n        'sr-only',\n        'focus:not-sr-only focus:bg-primary focus:text-primary-foreground focus:fixed focus:start-4 focus:top-4 focus:z-[100] focus:px-4 focus:py-2 focus:text-sm focus:font-medium',\n        radius.control,\n        'focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]',\n        className,\n      )}\n      {...props}\n    >\n      {children}\n    </a>\n  )\n}\n\nexport { SkipLink }\n"
+    }
+  ]
+}

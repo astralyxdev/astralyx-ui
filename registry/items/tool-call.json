@@ -1,0 +1,24 @@
+{
+  "name": "tool-call",
+  "type": "registry:ui",
+  "title": "Tool Call",
+  "description": "One tool invocation inside an assistant turn. Collapsed by default — the arguments are long and the interesting part is that it ran — except a failure, which opens itself.",
+  "category": "AI",
+  "dependencies": [
+    "lucide-react@^1.39.0"
+  ],
+  "registryDependencies": [
+    "code-block",
+    "collapsible",
+    "lib-styles",
+    "lib-utils",
+    "spinner"
+  ],
+  "files": [
+    {
+      "path": "components/ui/tool-call.tsx",
+      "type": "registry:ui",
+      "content": "import { type ComponentProps, type ReactNode } from 'react'\nimport { Check, ChevronDown, TriangleAlert, Wrench } from 'lucide-react'\nimport { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'\nimport { CodeBlock } from '@/components/ui/code-block'\nimport { Spinner } from '@/components/ui/spinner'\nimport { radius, surface } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * One tool invocation inside an assistant turn.\n *\n * Collapsed by default: the arguments and the result are usually long, and the\n * interesting part is that the tool ran at all. A failure opens on its own,\n * because that is the case you always want to read.\n */\ntype ToolCallProps = Omit<ComponentProps<'div'>, 'title'> & {\n  name: string\n  status?: 'running' | 'done' | 'error'\n  /** Short line beside the name — the target, the query, the file. */\n  summary?: ReactNode\n  input?: string\n  output?: string\n  language?: 'json' | 'bash' | 'tsx' | 'typescript'\n  defaultOpen?: boolean\n  inputLabel?: string\n  outputLabel?: string\n}\n\nconst STATUS = {\n  running: { icon: Spinner, className: 'text-[var(--blue-soft-foreground)]' },\n  done: { icon: Check, className: 'text-[var(--green-soft-foreground)]' },\n  error: { icon: TriangleAlert, className: 'text-[var(--destructive-soft-foreground)]' },\n} as const\n\nfunction ToolCall({\n  className,\n  name,\n  status = 'done',\n  summary,\n  input,\n  output,\n  language = 'json',\n  defaultOpen,\n  inputLabel = 'Input',\n  outputLabel = 'Output',\n  ...props\n}: ToolCallProps) {\n  const meta = STATUS[status]\n  const Icon = meta.icon\n\n  return (\n    <Collapsible\n      // A failed call opens itself; the others stay out of the way.\n      defaultOpen={defaultOpen ?? status === 'error'}\n      className={cn(surface, radius.surface, 'overflow-hidden', className)}\n      {...props}\n    >\n      <CollapsibleTrigger showChevron={false} className=\"p-3\">\n        <span className=\"flex min-w-0 flex-1 items-center gap-2\">\n          <Wrench className=\"text-muted-foreground size-3.5 shrink-0\" />\n          <span className=\"font-mono text-xs\">{name}</span>\n          {summary && (\n            <span className=\"text-muted-foreground truncate text-xs\">\n              {summary}\n            </span>\n          )}\n        </span>\n        <span className={cn('flex shrink-0 items-center gap-2', meta.className)}>\n          {status === 'running' ? <Spinner size=\"xs\" /> : <Icon className=\"size-3.5\" />}\n          <ChevronDown className=\"text-muted-foreground size-3.5\" />\n        </span>\n      </CollapsibleTrigger>\n\n      <CollapsibleContent>\n        <div className=\"space-y-2 p-2\">\n          {input && (\n            <CodeBlock title={inputLabel} language={language} code={input} maxLines={8} />\n          )}\n          {output && (\n            <CodeBlock title={outputLabel} language={language} code={output} maxLines={12} />\n          )}\n        </div>\n      </CollapsibleContent>\n    </Collapsible>\n  )\n}\n\nexport { ToolCall }\n"
+    }
+  ]
+}

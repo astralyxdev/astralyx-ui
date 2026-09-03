@@ -1,0 +1,715 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Tells the platform which way to render native controls, form widgets and
+     default scrollbars. Without it a dark page still gets light checkboxes. */
+  color-scheme: light;
+
+  --radius: 1.25rem;
+
+  /*
+   * Control corner radii, tuned per control height rather than derived from
+   * --radius: the shared scale's fixed offsets do not track height, so a step
+   * that looks right on h-12 is a different proportion entirely on h-7.
+   *
+   * Each is half its control's height — the roundest a squircle can be before
+   * the corners meet. Under `corner-shape: squircle` these render as iOS-style
+   * continuous corners, which is the point; they are deliberately NOT pills.
+   *
+   * xs has no entry: that one size is a true `rounded-full` pill.
+   */
+  /*
+   * Group radii. Concentric with the cards inside: a container's radius should
+   * be the inner radius plus the padding between them, or the gap between the
+   * two curves visibly narrows at the corners.
+   *
+   *   card radius 30px (--radius-3xl) + the group's own padding
+   */
+  --radius-group-sm: 42px; /* 30 + 12 */
+  --radius-group-md: 48px; /* 30 + 18 */
+  --radius-group-lg: 54px; /* 30 + 24 */
+
+  /* Small square indicators — a checkbox is too small for the control scale,
+     where any step would round it into a circle. */
+  --radius-check-xs: 2px; /* 8px box  — diff squares, status dots */
+  --radius-check-sm: 5px; /* 16px box */
+  --radius-check-md: 6px; /* 20px box */
+  --radius-check-lg: 8px; /* 24px box */
+
+  --radius-control-sm: 16px; /* h-8  / 32px */
+  --radius-control-md: 18px; /* h-9  / 36px */
+  --radius-control-lg: 20px; /* h-10 / 40px */
+  --radius-control-xl: 24px; /* h-12 / 48px */
+
+  /*
+   * How far a tinted control shifts its fill and text on hover. Negative
+   * darkens, which is right on a light background; `.dark` flips the sign.
+   * Consumed by `tintStyle()` through relative colour syntax.
+   */
+  --tint-shift: -0.08;
+  /* How far a custom tint moves to become readable *text* on the page surface.
+     The named colour sets ship a `-soft-foreground` for this; an arbitrary tint
+     has to derive one, and the raw colour as text measures ~3.5:1. Larger than
+     --tint-shift, which is only a hover nudge. */
+  --tint-text-shift: -0.26;
+
+  /*
+   * Which way a pressed control moves. Hover already steps in the right
+   * direction per theme; press continues in that same direction, so mixing
+   * toward black on light and white on dark keeps one rule working for all
+   * eight colour sets and for `tint`.
+   */
+  --press-shade: black;
+
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --primary-hover: oklch(0.32 0 0);
+  --secondary: oklch(0.97 0 0);
+  /* Recessed trays. Group sits above CardHeader so a card inside a group still
+     reads as the raised element. */
+  --card-header: oklch(0.988 0 0);
+  --group: oklch(0.97 0 0);
+
+  /* The sidebar is deliberately theme-independent: black ground, light ink, in
+     both themes. Declared only here — repeating them under `.dark` is what
+     would make the rail flip. */
+  --sidebar: oklch(0.08 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --secondary-hover: oklch(0.93 0 0);
+  --secondary-foreground-hover: oklch(0.08 0 0);
+  --muted: oklch(0.97 0 0);
+  /* Set by the worst surface it lands on, not the best. At 0.556 this cleared
+     AA on --card (4.73:1) but missed on --secondary (4.34:1), which is where
+     muted text actually sits most often — menu rows, tab triggers, field
+     hints. 0.544 gives 4.56 on secondary and 4.98 on card. */
+  --muted-foreground: oklch(0.544 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --destructive-hover: oklch(0.51 0.235 27.325);
+  --destructive-soft: oklch(0.95 0.04 27.325);
+  --destructive-soft-foreground: oklch(0.47 0.2 27.325);
+  --destructive-soft-hover: oklch(0.91 0.055 27.325);
+  --destructive-soft-foreground-hover: oklch(0.4 0.21 27.325);
+  --border: oklch(0.922 0 0);
+  /* Border while a field has focus — more contrast, not literally darker: in
+     dark mode "darker" would mean invisible, so it brightens instead. */
+  --border-active: oklch(0.62 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+
+  /* Color sets: solid pair (--x / --x-foreground) plus a tinted pair. */
+  --blue: oklch(0.55 0.19 258);
+  --blue-foreground: oklch(0.985 0 0);
+  --blue-soft: oklch(0.95 0.04 258);
+  --blue-soft-foreground: oklch(0.45 0.16 258);
+  --blue-hover: oklch(0.48 0.19 258);
+  --blue-soft-hover: oklch(0.91 0.055 258);
+  --blue-soft-foreground-hover: oklch(0.38 0.17 258);
+
+  --violet: oklch(0.55 0.23 295);
+  --violet-foreground: oklch(0.985 0 0);
+  --violet-soft: oklch(0.95 0.045 295);
+  --violet-soft-foreground: oklch(0.45 0.19 295);
+  --violet-hover: oklch(0.48 0.22 295);
+  --violet-soft-hover: oklch(0.91 0.06 295);
+  --violet-soft-foreground-hover: oklch(0.38 0.2 295);
+
+  /* 3.27:1 before — the worst of the set. */
+  --cyan: oklch(0.53 0.12 210);
+  --cyan-foreground: oklch(0.985 0 0);
+  --cyan-soft: oklch(0.95 0.04 210);
+  --cyan-soft-foreground: oklch(0.44 0.1 210);
+  --cyan-hover: oklch(0.55 0.12 210);
+  --cyan-soft-hover: oklch(0.91 0.05 210);
+  --cyan-soft-foreground-hover: oklch(0.37 0.11 210);
+
+  /* Darkened from 0.58 so white foreground text clears AA on a solid fill
+     (3.84:1 before, 4.61 now). Amber solves the same problem the other way,
+     with a dark foreground — it is too light to carry white at any usable
+     saturation. */
+  --green: oklch(0.535 0.15 150);
+  --green-foreground: oklch(0.985 0 0);
+  --green-soft: oklch(0.95 0.05 150);
+  --green-soft-foreground: oklch(0.42 0.12 150);
+  --green-hover: oklch(0.51 0.14 150);
+  --green-soft-hover: oklch(0.91 0.065 150);
+  --green-soft-foreground-hover: oklch(0.35 0.13 150);
+
+  --amber: oklch(0.78 0.15 75);
+  --amber-foreground: oklch(0.25 0.05 75);
+  --amber-soft: oklch(0.95 0.06 80);
+  --amber-soft-foreground: oklch(0.45 0.11 70);
+  --amber-hover: oklch(0.72 0.16 75);
+  --amber-soft-hover: oklch(0.91 0.08 80);
+  --amber-soft-foreground-hover: oklch(0.38 0.12 70);
+
+  /* 4.22:1 before. */
+  --rose: oklch(0.575 0.21 15);
+  --rose-foreground: oklch(0.985 0 0);
+  --rose-soft: oklch(0.95 0.04 15);
+  --rose-soft-foreground: oklch(0.47 0.19 15);
+  --rose-hover: oklch(0.53 0.2 15);
+  --rose-soft-hover: oklch(0.91 0.055 15);
+  --rose-soft-foreground-hover: oklch(0.4 0.2 15);
+
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+}
+
+.dark {
+  color-scheme: dark;
+
+  --background: oklch(0.08 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.13 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.13 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.13 0 0);
+  --primary-hover: oklch(0.82 0 0);
+  --tint-shift: 0.08;
+  --tint-text-shift: 0.18;
+  --press-shade: white;
+  --secondary: oklch(0.18 0 0);
+  --card-header: oklch(0.19 0 0);
+  --group: oklch(0.23 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --secondary-hover: oklch(0.24 0 0);
+  --secondary-foreground-hover: oklch(1 0 0);
+  --muted: oklch(0.18 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.2 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.16 0.02 22.216);
+  --destructive-hover: oklch(0.77 0.17 22.216);
+  --destructive-soft: oklch(0.704 0.191 22.216 / 18%);
+  --destructive-soft-foreground: oklch(0.85 0.1 22.216);
+  --destructive-soft-hover: oklch(0.704 0.191 22.216 / 30%);
+  --destructive-soft-foreground-hover: oklch(0.92 0.08 22.216);
+  --border: oklch(1 0 0 / 12%);
+  --border-active: oklch(1 0 0 / 40%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+
+  --blue: oklch(0.62 0.19 258);
+  --blue-foreground: oklch(0.16 0.02 258);
+  --blue-soft: oklch(0.62 0.19 258 / 18%);
+  --blue-soft-foreground: oklch(0.82 0.11 258);
+  --blue-hover: oklch(0.7 0.17 258);
+  --blue-soft-hover: oklch(0.62 0.19 258 / 30%);
+  --blue-soft-foreground-hover: oklch(0.9 0.09 258);
+
+  --violet: oklch(0.65 0.22 295);
+  --violet-foreground: oklch(0.16 0.02 295);
+  --violet-soft: oklch(0.65 0.22 295 / 18%);
+  --violet-soft-foreground: oklch(0.84 0.11 295);
+  --violet-hover: oklch(0.72 0.2 295);
+  --violet-soft-hover: oklch(0.65 0.22 295 / 30%);
+  --violet-soft-foreground-hover: oklch(0.91 0.09 295);
+
+  --cyan: oklch(0.72 0.11 210);
+  --cyan-foreground: oklch(0.16 0.02 210);
+  --cyan-soft: oklch(0.72 0.11 210 / 18%);
+  --cyan-soft-foreground: oklch(0.85 0.08 210);
+  --cyan-hover: oklch(0.79 0.1 210);
+  --cyan-soft-hover: oklch(0.72 0.11 210 / 30%);
+  --cyan-soft-foreground-hover: oklch(0.92 0.06 210);
+
+  --green: oklch(0.68 0.15 150);
+  --green-foreground: oklch(0.16 0.02 150);
+  --green-soft: oklch(0.68 0.15 150 / 18%);
+  --green-soft-foreground: oklch(0.84 0.11 150);
+  --green-hover: oklch(0.75 0.14 150);
+  --green-soft-hover: oklch(0.68 0.15 150 / 30%);
+  --green-soft-foreground-hover: oklch(0.91 0.09 150);
+
+  --amber: oklch(0.8 0.15 75);
+  --amber-foreground: oklch(0.2 0.04 75);
+  --amber-soft: oklch(0.8 0.15 75 / 18%);
+  --amber-soft-foreground: oklch(0.88 0.1 80);
+  --amber-hover: oklch(0.86 0.14 75);
+  --amber-soft-hover: oklch(0.8 0.15 75 / 30%);
+  --amber-soft-foreground-hover: oklch(0.94 0.08 80);
+
+  --rose: oklch(0.68 0.2 15);
+  --rose-foreground: oklch(0.16 0.02 15);
+  --rose-soft: oklch(0.68 0.2 15 / 18%);
+  --rose-soft-foreground: oklch(0.85 0.1 15);
+  --rose-hover: oklch(0.75 0.18 15);
+  --rose-soft-hover: oklch(0.68 0.2 15 / 30%);
+  --rose-soft-foreground-hover: oklch(0.92 0.08 15);
+
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+}
+
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-blue: var(--blue);
+  --color-blue-foreground: var(--blue-foreground);
+  --color-blue-soft: var(--blue-soft);
+  --color-blue-soft-foreground: var(--blue-soft-foreground);
+  --color-violet: var(--violet);
+  --color-violet-foreground: var(--violet-foreground);
+  --color-violet-soft: var(--violet-soft);
+  --color-violet-soft-foreground: var(--violet-soft-foreground);
+  --color-cyan: var(--cyan);
+  --color-cyan-foreground: var(--cyan-foreground);
+  --color-cyan-soft: var(--cyan-soft);
+  --color-cyan-soft-foreground: var(--cyan-soft-foreground);
+  --color-green: var(--green);
+  --color-green-foreground: var(--green-foreground);
+  --color-green-soft: var(--green-soft);
+  --color-green-soft-foreground: var(--green-soft-foreground);
+  --color-amber: var(--amber);
+  --color-amber-foreground: var(--amber-foreground);
+  --color-amber-soft: var(--amber-soft);
+  --color-amber-soft-foreground: var(--amber-soft-foreground);
+  --color-rose: var(--rose);
+  --color-rose-foreground: var(--rose-foreground);
+  --color-rose-soft: var(--rose-soft);
+  --color-rose-soft-foreground: var(--rose-soft-foreground);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --radius-xs: calc(var(--radius) - 8px);
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 4px);
+  --radius-lg: calc(var(--radius) - 2px);
+  --radius-xl: var(--radius);
+  --radius-2xl: calc(var(--radius) + 4px);
+  --radius-3xl: calc(var(--radius) + 10px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  /*
+   * iOS-style continuous corners. `corner-shape: squircle` reshapes whatever
+   * `border-radius` already says, so every rounded thing in the kit — and the
+   * focus ring, which follows the same shape — becomes a squircle with no per
+   * component work. Browsers without it keep circular corners, which is why the
+   * radius scale still has to look right on its own.
+   *
+   * This MUST stay inside `@layer base`. Unlayered declarations outrank every
+   * layered one, so as a top-level rule it silently beat the
+   * `[corner-shape:round]` utility that xs controls use to opt back out into a
+   * true pill.
+   */
+  @supports (corner-shape: squircle) {
+    *,
+    *::before,
+    *::after {
+      corner-shape: squircle;
+    }
+
+    /*
+     * Fully rounded means a real circle or pill, never a squircle.
+     *
+     * A superellipse at 50% radius is a rounded rectangle, so without this a
+     * spinner renders as a cube, progress bars get square ends, and every dot
+     * turns into a tiny box. Higher specificity than the `*` rule above, so it
+     * wins without !important.
+     */
+    .rounded-full {
+      corner-shape: round;
+    }
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Shiki dual-theme output: both palettes ship in the markup as CSS variables,
+   so switching themes needs no re-highlight. See src/lib/highlighter.ts. */
+.shiki,
+.shiki span {
+  color: var(--shiki-light);
+  background-color: var(--shiki-light-bg);
+}
+
+.dark .shiki,
+.dark .shiki span {
+  color: var(--shiki-dark);
+  background-color: var(--shiki-dark-bg);
+}
+
+/* Line numbers render in a pseudo-element gutter; the editable overlay in
+   CodeBlock reserves the same 3.5ch on its left edge to stay aligned. */
+.code-block--numbers .shiki code {
+  counter-reset: code-line;
+}
+
+.code-block--numbers .shiki .line {
+  counter-increment: code-line;
+}
+
+.code-block--numbers .shiki .line::before {
+  content: counter(code-line);
+  display: inline-block;
+  width: 2ch;
+  margin-left: -3.5ch;
+  margin-right: 1.5ch;
+  text-align: right;
+  color: var(--muted-foreground);
+  opacity: 0.5;
+}
+
+.shiki .line[data-highlighted] {
+  display: inline-block;
+  width: 100%;
+  /* Marker bar drawn as a gradient rather than an inset box-shadow, which the
+     kit avoids; a border would shift the code by 2px. */
+  background-color: var(--accent);
+  background-image: linear-gradient(
+    to right,
+    var(--ring) 0 2px,
+    transparent 2px
+  );
+}
+
+/*
+ * Range input. The native track and thumb only take styles through vendor
+ * pseudo-elements, which Tailwind cannot target, so they live here. Size and
+ * fill come from variables the Slider component sets per instance.
+ */
+.slider {
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.slider::-webkit-slider-runnable-track {
+  height: var(--slider-track);
+  border-radius: 999px;
+  corner-shape: round;
+  background: linear-gradient(
+    to right,
+    var(--foreground) 0 var(--slider-progress, 0%),
+    var(--secondary) var(--slider-progress, 0%) 100%
+  );
+}
+
+.slider::-moz-range-track {
+  height: var(--slider-track);
+  border-radius: 999px;
+  corner-shape: round;
+  background: var(--secondary);
+}
+
+.slider::-moz-range-progress {
+  height: var(--slider-track);
+  border-radius: 999px;
+  corner-shape: round;
+  background: var(--foreground);
+}
+
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  width: var(--slider-thumb);
+  height: var(--slider-thumb);
+  border-radius: 999px;
+  corner-shape: round;
+  background: var(--background);
+  border: 2px solid var(--foreground);
+  /* Centre the thumb on the track rather than on the input box. */
+  margin-top: calc((var(--slider-track) - var(--slider-thumb)) / 2);
+  transition: border-color 150ms ease-out;
+}
+
+.slider::-moz-range-thumb {
+  width: var(--slider-thumb);
+  height: var(--slider-thumb);
+  border-radius: 999px;
+  corner-shape: round;
+  background: var(--background);
+  border: 2px solid var(--foreground);
+}
+
+.slider:hover::-webkit-slider-thumb,
+.slider:focus-visible::-webkit-slider-thumb {
+  border-color: var(--border-active);
+}
+
+.slider:disabled {
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slider::-webkit-slider-thumb {
+    transition: none;
+  }
+}
+
+/*
+ * Hide the native resize grip. It is drawn by the browser in the bottom-right
+ * corner and cannot be styled, so it never matches the kit — and it collides
+ * with the rounded corner. Dragging the edge still resizes where `resize` is
+ * not `none`; only the icon goes.
+ */
+[data-slot='textarea']::-webkit-resizer {
+  display: none;
+}
+
+/*
+ * Native <dialog> backdrop. It is a pseudo-element in the top layer, so it
+ * cannot be reached from a class — these rules are the only way to style it.
+ */
+dialog::backdrop {
+  background-color: color-mix(in oklab, black, transparent 55%);
+  animation: dialog-backdrop-in 150ms ease-out;
+}
+
+dialog[data-slot='sheet']::backdrop {
+  background-color: color-mix(in oklab, black, transparent 60%);
+}
+
+@keyframes dialog-backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes sheet-in-right {
+  from {
+    translate: 100% 0;
+  }
+}
+
+@keyframes sheet-in-left {
+  from {
+    translate: -100% 0;
+  }
+}
+
+@keyframes sheet-in-top {
+  from {
+    translate: 0 -100%;
+  }
+}
+
+@keyframes sheet-in-bottom {
+  from {
+    translate: 0 100%;
+  }
+}
+
+dialog[open] {
+  animation: dialog-in 150ms ease-out;
+}
+
+dialog[open][data-side='right'] {
+  animation: sheet-in-right 200ms ease-out;
+}
+
+dialog[open][data-side='left'] {
+  animation: sheet-in-left 200ms ease-out;
+}
+
+dialog[open][data-side='top'] {
+  animation: sheet-in-top 200ms ease-out;
+}
+
+dialog[open][data-side='bottom'] {
+  animation: sheet-in-bottom 200ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  dialog[open],
+  dialog[open][data-side],
+  dialog::backdrop {
+    animation: none;
+  }
+}
+
+/* Indeterminate progress: a bar that sweeps rather than fills. */
+@keyframes progress-indeterminate {
+  0% {
+    translate: -100% 0;
+  }
+  100% {
+    translate: 350% 0;
+  }
+}
+
+/* Toasts arrive from the edge they are anchored to. */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    translate: 0 0.5rem;
+  }
+}
+
+/*
+ * Custom scrollbars, everywhere.
+ *
+ * Applied globally rather than to one component: every overflowing surface in
+ * the kit — a menu, a code block, a table wrapper, the sidebar, the page — gets
+ * the same bar, so nothing drops back to the platform default.
+ *
+ * The two mechanisms are kept apart on purpose. Chromium ignores every
+ * `::-webkit-scrollbar` rule the moment `scrollbar-color` is set to anything but
+ * `auto`, so declaring both means the shaped version silently never applies
+ * there. The `@supports` query hands Chromium and Safari the pseudo-elements —
+ * which can do the rounded, inset thumb — and gives Firefox the standard
+ * properties, which are all it understands.
+ *
+ * No JavaScript overlay anywhere, so native momentum, keyboard scrolling and
+ * accessibility stay intact.
+ */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track,
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 999px;
+  corner-shape: round;
+  /* Transparent border plus content-box clipping insets the thumb, so it reads
+     as a 4px pill rather than filling the whole gutter. */
+  border: 3px solid transparent;
+  background-clip: content-box;
+  transition: background-color 150ms ease-out;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--border-active);
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  :root {
+    /* Inherited, so this reaches every scrollable descendant. */
+    scrollbar-color: var(--border) transparent;
+  }
+
+  * {
+    /* Not inherited — it has to be set on each scroll container. */
+    scrollbar-width: thin;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *::-webkit-scrollbar-thumb {
+    transition: none;
+  }
+}
+
+/*
+ * Astralyx logo blink. Ported from the Lottie timeline on astralyx.dev: two
+ * quick blinks, then a longer one where the left eye only closes to 22% — the
+ * wink is in the original, not an accident.
+ *
+ * `transform-box: view-box` resolves transform-origin in viewBox units, so each
+ * eyelid pivots on its own hinge rather than the SVG's top-left corner.
+ */
+.ax-eyelid-l,
+.ax-eyelid-r {
+  transform-box: view-box;
+}
+
+.ax-eyelid-r {
+  transform-origin: 25.52px 31.14px;
+  animation: ax-blink-r 3s steps(1, end) infinite;
+}
+
+.ax-eyelid-l {
+  transform-origin: 9.94px 30.24px;
+  animation: ax-blink-l 3s steps(1, end) infinite;
+}
+
+@keyframes ax-blink-r {
+  0%, 32.22% { transform: scaleY(0); }
+  34.44% { transform: scaleY(1); }
+  37.78%, 41.11% { transform: scaleY(0); }
+  42.78% { transform: scaleY(1); }
+  45.56%, 66.67% { transform: scaleY(0); }
+  70%, 78.89% { transform: scaleY(1); }
+  83.33%, 100% { transform: scaleY(0); }
+}
+
+@keyframes ax-blink-l {
+  0%, 32.22% { transform: scaleY(0); }
+  34.44% { transform: scaleY(1); }
+  37.78%, 41.11% { transform: scaleY(0); }
+  42.78% { transform: scaleY(1); }
+  45.56%, 66.67% { transform: scaleY(0); }
+  70%, 78.89% { transform: scaleY(0.22); }
+  83.33%, 100% { transform: scaleY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ax-eyelid-l,
+  .ax-eyelid-r {
+    animation: none;
+    transform: scaleY(0);
+  }
+}
+
+/* The pending-reply dots. Opacity only, so it sits inside the motion rule. */
+@keyframes message-dot {
+  0%, 60%, 100% { opacity: 0.3; }
+  30% { opacity: 1; }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "root-cause-tree",
+  "type": "registry:ui",
+  "title": "Root Cause Tree",
+  "description": "A causal chain from symptom to candidate causes, each with a confidence band. Built on Tree, so it inherits the keyboard model rather than growing a second one.",
+  "category": "AIOps",
+  "dependencies": [],
+  "registryDependencies": [
+    "confidence-meter",
+    "lib-utils",
+    "tree"
+  ],
+  "files": [
+    {
+      "path": "components/ui/root-cause-tree.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps, ReactNode } from 'react'\nimport { ConfidenceMeter } from '@/components/ui/confidence-meter'\nimport { Tree, type TreeNode } from '@/components/ui/tree'\nimport { cn } from '@/lib/utils'\n\n/**\n * A causal chain: symptom at the root, candidate causes beneath it.\n *\n * Built on `Tree`, so it inherits the keyboard model rather than growing a\n * second one. What it adds is confidence — each branch carries a score, and the\n * label renders it inline.\n *\n * Confidence is shown as a band, never a bare percentage. These numbers come\n * out of a correlation engine and are not calibrated probabilities; printing\n * \"87%\" beside a guess lends it a precision it has not earned.\n */\nexport type CauseNode = {\n  id: string\n  label: ReactNode\n  /** 0 to 1. */\n  confidence?: number\n  detail?: ReactNode\n  children?: CauseNode[]\n}\n\nfunction toTreeNodes(causes: CauseNode[]): TreeNode[] {\n  return causes.map((cause) => ({\n    id: cause.id,\n    label: (\n      <span className=\"flex min-w-0 flex-1 items-center gap-2\">\n        <span className=\"min-w-0 flex-1 truncate\">{cause.label}</span>\n        {cause.confidence !== undefined && (\n          <ConfidenceMeter\n            value={cause.confidence}\n            showLabel={false}\n            size=\"sm\"\n            className=\"w-16 shrink-0\"\n            label=\"Confidence\"\n          />\n        )}\n      </span>\n    ),\n    meta: cause.detail,\n    children: cause.children ? toTreeNodes(cause.children) : undefined,\n  }))\n}\n\nfunction RootCauseTree({\n  causes,\n  defaultExpanded,\n  label = 'Root cause analysis',\n  className,\n  ...props\n}: Omit<ComponentProps<'div'>, 'children'> & {\n  causes: CauseNode[]\n  defaultExpanded?: string[]\n  /** Accessible name for the tree. */\n  label?: string\n}) {\n  const nodes = toTreeNodes(causes)\n\n  return (\n    <div data-slot=\"root-cause-tree\" className={cn('min-w-0', className)} {...props}>\n      <Tree\n        nodes={nodes}\n        defaultExpanded={defaultExpanded ?? causes.map((cause) => cause.id)}\n        aria-label={label}\n      />\n    </div>\n  )\n}\n\nexport { RootCauseTree }\n"
+    }
+  ]
+}

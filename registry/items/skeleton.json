@@ -1,0 +1,21 @@
+{
+  "name": "skeleton",
+  "type": "registry:ui",
+  "title": "Skeleton",
+  "description": "A placeholder shape for content that has not arrived. The pulse animates opacity only, so it stays inside the kit motion rule, and stops under prefers-reduced-motion.",
+  "category": "Display",
+  "dependencies": [
+    "class-variance-authority@^0.7.1"
+  ],
+  "registryDependencies": [
+    "lib-styles",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/skeleton.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps } from 'react'\nimport { cva, type VariantProps } from 'class-variance-authority'\nimport { radius } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * A placeholder shape for content that has not arrived.\n *\n * The pulse animates opacity only — no size or position — so it sits inside the\n * kit's motion rule, and it stops entirely under `prefers-reduced-motion`.\n */\nconst skeletonVariants = cva(\n  'bg-secondary animate-pulse motion-reduce:animate-none',\n  {\n    variants: {\n      shape: {\n        block: radius.control,\n        /** A line of text: height follows the line, corners stay soft. */\n        text: 'h-4 rounded-md',\n        circle: 'rounded-full [corner-shape:round]',\n      },\n    },\n    defaultVariants: { shape: 'block' },\n  },\n)\n\ntype SkeletonProps = ComponentProps<'div'> &\n  VariantProps<typeof skeletonVariants> & {\n    /** Render this many stacked lines. Only meaningful with `shape=\"text\"`. */\n    lines?: number\n  }\n\nfunction Skeleton({ className, shape, lines, ...props }: SkeletonProps) {\n  if (lines && lines > 1) {\n    return (\n      <div data-slot=\"skeleton-group\" className=\"grid w-full gap-2\" {...props}>\n        {Array.from({ length: lines }, (_, index) => (\n          <div\n            key={index}\n            data-slot=\"skeleton\"\n            className={cn(\n              skeletonVariants({ shape: shape ?? 'text' }),\n              // A ragged last line reads as a paragraph rather than a block.\n              index === lines - 1 ? 'w-3/5' : 'w-full',\n              className,\n            )}\n          />\n        ))}\n      </div>\n    )\n  }\n\n  return (\n    <div\n      data-slot=\"skeleton\"\n      className={cn(skeletonVariants({ shape }), className)}\n      {...props}\n    />\n  )\n}\n\nexport { Skeleton, skeletonVariants }\nexport type { SkeletonProps }\n"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "presence",
+  "type": "registry:ui",
+  "title": "Presence",
+  "description": "Who else is here. The overflow count carries its own tooltip listing the rest — a \"+5\" that cannot tell you who is unhelpful in exactly the moment you care.",
+  "category": "Product",
+  "dependencies": [],
+  "registryDependencies": [
+    "avatar",
+    "lib-utils",
+    "tooltip"
+  ],
+  "files": [
+    {
+      "path": "components/ui/presence.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps } from 'react'\nimport { Avatar } from '@/components/ui/avatar'\nimport { Tooltip } from '@/components/ui/tooltip'\nimport { cn } from '@/lib/utils'\n\n/**\n * Who else is here.\n *\n * Stacked avatars with a status ring. The overflow count is a real element with\n * its own tooltip listing the rest, not a truncated visual — \"+5\" that cannot\n * tell you who is unhelpful in exactly the moment you care.\n *\n * The ring colour is the only signal that changes, so someone going idle does\n * not reflow the row.\n */\nexport type Peer = {\n  id: string\n  name: string\n  status?: 'active' | 'idle' | 'away'\n  color?: string\n}\n\nconst RING = {\n  active: 'ring-[var(--green)]',\n  idle: 'ring-[var(--amber)]',\n  away: 'ring-border',\n} as const\n\nfunction Presence({\n  peers,\n  max = 4,\n  size = 'sm',\n  label = 'Viewing now',\n  className,\n  ...props\n}: ComponentProps<'div'> & {\n  peers: Peer[]\n  max?: number\n  size?: 'xs' | 'sm' | 'default'\n  label?: string\n}) {\n  const shown = peers.slice(0, max)\n  const rest = peers.slice(max)\n\n  return (\n    <div\n      data-slot=\"presence\"\n      role=\"group\"\n      aria-label={`${label}: ${peers.map((peer) => peer.name).join(', ')}`}\n      className={cn('flex items-center -space-x-2', className)}\n      {...props}\n    >\n      {shown.map((peer) => (\n        <Tooltip\n          key={peer.id}\n          content={\n            <span>\n              {peer.name}\n              {peer.status && peer.status !== 'active' && (\n                <span className=\"opacity-70\"> · {peer.status}</span>\n              )}\n            </span>\n          }\n        >\n          <span\n            tabIndex={0}\n            className={cn(\n              'ring-background relative rounded-full ring-2 outline-none [corner-shape:round]',\n              'focus-visible:ring-ring focus-visible:ring-2',\n            )}\n          >\n            <Avatar\n              size={size}\n              name={peer.name}\n              className={cn(\n                'ring-2 [corner-shape:round]',\n                RING[peer.status ?? 'active'],\n              )}\n              style={peer.color ? { backgroundColor: peer.color } : undefined}\n            />\n          </span>\n        </Tooltip>\n      ))}\n\n      {rest.length > 0 && (\n        <Tooltip content={rest.map((peer) => peer.name).join(', ')}>\n          <span\n            tabIndex={0}\n            className={cn(\n              'bg-secondary text-muted-foreground ring-background relative flex items-center justify-center rounded-full ring-2 outline-none [corner-shape:round]',\n              'focus-visible:ring-ring focus-visible:ring-2',\n              size === 'xs' ? 'size-6 text-[10px]' : size === 'sm' ? 'size-8 text-xs' : 'size-10 text-sm',\n            )}\n          >\n            +{rest.length}\n          </span>\n        </Tooltip>\n      )}\n    </div>\n  )\n}\n\nexport { Presence }\n"
+    }
+  ]
+}

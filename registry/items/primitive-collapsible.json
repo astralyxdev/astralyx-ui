@@ -1,0 +1,16 @@
+{
+  "name": "primitive-collapsible",
+  "type": "registry:primitive",
+  "title": "Collapsible",
+  "description": "A single panel that expands and collapses. The open height is measured rather than assumed, because height: auto cannot be transitioned.",
+  "category": "Navigation",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/primitives/collapsible.tsx",
+      "type": "registry:primitive",
+      "content": "import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react'\n\n/**\n * Animate a panel between zero and its natural height.\n *\n * `height: auto` cannot be transitioned, so the open height has to be measured\n * and applied as a pixel value.\n *\n * The first measurement is synchronous, in a layout effect, and seeds state\n * before the browser paints. Deferring it to `requestAnimationFrame` looks\n * equivalent and is not: a panel that starts open then has one frame at zero\n * height, and any observer callback arriving in that window cancels the pending\n * frame and reschedules — so a panel rendered open could sit collapsed\n * indefinitely while still reporting `aria-expanded=\"true\"`.\n *\n * A ResizeObserver keeps the value honest afterwards, when content loads late\n * or reflows while open. Those updates stay on a frame, since they are\n * reactions to layout rather than the initial paint.\n */\nexport function useCollapsibleHeight(\n  ref: RefObject<HTMLElement | null>,\n  open: boolean,\n) {\n  const [height, setHeight] = useState(0)\n  const raf = useRef(0)\n\n  // Seeds the open height before paint, so a panel that mounts open is never\n  // rendered at zero.\n  useLayoutEffect(() => {\n    const element = ref.current\n    if (element) setHeight(element.scrollHeight)\n  }, [ref, open])\n\n  useEffect(() => {\n    const element = ref.current\n    if (!element) return\n\n    const observer = new ResizeObserver(() => {\n      cancelAnimationFrame(raf.current)\n      raf.current = requestAnimationFrame(() => {\n        // Re-read rather than closing over a stale value: the observer fires\n        // precisely because the size changed.\n        setHeight(element.scrollHeight)\n      })\n    })\n    observer.observe(element)\n\n    return () => {\n      cancelAnimationFrame(raf.current)\n      observer.disconnect()\n    }\n  }, [ref])\n\n  return open ? height : 0\n}\n"
+    }
+  ]
+}

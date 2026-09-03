@@ -1,0 +1,20 @@
+{
+  "name": "theme-toggle",
+  "type": "registry:ui",
+  "title": "Theme Toggle",
+  "description": "Switches the document between light and dark. Uncontrolled by default: it reads the class already on the element rather than flashing to its own idea of the default on mount.",
+  "category": "Utility",
+  "dependencies": [
+    "lucide-react@^1.39.0"
+  ],
+  "registryDependencies": [
+    "button"
+  ],
+  "files": [
+    {
+      "path": "components/ui/theme-toggle.tsx",
+      "type": "registry:ui",
+      "content": "import { useEffect, useState } from 'react'\nimport { Moon, Sun } from 'lucide-react'\nimport { Button, type ButtonProps } from '@/components/ui/button'\n\n/**\n * Switches the document between light and dark.\n *\n * The class goes on `document.documentElement`, not on a wrapper. `.dark`\n * defines the token values on the element it lands on and everything below\n * inherits them, so a wrapper deeper in the tree cannot switch a subtree back —\n * a descendant has no way to undo variables set above it.\n *\n * Uncontrolled by default: it reads the class already on the element, so it\n * agrees with whatever the page shipped with instead of flashing to its own\n * idea of the default on mount. Pass `dark`/`onDarkChange` when the app owns\n * the state.\n */\nfunction ThemeToggle({\n  dark: darkProp,\n  onDarkChange,\n  variant = 'secondary',\n  size = 'icon-sm',\n  className,\n  ...props\n}: Omit<ButtonProps, 'children' | 'onChange'> & {\n  dark?: boolean\n  onDarkChange?: (dark: boolean) => void\n}) {\n  const controlled = darkProp !== undefined\n  const [uncontrolled, setUncontrolled] = useState(false)\n\n  // Read the live class on mount rather than assuming a default.\n  useEffect(() => {\n    if (controlled) return\n    setUncontrolled(document.documentElement.classList.contains('dark'))\n  }, [controlled])\n\n  const dark = controlled ? darkProp : uncontrolled\n\n  useEffect(() => {\n    document.documentElement.classList.toggle('dark', dark)\n  }, [dark])\n\n  return (\n    <Button\n      type=\"button\"\n      variant={variant}\n      size={size}\n      aria-label={dark ? 'Switch to light theme' : 'Switch to dark theme'}\n      aria-pressed={dark}\n      className={className}\n      onClick={() => {\n        const next = !dark\n        if (!controlled) setUncontrolled(next)\n        onDarkChange?.(next)\n      }}\n      {...props}\n    >\n      {dark ? <Moon /> : <Sun />}\n    </Button>\n  )\n}\n\nexport { ThemeToggle }\n"
+    }
+  ]
+}

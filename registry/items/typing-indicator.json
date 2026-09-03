@@ -1,0 +1,19 @@
+{
+  "name": "typing-indicator",
+  "type": "registry:ui",
+  "title": "Typing Indicator",
+  "description": "Who is currently typing. The animation is decorative and hidden from assistive tech; the sentence beside it is the actual content, and it is what gets announced.",
+  "category": "Messaging",
+  "dependencies": [],
+  "registryDependencies": [
+    "avatar",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/typing-indicator.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps, ReactNode } from 'react'\nimport { Avatar } from '@/components/ui/avatar'\nimport { cn } from '@/lib/utils'\n\n/**\n * Who is currently typing.\n *\n * The wording is built from the count rather than concatenated by the caller,\n * because the grammar changes at every step: one name, two names joined by\n * \"and\", then \"and 3 others\". Callers that build this string themselves get\n * \"Ada and  are typing\" the moment the list is empty.\n *\n * The dots animate — the one place a pure-colour transition cannot carry the\n * meaning, since \"someone is typing right now\" is inherently about liveness.\n * They stop under `prefers-reduced-motion`, where the text still says it.\n */\nfunction TypingIndicator({\n  names,\n  showAvatars = false,\n  avatars,\n  className,\n  ...props\n}: Omit<ComponentProps<'div'>, 'children'> & {\n  names: string[]\n  showAvatars?: boolean\n  avatars?: ReactNode\n}) {\n  if (names.length === 0) return null\n\n  // Grammar by count — the reason this is not a template string in the caller.\n  const text =\n    names.length === 1\n      ? `${names[0]} is typing`\n      : names.length === 2\n        ? `${names[0]} and ${names[1]} are typing`\n        : `${names[0]}, ${names[1]} and ${names.length - 2} ${\n            names.length - 2 === 1 ? 'other' : 'others'\n          } are typing`\n\n  return (\n    <div\n      data-slot=\"typing-indicator\"\n      aria-live=\"polite\"\n      className={cn('text-muted-foreground flex items-center gap-2 text-xs', className)}\n      {...props}\n    >\n      {showAvatars &&\n        (avatars ?? (\n          <span className=\"flex -space-x-1.5\">\n            {names.slice(0, 3).map((name) => (\n              <Avatar key={name} size=\"xs\" name={name} className=\"ring-background ring-2\" />\n            ))}\n          </span>\n        ))}\n\n      <span>{text}</span>\n\n      <span aria-hidden=\"true\" className=\"flex items-center gap-0.5\">\n        {[0, 1, 2].map((index) => (\n          <span\n            key={index}\n            className=\"bg-muted-foreground/60 size-1 animate-bounce rounded-full [corner-shape:round] motion-reduce:animate-none\"\n            style={{ animationDelay: `${index * 140}ms` }}\n          />\n        ))}\n      </span>\n    </div>\n  )\n}\n\nexport { TypingIndicator }\n"
+    }
+  ]
+}

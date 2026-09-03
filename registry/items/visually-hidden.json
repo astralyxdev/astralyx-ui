@@ -1,0 +1,19 @@
+{
+  "name": "visually-hidden",
+  "type": "registry:ui",
+  "title": "Visually Hidden",
+  "description": "Hidden from sight, present for screen readers. The clip technique — not display:none or visibility:hidden, both of which remove the element from the accessibility tree entirely.",
+  "category": "Utility",
+  "dependencies": [],
+  "registryDependencies": [
+    "lib-utils",
+    "primitive-slot"
+  ],
+  "files": [
+    {
+      "path": "components/ui/visually-hidden.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps } from 'react'\nimport { Slot } from '@/components/primitives/slot'\nimport { cn } from '@/lib/utils'\n\n/**\n * Hidden from sight, present for screen readers.\n *\n * The clip-based technique, not `display: none` or `visibility: hidden` —\n * both of those remove the element from the accessibility tree, which defeats\n * the entire purpose. It is also not `opacity: 0`, which leaves the element\n * taking up layout.\n *\n * Tailwind's `sr-only` does exactly this; the component exists so intent is\n * legible in the markup, and so `asChild` can apply it to an element that\n * already carries its own classes.\n */\nfunction VisuallyHidden({\n  className,\n  asChild = false,\n  ...props\n}: ComponentProps<'span'> & { asChild?: boolean }) {\n  const Comp = asChild ? Slot : 'span'\n\n  return (\n    <Comp data-slot=\"visually-hidden\" className={cn('sr-only', className)} {...props} />\n  )\n}\n\nexport { VisuallyHidden }\n"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "primitive-media-query",
+  "type": "registry:primitive",
+  "title": "media-query",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/primitives/media-query.tsx",
+      "type": "registry:primitive",
+      "content": "import { useSyncExternalStore } from 'react'\n\n/**\n * Subscribe to a media query.\n *\n * `useSyncExternalStore` rather than an effect: the value is read during the\n * first render instead of after it, so a component that branches on the\n * breakpoint does not paint the wrong layout and then correct itself.\n *\n * The server snapshot is `false` — a layout that stacks by default degrades\n * more gracefully than one that assumes room it may not have.\n */\nexport function useMediaQuery(query: string) {\n  return useSyncExternalStore(\n    (onChange) => {\n      const list = window.matchMedia(query)\n      list.addEventListener('change', onChange)\n      return () => list.removeEventListener('change', onChange)\n    },\n    () => window.matchMedia(query).matches,\n    () => false,\n  )\n}\n\n/** Tailwind's default breakpoints, so JS and CSS agree on where things change. */\nexport const BREAKPOINTS = {\n  sm: '40rem',\n  md: '48rem',\n  lg: '64rem',\n  xl: '80rem',\n} as const\n\nexport type Breakpoint = keyof typeof BREAKPOINTS\n\n/** True once the viewport is at or above the named breakpoint. */\nexport function useBreakpoint(breakpoint: Breakpoint) {\n  return useMediaQuery(`(min-width: ${BREAKPOINTS[breakpoint]})`)\n}\n"
+    }
+  ]
+}

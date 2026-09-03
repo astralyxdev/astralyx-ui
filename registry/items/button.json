@@ -1,0 +1,22 @@
+{
+  "name": "button",
+  "type": "registry:ui",
+  "title": "Button",
+  "description": "A control for a single action. Six variants across eight colour sets, ten sizes, and `asChild` to render as any element. Destructive is a colour, not a variant.",
+  "category": "Forms",
+  "dependencies": [
+    "class-variance-authority@^0.7.1"
+  ],
+  "registryDependencies": [
+    "lib-styles",
+    "lib-utils",
+    "primitive-slot"
+  ],
+  "files": [
+    {
+      "path": "components/ui/button.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps } from 'react'\nimport { cva, type VariantProps } from 'class-variance-authority'\nimport { Slot } from '@/components/primitives/slot'\nimport {\n  buttonText,\n  colorSet,\n  controlBase,\n  controlSize,\n  tintStyle,\n  type ColorSet,\n} from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * Every variant reads the `--ui-*` set, so `color` restyles all of them at once.\n *\n * Press is colour only, like hover, and it lands instantly: `active:duration-0`\n * skips the transition on the way down so the button answers the click, while\n * the release still eases back. Nothing moves, resizes or gains elevation.\n */\nconst SOLID = 'bg-[var(--ui)] text-[var(--ui-fg)] hover:bg-[var(--ui-hover)]'\nconst SOFT = 'bg-[var(--ui-soft)] text-[var(--ui-soft-fg)] hover:bg-[var(--ui-soft-hover)]'\n\n/**\n * Press continues past hover in the same direction, mixed with `--press-shade`\n * so one declaration is correct in both themes and for every colour set.\n */\nconst SOLID_PRESS =\n  'active:bg-[color-mix(in_oklab,var(--ui-hover),var(--press-shade)_14%)]'\nconst SOFT_PRESS =\n  'active:bg-[color-mix(in_oklab,var(--ui-soft-hover),var(--press-shade)_10%)]'\n\nconst buttonVariants = cva(\n  [\n    controlBase,\n    // Focus ring picks up the active colour set instead of a fixed accent.\n    'focus-visible:ring-[color-mix(in_oklab,var(--ui),transparent_55%)]',\n    'focus-visible:border-[var(--ui)]',\n  ].join(' '),\n  {\n    variants: {\n      variant: {\n        /** Solid fill in the current colour set — neutral unless `color` says otherwise. */\n        default: `${SOLID} ${SOLID_PRESS}`,\n        /** Identical to `default`, named for when the colour is the point. */\n        colored: `${SOLID} ${SOLID_PRESS}`,\n        /** Tinted fill: low-contrast background, saturated text. */\n        secondary: `${SOFT} ${SOFT_PRESS}`,\n        /** Stroke only — never a fill. The border matches the text exactly. */\n        outline:\n          'border bg-transparent border-[var(--ui-soft-fg)] text-[var(--ui-soft-fg)] hover:border-[var(--ui-soft-fg-hover)] hover:text-[var(--ui-soft-fg-hover)] active:bg-[var(--ui-soft)]',\n        ghost: `text-[var(--ui-soft-fg)] hover:bg-[var(--ui-soft)] ${SOFT_PRESS}`,\n        link: 'text-[var(--ui-soft-fg)] underline-offset-4 hover:underline active:opacity-70',\n      },\n      color: colorSet,\n      // `buttonText` trails `controlSize` so twMerge takes the smaller label\n      // size. Icon-only sizes carry no text at all.\n      size: {\n        xs: `${controlSize.xs} ${buttonText.xs}`,\n        sm: `${controlSize.sm} ${buttonText.sm}`,\n        default: `${controlSize.md} ${buttonText.md}`,\n        lg: `${controlSize.lg} ${buttonText.lg}`,\n        xl: `${controlSize.xl} ${buttonText.xl}`,\n        'icon-xs': controlSize.iconXs,\n        'icon-sm': controlSize.iconSm,\n        icon: controlSize.icon,\n        'icon-lg': controlSize.iconLg,\n        'icon-xl': controlSize.iconXl,\n      },\n    },\n    defaultVariants: {\n      variant: 'default',\n      color: 'neutral',\n      size: 'default',\n    },\n  },\n)\n\ntype ButtonProps = Omit<ComponentProps<'button'>, 'color'> &\n  VariantProps<typeof buttonVariants> & {\n    /** Render the child element instead of a `<button>`, keeping the styles. */\n    asChild?: boolean\n    /**\n     * Any CSS colour, used instead of a named `color` set. Fill, text, tint and\n     * border are all derived from it, and every variant keeps working.\n     */\n    tint?: string\n  }\n\nfunction Button({\n  className,\n  variant,\n  color,\n  size,\n  asChild = false,\n  tint,\n  style,\n  ...props\n}: ButtonProps) {\n  const Comp = asChild ? Slot : 'button'\n\n  return (\n    <Comp\n      data-slot=\"button\"\n      className={cn(buttonVariants({ variant, color, size, className }))}\n      style={tint ? { ...tintStyle(tint), ...style } : style}\n      {...props}\n    />\n  )\n}\n\nexport { Button, buttonVariants }\nexport type { ButtonProps, ColorSet }\n"
+    }
+  ]
+}

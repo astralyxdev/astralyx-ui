@@ -1,0 +1,21 @@
+{
+  "name": "stat",
+  "type": "registry:ui",
+  "title": "Stat",
+  "description": "One measurement: label, value and how it moved. Which direction counts as healthy is a prop, because a rise in incidents is not a rise in deployments.",
+  "category": "Display",
+  "dependencies": [
+    "lucide-react@^1.39.0"
+  ],
+  "registryDependencies": [
+    "lib-styles",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/stat.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps, ReactNode } from 'react'\nimport { ArrowDownRight, ArrowRight, ArrowUpRight } from 'lucide-react'\nimport { cardPadding, radius, surface } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * A single measurement: label, value, and how it moved.\n *\n * The direction of a change and whether that change is *good* are different\n * questions, which is why `goodDirection` exists. Deployments rising is\n * healthy; open incidents rising is not, and a component that colours every\n * increase green would say the opposite of what the number means.\n */\ntype StatProps = Omit<ComponentProps<'div'>, 'title'> & {\n  label: ReactNode\n  value: ReactNode\n  /** Signed change. Sign picks the arrow; `goodDirection` picks the colour. */\n  delta?: number\n  /** How the delta is written. Defaults to a percentage. */\n  deltaSuffix?: string\n  /**\n   * Which direction counts as healthy. `'none'` keeps the delta neutral, for\n   * measures where neither direction is good or bad.\n   */\n  goodDirection?: 'up' | 'down' | 'none'\n  icon?: ReactNode\n  /** A Sparkline, usually. Sits under the value. */\n  chart?: ReactNode\n  hint?: ReactNode\n  size?: 'sm' | 'default' | 'lg'\n  /** Draw the card. Off when the caller supplies its own container. */\n  bordered?: boolean\n}\n\nfunction Stat({\n  label,\n  value,\n  delta,\n  deltaSuffix = '%',\n  goodDirection = 'up',\n  icon,\n  chart,\n  hint,\n  size = 'default',\n  bordered = true,\n  className,\n  ...props\n}: StatProps) {\n  const rising = delta !== undefined && delta > 0\n  const flat = delta === undefined || delta === 0\n  const good =\n    goodDirection === 'none' || flat\n      ? undefined\n      : (rising && goodDirection === 'up') || (!rising && goodDirection === 'down')\n\n  const Arrow = flat ? ArrowRight : rising ? ArrowUpRight : ArrowDownRight\n\n  return (\n    <div\n      data-slot=\"stat\"\n      className={cn(\n        'flex min-w-0 flex-col gap-1',\n        bordered && [surface, radius.surface, cardPadding[size]],\n        className,\n      )}\n      {...props}\n    >\n      <div className=\"text-muted-foreground flex items-center gap-1.5 text-xs font-medium\">\n        {icon && (\n          <span className=\"[&_svg]:size-3.5 [&_svg]:shrink-0\">{icon}</span>\n        )}\n        <span className=\"truncate\">{label}</span>\n      </div>\n\n      <div className=\"flex flex-wrap items-baseline gap-x-2 gap-y-1\">\n        <span\n          className={cn(\n            'font-semibold tabular-nums',\n            size === 'sm' ? 'text-xl' : size === 'lg' ? 'text-3xl' : 'text-2xl',\n          )}\n        >\n          {value}\n        </span>\n\n        {delta !== undefined && (\n          <span\n            className={cn(\n              'inline-flex items-center gap-0.5 text-xs font-medium tabular-nums',\n              good === undefined && 'text-muted-foreground',\n              good === true && 'text-[var(--green-soft-foreground)]',\n              good === false && 'text-[var(--destructive-soft-foreground)]',\n            )}\n          >\n            <Arrow className=\"size-3.5 shrink-0\" aria-hidden=\"true\" />\n            {/* The sign is already carried by the arrow. */}\n            {Math.abs(delta)}\n            {deltaSuffix}\n          </span>\n        )}\n      </div>\n\n      {chart && <div className=\"mt-1 min-w-0\">{chart}</div>}\n      {hint && <p className=\"text-muted-foreground/70 text-xs\">{hint}</p>}\n    </div>\n  )\n}\n\nexport { Stat }\nexport type { StatProps }\n"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "kbd",
+  "type": "registry:ui",
+  "title": "Kbd",
+  "description": "A keyboard key. Splits on \"+\" so a chord can be written as one string.",
+  "category": "Display",
+  "dependencies": [],
+  "registryDependencies": [
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/kbd.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps } from 'react'\nimport { cn } from '@/lib/utils'\n\n/** A keyboard key. Splits on `+` so a chord can be written as one string. */\nfunction Kbd({\n  className,\n  keys,\n  children,\n  ...props\n}: ComponentProps<'kbd'> & { keys?: string }) {\n  const parts = keys?.split('+').map((key) => key.trim())\n\n  return (\n    <kbd\n      data-slot=\"kbd\"\n      className={cn(\n        'text-muted-foreground inline-flex items-center gap-1 font-mono text-xs',\n        className,\n      )}\n      {...props}\n    >\n      {parts\n        ? parts.map((key, index) => (\n            <span\n              key={index}\n              className=\"border-border bg-muted rounded-md border px-1.5 py-0.5\"\n            >\n              {key}\n            </span>\n          ))\n        : children}\n    </kbd>\n  )\n}\n\nexport { Kbd }\n"
+    }
+  ]
+}

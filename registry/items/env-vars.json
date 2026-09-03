@@ -1,0 +1,24 @@
+{
+  "name": "env-vars",
+  "type": "registry:ui",
+  "title": "Env Vars",
+  "description": "Environment variables with secrets masked until asked for. Reveal is per-row and never sticky — nothing survives a remount, so a shared screen cannot leak what someone expanded an hour ago.",
+  "category": "Operations",
+  "dependencies": [
+    "lucide-react@^1.39.0"
+  ],
+  "registryDependencies": [
+    "badge",
+    "button",
+    "copy-button",
+    "lib-styles",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/env-vars.tsx",
+      "type": "registry:ui",
+      "content": "import { useState, type ComponentProps } from 'react'\nimport { Eye, EyeOff, Lock } from 'lucide-react'\nimport { Badge } from '@/components/ui/badge'\nimport { Button } from '@/components/ui/button'\nimport { CopyButton } from '@/components/ui/copy-button'\nimport { radius, surface } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * Environment variables, with secrets masked until asked for.\n *\n * Reveal is per-row and never sticky — there is no \"show all\", and nothing is\n * remembered across a remount. Someone screen-sharing a deploy dashboard should\n * not have every production secret on screen because they expanded one an hour\n * ago.\n *\n * The mask is a fixed width rather than the value's real length, since the\n * length of a secret is itself a hint about what it is.\n */\nexport type EnvVar = {\n  key: string\n  value: string\n  /** Masked until revealed. */\n  secret?: boolean\n  /** Which environments it applies to. */\n  scopes?: string[]\n  updated?: string\n}\n\nconst MASK = '••••••••••••'\n\nfunction EnvVars({\n  vars,\n  className,\n  ...props\n}: ComponentProps<'div'> & { vars: EnvVar[] }) {\n  const [revealed, setRevealed] = useState<string[]>([])\n\n  return (\n    <div\n      data-slot=\"env-vars\"\n      className={cn(surface, radius.surface, 'overflow-hidden', className)}\n      {...props}\n    >\n      <ul className=\"list-none divide-y divide-[var(--border)]\">\n        {vars.map((entry) => {\n          const open = revealed.includes(entry.key)\n          const masked = entry.secret && !open\n\n          return (\n            <li\n              key={entry.key}\n              className=\"flex flex-col gap-2 p-3 sm:flex-row sm:items-center sm:gap-3\"\n            >\n              <div className=\"flex min-w-0 items-center gap-2 sm:w-56\">\n                {entry.secret && (\n                  <Lock className=\"text-muted-foreground size-3.5 shrink-0\" aria-hidden=\"true\" />\n                )}\n                <code className=\"min-w-0 truncate font-mono text-xs font-medium\">\n                  {entry.key}\n                </code>\n              </div>\n\n              <code\n                className={cn(\n                  'text-muted-foreground min-w-0 flex-1 truncate font-mono text-xs',\n                  masked && 'tracking-widest',\n                )}\n              >\n                {masked ? MASK : entry.value}\n              </code>\n\n              {entry.scopes && (\n                <div className=\"flex shrink-0 flex-wrap gap-1\">\n                  {entry.scopes.map((scope) => (\n                    <Badge key={scope} size=\"sm\">\n                      {scope}\n                    </Badge>\n                  ))}\n                </div>\n              )}\n\n              <div className=\"flex shrink-0 items-center gap-1\">\n                {entry.secret && (\n                  <Button\n                    variant=\"ghost\"\n                    size=\"icon-xs\"\n                    aria-label={open ? `Hide ${entry.key}` : `Reveal ${entry.key}`}\n                    aria-pressed={open}\n                    onClick={() =>\n                      setRevealed((current) =>\n                        open\n                          ? current.filter((key) => key !== entry.key)\n                          : [...current, entry.key],\n                      )\n                    }\n                  >\n                    {open ? <EyeOff /> : <Eye />}\n                  </Button>\n                )}\n                {/* Copies the real value even while masked — the usual reason\n                    to open one of these is to paste it somewhere. */}\n                <CopyButton value={entry.value} label={`Copy ${entry.key}`} />\n              </div>\n            </li>\n          )\n        })}\n      </ul>\n    </div>\n  )\n}\n\nexport { EnvVars }\n"
+    }
+  ]
+}

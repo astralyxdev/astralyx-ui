@@ -1,0 +1,23 @@
+{
+  "name": "network-status",
+  "type": "registry:ui",
+  "title": "Network Status",
+  "description": "RPC health: block height, latency, sync state. Staleness is derived from the age of the last block — a stuck node answers cheerfully with an old height, so \"connected\" from the node proves nothing.",
+  "category": "Crypto",
+  "dependencies": [
+    "lucide-react@^1.39.0"
+  ],
+  "registryDependencies": [
+    "badge",
+    "fmt",
+    "lib-styles",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/network-status.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps, ReactNode } from 'react'\nimport { Activity, TriangleAlert } from 'lucide-react'\nimport { Badge } from '@/components/ui/badge'\nimport { Fmt } from '@/components/ui/fmt'\nimport { radius, surface } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * RPC endpoint health: block height, latency, sync state.\n *\n * Staleness is derived from the age of the last block, not reported by the\n * node. A stuck node answers every request cheerfully with an old height — it\n * does not know it is stuck — so \"connected\" from the node itself proves\n * nothing. Comparing the last block time against the chain's expected block\n * time is what actually catches it.\n */\nfunction NetworkStatus({\n  chain,\n  blockHeight,\n  lastBlockAt,\n  now,\n  latency,\n  /** Seconds between blocks on this chain. Drives the staleness check. */\n  blockTime = 12,\n  peers,\n  locale = 'en-GB',\n  blockLabel = 'Block',\n  lastBlockLabel = 'Last',\n  latencyLabel = 'Latency',\n  peersLabel = 'Peers',\n  className,\n  ...props\n}: Omit<ComponentProps<'div'>, 'children'> & {\n  chain: ReactNode\n  blockHeight?: number\n  lastBlockAt?: Date\n  now?: Date\n  /** Milliseconds. */\n  latency?: number\n  blockTime?: number\n  peers?: number\n  locale?: string\n  blockLabel?: ReactNode\n  /** Precedes the last-block time. */\n  lastBlockLabel?: ReactNode\n  latencyLabel?: ReactNode\n  peersLabel?: ReactNode\n}) {\n  const reference = now ?? new Date()\n  const age = lastBlockAt ? (reference.getTime() - lastBlockAt.getTime()) / 1000 : undefined\n\n  // Three missed blocks is stuck, not slow.\n  const stale = age !== undefined && age > blockTime * 3\n  const slow = latency !== undefined && latency > 1000\n\n  const state = stale ? 'stale' : slow ? 'degraded' : 'healthy'\n  const tone = { healthy: 'green', degraded: 'amber', stale: 'destructive' } as const\n  const label = { healthy: 'Synced', degraded: 'Slow', stale: 'Stale' } as const\n\n  return (\n    <div\n      data-slot=\"network-status\"\n      data-state={state}\n      className={cn(surface, radius.surface, 'flex flex-wrap items-center gap-x-4 gap-y-2 p-3', className)}\n      {...props}\n    >\n      <span className=\"flex items-center gap-2\">\n        {stale ? (\n          <TriangleAlert className=\"size-4 shrink-0 text-[var(--destructive-soft-foreground)]\" aria-hidden=\"true\" />\n        ) : (\n          <Activity\n            className={cn(\n              'size-4 shrink-0',\n              slow ? 'text-[var(--amber-soft-foreground)]' : 'text-[var(--green-soft-foreground)]',\n            )}\n            aria-hidden=\"true\"\n          />\n        )}\n        <span className=\"text-sm font-medium\">{chain}</span>\n        <Badge size=\"sm\" color={tone[state]}>\n          {label[state]}\n        </Badge>\n      </span>\n\n      <dl className=\"text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-1 text-xs tabular-nums\">\n        {blockHeight !== undefined && (\n          <div className=\"flex gap-1.5\">\n            <dt>{blockLabel}</dt>\n            <dd className=\"text-foreground font-medium\">\n              <Fmt type=\"number\" value={blockHeight} locale={locale} />\n            </dd>\n          </div>\n        )}\n        {lastBlockAt && (\n          <div className=\"flex gap-1.5\">\n            <dt>{lastBlockLabel}</dt>\n            <dd className={cn(stale && 'text-[var(--destructive-soft-foreground)] font-medium')}>\n              <Fmt type=\"relative\" value={lastBlockAt} now={reference} locale={locale} />\n            </dd>\n          </div>\n        )}\n        {latency !== undefined && (\n          <div className=\"flex gap-1.5\">\n            <dt>{latencyLabel}</dt>\n            <dd className={cn(slow && 'text-[var(--amber-soft-foreground)] font-medium')}>\n              {latency} ms\n            </dd>\n          </div>\n        )}\n        {peers !== undefined && (\n          <div className=\"flex gap-1.5\">\n            <dt>{peersLabel}</dt>\n            <dd>{peers}</dd>\n          </div>\n        )}\n      </dl>\n    </div>\n  )\n}\n\nexport { NetworkStatus }\n"
+    }
+  ]
+}

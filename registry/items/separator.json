@@ -1,0 +1,18 @@
+{
+  "name": "separator",
+  "type": "registry:ui",
+  "title": "Separator",
+  "description": "A rule between sections, horizontal or vertical, optionally with a label set into it.",
+  "category": "Display",
+  "dependencies": [],
+  "registryDependencies": [
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/separator.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps, ReactNode } from 'react'\nimport { cn } from '@/lib/utils'\n\ntype SeparatorProps = Omit<ComponentProps<'div'>, 'children'> & {\n  orientation?: 'horizontal' | 'vertical'\n  /** Text set into the rule, e.g. \"or\". Horizontal only. */\n  label?: ReactNode\n  /**\n   * Purely visual, with no structural meaning. Hidden from assistive tech —\n   * which is the right default for a rule between two halves of one thing.\n   */\n  decorative?: boolean\n}\n\nfunction Separator({\n  className,\n  orientation = 'horizontal',\n  label,\n  decorative = true,\n  ...props\n}: SeparatorProps) {\n  const a11y = decorative\n    ? { role: 'none' as const }\n    : { role: 'separator' as const, 'aria-orientation': orientation }\n\n  if (label && orientation === 'horizontal') {\n    return (\n      <div\n        data-slot=\"separator\"\n        className={cn('flex w-full items-center gap-3', className)}\n        {...a11y}\n        {...props}\n      >\n        <span className=\"bg-border h-px flex-1\" />\n        <span className=\"text-muted-foreground shrink-0 text-xs\">{label}</span>\n        <span className=\"bg-border h-px flex-1\" />\n      </div>\n    )\n  }\n\n  return (\n    <div\n      data-slot=\"separator\"\n      className={cn(\n        'bg-border shrink-0',\n        // Vertical relies on `self-stretch`, not `h-full`. In a flex row the\n        // parent's height is usually auto, so `height: 100%` resolves against\n        // nothing and the rule collapses to a zero-height line. `align-self:\n        // stretch` fills the cross axis regardless, and still yields to an\n        // explicit height passed through className.\n        orientation === 'horizontal' ? 'h-px w-full' : 'w-px self-stretch',\n        className,\n      )}\n      {...a11y}\n      {...props}\n    />\n  )\n}\n\nexport { Separator }\nexport type { SeparatorProps }\n"
+    }
+  ]
+}

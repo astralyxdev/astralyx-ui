@@ -1,0 +1,25 @@
+{
+  "name": "pull-request-card",
+  "type": "registry:ui",
+  "title": "Pull Request Card",
+  "description": "A pull request at a glance — state, branches, checks, reviewers. State is shown as an icon and a word, never colour alone.",
+  "category": "Development",
+  "dependencies": [
+    "lucide-react@^1.39.0"
+  ],
+  "registryDependencies": [
+    "avatar",
+    "badge",
+    "diff-stat",
+    "fmt",
+    "lib-styles",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/pull-request-card.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps, ReactNode } from 'react'\nimport { GitMerge, GitPullRequest, GitPullRequestClosed, MessageSquare } from 'lucide-react'\nimport { Avatar, AvatarGroup } from '@/components/ui/avatar'\nimport { Badge } from '@/components/ui/badge'\nimport { DiffStat } from '@/components/ui/diff-stat'\nimport { Fmt } from '@/components/ui/fmt'\nimport { radius, surface } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * A pull request at a glance.\n *\n * The state is an icon *and* a word, never colour alone — merged and closed are\n * purple and red in every forge, which is exactly the pair that disappears for\n * the most common form of colour blindness.\n */\nexport type PullRequestState = 'open' | 'draft' | 'merged' | 'closed'\n\nconst STATE = {\n  open: { Icon: GitPullRequest, label: 'Open', color: 'green' },\n  draft: { Icon: GitPullRequest, label: 'Draft', color: 'neutral' },\n  merged: { Icon: GitMerge, label: 'Merged', color: 'violet' },\n  closed: { Icon: GitPullRequestClosed, label: 'Closed', color: 'destructive' },\n} as const\n\nfunction PullRequestCard({\n  number,\n  title,\n  state = 'open',\n  author,\n  branch,\n  baseBranch = 'main',\n  updated,\n  comments,\n  additions,\n  deletions,\n  reviewers,\n  labels,\n  checks,\n  reviewersLabel = 'Reviewers',\n  className,\n  ...props\n}: Omit<ComponentProps<'article'>, 'title'> & {\n  number: number\n  title: ReactNode\n  state?: PullRequestState\n  author?: string\n  branch?: string\n  baseBranch?: string\n  updated?: Date\n  comments?: number\n  additions?: number\n  deletions?: number\n  reviewers?: string[]\n  labels?: ReactNode\n  /** A StatusChecks summary, or any node. */\n  checks?: ReactNode\n  reviewersLabel?: ReactNode\n}) {\n  const { Icon, label, color } = STATE[state]\n\n  return (\n    <article\n      data-slot=\"pull-request-card\"\n      data-state={state}\n      className={cn(surface, radius.surface, 'flex flex-col gap-3 p-4', className)}\n      {...props}\n    >\n      <div className=\"flex items-start gap-2.5\">\n        <Icon\n          className={cn(\n            'mt-0.5 size-4 shrink-0',\n            state === 'open' && 'text-[var(--green-soft-foreground)]',\n            state === 'merged' && 'text-[var(--violet-soft-foreground)]',\n            state === 'closed' && 'text-[var(--destructive-soft-foreground)]',\n            state === 'draft' && 'text-muted-foreground',\n          )}\n          aria-hidden=\"true\"\n        />\n\n        <div className=\"min-w-0 flex-1\">\n          <h3 className=\"text-sm font-medium text-pretty\">{title}</h3>\n          <p className=\"text-muted-foreground mt-0.5 text-xs\">\n            #{number} · {label}\n            {author && ` · by ${author}`}\n            {updated && (\n              <>\n                {' · updated '}\n                <Fmt type=\"relative\" value={updated} />\n              </>\n            )}\n          </p>\n        </div>\n\n        <Badge size=\"sm\" color={color}>\n          {label}\n        </Badge>\n      </div>\n\n      {branch && (\n        <div className=\"text-muted-foreground flex flex-wrap items-center gap-1.5 font-mono text-xs\">\n          <span className=\"bg-muted rounded-sm px-1.5 py-0.5\">{branch}</span>\n          <span aria-hidden=\"true\">→</span>\n          <span className=\"bg-muted rounded-sm px-1.5 py-0.5\">{baseBranch}</span>\n        </div>\n      )}\n\n      {labels && <div className=\"flex flex-wrap gap-1.5\">{labels}</div>}\n      {checks}\n\n      <div className=\"text-muted-foreground flex flex-wrap items-center gap-3 text-xs\">\n        {(additions !== undefined || deletions !== undefined) && (\n          <DiffStat additions={additions ?? 0} deletions={deletions ?? 0} />\n        )}\n        {comments !== undefined && (\n          <span className=\"inline-flex items-center gap-1\">\n            <MessageSquare className=\"size-3.5\" aria-hidden=\"true\" />\n            {comments}\n          </span>\n        )}\n        {reviewers && reviewers.length > 0 && (\n          <span className=\"ms-auto inline-flex items-center gap-1.5\">\n            <span className=\"sr-only\">{reviewersLabel}</span>\n            <AvatarGroup>\n              {reviewers.map((name) => (\n                <Avatar key={name} size=\"xs\" name={name} />\n              ))}\n            </AvatarGroup>\n          </span>\n        )}\n      </div>\n    </article>\n  )\n}\n\nexport { PullRequestCard }\n"
+    }
+  ]
+}

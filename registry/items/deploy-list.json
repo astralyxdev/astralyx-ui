@@ -1,0 +1,27 @@
+{
+  "name": "deploy-list",
+  "type": "registry:ui",
+  "title": "Deploy List",
+  "description": "Deployments, newest first. A running deploy shows an indeterminate bar rather than a fabricated percentage — a number nobody can compute is worse than admitting you cannot.",
+  "category": "Development",
+  "dependencies": [
+    "lucide-react@^1.39.0"
+  ],
+  "registryDependencies": [
+    "avatar",
+    "badge",
+    "button",
+    "lib-styles",
+    "lib-utils",
+    "progress",
+    "spinner",
+    "tooltip"
+  ],
+  "files": [
+    {
+      "path": "components/ui/deploy-list.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps } from 'react'\nimport {\n  ExternalLink, GitBranch, RotateCcw, Timer,\n} from 'lucide-react'\nimport { Avatar } from '@/components/ui/avatar'\nimport { Badge } from '@/components/ui/badge'\nimport { Button } from '@/components/ui/button'\nimport { Progress } from '@/components/ui/progress'\nimport { Spinner } from '@/components/ui/spinner'\nimport { Tooltip } from '@/components/ui/tooltip'\nimport { radius, surface } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * Deployments, newest first.\n *\n * A running deploy shows an indeterminate bar rather than a fake percentage —\n * a progress number nobody can compute is worse than admitting you cannot.\n */\nexport type Deploy = {\n  id: string\n  environment: 'production' | 'preview' | 'staging'\n  status: 'ready' | 'building' | 'failed' | 'canceled'\n  branch: string\n  commit: string\n  message: string\n  author: string\n  /** Seconds. Omit while building. */\n  duration?: number\n  when: string\n  url?: string\n}\n\nconst STATUS = {\n  ready: { color: 'green', label: 'Ready' },\n  building: { color: 'blue', label: 'Building' },\n  failed: { color: 'destructive', label: 'Failed' },\n  canceled: { color: 'neutral', label: 'Canceled' },\n} as const\n\nconst ENVIRONMENT = {\n  production: 'violet',\n  preview: 'cyan',\n  staging: 'amber',\n} as const\n\nfunction formatDuration(seconds: number) {\n  const m = Math.floor(seconds / 60)\n  const s = seconds % 60\n  return m ? `${m}m ${s}s` : `${s}s`\n}\n\nfunction DeployList({\n  className,\n  deploys,\n  onRedeploy,\n  ...props\n}: ComponentProps<'div'> & {\n  deploys: Deploy[]\n  onRedeploy?: (id: string) => void\n}) {\n  return (\n    <div\n      data-slot=\"deploy-list\"\n      // Rows are full-bleed, so the container has to clip or the first and last\n      // lose the rounded corners the moment they take a background.\n      className={cn(\n        surface,\n        radius.panel,\n        'divide-border divide-y overflow-hidden',\n        className,\n      )}\n      {...props}\n    >\n      {deploys.map((deploy) => {\n        const status = STATUS[deploy.status]\n        const building = deploy.status === 'building'\n\n        return (\n          <div key={deploy.id} data-slot=\"deploy\" className=\"space-y-3 p-4\">\n            <div className=\"flex flex-wrap items-center gap-2\">\n              <Badge size=\"sm\" color={status.color}>\n                {building && <Spinner size=\"xs\" />}\n                {status.label}\n              </Badge>\n              <Badge size=\"sm\" color={ENVIRONMENT[deploy.environment]}>\n                {deploy.environment}\n              </Badge>\n              <span className=\"text-muted-foreground ms-auto text-xs whitespace-nowrap\">\n                {deploy.when}\n              </span>\n            </div>\n\n            <div className=\"min-w-0 space-y-1\">\n              <p className=\"truncate text-sm font-medium\">{deploy.message}</p>\n              <div className=\"text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-1 text-xs\">\n                <span className=\"flex items-center gap-1\">\n                  <GitBranch className=\"size-3\" /> {deploy.branch}\n                </span>\n                <span className=\"font-mono\">{deploy.commit.slice(0, 7)}</span>\n                <span className=\"flex items-center gap-1.5\">\n                  <Avatar size=\"xs\" name={deploy.author} /> {deploy.author}\n                </span>\n                {deploy.duration !== undefined && (\n                  <span className=\"flex items-center gap-1\">\n                    <Timer className=\"size-3\" /> {formatDuration(deploy.duration)}\n                  </span>\n                )}\n              </div>\n            </div>\n\n            {building && <Progress size=\"sm\" color=\"blue\" />}\n\n            <div className=\"flex items-center gap-2\">\n              {deploy.url && (\n                <Button asChild size=\"xs\" variant=\"secondary\">\n                  <a href={deploy.url} target=\"_blank\" rel=\"noreferrer\">\n                    <ExternalLink /> Visit\n                  </a>\n                </Button>\n              )}\n              {onRedeploy && (\n                <Tooltip content=\"Run this deployment again\">\n                  <Button\n                    size=\"xs\"\n                    variant=\"ghost\"\n                    onClick={() => onRedeploy(deploy.id)}\n                  >\n                    <RotateCcw /> Redeploy\n                  </Button>\n                </Tooltip>\n              )}\n            </div>\n          </div>\n        )\n      })}\n    </div>\n  )\n}\n\nexport { DeployList, formatDuration }\n"
+    }
+  ]
+}

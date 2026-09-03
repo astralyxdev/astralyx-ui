@@ -1,0 +1,21 @@
+{
+  "name": "bulk-action-bar",
+  "type": "registry:ui",
+  "title": "Bulk Action Bar",
+  "description": "The bar that appears once rows are selected. It states the count in words next to the destructive button, because \"Delete\" and \"Delete 4,812 records\" deserve different amounts of hesitation.",
+  "category": "Admin",
+  "dependencies": [
+    "lucide-react@^1.39.0"
+  ],
+  "registryDependencies": [
+    "lib-styles",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/bulk-action-bar.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps, ReactNode } from 'react'\nimport { X } from 'lucide-react'\nimport { radius } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * The bar that appears once rows are selected.\n *\n * Floating over the content rather than pushing it down. A bar that inserts\n * itself into the flow shifts every row the moment you tick a checkbox, and the\n * second checkbox you aim for has moved — the classic way to select the wrong\n * thing.\n *\n * Destructive actions state the count in the label. \"Delete\" and \"Delete 240\n * users\" deserve different amounts of hesitation, and the number is the only\n * thing that supplies it.\n */\nfunction BulkActionBar({\n  count,\n  onClear,\n  children,\n  label,\n  floating = true,\n  barLabel = 'Bulk actions',\n  clearLabel = 'Clear selection',\n  className,\n  ...props\n}: Omit<ComponentProps<'div'>, 'children'> & {\n  count: number\n  onClear?: () => void\n  children?: ReactNode\n  label?: (count: number) => ReactNode\n  /** Overlay the content instead of taking layout space. */\n  floating?: boolean\n  /** Accessible name for the bar itself. */\n  barLabel?: string\n  clearLabel?: string\n}) {\n  if (count === 0) return null\n\n  return (\n    <div\n      role=\"region\"\n      aria-label={barLabel}\n      data-slot=\"bulk-action-bar\"\n      className={cn(\n        'bg-foreground text-background flex flex-wrap items-center gap-3 p-3',\n        radius.control,\n        // Overlaid, so ticking a box never moves the next one.\n        floating &&\n          'fixed inset-x-4 bottom-4 z-40 mx-auto w-fit max-w-[calc(100%-2rem)] sm:inset-x-auto sm:start-1/2 sm:-translate-x-1/2',\n        className,\n      )}\n      {...props}\n    >\n      <span className=\"text-sm font-medium whitespace-nowrap\">\n        {label ? label(count) : `${count} selected`}\n      </span>\n\n      <span className=\"flex flex-wrap items-center gap-1.5\">{children}</span>\n\n      {onClear && (\n        <button\n          type=\"button\"\n          onClick={onClear}\n          aria-label={clearLabel}\n          className={cn(\n            'text-background/70 hover:text-background ms-1 flex size-6 shrink-0 items-center justify-center',\n            radius.xs,\n            'focus-visible:ring-background/50 outline-none focus-visible:ring-2',\n          )}\n        >\n          <X className=\"size-3.5\" />\n        </button>\n      )}\n    </div>\n  )\n}\n\nexport { BulkActionBar }\n"
+    }
+  ]
+}

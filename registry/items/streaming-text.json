@@ -1,0 +1,19 @@
+{
+  "name": "streaming-text",
+  "type": "registry:ui",
+  "title": "Streaming Text",
+  "description": "Text revealed as it arrives, with a caret while it is still coming. Driven by elapsed time rather than a per-character interval, so it never drifts or dumps a backlog after a background tab.",
+  "category": "AI",
+  "dependencies": [],
+  "registryDependencies": [
+    "lib-utils",
+    "primitive-media-query"
+  ],
+  "files": [
+    {
+      "path": "components/ui/streaming-text.tsx",
+      "type": "registry:ui",
+      "content": "import { useEffect, useRef, useState, type ComponentProps } from 'react'\nimport { useMediaQuery } from '@/components/primitives/media-query'\nimport { cn } from '@/lib/utils'\n\n/**\n * Text revealed as it arrives, with a caret while it is still coming.\n *\n * Reveal is driven by elapsed time rather than a per-character interval. A\n * `setInterval` per character drifts under load and queues up a backlog when\n * the tab is inactive, so a message that streamed while you were away finishes\n * by dumping a thousand characters at once. Reading the clock each frame makes\n * the reveal correct at any frame rate.\n *\n * Under `prefers-reduced-motion` the text appears complete immediately. The\n * animation carries no information the text does not, so there is nothing to\n * lose by skipping it.\n *\n * The output is a live region: a screen reader should hear the answer arrive,\n * not sit in silence until it finishes.\n */\nfunction StreamingText({\n  text,\n  speed = 240,\n  streaming = true,\n  caret = true,\n  onDone,\n  className,\n  ...props\n}: Omit<ComponentProps<'span'>, 'children'> & {\n  text: string\n  /** Characters per second. */\n  speed?: number\n  /** False renders the whole string at once. */\n  streaming?: boolean\n  caret?: boolean\n  onDone?: () => void\n}) {\n  const reduced = useMediaQuery('(prefers-reduced-motion: reduce)')\n  const instant = !streaming || reduced\n\n  const [count, setCount] = useState(instant ? text.length : 0)\n  const doneRef = useRef(false)\n\n  useEffect(() => {\n    if (instant) {\n      setCount(text.length)\n      return\n    }\n\n    doneRef.current = false\n    setCount(0)\n\n    const started = performance.now()\n    let frame = 0\n\n    const tick = (now: number) => {\n      // Derived from elapsed time, never accumulated per frame — so a dropped\n      // or delayed frame catches up instead of falling behind.\n      const next = Math.min(Math.floor(((now - started) / 1000) * speed), text.length)\n      setCount(next)\n\n      if (next < text.length) {\n        frame = requestAnimationFrame(tick)\n      } else if (!doneRef.current) {\n        doneRef.current = true\n        onDone?.()\n      }\n    }\n\n    frame = requestAnimationFrame(tick)\n    return () => cancelAnimationFrame(frame)\n    // `onDone` is deliberately not a dependency: a caller passing an inline\n    // arrow would otherwise restart the stream on every render.\n    // eslint-disable-next-line react-hooks/exhaustive-deps\n  }, [text, speed, instant])\n\n  const complete = count >= text.length\n\n  return (\n    <span\n      data-slot=\"streaming-text\"\n      data-streaming={!complete || undefined}\n      aria-live=\"polite\"\n      aria-busy={!complete}\n      className={cn('whitespace-pre-wrap', className)}\n      {...props}\n    >\n      {text.slice(0, count)}\n      {caret && !complete && (\n        <span\n          aria-hidden=\"true\"\n          className=\"bg-foreground ms-0.5 inline-block h-[1em] w-[2px] translate-y-[0.15em] animate-pulse motion-reduce:animate-none\"\n        />\n      )}\n    </span>\n  )\n}\n\nexport { StreamingText }\n"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "checkbox",
+  "type": "registry:ui",
+  "title": "Checkbox",
+  "description": "A binary choice. A real native checkbox under a styled box, so labels, forms, keyboard and the indeterminate state all work.",
+  "category": "Forms",
+  "dependencies": [
+    "class-variance-authority@^0.7.1",
+    "lucide-react@^1.39.0"
+  ],
+  "registryDependencies": [
+    "lib-styles",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/checkbox.tsx",
+      "type": "registry:ui",
+      "content": "import { useEffect, useRef, type ComponentProps, type ReactNode } from 'react'\nimport { cva, type VariantProps } from 'class-variance-authority'\nimport { Check, Minus } from 'lucide-react'\nimport { checkIconSize, checkSize, indicatorBase } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * A real `<input type=\"checkbox\">` visually replaced by a sibling box.\n *\n * Keeping the native input (screen-reader-only, not hidden) means form\n * submission, the label association, keyboard toggling and the indeterminate\n * state all come for free — a div with `role=\"checkbox\"` would have to\n * reimplement every one of them.\n */\nconst boxVariants = cva(\n  [\n    indicatorBase,\n    'peer-checked:bg-primary peer-checked:border-primary peer-checked:text-primary-foreground',\n    'peer-indeterminate:bg-primary peer-indeterminate:border-primary peer-indeterminate:text-primary-foreground',\n    'peer-focus-visible:border-ring peer-focus-visible:ring-ring/50 peer-focus-visible:ring-[3px]',\n    // The tick is painted by the box, so it must not intercept the click.\n    '[&_svg]:pointer-events-none',\n    // `peer-*` only reaches siblings of the input, and the tick is a descendant\n    // of the box — so the box carries the variant and targets the svg itself.\n    '[&_svg]:opacity-0',\n    'peer-checked:[&_svg]:opacity-100 peer-indeterminate:[&_svg]:opacity-100',\n  ].join(' '),\n  {\n    variants: {\n      size: {\n        sm: `${checkSize.sm} ${checkIconSize.sm}`,\n        default: `${checkSize.default} ${checkIconSize.default}`,\n        lg: `${checkSize.lg} ${checkIconSize.lg}`,\n      },\n      error: { true: 'border-destructive', false: '' },\n    },\n    defaultVariants: { size: 'default', error: false },\n  },\n)\n\ntype CheckboxProps = Omit<ComponentProps<'input'>, 'size' | 'type'> &\n  VariantProps<typeof boxVariants> & {\n    /** Text beside the box; also makes the whole row clickable. */\n    label?: ReactNode\n    description?: ReactNode\n    /** Visually a dash, and `indeterminate` to assistive tech. */\n    indeterminate?: boolean\n    /** `start` puts the label before the box, for a settings row. */\n    labelPosition?: 'start' | 'end'\n    containerClassName?: string\n  }\n\nfunction Checkbox({\n  className,\n  containerClassName,\n  size,\n  error,\n  label,\n  description,\n  indeterminate = false,\n  labelPosition = 'end',\n  ref,\n  ...props\n}: CheckboxProps) {\n  const inputRef = useRef<HTMLInputElement>(null)\n\n  // `indeterminate` exists only as a DOM property — there is no attribute.\n  useEffect(() => {\n    if (inputRef.current) inputRef.current.indeterminate = indeterminate\n  }, [indeterminate])\n\n  const text = (label || description) && (\n    <span className=\"grid gap-0.5 leading-tight\">\n      {label && <span className=\"text-sm font-medium\">{label}</span>}\n      {description && (\n        <span className=\"text-muted-foreground text-xs\">{description}</span>\n      )}\n    </span>\n  )\n\n  return (\n    <label\n      data-slot=\"checkbox\"\n      className={cn(\n        'group flex w-fit items-start gap-2.5 select-none',\n        props.disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer',\n        containerClassName,\n      )}\n    >\n      <input\n        type=\"checkbox\"\n        ref={(node) => {\n          inputRef.current = node\n          if (typeof ref === 'function') ref(node)\n          else if (ref) ref.current = node\n        }}\n        aria-invalid={error || undefined}\n        className=\"peer sr-only\"\n        {...props}\n      />\n\n      {labelPosition === 'start' && text}\n\n      <span className={cn(boxVariants({ size, error }), className)}>\n        {indeterminate ? <Minus /> : <Check />}\n      </span>\n\n      {labelPosition === 'end' && text}\n    </label>\n  )\n}\n\nexport { Checkbox, boxVariants as checkboxVariants }\nexport type { CheckboxProps }\n"
+    }
+  ]
+}

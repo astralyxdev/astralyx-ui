@@ -1,0 +1,15 @@
+{
+  "tsx": true,
+  "tailwind": { "css": "src/index.css" },
+  "aliases": {
+    "ui": "@/components/ui",
+    "primitives": "@/components/primitives",
+    "lib": "@/lib"
+  },
+  "paths": {
+    "ui": "src/components/ui",
+    "primitives": "src/components/primitives",
+    "lib": "src/lib",
+    "styles": "src/styles"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "primitive-dialog",
+  "type": "registry:primitive",
+  "title": "Dialog",
+  "description": "A modal window, built on the native <dialog> element — so the focus trap, background inerting, Escape handling and top-layer stacking come from the platform rather than from JavaScript.",
+  "category": "Overlays",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/primitives/dialog.tsx",
+      "type": "registry:primitive",
+      "content": "import {\n  createContext,\n  use,\n  useCallback,\n  useEffect,\n  useId,\n  useMemo,\n  useRef,\n  useState,\n  type ReactNode,\n} from 'react'\n\n/**\n * Modal state on top of the native `<dialog>` element.\n *\n * `showModal()` gives the focus trap, the inert background, Escape-to-close and\n * top-layer stacking for free — all of which a div-based modal has to\n * reimplement, usually incompletely. This owns the open state and keeps the DOM\n * element in step with it.\n */\ntype DialogContextValue = {\n  open: boolean\n  setOpen: (open: boolean) => void\n  dialogRef: React.RefObject<HTMLDialogElement | null>\n  ids: { title: string; description: string }\n}\n\nconst DialogContext = createContext<DialogContextValue | null>(null)\n\nexport function useDialog() {\n  const context = use(DialogContext)\n  if (!context) throw new Error('Must be used inside <Dialog>')\n  return context\n}\n\ntype DialogProviderProps = {\n  open?: boolean\n  defaultOpen?: boolean\n  onOpenChange?: (open: boolean) => void\n  children: ReactNode\n}\n\nexport function DialogProvider({\n  open: openProp,\n  defaultOpen = false,\n  onOpenChange,\n  children,\n}: DialogProviderProps) {\n  const controlled = openProp !== undefined\n  const [uncontrolled, setUncontrolled] = useState(defaultOpen)\n  const open = controlled ? openProp : uncontrolled\n\n  const dialogRef = useRef<HTMLDialogElement>(null)\n  const id = useId()\n  const ids = useMemo(\n    () => ({ title: `${id}-title`, description: `${id}-description` }),\n    [id],\n  )\n\n  const setOpen = useCallback(\n    (next: boolean) => {\n      if (!controlled) setUncontrolled(next)\n      onOpenChange?.(next)\n    },\n    [controlled, onOpenChange],\n  )\n\n  // Drive the DOM element from state. `showModal` throws if already open, so\n  // both calls are guarded by the element's own `open` property.\n  useEffect(() => {\n    const element = dialogRef.current\n    if (!element) return\n\n    if (open && !element.open) element.showModal()\n    if (!open && element.open) element.close()\n  }, [open])\n\n  // Escape and the close button both fire `close`; `cancel` fires for Escape\n  // only. Listening to `close` keeps React state in step however it happened.\n  useEffect(() => {\n    const element = dialogRef.current\n    if (!element) return\n\n    const onClose = () => setOpen(false)\n    element.addEventListener('close', onClose)\n    return () => element.removeEventListener('close', onClose)\n  }, [setOpen])\n\n  const context = useMemo(\n    () => ({ open, setOpen, dialogRef, ids }),\n    [open, setOpen, ids],\n  )\n\n  return <DialogContext value={context}>{children}</DialogContext>\n}\n"
+    }
+  ]
+}

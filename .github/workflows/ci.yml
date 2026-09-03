@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+      # Building the package proves the registry still generates and the CLI
+      # still compiles — both are release artefacts, so a break here is a
+      # release break, not a docs break.
+      - run: npm run build:package
+      - name: Registry graph is closed
+        run: node scripts/check-registry.mjs
+      # `bin/` and `registry/` are committed and also generated, which is
+      # exactly the pair that goes stale without anyone noticing. Rebuilding
+      # and diffing is the only thing that keeps the committed copy honest.
+      - name: Committed build output is up to date
+        run: |
+          if [ -n "$(git status --porcelain bin registry)" ]; then
+            echo "bin/ or registry/ is out of date. Run: npm run build:package"
+            git --no-pager diff --stat bin registry
+            exit 1
+          fi

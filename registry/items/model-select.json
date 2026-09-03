@@ -1,0 +1,20 @@
+{
+  "name": "model-select",
+  "type": "registry:ui",
+  "title": "Model Select",
+  "description": "Picks which model answers. A Select with the naming convention folded in, so \"Opus · most capable\" is scannable where a bare model id is not.",
+  "category": "AI",
+  "dependencies": [
+    "lucide-react@^1.39.0"
+  ],
+  "registryDependencies": [
+    "select"
+  ],
+  "files": [
+    {
+      "path": "components/ui/model-select.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps } from 'react'\nimport { Sparkles } from 'lucide-react'\nimport { Select } from '@/components/ui/select'\n\n/**\n * Picks which model answers.\n *\n * A Select with the naming convention folded in: the family and the tier read\n * as one line, so \"Opus · most capable\" is scannable where a bare model id is\n * not.\n */\nexport type Model = {\n  id: string\n  name: string\n  /** A short capability or cost note shown beside the name. */\n  note?: string\n  disabled?: boolean\n}\n\nfunction ModelSelect({\n  models,\n  size = 'sm',\n  placeholder = 'Model',\n  ...props\n}: Omit<ComponentProps<typeof Select>, 'options'> & { models: Model[] }) {\n  return (\n    <Select\n      size={size}\n      icon={<Sparkles />}\n      placeholder={placeholder}\n      options={models.map((model) => ({\n        value: model.id,\n        label: model.note ? `${model.name} · ${model.note}` : model.name,\n        disabled: model.disabled,\n      }))}\n      {...props}\n    />\n  )\n}\n\nexport { ModelSelect }\n"
+    }
+  ]
+}

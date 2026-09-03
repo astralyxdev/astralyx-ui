@@ -1,0 +1,14 @@
+{
+  "name": "lib-use-clipboard",
+  "type": "registry:lib",
+  "title": "use-clipboard",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "lib/use-clipboard.ts",
+      "type": "registry:lib",
+      "content": "import { useCallback, useEffect, useRef, useState } from 'react'\n\n/**\n * Copy to the clipboard, with the \"copied\" state that always comes with it.\n *\n * Written four separate times in this kit before it was extracted — CodeBlock,\n * Terminal, EnvVars and Message each had their own timer and their own reset.\n *\n * Three things it gets right that an inline version usually does not: the\n * timeout is cleared on unmount, so copying and navigating away does not set\n * state on a gone component; a second copy restarts the timer instead of\n * stacking two; and a rejected write (no permission, insecure origin) reports\n * `error` rather than silently claiming success.\n */\ntype ClipboardState = 'idle' | 'copied' | 'error'\n\nfunction useClipboard({ timeout = 1600 } = {}) {\n  const [state, setState] = useState<ClipboardState>('idle')\n  const timer = useRef(0)\n\n  useEffect(() => () => clearTimeout(timer.current), [])\n\n  const copy = useCallback(\n    async (text: string) => {\n      clearTimeout(timer.current)\n\n      try {\n        // `navigator.clipboard` is undefined on an insecure origin, which is a\n        // rejection rather than a crash from the caller's point of view.\n        if (!navigator.clipboard) throw new Error('Clipboard unavailable')\n        await navigator.clipboard.writeText(text)\n        setState('copied')\n      } catch {\n        setState('error')\n      }\n\n      timer.current = window.setTimeout(() => setState('idle'), timeout)\n    },\n    [timeout],\n  )\n\n  return { copy, state, copied: state === 'copied' }\n}\n\nexport { useClipboard }\nexport type { ClipboardState }\n"
+    }
+  ]
+}

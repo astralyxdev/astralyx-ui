@@ -1,0 +1,22 @@
+{
+  "name": "copy-button",
+  "type": "registry:ui",
+  "title": "Copy Button",
+  "description": "Copies a string and says so. Extracted after the same clipboard-plus-timer was written four times in this kit — CodeBlock, Terminal, EnvVars and Message all route through it now.",
+  "category": "Utility",
+  "dependencies": [
+    "lucide-react@^1.39.0"
+  ],
+  "registryDependencies": [
+    "button",
+    "lib-use-clipboard",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/copy-button.tsx",
+      "type": "registry:ui",
+      "content": "import type { ReactNode } from 'react'\nimport { Check, Copy, X } from 'lucide-react'\nimport { Button, type ButtonProps } from '@/components/ui/button'\nimport { useClipboard } from '@/lib/use-clipboard'\nimport { cn } from '@/lib/utils'\n\n/**\n * Copies a string and says so.\n *\n * The label changes rather than only the icon, because a tick replacing a\n * clipboard is invisible to a screen reader unless the accessible name changes\n * too — and `aria-live` on a button is the wrong tool for something the user\n * just did deliberately.\n *\n * `value` may be a function, for text that is expensive to build or that must\n * be read at click time rather than at render time.\n */\nfunction CopyButton({\n  value,\n  label = 'Copy',\n  copiedLabel = 'Copied',\n  showLabel = false,\n  variant = 'ghost',\n  size,\n  className,\n  onClick,\n  ...props\n}: Omit<ButtonProps, 'value' | 'children'> & {\n  value: string | (() => string)\n  label?: string\n  copiedLabel?: string\n  /** Render the label beside the icon instead of only as the accessible name. */\n  showLabel?: boolean\n  children?: ReactNode\n}) {\n  const { copy, state } = useClipboard()\n\n  const text =\n    state === 'error' ? 'Copy failed' : state === 'copied' ? copiedLabel : label\n  const Icon = state === 'error' ? X : state === 'copied' ? Check : Copy\n\n  return (\n    <Button\n      type=\"button\"\n      variant={variant}\n      size={size ?? (showLabel ? 'xs' : 'icon-xs')}\n      data-state={state}\n      // The accessible name carries the result; the icon alone would not.\n      aria-label={showLabel ? undefined : text}\n      className={cn(state === 'error' && 'text-[var(--destructive-soft-foreground)]', className)}\n      onClick={(event) => {\n        onClick?.(event)\n        void copy(typeof value === 'function' ? value() : value)\n      }}\n      {...props}\n    >\n      <Icon />\n      {showLabel && text}\n    </Button>\n  )\n}\n\nexport { CopyButton }\n"
+    }
+  ]
+}

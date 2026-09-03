@@ -1,0 +1,20 @@
+{
+  "name": "hover-card",
+  "type": "registry:ui",
+  "title": "Hover Card",
+  "description": "A preview card shown on hover — richer than a tooltip, and pointer-only. There is a close delay as well as an open delay, so the pointer can travel into the card without it vanishing.",
+  "category": "Overlays",
+  "dependencies": [],
+  "registryDependencies": [
+    "lib-styles",
+    "lib-utils",
+    "primitive-popper"
+  ],
+  "files": [
+    {
+      "path": "components/ui/hover-card.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  cloneElement,\n  isValidElement,\n  useEffect,\n  useRef,\n  useState,\n  type ComponentProps,\n  type ReactElement,\n  type ReactNode,\n} from 'react'\nimport { usePopper, type Align, type Side } from '@/components/primitives/popper'\nimport { menuSurface, radius } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * A preview card shown on hover — richer than a tooltip, and pointer-only.\n *\n * There is a close delay as well as an open delay, so the pointer can travel\n * from the trigger into the card without it vanishing on the way.\n *\n * Deliberately not keyboard-triggered: the content is supplementary, and a\n * keyboard user reaches the same information by following the link. A Popover is\n * the right component when the content must be reachable.\n */\nfunction HoverCard({\n  children,\n  content,\n  side = 'bottom',\n  align = 'center',\n  openDelay = 300,\n  closeDelay = 200,\n  className,\n  ...props\n}: Omit<ComponentProps<'div'>, 'content'> & {\n  children: ReactElement<Record<string, unknown>>\n  content: ReactNode\n  side?: Side\n  align?: Align\n  openDelay?: number\n  closeDelay?: number\n}) {\n  const [open, setOpen] = useState(false)\n  const anchorRef = useRef<HTMLElement>(null)\n  const floatingRef = useRef<HTMLDivElement>(null)\n  const timer = useRef(0)\n\n  const { style, side: resolved } = usePopper({\n    open,\n    anchorRef,\n    floatingRef,\n    side,\n    align,\n    offset: 8,\n  })\n\n  useEffect(() => () => clearTimeout(timer.current), [])\n\n  const schedule = (next: boolean, delay: number) => {\n    clearTimeout(timer.current)\n    timer.current = window.setTimeout(() => setOpen(next), delay)\n  }\n\n  if (!isValidElement(children)) return children\n\n  // Passing the ref object as a prop is React 19's ref-as-prop, not a read of\n  // `.current` during render — the rule cannot tell the two apart.\n  // oxlint-disable-next-line react/refs\n  const trigger = cloneElement(children, {\n    ref: anchorRef,\n    onPointerEnter: () => schedule(true, openDelay),\n    onPointerLeave: () => schedule(false, closeDelay),\n  })\n\n  return (\n    <>\n      {trigger}\n      {open && (\n        <div\n          ref={floatingRef}\n          data-slot=\"hover-card\"\n          data-side={resolved}\n          style={style}\n          onPointerEnter={() => clearTimeout(timer.current)}\n          onPointerLeave={() => schedule(false, closeDelay)}\n          className={cn(menuSurface, radius.surface, 'w-64 p-4 text-sm', className)}\n          {...props}\n        >\n          {content}\n        </div>\n      )}\n    </>\n  )\n}\n\nexport { HoverCard }\n"
+    }
+  ]
+}

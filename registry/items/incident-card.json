@@ -1,0 +1,24 @@
+{
+  "name": "incident-card",
+  "type": "registry:ui",
+  "title": "Incident Card",
+  "description": "An incident: severity, state, owner, age. Severity is a left edge rather than a tinted surface, because a list of ten red cards is unreadable and the stripe scales to a queue.",
+  "category": "Operations",
+  "dependencies": [
+    "lucide-react@^1.39.0"
+  ],
+  "registryDependencies": [
+    "avatar",
+    "badge",
+    "fmt",
+    "lib-styles",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/incident-card.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps, ReactNode } from 'react'\nimport { AlertTriangle, Clock, User } from 'lucide-react'\nimport { Avatar } from '@/components/ui/avatar'\nimport { Badge } from '@/components/ui/badge'\nimport { Fmt } from '@/components/ui/fmt'\nimport { radius, surface } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * An incident: severity, state, who owns it, how long it has been open.\n *\n * Severity uses a left edge rather than a tinted background. A card whose whole\n * surface is red draws the eye to the card instead of to its content, and a\n * list of ten of them is unreadable — the stripe scales to a queue.\n *\n * Duration is computed from `startedAt` and an optional `resolvedAt`, so an\n * open incident's age advances on its own instead of being a stale string\n * someone has to remember to refresh.\n */\nexport type Severity = 'sev1' | 'sev2' | 'sev3' | 'sev4'\nexport type IncidentState = 'investigating' | 'identified' | 'monitoring' | 'resolved'\n\nconst SEVERITY = {\n  sev1: { label: 'SEV1', color: 'destructive', edge: 'bg-[var(--destructive)]' },\n  sev2: { label: 'SEV2', color: 'amber', edge: 'bg-[var(--amber)]' },\n  sev3: { label: 'SEV3', color: 'blue', edge: 'bg-[var(--blue)]' },\n  sev4: { label: 'SEV4', color: 'neutral', edge: 'bg-border' },\n} as const\n\nconst STATE_LABEL = {\n  investigating: 'Investigating',\n  identified: 'Identified',\n  monitoring: 'Monitoring',\n  resolved: 'Resolved',\n} as const\n\nfunction IncidentCard({\n  title,\n  severity = 'sev3',\n  state = 'investigating',\n  startedAt,\n  resolvedAt,\n  assignee,\n  services,\n  summary,\n  now,\n  className,\n  ...props\n}: Omit<ComponentProps<'article'>, 'title'> & {\n  title: ReactNode\n  severity?: Severity\n  state?: IncidentState\n  startedAt: Date\n  resolvedAt?: Date\n  assignee?: string\n  services?: string[]\n  summary?: ReactNode\n  /** Reference point for the age. Defaults to now. */\n  now?: Date\n}) {\n  const level = SEVERITY[severity]\n  const end = resolvedAt ?? now ?? new Date()\n  const seconds = Math.max(0, (end.getTime() - startedAt.getTime()) / 1000)\n\n  return (\n    <article\n      data-slot=\"incident-card\"\n      data-severity={severity}\n      className={cn(\n        surface,\n        radius.surface,\n        'relative overflow-hidden ps-4',\n        state === 'resolved' && 'opacity-75',\n        className,\n      )}\n      {...props}\n    >\n      <span\n        aria-hidden=\"true\"\n        className={cn('absolute inset-y-0 start-0 w-1.5', level.edge)}\n      />\n\n      <div className=\"flex flex-col gap-2 p-4\">\n        <div className=\"flex flex-wrap items-center gap-2\">\n          <Badge size=\"sm\" color={level.color}>\n            <AlertTriangle />\n            {level.label}\n          </Badge>\n          <Badge size=\"sm\" color={state === 'resolved' ? 'green' : 'neutral'}>\n            {STATE_LABEL[state]}\n          </Badge>\n          <span className=\"text-muted-foreground ms-auto inline-flex items-center gap-1 text-xs tabular-nums\">\n            <Clock className=\"size-3.5\" aria-hidden=\"true\" />\n            <Fmt type=\"duration\" value={seconds} />\n          </span>\n        </div>\n\n        <h3 className=\"text-sm font-medium text-pretty\">{title}</h3>\n\n        {summary && <p className=\"text-muted-foreground text-sm\">{summary}</p>}\n\n        <div className=\"text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs\">\n          <span>\n            Started <Fmt type=\"relative\" value={startedAt} now={now} />\n          </span>\n\n          {services && services.length > 0 && (\n            <span className=\"flex flex-wrap gap-1\">\n              {services.map((service) => (\n                <Badge key={service} size=\"sm\">\n                  {service}\n                </Badge>\n              ))}\n            </span>\n          )}\n\n          {assignee && (\n            <span className=\"ms-auto inline-flex items-center gap-1.5\">\n              <User className=\"size-3.5 sr-only\" aria-hidden=\"true\" />\n              <Avatar size=\"xs\" name={assignee} />\n              {assignee}\n            </span>\n          )}\n        </div>\n      </div>\n    </article>\n  )\n}\n\nexport { IncidentCard }\n"
+    }
+  ]
+}

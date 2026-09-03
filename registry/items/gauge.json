@@ -1,0 +1,18 @@
+{
+  "name": "gauge",
+  "type": "registry:ui",
+  "title": "Gauge",
+  "description": "A radial meter — the circular counterpart to Progress. Drawn with stroke-dasharray rather than an arc path, so the sweep is one number and there is no arc-flag maths to get wrong.",
+  "category": "Display",
+  "dependencies": [],
+  "registryDependencies": [
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/gauge.tsx",
+      "type": "registry:ui",
+      "content": "import { useId, type ComponentProps, type ReactNode } from 'react'\nimport { cn } from '@/lib/utils'\n\n/**\n * A radial meter — the circular counterpart to Progress.\n *\n * Drawn with `stroke-dasharray` on a circle rather than an arc path, so the\n * sweep is one number to animate and there is no arc-flag maths to get wrong\n * near 180 degrees.\n *\n * It reports as a real `progressbar` with `aria-valuenow`, because a ring of\n * SVG is otherwise invisible to a screen reader — the number in the middle is\n * decoration, not an accessible value.\n */\nfunction Gauge({\n  value,\n  max = 100,\n  size = 96,\n  thickness = 8,\n  label,\n  hint,\n  tone,\n  showValue = true,\n  className,\n  ...props\n}: Omit<ComponentProps<'div'>, 'children'> & {\n  value: number\n  max?: number\n  size?: number\n  thickness?: number\n  label?: ReactNode\n  hint?: ReactNode\n  /** Any CSS colour. Defaults to a threshold ramp: green, amber, red. */\n  tone?: string\n  showValue?: boolean\n}) {\n  const id = useId()\n  const ratio = Math.max(0, Math.min(value / max, 1))\n  const percent = Math.round(ratio * 100)\n\n  // A 100-unit viewBox keeps the geometry independent of the rendered size.\n  const radius = 50 - thickness / 2\n  const circumference = 2 * Math.PI * radius\n\n  const colour =\n    tone ??\n    (ratio >= 0.9\n      ? 'var(--destructive)'\n      : ratio >= 0.75\n        ? 'var(--amber)'\n        : 'var(--green)')\n\n  return (\n    <div\n      data-slot=\"gauge\"\n      className={cn('inline-flex flex-col items-center gap-1', className)}\n      {...props}\n    >\n      <div className=\"relative\" style={{ width: size, height: size }}>\n        <svg\n          viewBox=\"0 0 100 100\"\n          role=\"progressbar\"\n          aria-valuenow={value}\n          aria-valuemin={0}\n          aria-valuemax={max}\n          aria-labelledby={label ? id : undefined}\n          aria-label={label ? undefined : `${percent} percent`}\n          className=\"size-full -rotate-90\"\n        >\n          <circle\n            cx=\"50\"\n            cy=\"50\"\n            r={radius}\n            fill=\"none\"\n            stroke=\"var(--border)\"\n            strokeWidth={thickness}\n          />\n          <circle\n            cx=\"50\"\n            cy=\"50\"\n            r={radius}\n            fill=\"none\"\n            stroke={colour}\n            strokeWidth={thickness}\n            strokeLinecap=\"round\"\n            strokeDasharray={circumference}\n            strokeDashoffset={circumference * (1 - ratio)}\n            className=\"transition-[stroke-dashoffset,stroke] duration-300 ease-out motion-reduce:transition-none\"\n          />\n        </svg>\n\n        {showValue && (\n          <div className=\"absolute inset-0 flex flex-col items-center justify-center\">\n            <span className=\"text-lg font-semibold tabular-nums\">{percent}%</span>\n            {hint && (\n              <span className=\"text-muted-foreground text-[10px]\">{hint}</span>\n            )}\n          </div>\n        )}\n      </div>\n\n      {label && (\n        <span id={id} className=\"text-muted-foreground text-xs font-medium\">\n          {label}\n        </span>\n      )}\n    </div>\n  )\n}\n\nexport { Gauge }\n"
+    }
+  ]
+}

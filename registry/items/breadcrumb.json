@@ -1,0 +1,22 @@
+{
+  "name": "breadcrumb",
+  "type": "registry:ui",
+  "title": "Breadcrumb",
+  "description": "The trail back up the hierarchy. An ordered list in a labelled nav, with the current page marked aria-current and deliberately not linked.",
+  "category": "Navigation",
+  "dependencies": [
+    "lucide-react@^1.39.0"
+  ],
+  "registryDependencies": [
+    "lib-styles",
+    "lib-utils",
+    "primitive-slot"
+  ],
+  "files": [
+    {
+      "path": "components/ui/breadcrumb.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps, ReactNode } from 'react'\nimport { Slot } from '@/components/primitives/slot'\nimport { ChevronRight, MoreHorizontal } from 'lucide-react'\nimport { focusRing, radius } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * The trail back up the hierarchy.\n *\n * An ordered list inside a labelled `<nav>`, because the order carries meaning.\n * The current page is a `<span aria-current=\"page\">`, not a link — linking to\n * where you already are is noise for a screen reader.\n */\nfunction Breadcrumb({\n  className,\n  label = 'Breadcrumb',\n  ...props\n}: ComponentProps<'nav'> & {\n  children: ReactNode\n  /** Accessible name for the nav landmark. */\n  label?: string\n}) {\n  return (\n    <nav\n      aria-label={label}\n      data-slot=\"breadcrumb\"\n      className={cn('w-full', className)}\n      {...props}\n    />\n  )\n}\n\nfunction BreadcrumbList({ className, ...props }: ComponentProps<'ol'>) {\n  return (\n    <ol\n      data-slot=\"breadcrumb-list\"\n      className={cn(\n        'text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm',\n        className,\n      )}\n      {...props}\n    />\n  )\n}\n\nfunction BreadcrumbItem({ className, ...props }: ComponentProps<'li'>) {\n  return (\n    <li\n      data-slot=\"breadcrumb-item\"\n      className={cn('inline-flex items-center gap-1.5', className)}\n      {...props}\n    />\n  )\n}\n\n/**\n * `asChild` renders the caller's own element — a router link, almost always.\n * A breadcrumb whose crumbs are plain `<a>` tags triggers a full page load in\n * a client-routed app, which is the one thing a breadcrumb must not do.\n */\nfunction BreadcrumbLink({\n  className,\n  asChild = false,\n  ...props\n}: ComponentProps<'a'> & { asChild?: boolean }) {\n  const Comp = asChild ? Slot : 'a'\n\n  return (\n    <Comp\n      data-slot=\"breadcrumb-link\"\n      className={cn(\n        'hover:text-foreground px-0.5 transition-colors duration-150 ease-out motion-reduce:transition-none',\n        radius.xs,\n        focusRing,\n        className,\n      )}\n      {...props}\n    />\n  )\n}\n\nfunction BreadcrumbPage({ className, ...props }: ComponentProps<'span'>) {\n  return (\n    <span\n      data-slot=\"breadcrumb-page\"\n      role=\"link\"\n      aria-disabled=\"true\"\n      aria-current=\"page\"\n      className={cn('text-foreground font-medium', className)}\n      {...props}\n    />\n  )\n}\n\nfunction BreadcrumbSeparator({\n  className,\n  children,\n  ...props\n}: ComponentProps<'li'>) {\n  return (\n    <li\n      role=\"presentation\"\n      aria-hidden=\"true\"\n      data-slot=\"breadcrumb-separator\"\n      // Sizes an icon child; a text child (a slash, a chevron glyph) inherits\n      // the list's own size and colour, which is what you want for punctuation.\n      className={cn('select-none [&>svg]:size-3.5', className)}\n      {...props}\n    >\n      {children ?? <ChevronRight />}\n    </li>\n  )\n}\n\nfunction BreadcrumbEllipsis({\n  className,\n  label = 'More',\n  ...props\n}: ComponentProps<'span'> & {\n  /** Screen-reader text for the collapsed items. */\n  label?: ReactNode\n}) {\n  return (\n    <span\n      role=\"presentation\"\n      aria-hidden=\"true\"\n      data-slot=\"breadcrumb-ellipsis\"\n      className={cn('flex size-5 items-center justify-center', className)}\n      {...props}\n    >\n      <MoreHorizontal className=\"size-3.5\" />\n      <span className=\"sr-only\">{label}</span>\n    </span>\n  )\n}\n\nexport {\n  Breadcrumb,\n  BreadcrumbEllipsis,\n  BreadcrumbItem,\n  BreadcrumbLink,\n  BreadcrumbList,\n  BreadcrumbPage,\n  BreadcrumbSeparator,\n}\n"
+    }
+  ]
+}

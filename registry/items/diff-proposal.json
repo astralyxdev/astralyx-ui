@@ -1,0 +1,23 @@
+{
+  "name": "diff-proposal",
+  "type": "registry:ui",
+  "title": "Diff Proposal",
+  "description": "A model-proposed edit with accept and reject. The decision is reported, never applied — and once made, the actions are replaced by the outcome so a stale card cannot be clicked twice.",
+  "category": "AI",
+  "dependencies": [
+    "lucide-react@^1.39.0"
+  ],
+  "registryDependencies": [
+    "button",
+    "diff-view",
+    "lib-styles",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/diff-proposal.tsx",
+      "type": "registry:ui",
+      "content": "import { useState, type ComponentProps, type ReactNode } from 'react'\nimport { Check, Sparkles, X } from 'lucide-react'\nimport { Button } from '@/components/ui/button'\nimport { DiffView, type DiffFile } from '@/components/ui/diff-view'\nimport { radius } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * A model-proposed edit, with accept and reject.\n *\n * The decision is reported, never applied here — this component has no idea\n * what the file system or editor buffer is. It also refuses to look decided:\n * once a choice is made the actions are replaced by a stated outcome, so a\n * stale card in a transcript cannot be clicked a second time.\n *\n * `rationale` sits above the diff rather than below it. The reason for a change\n * is what you read before deciding, and putting it after a forty-line diff means\n * nobody reads it at all.\n */\nexport type ProposalDecision = 'accepted' | 'rejected'\n\nfunction DiffProposal({\n  file,\n  title,\n  rationale,\n  view = 'unified',\n  decision: decisionProp,\n  onDecide,\n  acceptLabel = 'Accept',\n  rejectLabel = 'Reject',\n  acceptedLabel = 'Accepted',\n  rejectedLabel = 'Rejected',\n  className,\n  ...props\n}: Omit<ComponentProps<'div'>, 'title'> & {\n  file: DiffFile\n  title?: ReactNode\n  rationale?: ReactNode\n  view?: 'unified' | 'split'\n  decision?: ProposalDecision\n  onDecide?: (decision: ProposalDecision) => void\n  acceptLabel?: ReactNode\n  rejectLabel?: ReactNode\n  /** Shown once the change is accepted. */\n  acceptedLabel?: ReactNode\n  rejectedLabel?: ReactNode\n}) {\n  const controlled = decisionProp !== undefined\n  const [uncontrolled, setUncontrolled] = useState<ProposalDecision | undefined>()\n  const decision = controlled ? decisionProp : uncontrolled\n\n  function decide(next: ProposalDecision) {\n    if (!controlled) setUncontrolled(next)\n    onDecide?.(next)\n  }\n\n  return (\n    <div\n      data-slot=\"diff-proposal\"\n      data-decision={decision}\n      className={cn(\n        'border-border overflow-hidden border',\n        radius.surface,\n        decision && 'opacity-80',\n        className,\n      )}\n      {...props}\n    >\n      <div className=\"border-border bg-muted/40 flex flex-col gap-2 border-b p-3\">\n        <div className=\"flex items-center gap-2\">\n          <Sparkles className=\"text-[var(--violet-soft-foreground)] size-4 shrink-0\" aria-hidden=\"true\" />\n          <span className=\"min-w-0 flex-1 truncate text-sm font-medium\">\n            {title ?? 'Proposed change'}\n          </span>\n        </div>\n\n        {rationale && (\n          <p className=\"text-muted-foreground text-sm\">{rationale}</p>\n        )}\n      </div>\n\n      <DiffView file={file} view={view} collapsible={false} className=\"rounded-none border-0\" />\n\n      <div className=\"border-border flex flex-wrap items-center gap-2 border-t p-2\">\n        {decision ? (\n          <span\n            className={cn(\n              'inline-flex items-center gap-1.5 px-1 text-sm font-medium',\n              decision === 'accepted'\n                ? 'text-[var(--green-soft-foreground)]'\n                : 'text-muted-foreground',\n            )}\n          >\n            {decision === 'accepted' ? <Check className=\"size-4\" /> : <X className=\"size-4\" />}\n            {decision === 'accepted' ? acceptedLabel : rejectedLabel}\n          </span>\n        ) : (\n          <>\n            <Button size=\"xs\" onClick={() => decide('accepted')}>\n              <Check />\n              {acceptLabel}\n            </Button>\n            <Button variant=\"secondary\" size=\"xs\" onClick={() => decide('rejected')}>\n              <X />\n              {rejectLabel}\n            </Button>\n          </>\n        )}\n      </div>\n    </div>\n  )\n}\n\nexport { DiffProposal }\n"
+    }
+  ]
+}

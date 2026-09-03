@@ -1,0 +1,24 @@
+{
+  "name": "invoice-list",
+  "type": "registry:ui",
+  "title": "Invoice List",
+  "description": "Billing history. Amounts are right-aligned and tabular, which is the whole reason this is not a generic list — a money column that does not line up cannot be scanned.",
+  "category": "Finance",
+  "dependencies": [
+    "lucide-react@^1.39.0"
+  ],
+  "registryDependencies": [
+    "badge",
+    "button",
+    "fmt",
+    "lib-styles",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/invoice-list.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps, ReactNode } from 'react'\nimport { Download, FileText } from 'lucide-react'\nimport { Badge } from '@/components/ui/badge'\nimport { Button } from '@/components/ui/button'\nimport { Fmt } from '@/components/ui/fmt'\nimport { radius, surface } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * Billing history.\n *\n * Amounts are right-aligned and tabular, which is the whole reason this is not\n * a generic list: a column of money that does not line up at the decimal point\n * cannot be scanned, and scanning is what a billing page is for.\n *\n * Currency is per-invoice rather than per-list. An account that changed plan\n * across a currency migration has both, and formatting the old ones with the\n * new symbol would be wrong in a way nobody notices until an audit.\n */\nexport type Invoice = {\n  id: string\n  number: string\n  date: Date\n  amount: number\n  currency?: string\n  status: 'paid' | 'open' | 'past_due' | 'refunded' | 'void'\n  description?: ReactNode\n  url?: string\n}\n\nconst STATUS = {\n  paid: { label: 'Paid', color: 'green' },\n  open: { label: 'Open', color: 'blue' },\n  past_due: { label: 'Past due', color: 'destructive' },\n  refunded: { label: 'Refunded', color: 'neutral' },\n  void: { label: 'Void', color: 'neutral' },\n} as const\n\nfunction InvoiceList({\n  invoices,\n  onDownload,\n  locale = 'en-GB',\n  emptyLabel = 'No invoices yet',\n  className,\n  ...props\n}: Omit<ComponentProps<'div'>, 'children'> & {\n  invoices: Invoice[]\n  onDownload?: (invoice: Invoice) => void\n  locale?: string\n  emptyLabel?: ReactNode\n}) {\n  return (\n    <div\n      data-slot=\"invoice-list\"\n      className={cn(surface, radius.surface, 'overflow-hidden', className)}\n      {...props}\n    >\n      {invoices.length === 0 ? (\n        <p className=\"text-muted-foreground p-8 text-center text-sm\">{emptyLabel}</p>\n      ) : (\n        <ul className=\"list-none divide-y divide-[var(--border)]\">\n          {invoices.map((invoice) => {\n            const status = STATUS[invoice.status]\n\n            return (\n              <li\n                key={invoice.id}\n                className=\"flex flex-wrap items-center gap-x-3 gap-y-2 p-3\"\n              >\n                <FileText className=\"text-muted-foreground size-4 shrink-0\" aria-hidden=\"true\" />\n\n                <div className=\"min-w-0 flex-1\">\n                  <p className=\"truncate text-sm font-medium\">{invoice.number}</p>\n                  <p className=\"text-muted-foreground text-xs\">\n                    <Fmt type=\"date\" value={invoice.date} format=\"D MMMM YYYY\" locale={locale} />\n                    {invoice.description && <> · {invoice.description}</>}\n                  </p>\n                </div>\n\n                <Badge size=\"sm\" color={status.color}>\n                  {status.label}\n                </Badge>\n\n                {/* Tabular and a minimum width, so the column lines up for\n                    ordinary amounts — but `min-w`, not `w`: the currency prefix\n                    is locale-dependent (en-GB renders USD as \"US$\") and a large\n                    invoice would clip against a fixed width. */}\n                <span className=\"min-w-24 shrink-0 text-end text-sm font-medium tabular-nums whitespace-nowrap\">\n                  <Fmt\n                    type=\"currency\"\n                    value={invoice.amount}\n                    currency={invoice.currency ?? 'USD'}\n                    locale={locale}\n                  />\n                </span>\n\n                {(invoice.url || onDownload) && (\n                  <Button\n                    variant=\"ghost\"\n                    size=\"icon-xs\"\n                    aria-label={`Download ${invoice.number}`}\n                    asChild={Boolean(invoice.url)}\n                    onClick={onDownload ? () => onDownload(invoice) : undefined}\n                  >\n                    {invoice.url ? (\n                      <a href={invoice.url} download>\n                        <Download />\n                      </a>\n                    ) : (\n                      <Download />\n                    )}\n                  </Button>\n                )}\n              </li>\n            )\n          })}\n        </ul>\n      )}\n    </div>\n  )\n}\n\nexport { InvoiceList }\n"
+    }
+  ]
+}

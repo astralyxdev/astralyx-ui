@@ -1,0 +1,3923 @@
+{
+  "name": "astralyx-ui",
+  "version": "0.1.0",
+  "homepage": "https://github.com/astralyx/astralyx-ui#readme",
+  "items": [
+    {
+      "name": "accordion",
+      "type": "registry:ui",
+      "title": "Accordion",
+      "description": "A stack of collapsible sections. Each header is a real button inside a heading, which is what makes the set navigable by heading in a screen reader.",
+      "category": "Navigation",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "primitive-collapsible"
+      ]
+    },
+    {
+      "name": "address-input",
+      "type": "registry:ui",
+      "title": "Address Input",
+      "description": "A postal address whose shape follows the country. A US form asks for a State and a ZIP; a UK one asks for a County and a Postcode; Japan puts the postal code first. Shipping the US layout everywhere is how forms reject valid addresses.",
+      "category": "Geo",
+      "dependencies": [],
+      "registryDependencies": [
+        "combobox",
+        "input",
+        "label",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "agent-steps",
+      "type": "registry:ui",
+      "title": "Agent Steps",
+      "description": "An agent's plan with each step's state. The whole plan is shown from the start, including steps not yet reached — revealing them one at a time hides how much is left, which is what someone watching most wants to know.",
+      "category": "AI",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "fmt",
+        "lib-styles",
+        "lib-utils",
+        "spinner"
+      ]
+    },
+    {
+      "name": "alert-dialog",
+      "type": "registry:ui",
+      "title": "Alert Dialog",
+      "description": "A modal that interrupts to confirm something consequential. Unlike Dialog it has no backdrop dismissal and no corner close — a destructive confirmation should take a deliberate answer.",
+      "category": "Overlays",
+      "dependencies": [],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils",
+        "primitive-dialog",
+        "primitive-slot"
+      ]
+    },
+    {
+      "name": "alert-triage",
+      "type": "registry:ui",
+      "title": "Alert Triage",
+      "description": "An alert queue grouped by fingerprint. A flapping check fires two hundred times, and an ungrouped list buries every other alert underneath it — which is how real pages get missed.",
+      "category": "AIOps",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "checkbox",
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "alert",
+      "type": "registry:ui",
+      "title": "Alert",
+      "description": "A prominent message that stays on the page. Keeps the colour system, and picks its ARIA role from severity — a destructive alert interrupts, the rest wait their turn.",
+      "category": "Feedback",
+      "dependencies": [
+        "class-variance-authority@^0.7.1"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "anomaly-chart",
+      "type": "registry:ui",
+      "title": "Anomaly Chart",
+      "description": "A metric against its expected range, with outliers marked. The band is the point — 400ms at 03:00 may be an incident while 400ms at peak is Tuesday.",
+      "category": "AIOps",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "api-keys",
+      "type": "registry:ui",
+      "title": "API Keys",
+      "description": "Credentials, listed and revocable. A key is shown in full exactly once — after that only the prefix and last four, because a list that can reveal every key means a session holds every secret.",
+      "category": "Auth",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "copy-button",
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "aspect-ratio",
+      "type": "registry:ui",
+      "title": "Aspect Ratio",
+      "description": "Hold a box at a fixed ratio while its width is fluid. Modern CSS aspect-ratio, so no padding-top hack.",
+      "category": "Display",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "attachment-preview",
+      "type": "registry:ui",
+      "title": "Attachment Preview",
+      "description": "A file chip with an icon chosen from the MIME type. Never from the extension: a `.dat` that is really a PDF should show a PDF, and a `.pdf` that is really an executable should not.",
+      "category": "Messaging",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils",
+        "progress"
+      ]
+    },
+    {
+      "name": "audit-log",
+      "type": "registry:ui",
+      "title": "Audit Log",
+      "description": "Who did what to which thing, when. Denied and errored attempts are kept and marked rather than filtered out — a log of successes only tells you nothing about the attack you are looking for.",
+      "category": "Admin",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "fmt",
+        "input",
+        "json-viewer",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "avatar",
+      "type": "registry:ui",
+      "title": "Avatar",
+      "description": "An image standing in for a person, with a fallback that always renders. Initials are derived from the name, and a broken image falls through to them.",
+      "category": "Display",
+      "dependencies": [
+        "class-variance-authority@^0.7.1"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "badge",
+      "type": "registry:ui",
+      "title": "Badge",
+      "description": "A short status or category marker. Unlike a field, a badge exists to be noticed, so it keeps the full colour system and the tint escape hatch.",
+      "category": "Display",
+      "dependencies": [
+        "class-variance-authority@^0.7.1"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "primitive-slot"
+      ]
+    },
+    {
+      "name": "banner",
+      "type": "registry:ui",
+      "title": "Banner",
+      "description": "A page-level announcement strip. Distinct from Alert, which belongs to the content around it — a banner spans the page and belongs to the session.",
+      "category": "Feedback",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "benchmark-table",
+      "type": "registry:ui",
+      "title": "Benchmark Table",
+      "description": "Ranked results with variance. A difference inside the combined error bars is reported as \"within noise\" rather than as a win — printing \"1.03× faster\" from two noisy runs is how performance myths start.",
+      "category": "Build & Perf",
+      "dependencies": [],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "bet-input",
+      "type": "registry:ui",
+      "title": "Bet Input",
+      "description": "A stake field with quick multipliers and a live return. Stakes are integer minor units and the max is clamped to the balance, so \"all in\" cannot stake money that is not there.",
+      "category": "Gaming",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils",
+        "money-input"
+      ]
+    },
+    {
+      "name": "blame-view",
+      "type": "registry:ui",
+      "title": "Blame View",
+      "description": "Every line attributed to the commit that last touched it. Consecutive lines from one commit collapse into a single gutter entry — a blame view that repeats itself hides where one commit ends and the next begins.",
+      "category": "Development",
+      "dependencies": [],
+      "registryDependencies": [
+        "avatar",
+        "fmt",
+        "lib-styles",
+        "lib-utils",
+        "tooltip"
+      ]
+    },
+    {
+      "name": "branch-select",
+      "type": "registry:ui",
+      "title": "Branch Select",
+      "description": "A branch and tag picker. A Combobox underneath — repositories routinely have hundreds of branches, so search is not optional — with the default branch pinned first and tags labelled.",
+      "category": "Development",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "combobox",
+        "lib-styles"
+      ]
+    },
+    {
+      "name": "breadcrumb",
+      "type": "registry:ui",
+      "title": "Breadcrumb",
+      "description": "The trail back up the hierarchy. An ordered list in a labelled nav, with the current page marked aria-current and deliberately not linked.",
+      "category": "Navigation",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "primitive-slot"
+      ]
+    },
+    {
+      "name": "bridge-status",
+      "type": "registry:ui",
+      "title": "Bridge Status",
+      "description": "A cross-chain transfer as its two legs. Not one progress bar: the legs fail independently and the second cannot begin until the first is final, so a single bar implies a state that does not exist.",
+      "category": "Crypto",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "fmt",
+        "lib-styles",
+        "lib-utils",
+        "progress",
+        "spinner"
+      ]
+    },
+    {
+      "name": "build-log",
+      "type": "registry:ui",
+      "title": "Build Log",
+      "description": "Steps with their own output and timing bars. Failed steps open by default and successful ones stay closed — nobody opens a build log to read the steps that worked.",
+      "category": "Build & Perf",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "spinner",
+        "terminal"
+      ]
+    },
+    {
+      "name": "bulk-action-bar",
+      "type": "registry:ui",
+      "title": "Bulk Action Bar",
+      "description": "The bar that appears once rows are selected. It states the count in words next to the destructive button, because \"Delete\" and \"Delete 4,812 records\" deserve different amounts of hesitation.",
+      "category": "Admin",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "bundle-treemap",
+      "type": "registry:ui",
+      "title": "Bundle Treemap",
+      "description": "Bundle size by module, laid out by compressed size. Raw bytes overstate text-heavy modules dramatically — a 400KB locale file that gzips to 12KB dominates a raw treemap and barely matters on the wire.",
+      "category": "Build & Perf",
+      "dependencies": [],
+      "registryDependencies": [
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "button-group",
+      "type": "registry:ui",
+      "title": "Button Group",
+      "description": "Joins controls into one segmented unit — buttons, inputs, selects, or a mix. Inner corners are squared and adjacent borders overlap, so the row reads as a single control rather than a queue of separate ones.",
+      "category": "Forms",
+      "dependencies": [
+        "class-variance-authority@^0.7.1"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "title": "Button",
+      "description": "A control for a single action. Six variants across eight colour sets, ten sizes, and `asChild` to render as any element. Destructive is a colour, not a variant.",
+      "category": "Forms",
+      "dependencies": [
+        "class-variance-authority@^0.7.1"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "primitive-slot"
+      ]
+    },
+    {
+      "name": "cache-stats",
+      "type": "registry:ui",
+      "title": "Cache Stats",
+      "description": "Hit rate with the numbers behind it. 99% on 40 requests a day is noise and 80% on 4 million is a cost centre, so volume sits beside the percentage.",
+      "category": "Runtime",
+      "dependencies": [],
+      "registryDependencies": [
+        "fmt",
+        "lib-styles",
+        "lib-utils",
+        "sparkline"
+      ]
+    },
+    {
+      "name": "calendar",
+      "type": "registry:ui",
+      "title": "Calendar",
+      "description": "A date grid in single or range mode, with presets, times, dropdown captions and multiple months. No date library — the grid, weekday names and times all come from Intl.",
+      "category": "Display",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "lib-date",
+        "lib-styles",
+        "lib-utils",
+        "select",
+        "separator"
+      ]
+    },
+    {
+      "name": "campaign-card",
+      "type": "registry:ui",
+      "title": "Campaign Card",
+      "description": "An affiliate offer with its performance. EPC leads, not revenue — £40,000 and £4,000 cannot be ranked without knowing the traffic behind each, and earnings per click is the only comparable figure.",
+      "category": "Affiliate",
+      "dependencies": [],
+      "registryDependencies": [
+        "badge",
+        "fmt",
+        "lib-styles",
+        "lib-utils",
+        "sparkline"
+      ]
+    },
+    {
+      "name": "candlestick-chart",
+      "type": "registry:ui",
+      "title": "Candlestick Chart",
+      "description": "OHLC candles with a volume strip. Unlike every other chart here it does not stretch — a stretched candle varies its body width with the container while the wick stays one unit, and the body-versus-wick reading stops working.",
+      "category": "Crypto",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "card-input",
+      "type": "registry:ui",
+      "title": "Card Input",
+      "description": "Card number, expiry and CVC in one control, with brand detection and a Luhn check. Client-side validation catches the typo; it never claims the card is good.",
+      "category": "Finance",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "mask-input"
+      ]
+    },
+    {
+      "name": "card",
+      "type": "registry:ui",
+      "title": "Card",
+      "description": "A surface that groups related content. Header and footer are optional and draw their own dividers — a Card holding only a CardBody is just a padded box.",
+      "category": "Display",
+      "dependencies": [
+        "class-variance-authority@^0.7.1"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "carousel",
+      "type": "registry:ui",
+      "title": "Carousel",
+      "description": "A horizontally scrolling row of slides, built on CSS scroll-snap rather than a transform track — so touch swiping, momentum and keyboard scrolling all keep working.",
+      "category": "Display",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "cart",
+      "type": "registry:ui",
+      "title": "Cart",
+      "description": "A basket with quantities and per-line totals. Stock limits are enforced at the stepper, not on submit — letting someone add a ninth of eight units and saying so at checkout is the worst possible order.",
+      "category": "Commerce",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "chain-select",
+      "type": "registry:ui",
+      "title": "Chain Select",
+      "description": "A network switcher. Testnets are labelled and grouped below mainnets — transacting on the wrong network is the most expensive user error in this space, and an unlabelled list invites it.",
+      "category": "Crypto",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils",
+        "primitive-dismissable",
+        "primitive-popper"
+      ]
+    },
+    {
+      "name": "changelog-entry",
+      "type": "registry:ui",
+      "title": "Changelog Entry",
+      "description": "A release grouped by change type, with breaking changes hoisted to the top whatever order they came in. Everything else in a changelog is optional reading; a breaking change is not.",
+      "category": "Code Tools",
+      "dependencies": [],
+      "registryDependencies": [
+        "badge",
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "chart",
+      "type": "registry:ui",
+      "title": "Chart",
+      "description": "A small line, area or bar plot in plain SVG. Not a charting library — everything here is a scale and a path, which is the right trade for six numbers on a dashboard card.",
+      "category": "Display",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "checkbox",
+      "type": "registry:ui",
+      "title": "Checkbox",
+      "description": "A binary choice. A real native checkbox under a styled box, so labels, forms, keyboard and the indeterminate state all work.",
+      "category": "Forms",
+      "dependencies": [
+        "class-variance-authority@^0.7.1",
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "checkout-summary",
+      "type": "registry:ui",
+      "title": "Checkout Summary",
+      "description": "The order total, broken into its lines. A charge that is not yet known renders as \"calculated at next step\" rather than as £0.00 — showing zero for a charge you will apply is a promise you cannot keep.",
+      "category": "Commerce",
+      "dependencies": [],
+      "registryDependencies": [
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "citations",
+      "type": "registry:ui",
+      "title": "Citations",
+      "description": "Numbered sources for a generated answer. A marker is a real anchor with an accessible name, because a bare superscript \"3\" is meaningless read aloud — exactly when checking a claim matters most.",
+      "category": "AI",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "hover-card",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "code-block",
+      "type": "registry:ui",
+      "title": "Code Block",
+      "description": "Syntax-highlighted source with an optional title or file path, copy, inline editing, line numbers and collapsing.",
+      "category": "Display",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-highlighter",
+        "lib-styles",
+        "lib-use-clipboard",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "code-search",
+      "type": "registry:ui",
+      "title": "Code Search",
+      "description": "Search hits grouped by file, with the match marked inside its line. Ranges are clamped on render, because a wrong highlight is worse than none — it looks right.",
+      "category": "Development",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "cohort-table",
+      "type": "registry:ui",
+      "title": "Cohort Table",
+      "description": "Retention by signup period, as a triangle. Cells are shaded by rate rather than by count, so a small cohort that retains well is not washed out by a large one that does not.",
+      "category": "Analytics",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "collapsible",
+      "type": "registry:ui",
+      "title": "Collapsible",
+      "description": "A single panel that expands and collapses. The open height is measured rather than assumed, because height: auto cannot be transitioned.",
+      "category": "Navigation",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "primitive-collapsible",
+        "primitive-slot"
+      ]
+    },
+    {
+      "name": "color-picker",
+      "type": "registry:ui",
+      "title": "Color Picker",
+      "description": "A palette first, free entry second. Most product colour pickers choose a label or category colour, where an arbitrary hex is a liability — a gradient invites a colour nobody can read text on.",
+      "category": "Forms",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "label-picker",
+        "lib-styles",
+        "lib-utils",
+        "primitive-dismissable",
+        "primitive-popper"
+      ]
+    },
+    {
+      "name": "combobox",
+      "type": "registry:ui",
+      "title": "Combobox",
+      "description": "A Select you can type into. The search box lives inside the panel rather than replacing the trigger, so the chosen value stays visible while you filter.",
+      "category": "Forms",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "primitive-dismissable",
+        "primitive-popper"
+      ]
+    },
+    {
+      "name": "command",
+      "type": "registry:ui",
+      "title": "Command",
+      "description": "A command palette: type to filter, arrows to move, Enter to run. Items are data rather than children, because filtering has to reorder and hide them.",
+      "category": "Overlays",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "kbd",
+        "lib-styles",
+        "lib-utils",
+        "primitive-dialog"
+      ]
+    },
+    {
+      "name": "commit-graph",
+      "type": "registry:ui",
+      "title": "Commit Graph",
+      "description": "The branch graph beside a commit list. Lanes are held by the commit each one is waiting for, which is what keeps a branch on a single vertical line instead of drifting sideways at every merge.",
+      "category": "Development",
+      "dependencies": [],
+      "registryDependencies": [
+        "avatar",
+        "fmt",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "commit-list",
+      "type": "registry:ui",
+      "title": "Commit List",
+      "description": "A history, grouped by day. The grouping is the point — a flat list of forty commits is unreadable, and \"when\" is the axis people actually scan along.",
+      "category": "Development",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "button",
+        "diff-stat",
+        "lib-styles",
+        "lib-utils",
+        "tooltip"
+      ]
+    },
+    {
+      "name": "composer",
+      "type": "registry:ui",
+      "title": "Composer",
+      "description": "A live playground: drive a set of props and watch the generated source follow. Assembled from the kit’s own controls, so anything awkward about Select, Switch or NumberInput surfaces here first.",
+      "category": "Utility",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "card",
+        "code-block",
+        "color-picker",
+        "input",
+        "label",
+        "lib-highlighter",
+        "lib-utils",
+        "number-input",
+        "select",
+        "switch"
+      ]
+    },
+    {
+      "name": "confidence-meter",
+      "type": "registry:ui",
+      "title": "Confidence Meter",
+      "description": "How sure a model is, in five steps. Segmented on purpose — a smooth bar invites reading 0.834 as different from 0.851, which is not what a calibration score supports.",
+      "category": "AI",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "connection-string",
+      "type": "registry:ui",
+      "title": "Connection String",
+      "description": "A DSN parsed into the parts that matter for its driver. A file-backed database has a path and no host, user or port — pretending every database is Postgres is what makes most of these components useless outside it.",
+      "category": "Database",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "copy-button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "container-list",
+      "type": "registry:ui",
+      "title": "Container List",
+      "description": "Running containers with state, image tag and resource use. Restart count is shown whenever it is non-zero — a container \"running\" with 47 restarts is crash-looping, and its state says everything is fine.",
+      "category": "Runtime",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "context-menu",
+      "type": "registry:ui",
+      "title": "Context Menu",
+      "description": "A menu opened by right-click, positioned at the pointer. It has no element to anchor to — the anchor is a point — so it clamps against the viewport rather than flipping.",
+      "category": "Overlays",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "primitive-dismissable"
+      ]
+    },
+    {
+      "name": "context-picker",
+      "type": "registry:ui",
+      "title": "Context Picker",
+      "description": "Picks what an assistant can see. A dropdown rather than a dialog, because attaching context happens mid-thought and a modal takes focus off the prompt you were writing.",
+      "category": "AI",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "dropdown-menu",
+        "input",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "coordinate-input",
+      "type": "registry:ui",
+      "title": "Coordinate Input",
+      "description": "Latitude and longitude, accepting decimal degrees or DMS. A latitude above 90 is reported as \"is this a longitude?\" rather than \"out of range\" — swapped pairs are the most common coordinate bug there is.",
+      "category": "Geo",
+      "dependencies": [],
+      "registryDependencies": [
+        "copy-button",
+        "input",
+        "label",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "copy-button",
+      "type": "registry:ui",
+      "title": "Copy Button",
+      "description": "Copies a string and says so. Extracted after the same clipboard-plus-timer was written four times in this kit — CodeBlock, Terminal, EnvVars and Message all route through it now.",
+      "category": "Utility",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "lib-use-clipboard",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "cost-breakdown",
+      "type": "registry:ui",
+      "title": "Cost Breakdown",
+      "description": "Spend by model, with token volume beside it. The two routinely disagree — the cheap model handling 90% of calls is often 10% of the bill — and either number alone leads to the wrong optimisation.",
+      "category": "AI",
+      "dependencies": [],
+      "registryDependencies": [
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "coverage-report",
+      "type": "registry:ui",
+      "title": "Coverage Report",
+      "description": "Coverage per file, ranked by uncovered lines rather than by percentage. A 400-line file at 92% has 32 untested lines; a 12-line file at 60% has 5 — and percentage ranks the small one first.",
+      "category": "Build & Perf",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "cron-schedule",
+      "type": "registry:ui",
+      "title": "Cron Schedule",
+      "description": "Scheduled jobs: when each next runs and how the last went. An overdue job — next run in the past with nothing running — is called out, since that is the failure a schedule list exists to catch.",
+      "category": "Operations",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "fmt",
+        "lib-styles",
+        "lib-utils",
+        "spinner"
+      ]
+    },
+    {
+      "name": "curl-command",
+      "type": "registry:ui",
+      "title": "Curl Command",
+      "description": "A request as a runnable curl command, shell-quoted and with secrets masked. This output gets pasted into tickets, and an Authorization header pasted into a ticket is a leaked credential.",
+      "category": "API",
+      "dependencies": [],
+      "registryDependencies": [
+        "code-block"
+      ]
+    },
+    {
+      "name": "data-grid",
+      "type": "registry:ui",
+      "title": "Data Grid",
+      "description": "Sorting and selection over Table, driven by a column definition. The sort is stable and never mutates your array, so re-sorting on an equal column leaves settled rows where they were.",
+      "category": "Display",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "checkbox",
+        "empty",
+        "lib-styles",
+        "lib-utils",
+        "table"
+      ]
+    },
+    {
+      "name": "date-picker",
+      "type": "registry:ui",
+      "title": "Date Picker",
+      "description": "Calendar in a Popover with a trigger that reads like an Input. Every Calendar capability passes through — range, presets, times, multiple months — so there is one date implementation, not two.",
+      "category": "Forms",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "calendar",
+        "lib-date",
+        "lib-styles",
+        "lib-utils",
+        "popover"
+      ]
+    },
+    {
+      "name": "date-range-compare",
+      "type": "registry:ui",
+      "title": "Date Range Compare",
+      "description": "A metric against the same metric last period, with the basis named. \"+18%\" is meaningless until you know against what — and against a partial period it is meaningless full stop.",
+      "category": "Analytics",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "fmt",
+        "lib-styles",
+        "lib-utils",
+        "select",
+        "sparkline"
+      ]
+    },
+    {
+      "name": "dependency-list",
+      "type": "registry:ui",
+      "title": "Dependency List",
+      "description": "Packages with their update and vulnerability state. Severity outranks staleness in the sort, because ordering by how out of date things are buries a critical advisory behind forty patch bumps.",
+      "category": "Development",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "input",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "deploy-list",
+      "type": "registry:ui",
+      "title": "Deploy List",
+      "description": "Deployments, newest first. A running deploy shows an indeterminate bar rather than a fabricated percentage — a number nobody can compute is worse than admitting you cannot.",
+      "category": "Development",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "button",
+        "lib-styles",
+        "lib-utils",
+        "progress",
+        "spinner",
+        "tooltip"
+      ]
+    },
+    {
+      "name": "description-list",
+      "type": "registry:ui",
+      "title": "Description List",
+      "description": "Key/value metadata as a real <dl>, so a screen reader announces each term with its value. Columns on wide screens, stacked on narrow ones.",
+      "category": "Display",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "device-list",
+      "type": "registry:ui",
+      "title": "Device List",
+      "description": "Devices trusted to skip the second factor, and when that trust lapses. A grant that expires in three days is worth seeing before you are asked for a code at an airport.",
+      "category": "Auth",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "dialog",
+      "type": "registry:ui",
+      "title": "Dialog",
+      "description": "A modal window, built on the native <dialog> element — so the focus trap, background inerting, Escape handling and top-layer stacking come from the platform rather than from JavaScript.",
+      "category": "Overlays",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils",
+        "primitive-dialog",
+        "primitive-slot"
+      ]
+    },
+    {
+      "name": "diff-proposal",
+      "type": "registry:ui",
+      "title": "Diff Proposal",
+      "description": "A model-proposed edit with accept and reject. The decision is reported, never applied — and once made, the actions are replaced by the outcome so a stale card cannot be clicked twice.",
+      "category": "AI",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "diff-view",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "diff-stat",
+      "type": "registry:ui",
+      "title": "Diff Stat",
+      "description": "Added and removed line counts with the five-square bar. The squares are proportional but never empty — one line changed in a thousand still lights one square.",
+      "category": "Development",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "diff-view",
+      "type": "registry:ui",
+      "title": "Diff View",
+      "description": "A unified or side-by-side diff. Takes parsed hunks rather than a patch string, with parseUnifiedDiff exported alongside for when you only have the text.",
+      "category": "Development",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "diff-stat",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "donut",
+      "type": "registry:ui",
+      "title": "Donut",
+      "description": "Parts against a whole. Arcs are stroke-dasharray on a circle rather than wedge paths — one number per slice, and no arc-flag branch at the halfway point.",
+      "category": "Display",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "drawer",
+      "type": "registry:ui",
+      "title": "Drawer",
+      "description": "A bottom sheet you can drag away. Built on a native dialog, so focus containment and inerting the page come from the platform rather than a hand-rolled trap.",
+      "category": "Overlays",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "dropdown-menu",
+      "type": "registry:ui",
+      "title": "Dropdown Menu",
+      "description": "A menu of actions hung off a trigger. Unlike Select this is a list of commands, not a value — items are buttons, the menu closes on activation, and focus returns to the trigger.",
+      "category": "Overlays",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "primitive-dismissable",
+        "primitive-popper",
+        "primitive-slot"
+      ]
+    },
+    {
+      "name": "dropzone",
+      "type": "registry:ui",
+      "title": "Dropzone",
+      "description": "A drop target that is also a button, so the file picker stays reachable from the keyboard. Drag highlighting counts enter and leave rather than tracking a flag, which is what stops it flickering over child elements.",
+      "category": "Forms",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "empty",
+      "type": "registry:ui",
+      "title": "Empty",
+      "description": "The state a list is in before it has anything in it. An icon, a reason and a next action are what make the empty case useful rather than merely honest.",
+      "category": "Display",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "endpoint-list",
+      "type": "registry:ui",
+      "title": "Endpoint List",
+      "description": "API routes, grouped and filterable. The method badge is fixed-width because a route table is scanned down the method column, and a ragged left edge makes that scan impossible.",
+      "category": "API",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "http-status",
+        "input",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "env-diff",
+      "type": "registry:ui",
+      "title": "Env Diff",
+      "description": "Two environments side by side, values masked by default. A variable missing from one side is drawn differently from one whose value merely differs — \"not set\" and \"set to something else\" have different causes.",
+      "category": "Runtime",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "env-vars",
+      "type": "registry:ui",
+      "title": "Env Vars",
+      "description": "Environment variables with secrets masked until asked for. Reveal is per-row and never sticky — nothing survives a remount, so a shared screen cannot leak what someone expanded an hour ago.",
+      "category": "Operations",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "copy-button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "error-boundary",
+      "type": "registry:ui",
+      "title": "Error Boundary",
+      "description": "Catches a render error in its subtree and shows a fallback. The one component here that must be a class — getDerivedStateFromError has no hook equivalent.",
+      "category": "Utility",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "eval-results",
+      "type": "registry:ui",
+      "title": "Eval Results",
+      "description": "A model-versus-benchmark score matrix. The best result is marked per benchmark rather than overall — a model can lead on reasoning and trail on latency, and one winner badge hides that.",
+      "category": "AI",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "feature-flag",
+      "type": "registry:ui",
+      "title": "Feature Flag",
+      "description": "A flag with its rollout percentage and targeting rules. The kill switch is a separate control from the rollout — during an incident, turning it off must be one action, not a slider drag.",
+      "category": "Operations",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils",
+        "switch"
+      ]
+    },
+    {
+      "name": "feedback",
+      "type": "registry:ui",
+      "title": "Feedback",
+      "description": "Thumbs up or down, with an optional reason. The rating sends on click and the comment is a separate follow-up — holding the rating hostage to a comment box is how feedback widgets collect nothing.",
+      "category": "AI",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils",
+        "textarea"
+      ]
+    },
+    {
+      "name": "field",
+      "type": "registry:ui",
+      "title": "Field",
+      "description": "Wires a label, a control, help text and an error message together — id, aria-describedby and aria-invalid, all of which are easy to get one short of by hand.",
+      "category": "Forms",
+      "dependencies": [],
+      "registryDependencies": [
+        "label",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "file-tree",
+      "type": "registry:ui",
+      "title": "File Tree",
+      "description": "Files and directories as a tree. Uses the ARIA tree pattern with roving focus — arrow keys move between rows, so a repository with 200 files does not cost 200 tab stops.",
+      "category": "Development",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "fingerprint-diff",
+      "type": "registry:ui",
+      "title": "Fingerprint Diff",
+      "description": "Two device fingerprints, with only the differing attributes shown. The question is never what a device looks like — it is what changed between two sessions, and twenty-eight matching rows hide the two that matter.",
+      "category": "Security",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "flame-graph",
+      "type": "registry:ui",
+      "title": "Flame Graph",
+      "description": "Width is time, depth is stack. Frames stay in call order rather than being sorted by cost — reordering them destroys the shape a flame graph exists to show.",
+      "category": "Build & Perf",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "fmt",
+      "type": "registry:ui",
+      "title": "Fmt",
+      "description": "One component for every formatted value — dates, numbers, currency, bytes, durations, relative times — so the locale is a single decision rather than three developers reaching for toLocaleString, toFixed and padStart on one screen.",
+      "category": "Display",
+      "dependencies": [],
+      "registryDependencies": []
+    },
+    {
+      "name": "form",
+      "type": "registry:ui",
+      "title": "Form",
+      "description": "A thin bridge between React Hook Form and Field. Field owns the accessibility wiring and knows nothing about any form library; this adds only state and validation.",
+      "category": "Forms",
+      "dependencies": [
+        "react-hook-form@^7.87.0"
+      ],
+      "registryDependencies": [
+        "field",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "fraud-verdict",
+      "type": "registry:ui",
+      "title": "Fraud Verdict",
+      "description": "The decision at the end of a review: what was decided, on what basis, by whom. A settled verdict offers to reopen rather than accept a second one, because two conflicting verdicts on one case is the failure this shape prevents.",
+      "category": "Security",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "funnel",
+      "type": "registry:ui",
+      "title": "Funnel",
+      "description": "Conversion through ordered stages, with both the overall rate and the step rate. A funnel showing only the overall rate hides which single step is losing people.",
+      "category": "Display",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "gas-tracker",
+      "type": "registry:ui",
+      "title": "Gas Tracker",
+      "description": "Gas tiers with what each actually costs. Gwei alone is not a decision — the same gas price costs four times more for a swap than a transfer, which is why gasLimit is a prop.",
+      "category": "Crypto",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "gauge",
+      "type": "registry:ui",
+      "title": "Gauge",
+      "description": "A radial meter — the circular counterpart to Progress. Drawn with stroke-dasharray rather than an arc path, so the sweep is one number and there is no arc-flag maths to get wrong.",
+      "category": "Display",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "governance-proposal",
+      "type": "registry:ui",
+      "title": "Governance Proposal",
+      "description": "A proposal with its tally. Quorum is tracked separately from the majority because they are separate tests — a 92% \"for\" reads as passing right up until it fails for turnout.",
+      "category": "Crypto",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "group",
+      "type": "registry:ui",
+      "title": "Group",
+      "description": "A recessed container that holds a set of cards. Padding and gap are the same value, and the corner radius is concentric with the cards inside it.",
+      "category": "Display",
+      "dependencies": [
+        "class-variance-authority@^0.7.1"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "health-checks",
+      "type": "registry:ui",
+      "title": "Health Checks",
+      "description": "Endpoint probes with status, latency and history. A 200 that takes four seconds reads as degraded — a probe list that only reports the status code is why slow outages get noticed by customers first.",
+      "category": "Operations",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils",
+        "sparkline"
+      ]
+    },
+    {
+      "name": "heatmap-grid",
+      "type": "registry:ui",
+      "title": "Heatmap Grid",
+      "description": "A calendar heatmap — weeks as columns, weekdays as rows. UptimeStrip is the one-dimensional case; this is the grid.",
+      "category": "Display",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils",
+        "tooltip"
+      ]
+    },
+    {
+      "name": "hover-card",
+      "type": "registry:ui",
+      "title": "Hover Card",
+      "description": "A preview card shown on hover — richer than a tooltip, and pointer-only. There is a close delay as well as an open delay, so the pointer can travel into the card without it vanishing.",
+      "category": "Overlays",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "primitive-popper"
+      ]
+    },
+    {
+      "name": "http-status",
+      "type": "registry:ui",
+      "title": "HTTP Status",
+      "description": "A status code with its reason phrase. Colour follows the class, never the individual code — grading a 503 as worse than a 500 invents a severity ordering that does not exist.",
+      "category": "API",
+      "dependencies": [],
+      "registryDependencies": [
+        "badge",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "incident-card",
+      "type": "registry:ui",
+      "title": "Incident Card",
+      "description": "An incident: severity, state, owner, age. Severity is a left edge rather than a tinted surface, because a list of ten red cards is unreadable and the stripe scales to a queue.",
+      "category": "Operations",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "input-file",
+      "type": "registry:ui",
+      "title": "Input File",
+      "description": "A file picker shaped like an Input, for a form row. The native control is replaced rather than restyled — its button text is not settable and its layout is unreachable, so matching the field metrics means driving a hidden input.",
+      "category": "Forms",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "input-otp",
+      "type": "registry:ui",
+      "title": "Input OTP",
+      "description": "A fixed-length code entry, one box per character. Every box is a real input so autofill can target it, and paste is distributed across all of them.",
+      "category": "Forms",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "input",
+      "type": "registry:ui",
+      "title": "Input",
+      "description": "A single-line text field, built on the headless Field primitive. Monochrome by design — it shares the Button size steps but none of its colour sets.",
+      "category": "Forms",
+      "dependencies": [
+        "class-variance-authority@^0.7.1",
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "primitive-field"
+      ]
+    },
+    {
+      "name": "invoice-list",
+      "type": "registry:ui",
+      "title": "Invoice List",
+      "description": "Billing history. Amounts are right-aligned and tabular, which is the whole reason this is not a generic list — a money column that does not line up cannot be scanned.",
+      "category": "Finance",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "ip-cluster",
+      "type": "registry:ui",
+      "title": "IP Cluster",
+      "description": "Accounts grouped by a shared address or device. The shape is the finding: one node fanning out to eight accounts is multi-accounting, eight accounts each on their own address is a shared ISP.",
+      "category": "Security",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "json-viewer",
+      "type": "registry:ui",
+      "title": "JSON Viewer",
+      "description": "A collapsible view of a parsed value. Collapsed nodes show their size, because \"three entries or three thousand\" is the question you have before expanding one.",
+      "category": "Development",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "jwt-inspector",
+      "type": "registry:ui",
+      "title": "JWT Inspector",
+      "description": "Decodes a token into header, payload and signature. Decoding is not verification and the component says so — a green tick without the signing key would be actively dangerous.",
+      "category": "Code Tools",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "fmt",
+        "json-viewer",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "kanban",
+      "type": "registry:ui",
+      "title": "Kanban",
+      "description": "Columns of cards, movable between them. Drag-and-drop is pointer-only, so every card also moves with the arrow keys — a board you can only drag excludes keyboard users from its main action.",
+      "category": "Display",
+      "dependencies": [],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "kbd",
+      "type": "registry:ui",
+      "title": "Kbd",
+      "description": "A keyboard key. Splits on \"+\" so a chord can be written as one string.",
+      "category": "Display",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "label-picker",
+      "type": "registry:ui",
+      "title": "Label Picker",
+      "description": "Coloured repository labels, picked from a searchable list. Chip text is derived from the fill by luminance, since a label set imported from a forge only gives you a background colour.",
+      "category": "Development",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "input",
+        "lib-styles",
+        "lib-utils",
+        "popover"
+      ]
+    },
+    {
+      "name": "label",
+      "type": "registry:ui",
+      "title": "Label",
+      "description": "A form label. htmlFor is the point — clicking it focuses the control, and a screen reader announces the two together.",
+      "category": "Forms",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "leaderboard",
+      "type": "registry:ui",
+      "title": "Leaderboard",
+      "description": "Ranked scores with movement since the last period, and the current user pinned even when they are nowhere near the top. A board you cannot find yourself on is a board you stop opening.",
+      "category": "Gaming",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "ledger-table",
+      "type": "registry:ui",
+      "title": "Ledger Table",
+      "description": "Double-entry lines with a running balance. Debits and credits get their own columns and are totalled separately, because a ledger where the two do not agree is the finding.",
+      "category": "Finance",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "lighthouse-score",
+      "type": "registry:ui",
+      "title": "Lighthouse Score",
+      "description": "Category rings with the metrics behind them. A performance score of 62 is not actionable; \"LCP 4.1s\" is — so the metrics are shown, not hidden behind the summary.",
+      "category": "Build & Perf",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "liquidity-position",
+      "type": "registry:ui",
+      "title": "Liquidity Position",
+      "description": "A concentrated-liquidity position with its range. In-range versus out-of-range is the headline — a position outside its range earns nothing, and a card showing only \"fees earned\" while it stopped earning last week is misleading.",
+      "category": "Crypto",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "live-announcer",
+      "type": "registry:ui",
+      "title": "Live Announcer",
+      "description": "Imperative screen-reader announcements for things with no visible region of their own — a background save finishing, a filter narrowing a list.",
+      "category": "Utility",
+      "dependencies": [],
+      "registryDependencies": []
+    },
+    {
+      "name": "location-picker",
+      "type": "registry:ui",
+      "title": "Location Picker",
+      "description": "Pick a place by searching, or by typing coordinates. Both routes stay open: search covers the common case, the fields cover the field site or mooring that no geocoder knows.",
+      "category": "Geo",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "coordinate-input",
+        "input",
+        "lib-styles",
+        "lib-utils",
+        "map-embed",
+        "spinner"
+      ]
+    },
+    {
+      "name": "log-viewer",
+      "type": "registry:ui",
+      "title": "Log Viewer",
+      "description": "Structured logs with level filters, search and counts. Matches are highlighted in place rather than filtering the list down, so a search shows where the hits are in context.",
+      "category": "Development",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "input",
+        "lib-styles",
+        "lib-utils",
+        "select"
+      ]
+    },
+    {
+      "name": "login-form",
+      "type": "registry:ui",
+      "title": "Login Form",
+      "description": "Email and password, with somewhere for SSO buttons and an error. The error is announced, not just coloured — a failed sign-in that only turns red is invisible to a screen reader.",
+      "category": "Auth",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "input",
+        "label",
+        "lib-styles",
+        "lib-utils",
+        "password-input",
+        "separator"
+      ]
+    },
+    {
+      "name": "logo",
+      "type": "registry:ui",
+      "title": "logo",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "map-embed",
+      "type": "registry:ui",
+      "title": "Map Embed",
+      "description": "A map on CARTO's near-monochrome basemap. A full-colour street map fights everything drawn on top of it; a greyscale ground lets the marker be the only saturated thing on screen.",
+      "category": "Geo",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "market-table",
+      "type": "registry:ui",
+      "title": "Market Table",
+      "description": "A market list with price, change, volume and cap. Rank is the caller’s, never the row index — a re-sorted table that renumbers from one destroys the identifier people use to talk about a market.",
+      "category": "Crypto",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "input",
+        "lib-styles",
+        "lib-utils",
+        "sparkline"
+      ]
+    },
+    {
+      "name": "mask-input",
+      "type": "registry:ui",
+      "title": "Mask Input",
+      "description": "Formats as you type — card numbers, phone numbers, dates. Hands back the raw characters alongside the formatted text, so a form does not submit \"(555) 010-9999\" to an API expecting digits.",
+      "category": "Forms",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "media-gallery",
+      "type": "registry:ui",
+      "title": "Media Gallery",
+      "description": "A grid that opens into a lightbox. `alt` is required by the type rather than optional, because a gallery is exactly where missing alt text accumulates.",
+      "category": "Media",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "aspect-ratio",
+        "button",
+        "lib-styles",
+        "lib-utils",
+        "primitive-focus-trap",
+        "primitive-portal"
+      ]
+    },
+    {
+      "name": "mention-input",
+      "type": "registry:ui",
+      "title": "Mention Input",
+      "description": "A textarea with @-mention autocomplete. The trigger only fires at a word boundary, so an email address does not open the menu halfway through every address anyone types.",
+      "category": "Product",
+      "dependencies": [],
+      "registryDependencies": [
+        "avatar",
+        "lib-styles",
+        "lib-utils",
+        "textarea"
+      ]
+    },
+    {
+      "name": "menubar",
+      "type": "registry:ui",
+      "title": "Menubar",
+      "description": "An application menu bar. What makes it a menu bar rather than a row of dropdowns: once one menu is open, moving along the bar opens the next instead of merely focusing it.",
+      "category": "Navigation",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "primitive-dismissable",
+        "primitive-popper"
+      ]
+    },
+    {
+      "name": "merge-conflict",
+      "type": "registry:ui",
+      "title": "Merge Conflict",
+      "description": "Both sides of a conflict with a resolution per hunk. \"Keep both\" is offered because it is frequently right — two people adding a different import conflict textually and agree semantically.",
+      "category": "Code Tools",
+      "dependencies": [],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "message",
+      "type": "registry:ui",
+      "title": "Message",
+      "description": "One turn in a conversation. The two roles are shaped differently on purpose — a user message is a bubble, an assistant message is full-width prose, because a long answer in a bubble is unreadable.",
+      "category": "AI",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "avatar",
+        "button",
+        "lib-styles",
+        "lib-use-clipboard",
+        "lib-utils",
+        "tooltip"
+      ]
+    },
+    {
+      "name": "migration-list",
+      "type": "registry:ui",
+      "title": "Migration List",
+      "description": "Applied and pending migrations, sorted by version. A migration applied after a later version is flagged — that is the signature of two branches merged without a rebase, and it means this schema matches no single branch.",
+      "category": "Database",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "mint-panel",
+      "type": "registry:ui",
+      "title": "Mint Panel",
+      "description": "Supply, price and quantity, with the total shown before the button. A price of \"0.08 ETH\" beside a quantity of 5 is not a number anyone should be multiplying in their head at a mint.",
+      "category": "Crypto",
+      "dependencies": [],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "lib-styles",
+        "lib-utils",
+        "number-input",
+        "progress"
+      ]
+    },
+    {
+      "name": "model-comparison",
+      "type": "registry:ui",
+      "title": "Model Comparison",
+      "description": "Two or more outputs side by side with a pick. Columns are equal width and height regardless of content, because a taller box reads as the better answer before a word of it is read.",
+      "category": "AI",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "model-select",
+      "type": "registry:ui",
+      "title": "Model Select",
+      "description": "Picks which model answers. A Select with the naming convention folded in, so \"Opus · most capable\" is scannable where a bare model id is not.",
+      "category": "AI",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "select"
+      ]
+    },
+    {
+      "name": "moderation-queue",
+      "type": "registry:ui",
+      "title": "Moderation Queue",
+      "description": "Reported content with its report reasons and a decision. Sensitive items are blurred until revealed, because a moderator should choose when to look at the worst thing in the queue.",
+      "category": "Admin",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "button",
+        "checkbox",
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "money-input",
+      "type": "registry:ui",
+      "title": "Money Input",
+      "description": "A currency field that reads and writes integer minor units. Money that has been through a float has already lost — the value that leaves this control is a whole number of cents.",
+      "category": "Finance",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "multi-select",
+      "type": "registry:ui",
+      "title": "Multi Select",
+      "description": "Pick several options. The gap Select cannot fill — it is a single-value combobox by construction, which is why the LogViewer level filter had to become a threshold instead of a set.",
+      "category": "Forms",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "primitive-dismissable",
+        "primitive-popper"
+      ]
+    },
+    {
+      "name": "multiplier-chart",
+      "type": "registry:ui",
+      "title": "Multiplier Chart",
+      "description": "The rising curve of a crash-style round. The crash is a state, not an animation that ends — the frozen curve and the final figure stay on screen so a player who looked away still sees what happened.",
+      "category": "Gaming",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "navigation-menu",
+      "type": "registry:ui",
+      "title": "Navigation Menu",
+      "description": "A site nav bar with mega-menu panels and hover intent — a short open delay so crossing the bar does not flash panels, and a longer close delay so the panel is reachable.",
+      "category": "Navigation",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "primitive-dismissable",
+        "primitive-popper"
+      ]
+    },
+    {
+      "name": "network-status",
+      "type": "registry:ui",
+      "title": "Network Status",
+      "description": "RPC health: block height, latency, sync state. Staleness is derived from the age of the last block — a stuck node answers cheerfully with an old height, so \"connected\" from the node proves nothing.",
+      "category": "Crypto",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "nft-card",
+      "type": "registry:ui",
+      "title": "NFT Card",
+      "description": "A token tile: media, collection, price. Broken media resolves to a placeholder rather than collapsing the tile — IPFS gateways fail constantly and a grid that reflows on every 404 is unusable.",
+      "category": "Crypto",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "aspect-ratio",
+        "badge",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "notification-inbox",
+      "type": "registry:ui",
+      "title": "Notification Inbox",
+      "description": "A notification list grouped by day, with unread state. Unread is reported, never assumed — a panel that marks everything read on render clears what the user never saw.",
+      "category": "Product",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "button",
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "number-input",
+      "type": "registry:ui",
+      "title": "Number Input",
+      "description": "A number field with steppers. Uses type=\"text\" with inputMode=\"decimal\", because the native number input silently discards what it cannot parse — a half-typed \"1e\" or \"-\" vanishes as you type it.",
+      "category": "Forms",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "odds-display",
+      "type": "registry:ui",
+      "title": "Odds Display",
+      "description": "A selectable price in decimal, fractional or American. Decimal is the source of truth and the others are derived, so a format switch can never change what the bet actually pays.",
+      "category": "Gaming",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "on-call-schedule",
+      "type": "registry:ui",
+      "title": "On-call Schedule",
+      "description": "A rotation across a window of days. Shifts are positioned proportionally rather than snapped to a day grid — rotations hand over at 09:00, and rounding shows the wrong person on call for most of two days.",
+      "category": "AIOps",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "fmt",
+        "lib-styles",
+        "lib-utils",
+        "tooltip"
+      ]
+    },
+    {
+      "name": "order-book",
+      "type": "registry:ui",
+      "title": "Order Book",
+      "description": "Bids and asks with cumulative depth. The bar is the running total from the top of book, not the size at that level — what matters when taking liquidity is how much sits between you and a price.",
+      "category": "Crypto",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "page-header",
+      "type": "registry:ui",
+      "title": "Page Header",
+      "description": "The masthead a page opens with: eyebrow, title, lead and a meta row. Extracted after four pages in this catalogue had each grown their own copy and drifted apart.",
+      "category": "Utility",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "pagination",
+      "type": "registry:ui",
+      "title": "Pagination",
+      "description": "Move between pages of results. The windowing rule — how many neighbours to show and where the gaps fall — is exported as pageItems, so it can be reused or tested on its own.",
+      "category": "Navigation",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "password-input",
+      "type": "registry:ui",
+      "title": "Password Input",
+      "description": "A password field with a reveal toggle and an optional strength meter that rewards length over symbols — the thing naive meters get wrong when they demand punctuation from a passphrase.",
+      "category": "Forms",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "payment-method",
+      "type": "registry:ui",
+      "title": "Payment Method",
+      "description": "Saved cards and accounts, with expiry warnings. A card expiring next month is the reason a subscription fails, and saying so before it does is the entire value of this list.",
+      "category": "Finance",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "payout-status",
+      "type": "registry:ui",
+      "title": "Payout Status",
+      "description": "Where a payout is and when the money lands. \"Expected Thursday\" is the thing people open this to find out; the status word alone never answers it.",
+      "category": "Finance",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "fmt",
+        "lib-styles",
+        "lib-utils",
+        "stepper"
+      ]
+    },
+    {
+      "name": "permission-matrix",
+      "type": "registry:ui",
+      "title": "Permission Matrix",
+      "description": "Roles against permissions, in a grid. Inherited grants are drawn differently from direct ones, because \"why can this role still delete things\" is the question a flat list of ticks cannot answer.",
+      "category": "Auth",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "checkbox",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "pipeline",
+      "type": "registry:ui",
+      "title": "Pipeline",
+      "description": "CI stages left to right with parallel jobs stacked inside each. A stage is as bad as its worst job, so its state is derived rather than being another field to keep in sync.",
+      "category": "Operations",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "fmt",
+        "lib-styles",
+        "lib-utils",
+        "spinner"
+      ]
+    },
+    {
+      "name": "popover",
+      "type": "registry:ui",
+      "title": "Popover",
+      "description": "Rich content anchored to a trigger. Positioned with a fixed-position popper that flips when it would overflow, and dismissed by Escape or an outside press.",
+      "category": "Overlays",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "primitive-dismissable",
+        "primitive-popper",
+        "primitive-slot"
+      ]
+    },
+    {
+      "name": "port-table",
+      "type": "registry:ui",
+      "title": "Port Table",
+      "description": "Published ports with their bind address. `0.0.0.0:5432` and `127.0.0.1:5432` are the difference between a database on the internet and a database on the machine — printing only the number hides that.",
+      "category": "Runtime",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "portfolio-balance",
+      "type": "registry:ui",
+      "title": "Portfolio Balance",
+      "description": "Total value with its allocation. The hide toggle is part of the component, not an app-level bolt-on — people check balances on trains. Allocation is computed from the values, never taken as a percentage prop.",
+      "category": "Crypto",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "postback-config",
+      "type": "registry:ui",
+      "title": "Postback Config",
+      "description": "A server-to-server postback URL, validated against its macros. A postback missing {click_id} returns 200 and attributes nothing — this says so before it ships rather than in a reconciliation weeks later.",
+      "category": "Affiliate",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "copy-button",
+        "input",
+        "label",
+        "lib-styles",
+        "lib-utils",
+        "select"
+      ]
+    },
+    {
+      "name": "presence",
+      "type": "registry:ui",
+      "title": "Presence",
+      "description": "Who else is here. The overflow count carries its own tooltip listing the rest — a \"+5\" that cannot tell you who is unhelpful in exactly the moment you care.",
+      "category": "Product",
+      "dependencies": [],
+      "registryDependencies": [
+        "avatar",
+        "lib-utils",
+        "tooltip"
+      ]
+    },
+    {
+      "name": "price-ticker",
+      "type": "registry:ui",
+      "title": "Price Ticker",
+      "description": "A live price with its change. The flash on update is colour only — a ticker that moves makes the whole page twitch — and it compares against the previous rendered price, not the day’s direction.",
+      "category": "Crypto",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-utils",
+        "sparkline"
+      ]
+    },
+    {
+      "name": "pricing-table",
+      "type": "registry:ui",
+      "title": "Pricing Table",
+      "description": "Plans side by side. Every plan lists every feature, including the ones it lacks — omitting them makes the columns uneven and quietly hides what you would give up.",
+      "category": "Commerce",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "progress",
+      "type": "registry:ui",
+      "title": "Progress",
+      "description": "How far along a task is. Omit the value for an indeterminate bar, which sweeps rather than fills — the one honest way to say \"working, duration unknown\".",
+      "category": "Feedback",
+      "dependencies": [
+        "class-variance-authority@^0.7.1"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "prompt-input",
+      "type": "registry:ui",
+      "title": "Prompt Input",
+      "description": "The composer for a chat: a growing textarea, attached context as removable chips, and a toolbar. Enter sends, Shift+Enter adds a newline, and IME composition is checked first.",
+      "category": "AI",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "lib-styles",
+        "lib-utils",
+        "textarea",
+        "tooltip"
+      ]
+    },
+    {
+      "name": "prompt-template",
+      "type": "registry:ui",
+      "title": "Prompt Template",
+      "description": "A prompt with {{variable}} placeholders and a form to fill them. Variables are parsed out of the template rather than declared separately, so the two cannot drift.",
+      "category": "AI",
+      "dependencies": [],
+      "registryDependencies": [
+        "badge",
+        "copy-button",
+        "input",
+        "label",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "pull-request-card",
+      "type": "registry:ui",
+      "title": "Pull Request Card",
+      "description": "A pull request at a glance — state, branches, checks, reviewers. State is shown as an icon and a word, never colour alone.",
+      "category": "Development",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "diff-stat",
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "query-editor",
+      "type": "registry:ui",
+      "title": "Query Editor",
+      "description": "A SQL editor that asks before running an UPDATE or DELETE with no WHERE clause. That is the most expensive mistake anyone makes in a query console, and it is trivial to detect.",
+      "category": "Database",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "code-block",
+        "kbd",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "query-plan",
+      "type": "registry:ui",
+      "title": "Query Plan",
+      "description": "An EXPLAIN tree with cost bars drawn from self cost, not total. Every root holds 100% of total by definition, so a total-cost bar makes the root look like the problem in every query ever profiled.",
+      "category": "Database",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "queue-monitor",
+      "type": "registry:ui",
+      "title": "Queue Monitor",
+      "description": "Depth, throughput and whether the queue is keeping up. Depth alone says nothing — 40,000 draining at 5,000/s is fine, 300 draining at 2/s is an incident.",
+      "category": "Runtime",
+      "dependencies": [],
+      "registryDependencies": [
+        "badge",
+        "fmt",
+        "lib-styles",
+        "lib-utils",
+        "sparkline"
+      ]
+    },
+    {
+      "name": "radio-group",
+      "type": "registry:ui",
+      "title": "Radio Group",
+      "description": "One choice out of several. Built on native radio inputs, so arrow-key roving, form submission and the single-selection invariant come from the platform.",
+      "category": "Forms",
+      "dependencies": [
+        "class-variance-authority@^0.7.1"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "primitive-radio-group"
+      ]
+    },
+    {
+      "name": "range-slider",
+      "type": "registry:ui",
+      "title": "Range Slider",
+      "description": "Two thumbs over one track. Slider is a restyled native input[type=range], which has exactly one thumb by construction — so a range needs a custom control with the ARIA written out.",
+      "category": "Forms",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "rate-limit-meter",
+      "type": "registry:ui",
+      "title": "Rate Limit Meter",
+      "description": "A quota with its reset time given equal weight. \"9,800 of 10,000\" is alarming; \"resets in 40 seconds\" makes it fine — showing the first without the second sends people to build a cache they do not need.",
+      "category": "Runtime",
+      "dependencies": [],
+      "registryDependencies": [
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "rating",
+      "type": "registry:ui",
+      "title": "Rating",
+      "description": "A rating, readable or settable, drawn with monochrome marks. The icon is a prop; read-only renders one image with a text alternative — \"4 out of 5\" — rather than five separate announcements.",
+      "category": "Forms",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "reasoning-block",
+      "type": "registry:ui",
+      "title": "Reasoning Block",
+      "description": "A model's intermediate reasoning, folded away by default — it is supporting evidence, not the answer, and a panel that opens itself pushes the answer below the fold.",
+      "category": "AI",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "fmt",
+        "lib-styles",
+        "lib-utils",
+        "spinner"
+      ]
+    },
+    {
+      "name": "regex-tester",
+      "type": "registry:ui",
+      "title": "Regex Tester",
+      "description": "A pattern against a test string, with matches highlighted and capture groups listed. Zero-length matches are guarded — `/a*/g` matches empty at every position and hangs a naive exec loop.",
+      "category": "Code Tools",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "input",
+        "label",
+        "lib-styles",
+        "lib-utils",
+        "textarea"
+      ]
+    },
+    {
+      "name": "release-list",
+      "type": "registry:ui",
+      "title": "Release List",
+      "description": "A changelog as a document — each version an article with a real heading, so it can be linked to and navigated by heading. Never sorts, since \"newest first\" cannot be derived from semver once pre-releases exist.",
+      "category": "Development",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "request-builder",
+      "type": "registry:ui",
+      "title": "Request Builder",
+      "description": "Method, URL, headers, query and body. Query parameters are edited as rows and the assembled URL is shown beneath — hand-editing a query string is where encoding bugs come from.",
+      "category": "API",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "collapsible",
+        "input",
+        "lib-styles",
+        "lib-utils",
+        "select",
+        "switch",
+        "textarea"
+      ]
+    },
+    {
+      "name": "resizable",
+      "type": "registry:ui",
+      "title": "Resizable",
+      "description": "Two panels with a draggable divider. Sizes are percentages, so the split survives a container resize — and the handle is a real slider, so arrow keys resize it too.",
+      "category": "Navigation",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "primitive-media-query"
+      ]
+    },
+    {
+      "name": "resource-meter",
+      "type": "registry:ui",
+      "title": "Resource Meter",
+      "description": "Used against a cap: build minutes, storage, seats, rate limits. Unlike Progress it can exceed 100%, because a quota can be 130% used and hiding that is how a bill becomes a surprise.",
+      "category": "Operations",
+      "dependencies": [],
+      "registryDependencies": [
+        "fmt",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "response-viewer",
+      "type": "registry:ui",
+      "title": "Response Viewer",
+      "description": "Status, timing, size, headers and body. The three headline figures share one line because they are read together — a 200 that took 4 seconds is a different result from one that took 40ms.",
+      "category": "API",
+      "dependencies": [],
+      "registryDependencies": [
+        "badge",
+        "code-block",
+        "collapsible",
+        "fmt",
+        "http-status",
+        "json-viewer",
+        "lib-highlighter",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "retrieval-results",
+      "type": "registry:ui",
+      "title": "Retrieval Results",
+      "description": "The chunks a retrieval step pulled, with relevance. Near-misses are dimmed rather than dropped — when an answer is wrong, \"what did it nearly retrieve\" is the useful question.",
+      "category": "AI",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "confidence-meter",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "revenue-share-table",
+      "type": "registry:ui",
+      "title": "Revenue Share Table",
+      "description": "How a payout splits between parties. The unallocated remainder gets a named row instead of leaving the reader to subtract, and a split exceeding 100% is called out rather than quietly rendered.",
+      "category": "Affiliate",
+      "dependencies": [],
+      "registryDependencies": [
+        "fmt",
+        "lib-utils",
+        "table"
+      ]
+    },
+    {
+      "name": "review-thread",
+      "type": "registry:ui",
+      "title": "Review Thread",
+      "description": "A review conversation anchored to a line of code, with the line shown as context. Resolving is always a callback — a resolved thread is server truth other reviewers see.",
+      "category": "Development",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "button",
+        "lib-styles",
+        "lib-utils",
+        "textarea"
+      ]
+    },
+    {
+      "name": "risk-score",
+      "type": "registry:ui",
+      "title": "Risk Score",
+      "description": "A score with the signals that produced it. The factors are the component, not a detail beside it — an analyst cannot approve or decline on \"82\", and an unexplained score is the one thing a regulator will ask you to justify.",
+      "category": "Security",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "root-cause-tree",
+      "type": "registry:ui",
+      "title": "Root Cause Tree",
+      "description": "A causal chain from symptom to candidate causes, each with a confidence band. Built on Tree, so it inherits the keyboard model rather than growing a second one.",
+      "category": "AIOps",
+      "dependencies": [],
+      "registryDependencies": [
+        "confidence-meter",
+        "lib-utils",
+        "tree"
+      ]
+    },
+    {
+      "name": "round-history",
+      "type": "registry:ui",
+      "title": "Round History",
+      "description": "Recent results as a strip. It carries an explicit note that past rounds do not predict the next one, because a row of results is read as a pattern whether or not one exists.",
+      "category": "Gaming",
+      "dependencies": [],
+      "registryDependencies": [
+        "fmt",
+        "lib-styles",
+        "lib-utils",
+        "tooltip"
+      ]
+    },
+    {
+      "name": "runbook-steps",
+      "type": "registry:ui",
+      "title": "Runbook Steps",
+      "description": "Remediation steps, run one at a time and only in order. Offering \"run\" on step four while step two is untried invites exactly the mistake the runbook exists to prevent.",
+      "category": "AIOps",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "lib-styles",
+        "lib-utils",
+        "spinner"
+      ]
+    },
+    {
+      "name": "schema-table",
+      "type": "registry:ui",
+      "title": "Schema Table",
+      "description": "Columns, keys and indexes. Foreign keys name their target inline, because `owner_id` tells you nothing about whether it points at users or accounts — which is exactly what you opened the schema to find out.",
+      "category": "Database",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "schema-viewer",
+      "type": "registry:ui",
+      "title": "Schema Viewer",
+      "description": "JSON Schema as a tree. Required fields are marked on the field itself rather than left in the parent's `required` array — cross-referencing that list is the one job a renderer should do for you.",
+      "category": "API",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "scroll-area",
+      "type": "registry:ui",
+      "title": "Scroll Area",
+      "description": "A scrollable region with a themed scrollbar, styled through the standard scrollbar properties rather than a JavaScript overlay — so native momentum and keyboard scrolling stay intact.",
+      "category": "Navigation",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "seed-phrase",
+      "type": "registry:ui",
+      "title": "Seed Phrase",
+      "description": "A recovery phrase, blurred until revealed. Deliberately hostile to convenience: no copy button and no selection, because a seed phrase on the clipboard is readable by every page visited afterwards.",
+      "category": "Crypto",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "title": "Select",
+      "description": "A custom dropdown, not a native select — the trigger matches Input exactly and the panel is real markup. Full keyboard support, type-ahead, and dismissal on Escape or outside click.",
+      "category": "Forms",
+      "dependencies": [
+        "class-variance-authority@^0.7.1",
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "primitive-dismissable",
+        "primitive-popper"
+      ]
+    },
+    {
+      "name": "separator",
+      "type": "registry:ui",
+      "title": "Separator",
+      "description": "A rule between sections, horizontal or vertical, optionally with a label set into it.",
+      "category": "Display",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "service-status",
+      "type": "registry:ui",
+      "title": "Service Status",
+      "description": "The rows of a status page. The headline banner is derived from the services — a status page whose headline can disagree with its own rows is worse than none.",
+      "category": "Operations",
+      "dependencies": [],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils",
+        "uptime-strip"
+      ]
+    },
+    {
+      "name": "session-list",
+      "type": "registry:ui",
+      "title": "Session List",
+      "description": "Active sign-ins, with the current one pinned and unrevokable from here. Signing yourself out of the session you are using is a footgun, so it is simply not offered.",
+      "category": "Auth",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "sheet",
+      "type": "registry:ui",
+      "title": "Sheet",
+      "description": "A panel that slides in from an edge. Same native <dialog> machinery as Dialog, pinned to one side — so it inherits the focus trap and Escape handling.",
+      "category": "Overlays",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils",
+        "primitive-dialog",
+        "primitive-slot"
+      ]
+    },
+    {
+      "name": "shortcut-sheet",
+      "type": "registry:ui",
+      "title": "Shortcut Sheet",
+      "description": "A keyboard reference grouped by area. Presentational by design — it never binds the keys, because the component that shows a cheat sheet is not the one that owns the handlers.",
+      "category": "Development",
+      "dependencies": [],
+      "registryDependencies": [
+        "kbd",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "sidebar",
+      "type": "registry:ui",
+      "title": "Sidebar",
+      "description": "An inset application frame: a transparent rail that collapses to a 52px icon strip, beside a rounded content panel. Inset is the only layout and icon is the only collapsed state, which is what keeps the geometry exact.",
+      "category": "Navigation",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "primitive-media-query",
+        "primitive-slot",
+        "tooltip"
+      ]
+    },
+    {
+      "name": "skeleton",
+      "type": "registry:ui",
+      "title": "Skeleton",
+      "description": "A placeholder shape for content that has not arrived. The pulse animates opacity only, so it stays inside the kit motion rule, and stops under prefers-reduced-motion.",
+      "category": "Display",
+      "dependencies": [
+        "class-variance-authority@^0.7.1"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "skip-link",
+      "type": "registry:ui",
+      "title": "Skip Link",
+      "description": "The first tab stop: jump past the navigation to the content. Invisible until focused, which is the whole design.",
+      "category": "Utility",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "slider",
+      "type": "registry:ui",
+      "title": "Slider",
+      "description": "Pick a value along a range. A restyled native range input, so arrow keys, Home/End, touch dragging and form submission all work without JavaScript.",
+      "category": "Forms",
+      "dependencies": [
+        "class-variance-authority@^0.7.1"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "slo-budget",
+      "type": "registry:ui",
+      "title": "SLO Budget",
+      "description": "An error budget and how fast it is burning. Shows the budget remaining rather than availability achieved — 99.4% against a 99.9% target sounds like a near miss and is a six-times overspend.",
+      "category": "AIOps",
+      "dependencies": [],
+      "registryDependencies": [
+        "fmt",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "sparkline",
+      "type": "registry:ui",
+      "title": "Sparkline",
+      "description": "A microchart with no axes, legend or dependency — plain SVG over a normalised range, sized by whatever box you put it in.",
+      "category": "Display",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "spinner",
+      "type": "registry:ui",
+      "title": "Spinner",
+      "description": "An indeterminate busy indicator. Rotation is the one exception the motion rule has to allow — a still spinner says nothing. It stops under prefers-reduced-motion.",
+      "category": "Feedback",
+      "dependencies": [
+        "class-variance-authority@^0.7.1"
+      ],
+      "registryDependencies": [
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "stack-trace",
+      "type": "registry:ui",
+      "title": "Stack Trace",
+      "description": "A parsed exception with its frames. Library frames collapse behind a count — a stack is typically three frames of your code buried in forty of the framework’s.",
+      "category": "Development",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "copy-button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "staking-panel",
+      "type": "registry:ui",
+      "title": "Staking Panel",
+      "description": "A staking position: stake, rewards, APY and unlock. APY is labelled variable unless told otherwise, because it almost always is — a bare percentage reads as a fixed-term rate.",
+      "category": "Crypto",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "lib-styles",
+        "lib-utils",
+        "progress"
+      ]
+    },
+    {
+      "name": "stat",
+      "type": "registry:ui",
+      "title": "Stat",
+      "description": "One measurement: label, value and how it moved. Which direction counts as healthy is a prop, because a rise in incidents is not a rise in deployments.",
+      "category": "Display",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "status-checks",
+      "type": "registry:ui",
+      "title": "Status Checks",
+      "description": "The CI check list on a pull request. The summary states the blocking outcome rather than the raw tally, because \"3 failing\" says nothing about whether you can merge.",
+      "category": "Development",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils",
+        "spinner"
+      ]
+    },
+    {
+      "name": "stepper",
+      "type": "registry:ui",
+      "title": "Stepper",
+      "description": "Progress through a fixed sequence. One `current` index drives the common case; any step can override its own status for a failure or a skip in the middle.",
+      "category": "Navigation",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "spinner"
+      ]
+    },
+    {
+      "name": "streaming-text",
+      "type": "registry:ui",
+      "title": "Streaming Text",
+      "description": "Text revealed as it arrives, with a caret while it is still coming. Driven by elapsed time rather than a per-character interval, so it never drifts or dumps a backlog after a background tab.",
+      "category": "AI",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils",
+        "primitive-media-query"
+      ]
+    },
+    {
+      "name": "subscription-state",
+      "type": "registry:ui",
+      "title": "Subscription State",
+      "description": "Plan, price and what happens next. A cancelled subscription with three weeks of access left is the case people most often get wrong, and a status badge alone never says it.",
+      "category": "Commerce",
+      "dependencies": [],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "suggestions",
+      "type": "registry:ui",
+      "title": "Suggestions",
+      "description": "Starter prompts, offered before the first message. Buttons rather than a list, because each one performs an action.",
+      "category": "AI",
+      "dependencies": [],
+      "registryDependencies": [
+        "button",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "swap-panel",
+      "type": "registry:ui",
+      "title": "Swap Panel",
+      "description": "The pay/receive form of a token swap. Price impact is surfaced rather than buried behind a details toggle, and above a threshold the action is disabled outright.",
+      "category": "Crypto",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "switch",
+      "type": "registry:ui",
+      "title": "Switch",
+      "description": "An instant on/off toggle. A native checkbox with role=\"switch\", so it submits with a form and toggles from the keyboard.",
+      "category": "Forms",
+      "dependencies": [
+        "class-variance-authority@^0.7.1"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "symbol-outline",
+      "type": "registry:ui",
+      "title": "Symbol Outline",
+      "description": "A file's symbols as a tree, in file order rather than alphabetical. An outline is a map of the document you are reading; re-sorting it makes the outline and the editor disagree about where things are.",
+      "category": "Code Tools",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "input",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "table-of-contents",
+      "type": "registry:ui",
+      "title": "Table of Contents",
+      "description": "An anchor list that tracks which heading is on screen, through IntersectionObserver rather than scroll offsets. Reads the DOM by default, so it works for rendered markdown.",
+      "category": "Navigation",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "table",
+      "type": "registry:ui",
+      "title": "Table",
+      "description": "Rows and columns of structured data. The wrapper scrolls rather than the page, so a wide table never forces horizontal scroll on the whole document.",
+      "category": "Display",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "tabs",
+      "type": "registry:ui",
+      "title": "Tabs",
+      "description": "Switch between panels in the same context. Full WAI-ARIA keyboard support: arrows rove, Home and End jump, and only the active tab is in the tab order.",
+      "category": "Navigation",
+      "dependencies": [
+        "class-variance-authority@^0.7.1"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "primitive-tabs"
+      ]
+    },
+    {
+      "name": "tag-input",
+      "type": "registry:ui",
+      "title": "Tag Input",
+      "description": "Free-text chips for keywords, recipients or labels. Backspace on an empty field removes the last tag, and pasting a comma-separated list splits it rather than making one long tag.",
+      "category": "Forms",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "terminal",
+      "type": "registry:ui",
+      "title": "Terminal",
+      "description": "Console output with ANSI colour. Follow-tail sticks to the bottom only while the reader is already there, so scrolling up to read something is never undone by the next line.",
+      "category": "Development",
+      "dependencies": [],
+      "registryDependencies": [
+        "copy-button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "test-results",
+      "type": "registry:ui",
+      "title": "Test Results",
+      "description": "A test run with suites, tests and failure output. Failures expand by default and passes stay collapsed — nobody opens a report to read what passed.",
+      "category": "Development",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "fmt",
+        "lib-styles",
+        "lib-utils",
+        "spinner"
+      ]
+    },
+    {
+      "name": "textarea",
+      "type": "registry:ui",
+      "title": "Textarea",
+      "description": "The multi-line sibling of Input. Same variants, same padding rule, with a resize control and no icon slot.",
+      "category": "Forms",
+      "dependencies": [
+        "class-variance-authority@^0.7.1"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "theme-toggle",
+      "type": "registry:ui",
+      "title": "Theme Toggle",
+      "description": "Switches the document between light and dark. Uncontrolled by default: it reads the class already on the element rather than flashing to its own idea of the default on mount.",
+      "category": "Utility",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button"
+      ]
+    },
+    {
+      "name": "thread-list",
+      "type": "registry:ui",
+      "title": "Thread List",
+      "description": "An inbox of conversations. Unread is carried by weight and a count, not by colour alone, and the timestamp coarsens with age — a message from March does not need a clock time.",
+      "category": "Messaging",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "ticket-card",
+      "type": "registry:ui",
+      "title": "Ticket Card",
+      "description": "A support ticket with its SLA. Breach risk is computed from the due time, not from how old the ticket is — a two-week ticket with a monthly SLA is fine, and an hour-old one may not be.",
+      "category": "Messaging",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "fmt",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "time-picker",
+      "type": "registry:ui",
+      "title": "Time Picker",
+      "description": "Pick a time of day from generated slots. The value is always HH:mm in 24-hour form regardless of how it is displayed — the format is presentation, the value is data.",
+      "category": "Forms",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "primitive-dismissable",
+        "primitive-popper"
+      ]
+    },
+    {
+      "name": "timeline",
+      "type": "registry:ui",
+      "title": "Timeline",
+      "description": "A vertical run of events sharing one rail — deploys, incidents, review activity, an agent run. The connector stops at the last item instead of dangling past it.",
+      "category": "Navigation",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "timezone-select",
+      "type": "registry:ui",
+      "title": "Timezone Select",
+      "description": "An IANA timezone picker showing each zone's current offset and local time. Zones are named by city, never by abbreviation — \"CST\" is Central, China and Cuba Standard Time.",
+      "category": "Geo",
+      "dependencies": [],
+      "registryDependencies": [
+        "combobox"
+      ]
+    },
+    {
+      "name": "toast",
+      "type": "registry:ui",
+      "title": "Toast",
+      "description": "Transient messages that stack and dismiss themselves. A provider plus a useToast() hook rather than a global singleton, so the queue lives in React state and two regions can coexist.",
+      "category": "Feedback",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "toggle",
+      "type": "registry:ui",
+      "title": "Toggle",
+      "description": "A button that stays pressed. Uses aria-pressed rather than a checkbox, because this is a control that changes state, not a value submitted with a form.",
+      "category": "Forms",
+      "dependencies": [
+        "class-variance-authority@^0.7.1"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "token-amount",
+      "type": "registry:ui",
+      "title": "Token Amount",
+      "description": "A balance formatted from base units without ever touching a float. 1 ETH is 10¹⁸ wei, which exceeds Number.MAX_SAFE_INTEGER by two orders of magnitude — a balance that passes through a JavaScript number is silently wrong.",
+      "category": "Crypto",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "token-approvals",
+      "type": "registry:ui",
+      "title": "Token Approvals",
+      "description": "Spending allowances granted to contracts, with revoke. An unlimited approval is stated as \"unlimited\" rather than rendered as 2²⁵⁶−1, which reads like a display bug — it is a standing permission to move the whole balance, forever.",
+      "category": "Crypto",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "fmt",
+        "lib-styles",
+        "lib-utils",
+        "wallet-address"
+      ]
+    },
+    {
+      "name": "token-select",
+      "type": "registry:ui",
+      "title": "Token Select",
+      "description": "A token picker with balances and search. Symbols are not unique — anyone can deploy a contract called \"USDC\" — so unverified tokens are segregated, badged, and shown by contract address rather than the name they claim.",
+      "category": "Crypto",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils",
+        "primitive-dismissable",
+        "primitive-popper",
+        "wallet-address"
+      ]
+    },
+    {
+      "name": "token-usage",
+      "type": "registry:ui",
+      "title": "Token Usage",
+      "description": "How much of a context window is spoken for. The colour crosses to amber at 75% and destructive at 90%, because the number only matters once it is close.",
+      "category": "AI",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils",
+        "progress",
+        "tooltip"
+      ]
+    },
+    {
+      "name": "tool-call",
+      "type": "registry:ui",
+      "title": "Tool Call",
+      "description": "One tool invocation inside an assistant turn. Collapsed by default — the arguments are long and the interesting part is that it ran — except a failure, which opens itself.",
+      "category": "AI",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "code-block",
+        "collapsible",
+        "lib-styles",
+        "lib-utils",
+        "spinner"
+      ]
+    },
+    {
+      "name": "toolbar",
+      "type": "registry:ui",
+      "title": "Toolbar",
+      "description": "A group of controls that arrow keys move between — the ARIA role ButtonGroup deliberately does not claim, because claiming it without implementing it is worse than not claiming it.",
+      "category": "Navigation",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils",
+        "primitive-focus-trap"
+      ]
+    },
+    {
+      "name": "tooltip",
+      "type": "registry:ui",
+      "title": "Tooltip",
+      "description": "A short hint on hover or focus. Focus opens it immediately — a keyboard user has already committed — while pointer hover waits, so sweeping across a toolbar does not fire a row of them.",
+      "category": "Overlays",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils",
+        "primitive-popper"
+      ]
+    },
+    {
+      "name": "topology-map",
+      "type": "registry:ui",
+      "title": "Topology Map",
+      "description": "A service dependency graph with health. Laid out in dependency layers, not by a force simulation — during an incident nobody wants to re-find the database because the layout moved.",
+      "category": "AIOps",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "tooltip"
+      ]
+    },
+    {
+      "name": "tour",
+      "type": "registry:ui",
+      "title": "Tour",
+      "description": "Guided coach marks over the real interface. Steps point at selectors, so a tour is data next to the copy it belongs to rather than refs threaded through every component it visits.",
+      "category": "Overlays",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils",
+        "primitive-focus-trap",
+        "primitive-popper",
+        "primitive-portal"
+      ]
+    },
+    {
+      "name": "traffic-split",
+      "type": "registry:ui",
+      "title": "Traffic Split",
+      "description": "Traffic weights across versions — canary or blue/green. Weights that do not total 100 are called out rather than silently rescaled, because a config adding to 97 is a real state during an edit.",
+      "category": "Operations",
+      "dependencies": [],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "transaction-list",
+      "type": "registry:ui",
+      "title": "Transaction List",
+      "description": "Wallet activity grouped by day. Direction is derived against the connected account, not passed in — the same transfer is a send for one wallet and a receive for another, and a self-transfer is both.",
+      "category": "Crypto",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "fmt",
+        "lib-styles",
+        "lib-utils",
+        "wallet-address"
+      ]
+    },
+    {
+      "name": "transaction-status",
+      "type": "registry:ui",
+      "title": "Transaction Status",
+      "description": "A transaction from submitted to final. Confirmations are progress toward a threshold, not a tick at one block — chains reorganise, and \"done\" at one confirmation teaches a habit that eventually costs money.",
+      "category": "Crypto",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "fmt",
+        "lib-styles",
+        "lib-utils",
+        "progress",
+        "spinner",
+        "wallet-address"
+      ]
+    },
+    {
+      "name": "tree",
+      "type": "registry:ui",
+      "title": "Tree",
+      "description": "A collapsible hierarchy with real keyboard navigation — arrow keys move by what is visible, one tab stop for the whole tree, and ARIA that says where each row sits in its branch.",
+      "category": "Navigation",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "two-factor-setup",
+      "type": "registry:ui",
+      "title": "Two-Factor Setup",
+      "description": "Scan, verify, save recovery codes. The recovery step is a step, not a footnote: an authenticator lost with no codes saved is an account lost, and burying them behind a link is why that happens.",
+      "category": "Auth",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "copy-button",
+        "input-otp",
+        "lib-styles",
+        "lib-utils",
+        "stepper"
+      ]
+    },
+    {
+      "name": "typing-indicator",
+      "type": "registry:ui",
+      "title": "Typing Indicator",
+      "description": "Who is currently typing. The animation is decorative and hidden from assistive tech; the sentence beside it is the actual content, and it is what gets announced.",
+      "category": "Messaging",
+      "dependencies": [],
+      "registryDependencies": [
+        "avatar",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "typography",
+      "type": "registry:ui",
+      "title": "Typography",
+      "description": "Prose styling for content you did not author element by element — rendered markdown, a CMS body, a changelog. Headings start at h2, since the page already has its h1.",
+      "category": "Display",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "upload-list",
+      "type": "registry:ui",
+      "title": "Upload List",
+      "description": "Files in flight, with per-file progress and a retry for the ones that failed. A failed upload keeps its row rather than vanishing — silently dropping it is how people lose work.",
+      "category": "Media",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "attachment-preview",
+        "button",
+        "lib-styles",
+        "lib-utils",
+        "progress"
+      ]
+    },
+    {
+      "name": "uptime-strip",
+      "type": "registry:ui",
+      "title": "Uptime Strip",
+      "description": "A run of per-period bars: uptime history or a contribution heatmap. One primitive for both, since they are the same picture — buckets coloured by state or by intensity.",
+      "category": "Operations",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils",
+        "tooltip"
+      ]
+    },
+    {
+      "name": "user-menu",
+      "type": "registry:ui",
+      "title": "User Menu",
+      "description": "The account button for a header or sidebar footer. The identity is repeated inside the panel, because on a collapsed rail the trigger is a bare avatar.",
+      "category": "Product",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "dropdown-menu",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "utm-builder",
+      "type": "registry:ui",
+      "title": "UTM Builder",
+      "description": "Builds a tagged campaign URL. Values are lower-cased with underscores for spaces, because analytics tools treat Summer Sale, summer sale and summer_sale as three separate campaigns and nobody reconciles them later.",
+      "category": "Affiliate",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "copy-button",
+        "input",
+        "label",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "validator-list",
+      "type": "registry:ui",
+      "title": "Validator List",
+      "description": "Validators with commission, uptime and voting power. Flags membership of the smallest set controlling a third of the stake, and sorts ascending by default — the conventional descending sort pushes delegators toward whoever is already largest.",
+      "category": "Crypto",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "video-player",
+      "type": "registry:ui",
+      "title": "Video Player",
+      "description": "A player with a scrubber, quality and subtitle menus. Controls are real buttons on a real timeline, so the keyboard reaches every one of them — a div-based scrubber never does.",
+      "category": "Media",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "dropdown-menu",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "virtual-list",
+      "type": "registry:ui",
+      "title": "Virtual List",
+      "description": "Renders only the rows in view. DataGrid and LogViewer both render every row they are given, which is fine until a few thousand and then stalls the main thread.",
+      "category": "Navigation",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "visually-hidden",
+      "type": "registry:ui",
+      "title": "Visually Hidden",
+      "description": "Hidden from sight, present for screen readers. The clip technique — not display:none or visibility:hidden, both of which remove the element from the accessibility tree entirely.",
+      "category": "Utility",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils",
+        "primitive-slot"
+      ]
+    },
+    {
+      "name": "wallet-address",
+      "type": "registry:ui",
+      "title": "Wallet Address",
+      "description": "An address shortened for display but never for copying. The truncation floor is security-relevant: attackers generate lookalikes sharing the first and last characters, so `chars` cannot go below six.",
+      "category": "Crypto",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "copy-button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "wallet-connect",
+      "type": "registry:ui",
+      "title": "Wallet Connect",
+      "description": "Connect button and connected account in one control. Wrong-network outranks showing a balance — a figure from the wrong ledger is worse than none, because it looks authoritative.",
+      "category": "Crypto",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "dropdown-menu",
+        "lib-styles",
+        "lib-utils",
+        "wallet-address"
+      ]
+    },
+    {
+      "name": "webhook-inspector",
+      "type": "registry:ui",
+      "title": "Webhook Inspector",
+      "description": "Inbound deliveries with payload and response. Signature status is its own field, never folded into the status code — a 200 with an invalid signature is a forged request your handler accepted.",
+      "category": "API",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "fmt",
+        "http-status",
+        "json-viewer",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "websocket-frames",
+      "type": "registry:ui",
+      "title": "WebSocket Frames",
+      "description": "A frame log with the delta between frames. Protocol bugs are about the gap — a heartbeat that stopped arriving is obvious as a 30-second delta and invisible as a list of clock times.",
+      "category": "Runtime",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "fmt",
+        "lib-styles",
+        "lib-utils",
+        "select"
+      ]
+    },
+    {
+      "name": "primitive-collapsible",
+      "type": "registry:primitive",
+      "title": "Collapsible",
+      "description": "A single panel that expands and collapses. The open height is measured rather than assumed, because height: auto cannot be transitioned.",
+      "category": "Navigation",
+      "dependencies": [],
+      "registryDependencies": []
+    },
+    {
+      "name": "primitive-dialog",
+      "type": "registry:primitive",
+      "title": "Dialog",
+      "description": "A modal window, built on the native <dialog> element — so the focus trap, background inerting, Escape handling and top-layer stacking come from the platform rather than from JavaScript.",
+      "category": "Overlays",
+      "dependencies": [],
+      "registryDependencies": []
+    },
+    {
+      "name": "primitive-dismissable",
+      "type": "registry:primitive",
+      "title": "dismissable",
+      "dependencies": [],
+      "registryDependencies": []
+    },
+    {
+      "name": "primitive-field",
+      "type": "registry:primitive",
+      "title": "Field",
+      "description": "Wires a label, a control, help text and an error message together — id, aria-describedby and aria-invalid, all of which are easy to get one short of by hand.",
+      "category": "Forms",
+      "dependencies": [],
+      "registryDependencies": []
+    },
+    {
+      "name": "primitive-focus-trap",
+      "type": "registry:primitive",
+      "title": "focus-trap",
+      "dependencies": [],
+      "registryDependencies": []
+    },
+    {
+      "name": "primitive-media-query",
+      "type": "registry:primitive",
+      "title": "media-query",
+      "dependencies": [],
+      "registryDependencies": []
+    },
+    {
+      "name": "primitive-popper",
+      "type": "registry:primitive",
+      "title": "popper",
+      "dependencies": [],
+      "registryDependencies": []
+    },
+    {
+      "name": "primitive-portal",
+      "type": "registry:primitive",
+      "title": "portal",
+      "dependencies": [],
+      "registryDependencies": []
+    },
+    {
+      "name": "primitive-radio-group",
+      "type": "registry:primitive",
+      "title": "Radio Group",
+      "description": "One choice out of several. Built on native radio inputs, so arrow-key roving, form submission and the single-selection invariant come from the platform.",
+      "category": "Forms",
+      "dependencies": [],
+      "registryDependencies": []
+    },
+    {
+      "name": "primitive-router",
+      "type": "registry:primitive",
+      "title": "router",
+      "dependencies": [],
+      "registryDependencies": []
+    },
+    {
+      "name": "primitive-slot",
+      "type": "registry:primitive",
+      "title": "slot",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "primitive-tabs",
+      "type": "registry:primitive",
+      "title": "Tabs",
+      "description": "Switch between panels in the same context. Full WAI-ARIA keyboard support: arrows rove, Home and End jump, and only the active tab is in the tab order.",
+      "category": "Navigation",
+      "dependencies": [],
+      "registryDependencies": []
+    },
+    {
+      "name": "lib-date",
+      "type": "registry:lib",
+      "title": "date",
+      "dependencies": [],
+      "registryDependencies": []
+    },
+    {
+      "name": "lib-highlighter",
+      "type": "registry:lib",
+      "title": "highlighter",
+      "dependencies": [
+        "shiki@^4.4.3"
+      ],
+      "registryDependencies": []
+    },
+    {
+      "name": "lib-styles",
+      "type": "registry:lib",
+      "title": "styles",
+      "dependencies": [],
+      "registryDependencies": []
+    },
+    {
+      "name": "lib-use-clipboard",
+      "type": "registry:lib",
+      "title": "use-clipboard",
+      "dependencies": [],
+      "registryDependencies": []
+    },
+    {
+      "name": "lib-utils",
+      "type": "registry:lib",
+      "title": "utils",
+      "dependencies": [
+        "cn@^0.2.4"
+      ],
+      "registryDependencies": []
+    },
+    {
+      "name": "theme",
+      "type": "registry:theme",
+      "title": "Theme",
+      "description": "Colour tokens, the surface ladder, and the keyframes components rely on.",
+      "dependencies": [
+        "tailwindcss@^4.3.3",
+        "tw-animate-css@^1.4.0"
+      ],
+      "registryDependencies": []
+    }
+  ]
+}

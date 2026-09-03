@@ -1,0 +1,16 @@
+{
+  "name": "lib-highlighter",
+  "type": "registry:lib",
+  "title": "highlighter",
+  "dependencies": [
+    "shiki@^4.4.3"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "lib/highlighter.ts",
+      "type": "registry:lib",
+      "content": "import { createHighlighterCore, type HighlighterCore } from 'shiki/core'\nimport { createJavaScriptRegexEngine } from 'shiki/engine/javascript'\n\n/** Languages the CodeBlock can highlight. Add a lang here and in `LANGS`. */\nexport const LANGUAGES = [\n  'tsx',\n  'jsx',\n  'typescript',\n  'javascript',\n  'css',\n  'html',\n  'json',\n  'bash',\n  'sql',\n] as const\n\nexport type Language = (typeof LANGUAGES)[number]\n\nconst LANGS = [\n  import('shiki/langs/tsx.mjs'),\n  import('shiki/langs/jsx.mjs'),\n  import('shiki/langs/typescript.mjs'),\n  import('shiki/langs/javascript.mjs'),\n  import('shiki/langs/css.mjs'),\n  import('shiki/langs/html.mjs'),\n  import('shiki/langs/json.mjs'),\n  import('shiki/langs/bash.mjs'),\n  import('shiki/langs/sql.mjs'),\n]\n\nlet highlighter: Promise<HighlighterCore> | undefined\n\n/**\n * Lazily create a single shared highlighter. Both themes are loaded at once so\n * a rendered block carries light *and* dark colors and needs no re-highlight\n * when the theme flips — see the `.shiki` rules in index.css.\n */\nexport function getHighlighter() {\n  highlighter ??= createHighlighterCore({\n    themes: [\n      import('shiki/themes/github-light-default.mjs'),\n      import('shiki/themes/github-dark-default.mjs'),\n    ],\n    langs: LANGS,\n    engine: createJavaScriptRegexEngine(),\n  })\n\n  return highlighter\n}\n\nexport type HighlightOptions = {\n  /** 1-based line numbers to mark with `data-highlighted`. */\n  highlightLines?: number[]\n}\n\nexport async function highlight(\n  code: string,\n  lang: Language,\n  { highlightLines }: HighlightOptions = {},\n) {\n  const shiki = await getHighlighter()\n  const marked = new Set(highlightLines)\n\n  return shiki.codeToHtml(code, {\n    lang,\n    themes: { light: 'github-light-default', dark: 'github-dark-default' },\n    defaultColor: false,\n    colorReplacements: {\n      '#ffffff': 'transparent',\n      '#0d1117': 'transparent',\n    },\n    transformers: marked.size\n      ? [\n          {\n            name: 'highlight-lines',\n            line(node, line) {\n              if (marked.has(line)) {\n                node.properties['data-highlighted'] = ''\n              }\n            },\n          },\n        ]\n      : undefined,\n  })\n}\n"
+    }
+  ]
+}

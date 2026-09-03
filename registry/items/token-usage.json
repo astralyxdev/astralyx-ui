@@ -1,0 +1,20 @@
+{
+  "name": "token-usage",
+  "type": "registry:ui",
+  "title": "Token Usage",
+  "description": "How much of a context window is spoken for. The colour crosses to amber at 75% and destructive at 90%, because the number only matters once it is close.",
+  "category": "AI",
+  "dependencies": [],
+  "registryDependencies": [
+    "lib-utils",
+    "progress",
+    "tooltip"
+  ],
+  "files": [
+    {
+      "path": "components/ui/token-usage.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps } from 'react'\nimport { Progress } from '@/components/ui/progress'\nimport { Tooltip } from '@/components/ui/tooltip'\nimport { cn } from '@/lib/utils'\n\n/**\n * How much of a context window is spoken for.\n *\n * The colour crosses to amber at 75% and destructive at 90%, because the number\n * only matters once it is close — a green bar at 12% is noise, an amber one at\n * 80% is a warning you can act on before the conversation truncates.\n */\nfunction TokenUsage({\n  className,\n  used,\n  limit,\n  label = 'Context used',\n  size = 'sm',\n  showNumbers = true,\n  ...props\n}: ComponentProps<'div'> & {\n  used: number\n  limit: number\n  label?: string\n  size?: 'sm' | 'default' | 'lg'\n  showNumbers?: boolean\n}) {\n  const share = limit === 0 ? 0 : Math.min(100, (used / limit) * 100)\n  const color = share >= 90 ? 'destructive' : share >= 75 ? 'amber' : 'blue'\n\n  const compact = (n: number) =>\n    n >= 1000 ? `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}k` : String(n)\n\n  return (\n    <div\n      data-slot=\"token-usage\"\n      className={cn('w-full space-y-1.5', className)}\n      {...props}\n    >\n      <div className=\"flex items-baseline justify-between gap-2\">\n        <span className=\"text-muted-foreground text-xs\">{label}</span>\n        {showNumbers && (\n          <span className=\"text-muted-foreground font-mono text-xs tabular-nums\">\n            {compact(used)} / {compact(limit)}\n          </span>\n        )}\n      </div>\n      <Tooltip content={`${used.toLocaleString()} of ${limit.toLocaleString()} tokens`}>\n        <div>\n          <Progress value={share} color={color} size={size} />\n        </div>\n      </Tooltip>\n    </div>\n  )\n}\n\nexport { TokenUsage }\n"
+    }
+  ]
+}

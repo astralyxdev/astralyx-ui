@@ -1,0 +1,20 @@
+{
+  "name": "spinner",
+  "type": "registry:ui",
+  "title": "Spinner",
+  "description": "An indeterminate busy indicator. Rotation is the one exception the motion rule has to allow — a still spinner says nothing. It stops under prefers-reduced-motion.",
+  "category": "Feedback",
+  "dependencies": [
+    "class-variance-authority@^0.7.1"
+  ],
+  "registryDependencies": [
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/spinner.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps } from 'react'\nimport { cva, type VariantProps } from 'class-variance-authority'\nimport { cn } from '@/lib/utils'\n\n/**\n * An indeterminate busy indicator.\n *\n * Rotation is the exception the motion rule has to allow — a still spinner says\n * nothing at all. It stops under `prefers-reduced-motion`, where the label and\n * `role=\"status\"` still carry the meaning.\n */\nconst spinnerVariants = cva(\n  'inline-block animate-spin rounded-full border-current border-e-transparent motion-reduce:animate-none',\n  {\n    variants: {\n      size: {\n        xs: 'size-3 border-[1.5px]',\n        sm: 'size-4 border-2',\n        default: 'size-5 border-2',\n        lg: 'size-6 border-2',\n        xl: 'size-8 border-[3px]',\n      },\n    },\n    defaultVariants: { size: 'default' },\n  },\n)\n\nfunction Spinner({\n  className,\n  size,\n  label = 'Loading',\n  ...props\n}: ComponentProps<'span'> & VariantProps<typeof spinnerVariants> & {\n  label?: string\n}) {\n  return (\n    <span\n      role=\"status\"\n      data-slot=\"spinner\"\n      className={cn('inline-flex items-center gap-2', className)}\n      {...props}\n    >\n      <span aria-hidden=\"true\" className={cn(spinnerVariants({ size }))} />\n      <span className=\"sr-only\">{label}</span>\n    </span>\n  )\n}\n\nexport { Spinner, spinnerVariants }\n"
+    }
+  ]
+}

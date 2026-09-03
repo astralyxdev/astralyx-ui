@@ -1,0 +1,23 @@
+{
+  "name": "reasoning-block",
+  "type": "registry:ui",
+  "title": "Reasoning Block",
+  "description": "A model's intermediate reasoning, folded away by default — it is supporting evidence, not the answer, and a panel that opens itself pushes the answer below the fold.",
+  "category": "AI",
+  "dependencies": [
+    "lucide-react@^1.39.0"
+  ],
+  "registryDependencies": [
+    "fmt",
+    "lib-styles",
+    "lib-utils",
+    "spinner"
+  ],
+  "files": [
+    {
+      "path": "components/ui/reasoning-block.tsx",
+      "type": "registry:ui",
+      "content": "import { useState, type ComponentProps, type ReactNode } from 'react'\nimport { Brain, ChevronDown, ChevronRight } from 'lucide-react'\nimport { Fmt } from '@/components/ui/fmt'\nimport { Spinner } from '@/components/ui/spinner'\nimport { focusRing, interactive, radius } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * A model's intermediate reasoning, folded away by default.\n *\n * Collapsed by default on purpose: reasoning is supporting evidence, not the\n * answer, and a panel that opens itself pushes the thing the reader asked for\n * below the fold.\n *\n * While streaming it opens itself and shows a spinner, because during that time\n * it is the only thing happening — then collapses once the answer starts. That\n * transition is the whole interaction, so `streaming` is a prop rather than\n * something inferred from children changing.\n */\nfunction ReasoningBlock({\n  children,\n  streaming = false,\n  duration,\n  defaultOpen,\n  label = 'Reasoning',\n  className,\n  ...props\n}: ComponentProps<'div'> & {\n  streaming?: boolean\n  /** Seconds spent thinking. Shown once finished. */\n  duration?: number\n  defaultOpen?: boolean\n  label?: ReactNode\n}) {\n  const [open, setOpen] = useState(defaultOpen ?? streaming)\n  const Chevron = open ? ChevronDown : ChevronRight\n\n  return (\n    <div\n      data-slot=\"reasoning-block\"\n      data-streaming={streaming || undefined}\n      className={cn('border-border overflow-hidden border', radius.surface, className)}\n      {...props}\n    >\n      <button\n        type=\"button\"\n        aria-expanded={open}\n        onClick={() => setOpen((value) => !value)}\n        className={cn(\n          'text-muted-foreground hover:text-foreground hover:bg-accent/40 flex w-full items-center gap-2 px-3 py-2',\n          interactive,\n          focusRing,\n        )}\n      >\n        <Chevron className=\"size-4 shrink-0\" aria-hidden=\"true\" />\n        {streaming ? (\n          <Spinner size=\"xs\" className=\"shrink-0\" label=\"Thinking\" />\n        ) : (\n          <Brain className=\"size-4 shrink-0\" aria-hidden=\"true\" />\n        )}\n        <span className=\"min-w-0 flex-1 truncate text-start text-xs font-medium\">\n          {streaming ? 'Thinking…' : label}\n        </span>\n        {!streaming && duration !== undefined && (\n          <span className=\"shrink-0 text-xs tabular-nums\">\n            <Fmt type=\"duration\" value={duration} />\n          </span>\n        )}\n      </button>\n\n      {open && (\n        <div className=\"border-border text-muted-foreground border-t p-3 text-sm\">\n          {children}\n        </div>\n      )}\n    </div>\n  )\n}\n\nexport { ReasoningBlock }\n"
+    }
+  ]
+}

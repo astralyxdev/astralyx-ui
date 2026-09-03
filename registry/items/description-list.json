@@ -1,0 +1,18 @@
+{
+  "name": "description-list",
+  "type": "registry:ui",
+  "title": "Description List",
+  "description": "Key/value metadata as a real <dl>, so a screen reader announces each term with its value. Columns on wide screens, stacked on narrow ones.",
+  "category": "Display",
+  "dependencies": [],
+  "registryDependencies": [
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/description-list.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps, ReactNode } from 'react'\nimport { cn } from '@/lib/utils'\n\n/**\n * Key/value metadata — the panel that sits beside almost every detail view.\n *\n * A real `<dl>`, so the pairing is in the markup rather than implied by a\n * two-column grid. That matters for a screen reader, which announces a term\n * and its description together.\n *\n * `columns` lays terms beside values on wide screens and stacks them on narrow\n * ones. Stacking is not a fallback: at phone width a 40/60 split leaves both\n * halves too narrow to read, and a long value wraps into a column an inch wide.\n */\nfunction DescriptionList({\n  className,\n  columns = true,\n  divided = false,\n  ...props\n}: ComponentProps<'dl'> & {\n  /** Term beside value from `sm` up. Off keeps them stacked at every width. */\n  columns?: boolean\n  divided?: boolean\n}) {\n  return (\n    <dl\n      data-slot=\"description-list\"\n      data-columns={columns}\n      className={cn(\n        'grid gap-x-6 gap-y-3 text-sm',\n        columns && 'sm:grid-cols-[minmax(0,12rem)_minmax(0,1fr)]',\n        divided && '[&>dd]:border-border [&>dd]:not-last:border-b [&>dd]:not-last:pb-3',\n        divided && columns && '[&>dt]:border-border [&>dt]:sm:not-last:border-b [&>dt]:sm:not-last:pb-3',\n        className,\n      )}\n      {...props}\n    />\n  )\n}\n\nfunction DescriptionTerm({ className, ...props }: ComponentProps<'dt'>) {\n  return (\n    <dt\n      data-slot=\"description-term\"\n      className={cn('text-muted-foreground min-w-0 font-medium', className)}\n      {...props}\n    />\n  )\n}\n\nfunction DescriptionDetails({ className, ...props }: ComponentProps<'dd'>) {\n  return (\n    <dd\n      data-slot=\"description-details\"\n      className={cn('ms-0 min-w-0 break-words', className)}\n      {...props}\n    />\n  )\n}\n\n/** Convenience for the common case: a flat list of pairs. */\nfunction DescriptionPairs({\n  items,\n  ...props\n}: ComponentProps<typeof DescriptionList> & {\n  items: { term: ReactNode; details: ReactNode }[]\n}) {\n  return (\n    <DescriptionList {...props}>\n      {items.map((item, index) => (\n        <div key={index} className=\"contents\">\n          <DescriptionTerm>{item.term}</DescriptionTerm>\n          <DescriptionDetails>{item.details}</DescriptionDetails>\n        </div>\n      ))}\n    </DescriptionList>\n  )\n}\n\nexport {\n  DescriptionDetails,\n  DescriptionList,\n  DescriptionPairs,\n  DescriptionTerm,\n}\n"
+    }
+  ]
+}

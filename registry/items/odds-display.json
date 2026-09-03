@@ -1,0 +1,21 @@
+{
+  "name": "odds-display",
+  "type": "registry:ui",
+  "title": "Odds Display",
+  "description": "A selectable price in decimal, fractional or American. Decimal is the source of truth and the others are derived, so a format switch can never change what the bet actually pays.",
+  "category": "Gaming",
+  "dependencies": [
+    "lucide-react@^1.39.0"
+  ],
+  "registryDependencies": [
+    "lib-styles",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/odds-display.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps, ReactNode } from 'react'\nimport { ArrowDown, ArrowUp } from 'lucide-react'\nimport { focusRing, interactive, radius } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * A selectable odds button that shows which way the price moved.\n *\n * Three formats, converted here rather than by the caller. Decimal, fractional\n * and American describe the same price and every operator has to render all\n * three for different markets — doing the conversion in each call site is how\n * they end up disagreeing.\n *\n * A drift is flagged with an arrow and a colour, which is the one thing a\n * bettor is watching. It is deliberately not animated: odds boards that flash\n * are unusable when several markets move at once.\n */\nexport type OddsFormat = 'decimal' | 'fractional' | 'american'\n\n/** Decimal is the source of truth; the others are derived from it. */\nfunction formatOdds(decimal: number, format: OddsFormat) {\n  if (format === 'decimal') return decimal.toFixed(2)\n\n  if (format === 'american') {\n    if (decimal >= 2) return `+${Math.round((decimal - 1) * 100)}`\n    return `${Math.round(-100 / (decimal - 1))}`\n  }\n\n  // Fractional: reduce (decimal - 1) to a simple fraction.\n  const profit = decimal - 1\n  let bestNumerator = 1\n  let bestDenominator = 1\n  let bestError = Infinity\n  for (let denominator = 1; denominator <= 20; denominator++) {\n    const numerator = Math.round(profit * denominator)\n    const error = Math.abs(profit - numerator / denominator)\n    if (error < bestError) {\n      bestError = error\n      bestNumerator = numerator\n      bestDenominator = denominator\n    }\n  }\n  return `${bestNumerator}/${bestDenominator}`\n}\n\nfunction OddsDisplay({\n  label,\n  odds,\n  previousOdds,\n  format = 'decimal',\n  selected = false,\n  suspended = false,\n  onSelect,\n  driftedLabel = 'drifted out',\n  shortenedLabel = 'shortened',\n  className,\n  ...props\n}: Omit<ComponentProps<'button'>, 'onSelect'> & {\n  label?: ReactNode\n  /** Decimal odds. */\n  odds: number\n  previousOdds?: number\n  format?: OddsFormat\n  selected?: boolean\n  suspended?: boolean\n  onSelect?: () => void\n  /** Accessible name when the price lengthens. */\n  driftedLabel?: string\n  shortenedLabel?: string\n}) {\n  const drifted = previousOdds !== undefined && previousOdds !== odds\n  const up = drifted && odds > previousOdds!\n  const down = drifted && odds < previousOdds!\n\n  return (\n    <button\n      type=\"button\"\n      data-slot=\"odds-display\"\n      aria-pressed={selected}\n      disabled={suspended}\n      onClick={onSelect}\n      className={cn(\n        'flex min-w-20 flex-col items-center gap-0.5 px-3 py-2',\n        radius.control,\n        interactive,\n        focusRing,\n        selected\n          ? 'bg-primary text-primary-foreground'\n          : 'bg-secondary hover:bg-accent text-foreground',\n        suspended && 'cursor-not-allowed opacity-50',\n        className,\n      )}\n      {...props}\n    >\n      {label && (\n        <span className={cn('truncate text-xs', selected ? 'opacity-80' : 'text-muted-foreground')}>\n          {label}\n        </span>\n      )}\n\n      <span className=\"flex items-center gap-1 text-sm font-semibold tabular-nums\">\n        {suspended ? '—' : formatOdds(odds, format)}\n        {/* Flagged, not animated: a flashing board is unusable. */}\n        {!suspended && up && (\n          <ArrowUp className=\"size-3 text-[var(--green-soft-foreground)]\" aria-label={driftedLabel} />\n        )}\n        {!suspended && down && (\n          <ArrowDown className=\"size-3 text-[var(--destructive-soft-foreground)]\" aria-label={shortenedLabel} />\n        )}\n      </span>\n    </button>\n  )\n}\n\nexport { OddsDisplay, formatOdds }\n"
+    }
+  ]
+}

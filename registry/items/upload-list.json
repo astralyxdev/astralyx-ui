@@ -1,0 +1,24 @@
+{
+  "name": "upload-list",
+  "type": "registry:ui",
+  "title": "Upload List",
+  "description": "Files in flight, with per-file progress and a retry for the ones that failed. A failed upload keeps its row rather than vanishing — silently dropping it is how people lose work.",
+  "category": "Media",
+  "dependencies": [
+    "lucide-react@^1.39.0"
+  ],
+  "registryDependencies": [
+    "attachment-preview",
+    "button",
+    "lib-styles",
+    "lib-utils",
+    "progress"
+  ],
+  "files": [
+    {
+      "path": "components/ui/upload-list.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps, ReactNode } from 'react'\nimport { RotateCcw, X } from 'lucide-react'\nimport { AttachmentPreview, type Attachment } from '@/components/ui/attachment-preview'\nimport { Button } from '@/components/ui/button'\nimport { Progress } from '@/components/ui/progress'\nimport { radius, surface } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * A batch of uploads with an aggregate bar.\n *\n * Overall progress is weighted by file size, not by count. Five thumbnails and\n * one video are not six equal sixths, and a per-file average sits at 83% while\n * the only file that matters has barely started.\n *\n * Failures stay in the list with a retry. Dropping them silently is how a user\n * ends up believing an upload finished; the failed row is the notification.\n */\nfunction UploadList({\n  uploads,\n  onRetry,\n  onRemove,\n  onCancelAll,\n  cancelAllLabel = 'Cancel remaining',\n  className,\n  ...props\n}: Omit<ComponentProps<'div'>, 'children'> & {\n  uploads: Attachment[]\n  onRetry?: (id: string) => void\n  onRemove?: (id: string) => void\n  onCancelAll?: () => void\n  cancelAllLabel?: ReactNode\n}) {\n  const active = uploads.filter((u) => u.progress !== undefined && u.progress < 1 && !u.error)\n  const failed = uploads.filter((u) => u.error)\n  const done = uploads.filter((u) => u.progress === undefined || u.progress >= 1).length\n\n  // Weighted by bytes: five thumbnails and one video are not six equal sixths.\n  const totalBytes = uploads.reduce((sum, u) => sum + (u.size ?? 0), 0)\n  const uploadedBytes = uploads.reduce(\n    (sum, u) => sum + (u.size ?? 0) * (u.error ? 0 : (u.progress ?? 1)),\n    0,\n  )\n  const overall = totalBytes > 0 ? uploadedBytes / totalBytes : done / Math.max(uploads.length, 1)\n\n  if (uploads.length === 0) return null\n\n  return (\n    <div\n      data-slot=\"upload-list\"\n      className={cn(surface, radius.surface, 'flex flex-col gap-3 p-3', className)}\n      {...props}\n    >\n      <div className=\"flex flex-col gap-1.5\">\n        <div className=\"flex items-baseline justify-between gap-2 text-xs\">\n          <span className=\"font-medium\">\n            {active.length > 0\n              ? `Uploading ${active.length} of ${uploads.length}`\n              : failed.length > 0\n                ? `${failed.length} failed`\n                : `${uploads.length} uploaded`}\n          </span>\n          <span className=\"text-muted-foreground tabular-nums\">\n            {Math.round(overall * 100)}%\n          </span>\n        </div>\n        <Progress value={overall * 100} className=\"h-1.5\" />\n      </div>\n\n      <ul className=\"flex list-none flex-col gap-2\">\n        {uploads.map((upload) => (\n          <li key={upload.id} className=\"flex items-center gap-2\">\n            <AttachmentPreview\n              attachment={upload}\n              onRemove={onRemove}\n              compact\n              className=\"min-w-0 flex-1\"\n            />\n            {/* Failures keep a retry rather than disappearing. */}\n            {upload.error && onRetry && (\n              <Button\n                variant=\"secondary\"\n                size=\"icon-xs\"\n                aria-label={`Retry ${upload.name}`}\n                onClick={() => onRetry(upload.id)}\n              >\n                <RotateCcw />\n              </Button>\n            )}\n          </li>\n        ))}\n      </ul>\n\n      {active.length > 0 && onCancelAll && (\n        <Button variant=\"ghost\" size=\"xs\" className=\"self-start\" onClick={onCancelAll}>\n          <X />\n          {cancelAllLabel}\n        </Button>\n      )}\n    </div>\n  )\n}\n\nexport { UploadList }\n"
+    }
+  ]
+}

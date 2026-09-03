@@ -1,0 +1,22 @@
+{
+  "name": "popover",
+  "type": "registry:ui",
+  "title": "Popover",
+  "description": "Rich content anchored to a trigger. Positioned with a fixed-position popper that flips when it would overflow, and dismissed by Escape or an outside press.",
+  "category": "Overlays",
+  "dependencies": [],
+  "registryDependencies": [
+    "lib-styles",
+    "lib-utils",
+    "primitive-dismissable",
+    "primitive-popper",
+    "primitive-slot"
+  ],
+  "files": [
+    {
+      "path": "components/ui/popover.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  createContext,\n  use,\n  useMemo,\n  useRef,\n  useState,\n  type ComponentProps,\n  type ReactNode,\n} from 'react'\nimport { useDismissable } from '@/components/primitives/dismissable'\nimport { usePopper, type Align, type Side } from '@/components/primitives/popper'\nimport { Slot } from '@/components/primitives/slot'\nimport { menuSurface, radius } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/** Rich content anchored to a trigger, dismissed by Escape or an outside press. */\ntype PopoverContextValue = {\n  open: boolean\n  setOpen: (open: boolean) => void\n  anchorRef: React.RefObject<HTMLElement | null>\n  contentRef: React.RefObject<HTMLDivElement | null>\n}\n\nconst PopoverContext = createContext<PopoverContextValue | null>(null)\n\nfunction usePopover() {\n  const context = use(PopoverContext)\n  if (!context) throw new Error('Must be used inside <Popover>')\n  return context\n}\n\nfunction Popover({\n  open: openProp,\n  defaultOpen = false,\n  onOpenChange,\n  children,\n}: {\n  open?: boolean\n  defaultOpen?: boolean\n  onOpenChange?: (open: boolean) => void\n  children: ReactNode\n}) {\n  const controlled = openProp !== undefined\n  const [uncontrolled, setUncontrolled] = useState(defaultOpen)\n  const open = controlled ? openProp : uncontrolled\n\n  const anchorRef = useRef<HTMLElement>(null)\n  const contentRef = useRef<HTMLDivElement>(null)\n\n  const context = useMemo<PopoverContextValue>(\n    () => ({\n      open,\n      anchorRef,\n      contentRef,\n      setOpen: (next) => {\n        if (!controlled) setUncontrolled(next)\n        onOpenChange?.(next)\n      },\n    }),\n    [open, controlled, onOpenChange],\n  )\n\n  return <PopoverContext value={context}>{children}</PopoverContext>\n}\n\nfunction PopoverTrigger({\n  asChild = false,\n  onClick,\n  ...props\n}: ComponentProps<'button'> & { asChild?: boolean }) {\n  const { open, setOpen, anchorRef } = usePopover()\n  const Comp = asChild ? Slot : 'button'\n\n  return (\n    <Comp\n      // The anchor ref is typed for any element, since `asChild` can make this\n      // an anchor, a div, anything — the cast keeps that generality.\n      ref={anchorRef as React.Ref<HTMLButtonElement>}\n      data-slot=\"popover-trigger\"\n      aria-haspopup=\"dialog\"\n      aria-expanded={open}\n      onClick={(event: React.MouseEvent<HTMLButtonElement>) => {\n        onClick?.(event)\n        if (!event.defaultPrevented) setOpen(!open)\n      }}\n      {...props}\n    />\n  )\n}\n\nfunction PopoverContent({\n  className,\n  side = 'bottom',\n  align = 'center',\n  offset = 6,\n  ...props\n}: ComponentProps<'div'> & {\n  side?: Side\n  align?: Align\n  offset?: number\n}) {\n  const { open, setOpen, anchorRef, contentRef } = usePopover()\n\n  const { style, side: resolved } = usePopper({\n    open,\n    anchorRef,\n    floatingRef: contentRef,\n    side,\n    align,\n    offset,\n  })\n\n  useDismissable({\n    open,\n    onDismiss: () => setOpen(false),\n    refs: [anchorRef, contentRef],\n  })\n\n  if (!open) return null\n\n  return (\n    <div\n      ref={contentRef}\n      role=\"dialog\"\n      data-slot=\"popover-content\"\n      data-side={resolved}\n      style={style}\n      className={cn(menuSurface, radius.surface, 'w-72 p-4 text-sm', className)}\n      {...props}\n    />\n  )\n}\n\nexport { Popover, PopoverContent, PopoverTrigger, usePopover }\n"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "wallet-address",
+  "type": "registry:ui",
+  "title": "Wallet Address",
+  "description": "An address shortened for display but never for copying. The truncation floor is security-relevant: attackers generate lookalikes sharing the first and last characters, so `chars` cannot go below six.",
+  "category": "Crypto",
+  "dependencies": [
+    "lucide-react@^1.39.0"
+  ],
+  "registryDependencies": [
+    "copy-button",
+    "lib-styles",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/wallet-address.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps, ReactNode } from 'react'\nimport { ExternalLink } from 'lucide-react'\nimport { CopyButton } from '@/components/ui/copy-button'\nimport { focusRing, radius } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * An address, shortened for display but never for copying.\n *\n * The truncation is the security-relevant part. Addresses are compared by their\n * ends, so an attacker generates a lookalike sharing the first and last few\n * characters — \"address poisoning\". Showing too few characters makes that\n * attack trivial, which is why the minimum here is 6 leading and 4 trailing and\n * `chars` cannot go below it.\n *\n * Copy always yields the full address. A UI that copies what it displays is how\n * funds get sent to a truncated string.\n *\n * A `name` (ENS or similar) replaces the address visually but never replaces it\n * for copying — names are re-registrable and are not identity.\n */\nexport type WalletAddressProps = Omit<ComponentProps<'span'>, 'children'> & {\n  address: string\n  /** ENS or label. Shown instead of the address; the address is still copied. */\n  name?: ReactNode\n  /** Leading characters. Clamped to a minimum of 6. */\n  chars?: number\n  copyable?: boolean\n  /** Block explorer URL for this address. */\n  href?: string\n  avatar?: ReactNode\n  mono?: boolean\n  size?: 'sm' | 'default'\n  /** Accessible name for the explorer link. */\n  explorerLabel?: string\n  copyLabel?: string\n}\n\n/** Middle ellipsis, with a floor that keeps lookalikes distinguishable. */\nfunction shortenAddress(address: string, chars = 6) {\n  const lead = Math.max(6, chars)\n  const tail = 4\n  if (address.length <= lead + tail + 1) return address\n  return `${address.slice(0, lead)}…${address.slice(-tail)}`\n}\n\nfunction WalletAddress({\n  address,\n  name,\n  chars = 6,\n  copyable = true,\n  href,\n  avatar,\n  mono = true,\n  size = 'default',\n  explorerLabel = 'View on block explorer',\n  copyLabel = 'Copy address',\n  className,\n  ...props\n}: WalletAddressProps) {\n  const shown = name ?? shortenAddress(address, chars)\n\n  return (\n    <span\n      data-slot=\"wallet-address\"\n      className={cn(\n        'inline-flex items-center gap-1.5',\n        size === 'sm' ? 'text-xs' : 'text-sm',\n        className,\n      )}\n      {...props}\n    >\n      {avatar}\n\n      <span\n        className={cn('truncate', mono && !name && 'font-mono')}\n        // The full value on hover, so it can be verified without copying.\n        title={address}\n      >\n        {shown}\n      </span>\n\n      {href && (\n        <a\n          href={href}\n          target=\"_blank\"\n          rel=\"noreferrer noopener\"\n          aria-label={explorerLabel}\n          className={cn(\n            'text-muted-foreground hover:text-foreground shrink-0',\n            radius.xs,\n            focusRing,\n          )}\n        >\n          <ExternalLink className=\"size-3.5\" />\n        </a>\n      )}\n\n      {/* Always the full address, never what is displayed. */}\n      {copyable && <CopyButton value={address} label={copyLabel} />}\n    </span>\n  )\n}\n\nexport { WalletAddress, shortenAddress }\n"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "page-header",
+  "type": "registry:ui",
+  "title": "Page Header",
+  "description": "The masthead a page opens with: eyebrow, title, lead and a meta row. Extracted after four pages in this catalogue had each grown their own copy and drifted apart.",
+  "category": "Utility",
+  "dependencies": [],
+  "registryDependencies": [
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/page-header.tsx",
+      "type": "registry:ui",
+      "content": "import type { ReactNode } from 'react'\nimport { cn } from '@/lib/utils'\n\n/**\n * The masthead every page in the catalogue opens with.\n *\n * Extracted because four pages had each grown their own copy of the same\n * markup, and they had already drifted — different bottom padding, different\n * measure on the lead paragraph. One header keeps the rhythm identical as you\n * move between a doc, a component and an index.\n *\n * `eyebrow` is the line above the title: a breadcrumb on a component page, the\n * source path, a section label. `meta` sits under the lead for counts, badges\n * or links.\n */\nfunction PageHeader({\n  eyebrow,\n  title,\n  description,\n  meta,\n  className,\n}: {\n  eyebrow?: ReactNode\n  title: string\n  description?: ReactNode\n  meta?: ReactNode\n  className?: string\n}) {\n  return (\n    <header className={cn('border-border mb-10 border-b pb-6', className)}>\n      {eyebrow && <div className=\"mb-2\">{eyebrow}</div>}\n      <h1 className=\"text-3xl font-semibold tracking-tight text-balance\">\n        {title}\n      </h1>\n      {description && (\n        <p className=\"text-muted-foreground mt-2 max-w-2xl text-sm text-pretty\">\n          {description}\n        </p>\n      )}\n      {meta && <div className=\"mt-4 flex flex-wrap items-center gap-2\">{meta}</div>}\n    </header>\n  )\n}\n\nexport { PageHeader }\n"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "resource-meter",
+  "type": "registry:ui",
+  "title": "Resource Meter",
+  "description": "Used against a cap: build minutes, storage, seats, rate limits. Unlike Progress it can exceed 100%, because a quota can be 130% used and hiding that is how a bill becomes a surprise.",
+  "category": "Operations",
+  "dependencies": [],
+  "registryDependencies": [
+    "fmt",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/resource-meter.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps, ReactNode } from 'react'\nimport { Fmt } from '@/components/ui/fmt'\nimport { cn } from '@/lib/utils'\n\n/**\n * A used-against-cap bar: build minutes, storage, seats, rate limits.\n *\n * Not `Progress`, which reports how far along a task is. This reports\n * consumption of a fixed budget, so it warns as it fills and can overflow past\n * 100% — a task cannot be 130% done, but a quota can be 130% used, and hiding\n * that by clamping is how a bill becomes a surprise.\n */\nfunction ResourceMeter({\n  label,\n  used,\n  cap,\n  unit = 'number',\n  tone,\n  hint,\n  size = 'default',\n  className,\n  ...props\n}: Omit<ComponentProps<'div'>, 'children'> & {\n  label: ReactNode\n  used: number\n  cap: number\n  /** How the numbers are written. */\n  unit?: 'number' | 'bytes' | 'duration'\n  /** Any CSS colour. Defaults to a threshold ramp. */\n  tone?: string\n  hint?: ReactNode\n  size?: 'sm' | 'default'\n}) {\n  const ratio = cap > 0 ? used / cap : 0\n  const over = ratio > 1\n  const percent = Math.round(ratio * 100)\n\n  const colour =\n    tone ??\n    (over || ratio >= 0.95\n      ? 'var(--destructive)'\n      : ratio >= 0.8\n        ? 'var(--amber)'\n        : 'var(--blue)')\n\n  return (\n    <div\n      data-slot=\"resource-meter\"\n      className={cn('flex min-w-0 flex-col gap-1.5', className)}\n      {...props}\n    >\n      <div className=\"flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5\">\n        <span className={cn('font-medium', size === 'sm' ? 'text-xs' : 'text-sm')}>\n          {label}\n        </span>\n        <span className=\"text-muted-foreground text-xs tabular-nums\">\n          <Fmt type={unit} value={used} /> / <Fmt type={unit} value={cap} />\n          <span className={cn('ms-1.5', over && 'text-[var(--destructive-soft-foreground)] font-medium')}>\n            ({percent}%)\n          </span>\n        </span>\n      </div>\n\n      <div\n        role=\"progressbar\"\n        aria-valuenow={used}\n        aria-valuemin={0}\n        aria-valuemax={cap}\n        aria-label={typeof label === 'string' ? label : undefined}\n        className={cn(\n          'bg-secondary w-full overflow-hidden rounded-full [corner-shape:round]',\n          size === 'sm' ? 'h-1.5' : 'h-2',\n        )}\n      >\n        <div\n          className=\"h-full rounded-full transition-[width,background-color] duration-300 ease-out [corner-shape:round] motion-reduce:transition-none\"\n          style={{\n            // Clamped for the bar only — the number above still says 130%.\n            width: `${Math.min(ratio, 1) * 100}%`,\n            backgroundColor: colour,\n          }}\n        />\n      </div>\n\n      {hint && <p className=\"text-muted-foreground/70 text-xs\">{hint}</p>}\n      {over && !hint && (\n        <p className=\"text-[var(--destructive-soft-foreground)] text-xs\">\n          Over budget by <Fmt type={unit} value={used - cap} />\n        </p>\n      )}\n    </div>\n  )\n}\n\nexport { ResourceMeter }\n"
+    }
+  ]
+}

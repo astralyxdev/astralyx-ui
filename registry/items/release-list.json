@@ -1,0 +1,22 @@
+{
+  "name": "release-list",
+  "type": "registry:ui",
+  "title": "Release List",
+  "description": "A changelog as a document — each version an article with a real heading, so it can be linked to and navigated by heading. Never sorts, since \"newest first\" cannot be derived from semver once pre-releases exist.",
+  "category": "Development",
+  "dependencies": [
+    "lucide-react@^1.39.0"
+  ],
+  "registryDependencies": [
+    "badge",
+    "lib-styles",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/release-list.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps, ReactNode } from 'react'\nimport { Tag } from 'lucide-react'\nimport { Badge } from '@/components/ui/badge'\nimport { radius, surface } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * A changelog: versions newest first, each with its notes.\n *\n * The version is an `<h3>` inside an article rather than a styled div, because\n * a changelog is a document — someone lands on it from a link and navigates it\n * by heading. Order is the caller's; this never sorts, since \"newest first\"\n * cannot be derived from a semver string alone once pre-releases are involved.\n */\nexport type Release = {\n  version: string\n  date?: Date\n  /** Highlighted as the current or newest release. */\n  current?: boolean\n  tag?: ReactNode\n  notes?: ReactNode\n  /** Grouped bullets — Added, Fixed, Changed. */\n  sections?: { label: string; items: ReactNode[] }[]\n}\n\nfunction ReleaseList({\n  releases,\n  locale = 'en-GB',\n  latestLabel = 'Latest',\n  className,\n  ...props\n}: ComponentProps<'div'> & {\n  releases: Release[]\n  locale?: string\n  /** Badge on the newest release. */\n  latestLabel?: ReactNode\n}) {\n  const date = new Intl.DateTimeFormat(locale, {\n    day: 'numeric',\n    month: 'long',\n    year: 'numeric',\n  })\n\n  return (\n    <div\n      data-slot=\"release-list\"\n      className={cn('flex flex-col gap-4', className)}\n      {...props}\n    >\n      {releases.map((release) => (\n        <article\n          key={release.version}\n          className={cn(surface, radius.surface, 'p-4')}\n        >\n          <header className=\"mb-3 flex flex-wrap items-center gap-2\">\n            <Tag className=\"text-muted-foreground size-4 shrink-0\" aria-hidden=\"true\" />\n            <h3 className=\"font-mono text-sm font-semibold\">{release.version}</h3>\n            {release.current && (\n              <Badge size=\"sm\" color=\"green\">\n                {latestLabel}\n              </Badge>\n            )}\n            {release.tag}\n            {release.date && (\n              <time\n                dateTime={release.date.toISOString()}\n                className=\"text-muted-foreground ms-auto text-xs\"\n              >\n                {date.format(release.date)}\n              </time>\n            )}\n          </header>\n\n          {release.notes && (\n            <div className=\"text-muted-foreground mb-3 text-sm\">{release.notes}</div>\n          )}\n\n          {release.sections?.map((section) => (\n            <section key={section.label} className=\"mb-3 last:mb-0\">\n              <h4 className=\"mb-1 text-xs font-medium tracking-wide uppercase\">\n                {section.label}\n              </h4>\n              <ul className=\"text-muted-foreground ms-4 flex list-disc flex-col gap-0.5 text-sm\">\n                {section.items.map((item, index) => (\n                  <li key={index}>{item}</li>\n                ))}\n              </ul>\n            </section>\n          ))}\n        </article>\n      ))}\n    </div>\n  )\n}\n\nexport { ReleaseList }\n"
+    }
+  ]
+}

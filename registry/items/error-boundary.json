@@ -1,0 +1,22 @@
+{
+  "name": "error-boundary",
+  "type": "registry:ui",
+  "title": "Error Boundary",
+  "description": "Catches a render error in its subtree and shows a fallback. The one component here that must be a class — getDerivedStateFromError has no hook equivalent.",
+  "category": "Utility",
+  "dependencies": [
+    "lucide-react@^1.39.0"
+  ],
+  "registryDependencies": [
+    "button",
+    "lib-styles",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/error-boundary.tsx",
+      "type": "registry:ui",
+      "content": "import { Component, type ErrorInfo, type ReactNode } from 'react'\nimport { RotateCcw, TriangleAlert } from 'lucide-react'\nimport { Button } from '@/components/ui/button'\nimport { radius, surface } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * Catches a render error in its subtree and shows a fallback.\n *\n * The one component here that must be a class: `componentDidCatch` and\n * `getDerivedStateFromError` have no hook equivalent, and React has said they\n * are not getting one.\n *\n * `resetKeys` is what makes recovery work. Clearing the error alone re-renders\n * the same children with the same props and throws again immediately — the\n * boundary has to be told what changed. Pass whatever caused the failure (a\n * route, a record id) and it resets when that changes.\n *\n * It deliberately does not report anywhere. Wire `onError` to your own\n * telemetry rather than having a UI component decide where errors go.\n */\ntype ErrorBoundaryProps = {\n  children: ReactNode\n  /** Rendered instead of the subtree. Receives the error and a reset callback. */\n  fallback?: (error: Error, reset: () => void) => ReactNode\n  onError?: (error: Error, info: ErrorInfo) => void\n  /** Clears the error whenever any of these change. */\n  resetKeys?: unknown[]\n  title?: string\n  /** Text on the reset button in the default fallback. */\n  retryLabel?: ReactNode\n}\n\ntype ErrorBoundaryState = { error: Error | null }\n\nclass ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {\n  state: ErrorBoundaryState = { error: null }\n\n  static getDerivedStateFromError(error: Error): ErrorBoundaryState {\n    return { error }\n  }\n\n  componentDidCatch(error: Error, info: ErrorInfo) {\n    this.props.onError?.(error, info)\n  }\n\n  componentDidUpdate(previous: ErrorBoundaryProps) {\n    const before = previous.resetKeys\n    const after = this.props.resetKeys\n    if (!this.state.error || !before || !after) return\n\n    const changed =\n      before.length !== after.length ||\n      before.some((key, index) => !Object.is(key, after[index]))\n\n    if (changed) this.reset()\n  }\n\n  reset = () => this.setState({ error: null })\n\n  render() {\n    const { error } = this.state\n    if (!error) return this.props.children\n\n    if (this.props.fallback) return this.props.fallback(error, this.reset)\n\n    return (\n      <div\n        role=\"alert\"\n        data-slot=\"error-boundary\"\n        className={cn(surface, radius.surface, 'flex flex-col items-start gap-3 p-4')}\n      >\n        <div className=\"flex items-center gap-2\">\n          <TriangleAlert\n            className=\"size-4 shrink-0 text-[var(--destructive-soft-foreground)]\"\n            aria-hidden=\"true\"\n          />\n          <h2 className=\"text-sm font-medium\">\n            {this.props.title ?? 'Something went wrong'}\n          </h2>\n        </div>\n\n        <p className=\"text-muted-foreground font-mono text-xs break-words\">\n          {error.message}\n        </p>\n\n        <Button variant=\"secondary\" size=\"sm\" onClick={this.reset}>\n          <RotateCcw />\n          {this.props.retryLabel ?? 'Try again'}\n        </Button>\n      </div>\n    )\n  }\n}\n\nexport { ErrorBoundary }\nexport type { ErrorBoundaryProps }\n"
+    }
+  ]
+}

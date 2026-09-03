@@ -1,0 +1,19 @@
+{
+  "name": "http-status",
+  "type": "registry:ui",
+  "title": "HTTP Status",
+  "description": "A status code with its reason phrase. Colour follows the class, never the individual code — grading a 503 as worse than a 500 invents a severity ordering that does not exist.",
+  "category": "API",
+  "dependencies": [],
+  "registryDependencies": [
+    "badge",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/http-status.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps } from 'react'\nimport { Badge } from '@/components/ui/badge'\nimport { cn } from '@/lib/utils'\n\n/**\n * An HTTP status code with its meaning.\n *\n * The number alone is only legible to people who have memorised the table, and\n * the ones that matter most are the ones nobody memorises — 409, 422, 429 are\n * each a different action for the reader. The reason phrase is shown beside the\n * code rather than behind a tooltip.\n *\n * Colour follows the class, not the individual code: every 2xx is the same\n * green, every 5xx the same red. Grading within a class invents a severity\n * ordering that does not exist — a 503 is not \"worse\" than a 500, it is\n * different.\n *\n * 3xx is treated as informational rather than as success. A redirect is not a\n * completed request, and colouring it green hides a redirect loop.\n */\nconst PHRASES: Record<number, string> = {\n  200: 'OK', 201: 'Created', 202: 'Accepted', 204: 'No Content',\n  301: 'Moved Permanently', 302: 'Found', 304: 'Not Modified', 307: 'Temporary Redirect', 308: 'Permanent Redirect',\n  400: 'Bad Request', 401: 'Unauthorized', 403: 'Forbidden', 404: 'Not Found',\n  405: 'Method Not Allowed', 409: 'Conflict', 410: 'Gone', 413: 'Payload Too Large',\n  418: \"I'm a teapot\", 422: 'Unprocessable Content', 429: 'Too Many Requests',\n  500: 'Internal Server Error', 501: 'Not Implemented', 502: 'Bad Gateway',\n  503: 'Service Unavailable', 504: 'Gateway Timeout',\n}\n\n/** Colour by class. Grading inside a class implies an ordering that is not real. */\nfunction toneFor(status: number) {\n  if (status >= 500) return 'destructive'\n  if (status >= 400) return 'amber'\n  if (status >= 300) return 'blue'\n  if (status >= 200) return 'green'\n  return 'neutral'\n}\n\nfunction HttpStatus({\n  status,\n  phrase,\n  showPhrase = true,\n  size = 'sm',\n  className,\n  ...props\n}: Omit<ComponentProps<typeof Badge>, 'color' | 'children'> & {\n  status: number\n  /** Overrides the built-in reason phrase. */\n  phrase?: string\n  showPhrase?: boolean\n  size?: 'sm' | 'default'\n}) {\n  const text = phrase ?? PHRASES[status]\n\n  return (\n    <Badge\n      data-slot=\"http-status\"\n      data-status={status}\n      color={toneFor(status)}\n      size={size}\n      className={cn('font-mono tabular-nums', className)}\n      {...props}\n    >\n      {status}\n      {showPhrase && text && <span className=\"font-sans font-normal\">{text}</span>}\n    </Badge>\n  )\n}\n\nexport { HttpStatus, PHRASES as httpPhrases, toneFor as httpStatusTone }\n"
+    }
+  ]
+}

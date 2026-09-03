@@ -1,0 +1,18 @@
+{
+  "name": "confidence-meter",
+  "type": "registry:ui",
+  "title": "Confidence Meter",
+  "description": "How sure a model is, in five steps. Segmented on purpose — a smooth bar invites reading 0.834 as different from 0.851, which is not what a calibration score supports.",
+  "category": "AI",
+  "dependencies": [],
+  "registryDependencies": [
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/confidence-meter.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps, ReactNode } from 'react'\nimport { cn } from '@/lib/utils'\n\n/**\n * A model's confidence in an answer.\n *\n * Segmented rather than continuous, deliberately. A smooth bar invites reading\n * 0.834 as meaningfully different from 0.851, which is not what a calibration\n * score supports. Five steps say \"fairly confident\" and stop there.\n *\n * The band label is the accessible name, so a screen reader hears \"confidence:\n * high\" instead of a percentage that implies more precision than exists.\n */\nconst BANDS = [\n  { max: 0.2, label: 'Very low', tone: 'bg-[var(--destructive)]' },\n  { max: 0.4, label: 'Low', tone: 'bg-[var(--destructive)]' },\n  { max: 0.6, label: 'Moderate', tone: 'bg-[var(--amber)]' },\n  { max: 0.8, label: 'High', tone: 'bg-[var(--green)]' },\n  { max: 1.01, label: 'Very high', tone: 'bg-[var(--green)]' },\n] as const\n\nconst SEGMENTS = 5\n\nfunction ConfidenceMeter({\n  value,\n  label = 'Confidence',\n  showLabel = true,\n  hint,\n  size = 'default',\n  className,\n  ...props\n}: Omit<ComponentProps<'div'>, 'children'> & {\n  /** 0 to 1. */\n  value: number\n  label?: ReactNode\n  showLabel?: boolean\n  hint?: ReactNode\n  size?: 'sm' | 'default'\n}) {\n  const ratio = Math.max(0, Math.min(value, 1))\n  const band = BANDS.find((entry) => ratio < entry.max) ?? BANDS[BANDS.length - 1]\n  const filled = Math.max(1, Math.ceil(ratio * SEGMENTS))\n\n  return (\n    <div\n      data-slot=\"confidence-meter\"\n      className={cn('flex min-w-0 flex-col gap-1', className)}\n      {...props}\n    >\n      {showLabel && (\n        <div className=\"text-muted-foreground flex items-baseline justify-between gap-2 text-xs\">\n          <span className=\"font-medium\">{label}</span>\n          <span>{band.label}</span>\n        </div>\n      )}\n\n      <div\n        role=\"meter\"\n        aria-valuenow={Math.round(ratio * 100)}\n        aria-valuemin={0}\n        aria-valuemax={100}\n        aria-valuetext={band.label}\n        aria-label={typeof label === 'string' ? label : 'Confidence'}\n        className=\"flex gap-1\"\n      >\n        {Array.from({ length: SEGMENTS }, (_, index) => (\n          <span\n            key={index}\n            className={cn(\n              'flex-1 rounded-full [corner-shape:round]',\n              size === 'sm' ? 'h-1' : 'h-1.5',\n              index < filled ? band.tone : 'bg-secondary',\n            )}\n          />\n        ))}\n      </div>\n\n      {hint && <p className=\"text-muted-foreground/70 text-xs\">{hint}</p>}\n    </div>\n  )\n}\n\nexport { ConfidenceMeter }\n"
+    }
+  ]
+}

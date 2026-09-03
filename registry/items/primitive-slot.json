@@ -1,0 +1,16 @@
+{
+  "name": "primitive-slot",
+  "type": "registry:primitive",
+  "title": "slot",
+  "dependencies": [],
+  "registryDependencies": [
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/primitives/slot.tsx",
+      "type": "registry:primitive",
+      "content": "import {\n  Children,\n  cloneElement,\n  isValidElement,\n  type AnyActionArg,\n  type CSSProperties,\n  type ReactElement,\n  type ReactNode,\n} from 'react'\nimport { cn } from '@/lib/utils'\n\ntype AnyProps = Record<string, unknown>\n\n/**\n * Merge a parent's props onto a child element's own props.\n *\n * Event handlers are chained (child first, then parent), `className` is merged\n * through `cn`, `style` is shallow-merged, and everything else the parent sets\n * wins — except that a child's explicit value is never overwritten by\n * `undefined`.\n */\nfunction mergeProps(parent: AnyProps, child: AnyProps): AnyProps {\n  const merged: AnyProps = { ...child }\n\n  for (const key in parent) {\n    const parentValue = parent[key]\n    const childValue = child[key]\n\n    if (/^on[A-Z]/.test(key)) {\n      if (typeof parentValue === 'function' && typeof childValue === 'function') {\n        merged[key] = (...args: AnyActionArg) => {\n          childValue(...args)\n          parentValue(...args)\n        }\n      } else {\n        merged[key] = parentValue ?? childValue\n      }\n      continue\n    }\n\n    if (key === 'className') {\n      merged[key] = cn(parentValue as string, childValue as string)\n      continue\n    }\n\n    if (key === 'style') {\n      merged[key] = {\n        ...(parentValue as CSSProperties),\n        ...(childValue as CSSProperties),\n      }\n      continue\n    }\n\n    if (parentValue !== undefined) merged[key] = parentValue\n  }\n\n  return merged\n}\n\ntype SlotProps = AnyProps & { children?: ReactNode }\n\n/**\n * Render into the single child element instead of a wrapper of our own — the\n * primitive behind every `asChild` prop in the kit. React 19 treats `ref` as an\n * ordinary prop, so it merges like anything else.\n */\nfunction Slot({ children, ...props }: SlotProps) {\n  const child = Children.only(children)\n\n  if (!isValidElement(child)) return null\n\n  const element = child as ReactElement<AnyProps>\n\n  return cloneElement(element, mergeProps(props, element.props))\n}\n\nexport { Slot, mergeProps }\nexport type { SlotProps }\n"
+    }
+  ]
+}

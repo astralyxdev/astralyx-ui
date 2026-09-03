@@ -1,0 +1,18 @@
+{
+  "name": "aspect-ratio",
+  "type": "registry:ui",
+  "title": "Aspect Ratio",
+  "description": "Hold a box at a fixed ratio while its width is fluid. Modern CSS aspect-ratio, so no padding-top hack.",
+  "category": "Display",
+  "dependencies": [],
+  "registryDependencies": [
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/aspect-ratio.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps } from 'react'\nimport { cn } from '@/lib/utils'\n\n/**\n * Hold a box at a fixed ratio while its width is fluid.\n *\n * Modern `aspect-ratio` makes the old padding-top trick unnecessary; this exists\n * so the ratio is a prop rather than an inline style at every call site.\n */\nfunction AspectRatio({\n  className,\n  ratio = 16 / 9,\n  style,\n  ...props\n}: ComponentProps<'div'> & { ratio?: number }) {\n  return (\n    <div\n      data-slot=\"aspect-ratio\"\n      className={cn('w-full overflow-hidden', className)}\n      style={{ aspectRatio: ratio, ...style }}\n      {...props}\n    />\n  )\n}\n\nexport { AspectRatio }\n"
+    }
+  ]
+}

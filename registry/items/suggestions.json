@@ -1,0 +1,19 @@
+{
+  "name": "suggestions",
+  "type": "registry:ui",
+  "title": "Suggestions",
+  "description": "Starter prompts, offered before the first message. Buttons rather than a list, because each one performs an action.",
+  "category": "AI",
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/suggestions.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps } from 'react'\nimport { Button } from '@/components/ui/button'\nimport { cn } from '@/lib/utils'\n\n/**\n * Starter prompts, offered before the first message.\n *\n * Buttons rather than a list: each one performs an action, and the pill shape\n * signals \"tap me\" in a way a bulleted list does not.\n */\nfunction Suggestions({\n  className,\n  items,\n  onSelect,\n  ...props\n}: Omit<ComponentProps<'div'>, 'onSelect'> & {\n  items: string[]\n  onSelect?: (prompt: string) => void\n}) {\n  return (\n    <div\n      data-slot=\"suggestions\"\n      className={cn('flex flex-wrap gap-2', className)}\n      {...props}\n    >\n      {items.map((item) => (\n        <Button\n          key={item}\n          size=\"xs\"\n          variant=\"secondary\"\n          onClick={() => onSelect?.(item)}\n          // Long prompts must not stretch the row into one wide line.\n          className=\"max-w-full justify-start\"\n        >\n          <span className=\"truncate\">{item}</span>\n        </Button>\n      ))}\n    </div>\n  )\n}\n\nexport { Suggestions }\n"
+    }
+  ]
+}

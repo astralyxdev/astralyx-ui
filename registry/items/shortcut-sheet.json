@@ -1,0 +1,19 @@
+{
+  "name": "shortcut-sheet",
+  "type": "registry:ui",
+  "title": "Shortcut Sheet",
+  "description": "A keyboard reference grouped by area. Presentational by design — it never binds the keys, because the component that shows a cheat sheet is not the one that owns the handlers.",
+  "category": "Development",
+  "dependencies": [],
+  "registryDependencies": [
+    "kbd",
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/shortcut-sheet.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps, ReactNode } from 'react'\nimport { Kbd } from '@/components/ui/kbd'\nimport { cn } from '@/lib/utils'\n\n/**\n * A keyboard reference, grouped by area.\n *\n * Presentational only — it renders a map of shortcuts and nothing else. It does\n * not bind them, because the component that displays a cheat sheet is never the\n * one that owns the handlers, and a sheet that silently registered global keys\n * would fight whatever actually implements them.\n *\n * Keys are given as arrays so the modifier chain stays data: `['Meta', 'K']`\n * renders two caps, and the same array can drive a matcher elsewhere.\n */\nexport type Shortcut = {\n  keys: string[]\n  label: ReactNode\n}\n\nexport type ShortcutGroup = {\n  label: string\n  shortcuts: Shortcut[]\n}\n\nfunction ShortcutSheet({\n  groups,\n  columns = true,\n  className,\n  ...props\n}: ComponentProps<'div'> & {\n  groups: ShortcutGroup[]\n  /** Two columns from `sm` up. */\n  columns?: boolean\n}) {\n  return (\n    <div\n      data-slot=\"shortcut-sheet\"\n      className={cn(\n        'grid gap-x-8 gap-y-6',\n        columns && 'sm:grid-cols-2',\n        className,\n      )}\n      {...props}\n    >\n      {groups.map((group) => (\n        <section key={group.label} className=\"flex flex-col gap-1\">\n          <h3 className=\"text-muted-foreground mb-1 text-xs font-medium tracking-wide uppercase\">\n            {group.label}\n          </h3>\n\n          <dl className=\"flex flex-col\">\n            {group.shortcuts.map((shortcut, index) => (\n              <div\n                key={index}\n                className=\"border-border/50 flex items-center justify-between gap-4 border-b py-1.5 last:border-b-0\"\n              >\n                <dt className=\"min-w-0 truncate text-sm\">{shortcut.label}</dt>\n                <dd className=\"flex shrink-0 items-center gap-1\">\n                  {shortcut.keys.map((key) => (\n                    <Kbd key={key}>{key}</Kbd>\n                  ))}\n                </dd>\n              </div>\n            ))}\n          </dl>\n        </section>\n      ))}\n    </div>\n  )\n}\n\nexport { ShortcutSheet }\n"
+    }
+  ]
+}

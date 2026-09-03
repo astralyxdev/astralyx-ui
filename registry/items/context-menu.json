@@ -1,0 +1,20 @@
+{
+  "name": "context-menu",
+  "type": "registry:ui",
+  "title": "Context Menu",
+  "description": "A menu opened by right-click, positioned at the pointer. It has no element to anchor to — the anchor is a point — so it clamps against the viewport rather than flipping.",
+  "category": "Overlays",
+  "dependencies": [],
+  "registryDependencies": [
+    "lib-styles",
+    "lib-utils",
+    "primitive-dismissable"
+  ],
+  "files": [
+    {
+      "path": "components/ui/context-menu.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  useEffect,\n  useRef,\n  useState,\n  type ComponentProps,\n  type ReactNode,\n} from 'react'\nimport { useDismissable } from '@/components/primitives/dismissable'\nimport { menuItem, menuSurface, radius } from '@/lib/styles'\nimport { cn } from '@/lib/utils'\n\n/**\n * A menu opened by right-click, positioned at the pointer.\n *\n * Unlike the other layers this has no element to anchor to — the anchor is a\n * point. It clamps against the viewport itself rather than flipping, since a\n * context menu should open down-and-right from the cursor whenever it fits.\n */\nexport type ContextMenuItem = {\n  id: string\n  label: string\n  icon?: ReactNode\n  shortcut?: string\n  disabled?: boolean\n  destructive?: boolean\n  separatorBefore?: boolean\n  onSelect?: () => void\n}\n\nfunction ContextMenu({\n  items,\n  children,\n  className,\n  ...props\n}: Omit<ComponentProps<'div'>, 'onSelect'> & {\n  items: ContextMenuItem[]\n  children: ReactNode\n}) {\n  const [point, setPoint] = useState<{ x: number; y: number } | null>(null)\n  const menuRef = useRef<HTMLDivElement>(null)\n  const triggerRef = useRef<HTMLDivElement>(null)\n\n  useDismissable({\n    open: point !== null,\n    onDismiss: () => setPoint(null),\n    refs: [menuRef],\n  })\n\n  // Measure after mount, then pull the menu back inside the viewport.\n  useEffect(() => {\n    if (!point || !menuRef.current) return\n    const rect = menuRef.current.getBoundingClientRect()\n    const x = Math.min(point.x, window.innerWidth - rect.width - 8)\n    const y = Math.min(point.y, window.innerHeight - rect.height - 8)\n    if (x !== point.x || y !== point.y) setPoint({ x, y })\n  }, [point])\n\n  return (\n    <>\n      <div\n        ref={triggerRef}\n        data-slot=\"context-menu-trigger\"\n        onContextMenu={(event) => {\n          event.preventDefault()\n          setPoint({ x: event.clientX, y: event.clientY })\n        }}\n        className={className}\n        {...props}\n      >\n        {children}\n      </div>\n\n      {point && (\n        <div\n          ref={menuRef}\n          role=\"menu\"\n          data-slot=\"context-menu\"\n          style={{ position: 'fixed', top: point.y, left: point.x }}\n          className={cn(menuSurface, radius.surface, 'min-w-48')}\n        >\n          {items.map((item) => (\n            <div key={item.id}>\n              {item.separatorBefore && (\n                <div role=\"separator\" className=\"bg-border -mx-1 my-1 h-px\" />\n              )}\n              <button\n                type=\"button\"\n                role=\"menuitem\"\n                disabled={item.disabled}\n                data-disabled={item.disabled}\n                onClick={() => {\n                  item.onSelect?.()\n                  setPoint(null)\n                }}\n                className={cn(\n                  menuItem,\n                  radius.control,\n                  item.destructive && 'text-[var(--destructive-soft-foreground)]',\n                )}\n              >\n                {item.icon}\n                <span className=\"flex-1\">{item.label}</span>\n                {item.shortcut && (\n                  <span className=\"text-muted-foreground font-mono text-xs\">\n                    {item.shortcut}\n                  </span>\n                )}\n              </button>\n            </div>\n          ))}\n        </div>\n      )}\n    </>\n  )\n}\n\nexport { ContextMenu }\n"
+    }
+  ]
+}

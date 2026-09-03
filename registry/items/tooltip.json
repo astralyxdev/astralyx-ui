@@ -1,0 +1,19 @@
+{
+  "name": "tooltip",
+  "type": "registry:ui",
+  "title": "Tooltip",
+  "description": "A short hint on hover or focus. Focus opens it immediately — a keyboard user has already committed — while pointer hover waits, so sweeping across a toolbar does not fire a row of them.",
+  "category": "Overlays",
+  "dependencies": [],
+  "registryDependencies": [
+    "lib-utils",
+    "primitive-popper"
+  ],
+  "files": [
+    {
+      "path": "components/ui/tooltip.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  cloneElement,\n  isValidElement,\n  useEffect,\n  useId,\n  useRef,\n  useState,\n  type ComponentProps,\n  type ReactElement,\n  type ReactNode,\n} from 'react'\nimport { usePopper, type Align, type Side } from '@/components/primitives/popper'\nimport { cn } from '@/lib/utils'\n\n/**\n * A short hint shown on hover or focus.\n *\n * Focus opens it without a delay — a keyboard user has already committed, and\n * making them wait is just latency. Pointer hover waits, so sweeping across a\n * toolbar does not fire a row of tooltips.\n *\n * The trigger is cloned rather than wrapped, so the tooltip adds no element to\n * the layout and cannot break a flex or grid parent.\n */\nfunction Tooltip({\n  children,\n  content,\n  side = 'top',\n  align = 'center',\n  delay = 400,\n  offset = 6,\n  className,\n  ...props\n}: Omit<ComponentProps<'div'>, 'content'> & {\n  children: ReactElement<Record<string, unknown>>\n  content: ReactNode\n  side?: Side\n  align?: Align\n  delay?: number\n  offset?: number\n}) {\n  const [open, setOpen] = useState(false)\n  const anchorRef = useRef<HTMLElement>(null)\n  const floatingRef = useRef<HTMLDivElement>(null)\n  const timer = useRef(0)\n  const id = useId()\n\n  const { style, side: resolved } = usePopper({\n    open,\n    anchorRef,\n    floatingRef,\n    side,\n    align,\n    offset,\n  })\n\n  useEffect(() => () => clearTimeout(timer.current), [])\n\n  function show(immediate = false) {\n    clearTimeout(timer.current)\n    if (immediate) return setOpen(true)\n    timer.current = window.setTimeout(() => setOpen(true), delay)\n  }\n\n  function hide() {\n    clearTimeout(timer.current)\n    setOpen(false)\n  }\n\n  // Escape must dismiss a tooltip that focus opened, per the ARIA practices.\n  useEffect(() => {\n    if (!open) return\n    const onKeyDown = (event: KeyboardEvent) => {\n      if (event.key === 'Escape') hide()\n    }\n    document.addEventListener('keydown', onKeyDown)\n    return () => document.removeEventListener('keydown', onKeyDown)\n  }, [open])\n\n  if (!isValidElement(children)) return children\n\n  // Passing the ref object as a prop is React 19's ref-as-prop, not a read of\n  // `.current` during render — the rule cannot tell the two apart.\n  // oxlint-disable-next-line react/refs\n  const trigger = cloneElement(children, {\n    ref: anchorRef,\n    'aria-describedby': open ? id : undefined,\n    onPointerEnter: () => show(),\n    onPointerLeave: hide,\n    onFocus: () => show(true),\n    onBlur: hide,\n  })\n\n  return (\n    <>\n      {trigger}\n      {open && (\n        <div\n          ref={floatingRef}\n          id={id}\n          role=\"tooltip\"\n          data-slot=\"tooltip\"\n          data-side={resolved}\n          style={style}\n          className={cn(\n            'bg-foreground text-background pointer-events-none z-50 max-w-64 rounded-lg px-2.5 py-1.5 text-xs font-medium',\n            className,\n          )}\n          {...props}\n        >\n          {content}\n        </div>\n      )}\n    </>\n  )\n}\n\nexport { Tooltip }\n"
+    }
+  ]
+}

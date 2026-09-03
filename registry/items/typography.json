@@ -1,0 +1,18 @@
+{
+  "name": "typography",
+  "type": "registry:ui",
+  "title": "Typography",
+  "description": "Prose styling for content you did not author element by element — rendered markdown, a CMS body, a changelog. Headings start at h2, since the page already has its h1.",
+  "category": "Display",
+  "dependencies": [],
+  "registryDependencies": [
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/typography.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps } from 'react'\nimport { cn } from '@/lib/utils'\n\n/**\n * Prose styling for content you did not author element by element — rendered\n * markdown, a CMS body, a changelog.\n *\n * Descendant selectors rather than styled components, because the content\n * arrives as plain HTML from a markdown renderer and there is nothing to swap.\n *\n * Vertical rhythm is set with `space-y`-style adjacent-sibling margins rather\n * than a margin on every element. A margin on each one collapses differently\n * depending on what precedes it, which is why prose blocks tend to have too\n * much space after headings and too little between list items.\n *\n * Headings deliberately start at `h2`. A prose block is page *content*, and the\n * page already has its `h1` — a body that ships its own would give the document\n * two, which is the most common heading-order failure there is.\n */\nconst PROSE = [\n  'text-sm leading-relaxed text-foreground',\n\n  // Rhythm: gaps between siblings, nothing leading or trailing.\n  '[&>*+*]:mt-4',\n  '[&>h2+*]:mt-2 [&>h3+*]:mt-2 [&>h4+*]:mt-1.5',\n  '[&>*+h2]:mt-8 [&>*+h3]:mt-6 [&>*+h4]:mt-5',\n\n  '[&_h2]:text-lg [&_h2]:font-semibold [&_h2]:tracking-tight',\n  '[&_h3]:text-base [&_h3]:font-semibold [&_h3]:tracking-tight',\n  '[&_h4]:text-sm [&_h4]:font-semibold',\n\n  '[&_p]:text-muted-foreground [&_p]:text-pretty',\n  '[&_strong]:text-foreground [&_strong]:font-semibold',\n  '[&_em]:italic',\n\n  '[&_a]:underline [&_a]:underline-offset-4 [&_a]:decoration-border hover:[&_a]:decoration-current',\n\n  '[&_ul]:ms-5 [&_ul]:list-disc [&_ol]:ms-5 [&_ol]:list-decimal',\n  '[&_li]:text-muted-foreground [&_li+li]:mt-1',\n  '[&_li>ul]:mt-1 [&_li>ol]:mt-1',\n\n  '[&_blockquote]:border-border [&_blockquote]:text-muted-foreground [&_blockquote]:border-s-2 [&_blockquote]:ps-4 [&_blockquote]:italic',\n\n  '[&_code]:bg-muted [&_code]:rounded-sm [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.85em]',\n  // Literal, not built from `radius.control`: a class assembled by\n  // concatenation is invisible to Tailwind's scanner and generates nothing.\n  '[&_pre]:bg-muted [&_pre]:overflow-x-auto [&_pre]:rounded-lg [&_pre]:p-3',\n  '[&_pre_code]:bg-transparent [&_pre_code]:p-0',\n\n  '[&_hr]:border-border [&_hr]:my-6',\n  '[&_img]:rounded-lg',\n\n  '[&_table]:w-full [&_table]:text-sm',\n  '[&_th]:border-border [&_th]:border-b [&_th]:px-3 [&_th]:py-2 [&_th]:text-start [&_th]:font-medium',\n  '[&_td]:border-border/60 [&_td]:border-b [&_td]:px-3 [&_td]:py-2',\n].join(' ')\n\nfunction Typography({\n  className,\n  size = 'default',\n  ...props\n}: ComponentProps<'div'> & { size?: 'sm' | 'default' | 'lg' }) {\n  return (\n    <div\n      data-slot=\"typography\"\n      className={cn(\n        PROSE,\n        size === 'sm' && 'text-xs',\n        size === 'lg' && 'text-base',\n        className,\n      )}\n      {...props}\n    />\n  )\n}\n\nexport { Typography, PROSE }\n"
+    }
+  ]
+}

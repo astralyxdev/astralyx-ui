@@ -1,0 +1,19 @@
+{
+  "name": "toolbar",
+  "type": "registry:ui",
+  "title": "Toolbar",
+  "description": "A group of controls that arrow keys move between — the ARIA role ButtonGroup deliberately does not claim, because claiming it without implementing it is worse than not claiming it.",
+  "category": "Navigation",
+  "dependencies": [],
+  "registryDependencies": [
+    "lib-utils",
+    "primitive-focus-trap"
+  ],
+  "files": [
+    {
+      "path": "components/ui/toolbar.tsx",
+      "type": "registry:ui",
+      "content": "import { useRef, type ComponentProps, type KeyboardEvent } from 'react'\nimport { tabbableWithin } from '@/components/primitives/focus-trap'\nimport { cn } from '@/lib/utils'\n\n/**\n * A group of controls that arrow keys move between.\n *\n * This is the role `ButtonGroup` deliberately does not claim. `role=\"toolbar\"`\n * is a promise: the group is one tab stop and arrow keys move within it. Making\n * that claim without implementing it is worse than not claiming it, since a\n * screen-reader user is told to use arrows that do nothing.\n *\n * Focus roves over whatever is currently focusable, recomputed on each key.\n * Toolbars gain and lose buttons as selection changes, and a list cached on\n * mount sends focus to a control that is no longer there.\n */\nfunction Toolbar({\n  orientation = 'horizontal',\n  className,\n  onKeyDown,\n  ...props\n}: ComponentProps<'div'> & { orientation?: 'horizontal' | 'vertical' }) {\n  const ref = useRef<HTMLDivElement>(null)\n\n  function handleKeyDown(event: KeyboardEvent<HTMLDivElement>) {\n    onKeyDown?.(event)\n    if (event.defaultPrevented) return\n\n    const forward = orientation === 'horizontal' ? 'ArrowRight' : 'ArrowDown'\n    const back = orientation === 'horizontal' ? 'ArrowLeft' : 'ArrowUp'\n    const keys = [forward, back, 'Home', 'End']\n    if (!keys.includes(event.key)) return\n\n    const root = ref.current\n    if (!root) return\n    const items = tabbableWithin(root)\n    if (items.length === 0) return\n\n    const current = items.indexOf(document.activeElement as HTMLElement)\n    event.preventDefault()\n\n    const next =\n      event.key === 'Home'\n        ? 0\n        : event.key === 'End'\n          ? items.length - 1\n          : event.key === forward\n            ? (current + 1 + items.length) % items.length\n            : (current - 1 + items.length) % items.length\n\n    items[next]?.focus()\n  }\n\n  return (\n    <div\n      ref={ref}\n      role=\"toolbar\"\n      data-slot=\"toolbar\"\n      aria-orientation={orientation}\n      onKeyDown={handleKeyDown}\n      className={cn(\n        'flex items-center gap-1',\n        orientation === 'vertical' && 'flex-col items-stretch',\n        className,\n      )}\n      {...props}\n    />\n  )\n}\n\n/** A hairline between groups of controls. */\nfunction ToolbarSeparator({\n  orientation = 'vertical',\n  className,\n  ...props\n}: ComponentProps<'div'> & { orientation?: 'horizontal' | 'vertical' }) {\n  return (\n    <div\n      role=\"separator\"\n      aria-orientation={orientation}\n      data-slot=\"toolbar-separator\"\n      className={cn(\n        'bg-border shrink-0',\n        orientation === 'vertical' ? 'mx-1 h-5 w-px self-center' : 'my-1 h-px w-full',\n        className,\n      )}\n      {...props}\n    />\n  )\n}\n\nexport { Toolbar, ToolbarSeparator }\n"
+    }
+  ]
+}

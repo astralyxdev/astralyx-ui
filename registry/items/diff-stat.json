@@ -1,0 +1,18 @@
+{
+  "name": "diff-stat",
+  "type": "registry:ui",
+  "title": "Diff Stat",
+  "description": "Added and removed line counts with the five-square bar. The squares are proportional but never empty — one line changed in a thousand still lights one square.",
+  "category": "Development",
+  "dependencies": [],
+  "registryDependencies": [
+    "lib-utils"
+  ],
+  "files": [
+    {
+      "path": "components/ui/diff-stat.tsx",
+      "type": "registry:ui",
+      "content": "import type { ComponentProps } from 'react'\nimport { cn } from '@/lib/utils'\n\n/**\n * Added and removed line counts, with the five-square bar every forge uses.\n *\n * The squares are proportional but never empty: a change of one line in a\n * thousand still shows one lit square, because rounding it to zero would read\n * as \"nothing changed\".\n */\nfunction DiffStat({\n  className,\n  additions,\n  deletions,\n  showCounts = true,\n  squares = 5,\n  ...props\n}: ComponentProps<'span'> & {\n  additions: number\n  deletions: number\n  showCounts?: boolean\n  squares?: number\n}) {\n  const total = additions + deletions\n  const added = total === 0 ? 0 : Math.max(1, Math.round((additions / total) * squares))\n  const removed = total === 0 ? 0 : Math.max(1, Math.min(squares - added, Math.round((deletions / total) * squares)))\n\n  return (\n    <span\n      data-slot=\"diff-stat\"\n      className={cn('inline-flex items-center gap-2 font-mono text-xs', className)}\n      {...props}\n    >\n      {showCounts && (\n        <>\n          <span className=\"text-[var(--green-soft-foreground)]\">+{additions.toLocaleString()}</span>\n          <span className=\"text-[var(--destructive-soft-foreground)]\">\n            &minus;{deletions.toLocaleString()}\n          </span>\n        </>\n      )}\n      <span\n        className=\"flex gap-0.5\"\n        role=\"img\"\n        aria-label={`${additions} additions, ${deletions} deletions`}\n      >\n        {Array.from({ length: squares }, (_, index) => (\n          <span\n            key={index}\n            className={cn(\n              'size-2 rounded-[var(--radius-check-xs)]',\n              index < added\n                ? 'bg-[var(--green)]'\n                : index < added + removed\n                  ? 'bg-[var(--destructive)]'\n                  : 'bg-border',\n            )}\n          />\n        ))}\n      </span>\n    </span>\n  )\n}\n\nexport { DiffStat }\n"
+    }
+  ]
+}

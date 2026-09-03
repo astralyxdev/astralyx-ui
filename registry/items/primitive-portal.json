@@ -1,0 +1,14 @@
+{
+  "name": "primitive-portal",
+  "type": "registry:primitive",
+  "title": "portal",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/primitives/portal.tsx",
+      "type": "registry:primitive",
+      "content": "import { useEffect, useState, type ReactNode } from 'react'\nimport { createPortal } from 'react-dom'\n\n/**\n * Renders children into another part of the document.\n *\n * Mounting is deferred by one effect rather than portalling during render.\n * `document.body` does not exist while rendering on the server, and reading it\n * during the first client render would produce markup that does not match what\n * the server sent.\n *\n * Most overlays in this kit do not need this: Dialog and Sheet use a native\n * `<dialog>`, which the browser already promotes to the top layer. Portal is\n * for the cases that cannot — an element that must escape an ancestor's\n * `overflow: hidden` or stacking context without becoming modal.\n */\nfunction Portal({\n  children,\n  container,\n}: {\n  children: ReactNode\n  /** Defaults to `document.body`. */\n  container?: Element | null\n}) {\n  const [mounted, setMounted] = useState(false)\n\n  useEffect(() => setMounted(true), [])\n\n  if (!mounted) return null\n  return createPortal(children, container ?? document.body)\n}\n\nexport { Portal }\n"
+    }
+  ]
+}
