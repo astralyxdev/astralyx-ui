@@ -30,17 +30,16 @@ jobs:
 
       - run: npm run build
 
-      - name: SPA fallback and custom domain
+      - name: SPA fallback
         # Pages has no rewrite rules: a deep link like /docs/theming is a 404 as
         # far as the server is concerned. Serving index.html as the 404 body
-        # boots the app, and the router then reads the real pathname.
+        # boots the app, and the router reads the real pathname from there. The
+        # response keeps its 404 status, which is expected and harmless.
         #
-        # CNAME has to be part of the artefact. Setting the domain in the repo
-        # UI writes the file to a branch this workflow never publishes from, so
-        # an artefact deploy without it drops the domain on the next run.
-        run: |
-          cp dist/index.html dist/404.html
-          echo 'ui.astralyx.dev' > dist/CNAME
+        # No CNAME file: on an artefact deploy the custom domain comes from the
+        # repository's own Pages setting, not from a file in the artefact —
+        # verified against the API after a deploy that did include one.
+        run: cp dist/index.html dist/404.html
 
       - uses: actions/upload-pages-artifact@v4
         with:
