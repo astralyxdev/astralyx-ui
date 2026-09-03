@@ -7,6 +7,9 @@ on:
 
 permissions:
   contents: read
+  # The whole authentication story. npm mints a short-lived credential from
+  # this OIDC token at publish time, so there is no npm token in this repo's
+  # secrets to leak, rotate or forget about.
   id-token: write
 
 jobs:
@@ -16,15 +19,32 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
-          node-version: 22
+          # Trusted publishing needs npm >= 11.5.1, which ships with Node 24.
+          # Node 22 carries npm 10 and fails here asking for a token, which
+          # reads like a missing secret rather than a version problem.
+          node-version: 24
           registry-url: https://registry.npmjs.org
-          cache: npm
+          package-manager-cache: false
+
+      - name: npm supports OIDC
+        # Cheap assertion with a clear message, because the failure it guards
+        # against surfaces much later and much less legibly. Pure shell, so it
+        # does not fetch a package just to compare two version strings.
+        run: |
+          need=11.5.1
+          have=$(npm -v)
+          if [ "$(printf '%s\n' "$need" "$have" | sort -V | head -1)" != "$need" ]; then
+            echo "npm $have is too old for trusted publishing (need >= $need)"
+            exit 1
+          fi
+          echo "npm $have supports OIDC"
+
       - run: npm ci
       - run: npm run lint
       - run: npm run build:package
       - run: node scripts/check-registry.mjs
-      # prepublishOnly rebuilds the package; provenance ties the published
-      # tarball to this workflow run.
-      - run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # No NODE_AUTH_TOKEN and no --provenance flag: OIDC is detected
+      # automatically, and npm attaches provenance on its own when a public
+      # repo publishes a public package this way.
+      - run: npm publish --access public
