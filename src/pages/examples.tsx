@@ -6,9 +6,17 @@ import { PageHeader } from '@/components/ui/page-header'
 import { EXAMPLES, examplePath } from '@/examples'
 import { focusRing } from '@/lib/styles'
 import { cn } from '@/lib/utils'
+import { useSeo } from '@/lib/seo'
 
 /** Index of the full-page examples. */
 function Examples() {
+  useSeo({
+    title: 'Examples',
+    description:
+      'Whole screens built from the kit — a dashboard, a mail client, a repository browser, an assistant and a settings form.',
+    path: '/examples',
+  })
+
   return (
     <div className="mx-auto max-w-4xl pb-8">
       <PageHeader

@@ -17,12 +17,21 @@ import { CodeBlock } from '@/components/ui/code-block'
 import { componentPath, ENTRIES, findCategory, isReady, type ComponentEntry } from '@/registry'
 import { focusRing, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
+import { useSeo } from '@/lib/seo'
 
 /**
  * A component page reads top to bottom: what it is, how to bring it in, a
  * playground to feel it out, worked examples, then the full props reference.
  */
 function ComponentPage({ entry }: { entry: ComponentEntry }) {
+  // Above the `isReady` bail-out: hooks cannot sit behind a conditional
+  // return, and an unbuilt component still has a real URL worth describing.
+  useSeo({
+    title: entry.label,
+    description: `${entry.description} Copy it into your project with npx astralyx-ui add ${entry.id}.`,
+    path: componentPath(entry.id),
+  })
+
   if (!isReady(entry)) return <NotBuilt entry={entry} />
 
   const category = findCategory(entry.id)

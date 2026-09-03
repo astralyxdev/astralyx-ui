@@ -5,6 +5,7 @@ import { PageHeader } from '@/components/ui/page-header'
 import { CATEGORIES, ENTRIES, componentPath, isReady } from '@/registry'
 import { focusRing, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
+import { useSeo } from '@/lib/seo'
 
 /**
  * The catalogue: every component, grouped the way the rail groups them.
@@ -14,6 +15,13 @@ import { cn } from '@/lib/utils'
  * beside it stays the fast path once you already know the name.
  */
 function ComponentsIndex() {
+  useSeo({
+    title: 'Components',
+    description:
+      'Every component in the kit, grouped by category. Each has a live composer, worked examples and a full props table.',
+    path: '/components',
+  })
+
   const ready = ENTRIES.filter(isReady).length
 
   return (

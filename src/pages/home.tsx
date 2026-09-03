@@ -26,6 +26,7 @@ import { EXAMPLES, examplePath } from '@/examples'
 import { CATEGORIES, componentPath, ENTRIES } from '@/registry'
 import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
+import { useSeo } from '@/lib/seo'
 
 const NOW = new Date('2026-09-03T08:00:00')
 const ago = (minutes: number) => new Date(NOW.getTime() - minutes * 60_000)
@@ -46,6 +47,12 @@ const ago = (minutes: number) => new Date(NOW.getTime() - minutes * 60_000)
  * for it at every breakpoint. See `Showcase`.
  */
 function Home() {
+  useSeo({
+    description:
+      'Accessible React components and primitives for React 19 and Tailwind v4. A CLI copies the source into your repo — nothing is imported from a package at runtime.',
+    path: '/',
+  })
+
   return (
     <div className="-mx-4 -mt-4 sm:-mx-6 sm:-mt-6 lg:-mx-8 lg:-mt-8">
       <Hero />
