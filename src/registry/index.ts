@@ -245,7 +245,8 @@ import {
   responseViewerEntry, schemaViewerEntry, webhookInspectorEntry,
 } from './api'
 import {
-  connectionStringEntry, migrationListEntry, queryEditorEntry, queryPlanEntry,
+  connectionStringEntry, migrationListEntry, queryConstructorEntry,
+  queryEditorEntry, queryPlanEntry,
   schemaTableEntry,
 } from './database'
 import {
@@ -732,6 +733,7 @@ export const CATEGORIES: Category[] = [
     label: 'Database',
     items: [
       queryEditorEntry,
+      queryConstructorEntry,
       queryPlanEntry,
       schemaTableEntry,
       migrationListEntry,

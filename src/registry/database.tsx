@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { ConnectionString } from '@/components/ui/connection-string'
 import { MigrationList, type Migration } from '@/components/ui/migration-list'
+import { QueryConstructor, type Query, type QueryTable } from '@/components/ui/query-constructor'
 import { QueryEditor } from '@/components/ui/query-editor'
 import { QueryPlan, type PlanNode } from '@/components/ui/query-plan'
 import { SchemaTable, type SchemaColumn, type SchemaIndex } from '@/components/ui/schema-table'
@@ -15,7 +17,8 @@ export const queryEditorEntry: ComponentEntry = {
   label: 'Query Editor',
   description:
     'A SQL editor that asks before running an UPDATE or DELETE with no WHERE clause. That is the most expensive mistake anyone makes in a query console, and it is trivial to detect.',
-  usage: `import { QueryEditor } from '@/components/ui/query-editor'
+  usage: `import { QueryConstructor, type Query, type QueryTable } from '@/components/ui/query-constructor'
+import { QueryEditor } from '@/components/ui/query-editor'
 
 <QueryEditor value={sql} onValueChange={setSql} onRun={run} />`,
   composer: {
@@ -270,5 +273,145 @@ export const connectionStringEntry: ComponentEntry = {
     { name: 'file-backed drivers', type: 'sqlite, duckdb, file', description: 'Show a path and nothing else. A relative path is flagged, because it resolves against the working directory of whatever starts the process rather than the config file.' },
     { name: 'masking', type: 'default on', description: 'A DSN carries a live password mid-string, and this is the screen people paste into tickets.' },
     { name: 'warnings', type: 'per driver', description: '`sslmode=disable` on Postgres, `encrypt=false` on SQL Server, `tls=false` on MongoDB — plus an unencoded password containing `@` `/` `?` or `#`, which silently reassigns the host.' },
+  ],
+}
+
+/* --------------------------------------------------------- query constructor */
+
+const SCHEMA: QueryTable[] = [
+  {
+    name: 'users',
+    columns: [
+      { name: 'id', type: 'bigserial', primaryKey: true },
+      { name: 'email', type: 'text' },
+      { name: 'country', type: 'text' },
+      { name: 'plan_id', type: 'bigint', references: 'plans.id' },
+      { name: 'seats', type: 'integer' },
+      { name: 'trial', type: 'boolean' },
+      { name: 'created_at', type: 'timestamptz' },
+    ],
+  },
+  {
+    name: 'plans',
+    columns: [
+      { name: 'id', type: 'bigserial', primaryKey: true },
+      { name: 'name', type: 'text' },
+      { name: 'monthly_cents', type: 'integer' },
+    ],
+  },
+  {
+    name: 'orders',
+    columns: [
+      { name: 'id', type: 'bigserial', primaryKey: true },
+      { name: 'user_id', type: 'bigint', references: 'users.id' },
+      { name: 'total_cents', type: 'integer' },
+      { name: 'status', type: 'text' },
+      { name: 'placed_at', type: 'timestamptz' },
+    ],
+  },
+]
+
+const STARTER: Query = {
+  from: 'users',
+  joins: [
+    {
+      id: 'j-plans',
+      type: 'inner',
+      table: 'plans',
+      leftColumn: 'users.plan_id',
+      rightColumn: 'plans.id',
+    },
+  ],
+  select: ['users.email', 'users.country', 'plans.name', 'users.seats'],
+  where: {
+    id: 'w-root',
+    join: 'and',
+    conditions: [
+      { id: 'w1', field: 'users.seats', operator: 'gte', value: '5' },
+      { id: 'w2', field: 'users.trial', operator: 'false', value: '' },
+      {
+        id: 'w-grp',
+        join: 'or',
+        conditions: [
+          { id: 'w3', field: 'users.country', operator: 'eq', value: 'DE' },
+          { id: 'w4', field: 'users.country', operator: 'eq', value: 'FR' },
+        ],
+      },
+    ],
+  },
+  groupBy: [],
+  orderBy: [{ column: 'users.seats', direction: 'desc' }],
+  limit: 100,
+}
+
+function QueryConstructorDemo({
+  placeholders = 'numbered',
+  preview = true,
+}: {
+  placeholders?: 'numbered' | 'question'
+  preview?: boolean
+}) {
+  const [query, setQuery] = useState<Query>(STARTER)
+  return (
+    <QueryConstructor
+      className="w-full"
+      tables={SCHEMA}
+      value={query}
+      onChange={setQuery}
+      placeholders={placeholders}
+      preview={preview}
+      onRun={() => {}}
+    />
+  )
+}
+
+export const queryConstructorEntry: ComponentEntry = {
+  id: 'query-constructor',
+  label: 'Query Constructor',
+  isNew: true,
+  description:
+    'A SELECT assembled from your schema rather than typed — tables, joins from declared foreign keys, and a WHERE clause built with SegmentBuilder. Values compile to bound parameters and identifiers are allow-listed against the schema.',
+  usage: `import { QueryConstructor } from '@/components/ui/query-constructor'
+
+<QueryConstructor tables={schema} onCompile={(sql, params) => preview(sql, params)} />`,
+  composer: {
+    tall: true,
+    controls: [
+      {
+        type: 'select',
+        prop: 'placeholders',
+        label: 'placeholders',
+        default: 'numbered',
+        options: ['numbered', 'question'],
+      },
+      { type: 'boolean', prop: 'preview', label: 'preview', default: true },
+    ],
+    render: (state) => (
+      <QueryConstructorDemo
+        placeholders={state.placeholders as 'numbered' | 'question'}
+        preview={Boolean(state.preview)}
+      />
+    ),
+    code: (state) =>
+      `<QueryConstructor\n  tables={schema}\n  placeholders="${state.placeholders}"\n  preview={${Boolean(state.preview)}}\n  onCompile={(sql, params) => preview(sql, params)}\n/>`,
+  },
+  api: [
+    { name: 'tables', type: 'QueryTable[]', description: '{ name, columns } where columns are `SchemaColumn` — the same type [[schema-table]] takes, so one schema description feeds both.' },
+    { name: 'vs QueryEditor', type: 'who it is for', description: 'The editor is for people who know SQL and want a console. This is for people who know the question and not the dialect. They are meant to sit beside each other, and the generated statement pastes straight into the editor.' },
+    { name: 'values', type: 'bound parameters', description: 'A value never enters the SQL string — it is emitted as `$1` (or `?`) and returned in `params`. That is what makes the output safe to execute.' },
+    { name: 'identifiers', type: 'allow-listed', description: 'No driver can parameterise a table or column name, so the defence is a list: every identifier is looked up in the schema you passed and anything absent is dropped. A name cannot reach the query unless it was already in your schema.' },
+    { name: 'follows the schema', type: 'columns are scoped', description: 'Pickers only offer columns of the tables in play, qualified as `table.column`. Changing the source table clears the choices that named the old one instead of leaving a query that will not run.' },
+    { name: 'joins', type: 'from foreign keys', description: 'A `references` on a column is a join the schema already knows about, so it is suggested rather than retyped.' },
+    { name: 'where', type: 'a SegmentBuilder', description: 'The same nested-precedence problem, so the same component — solving it twice would give two answers to "what does A or B and C mean".' },
+    { name: 'what it will not build', type: 'stated', description: 'Sub-queries, CTEs, window functions and unions. Past a certain complexity a builder is slower than typing, which is what the editor is for.' },
+    { name: 'onCompile', type: '(sql, params) => void', description: 'Fires when the statement changes, keyed on the output rather than the callback identity so an inline arrow does not loop.' },
+  ],
+  demos: [
+    {
+      title: 'Team users in DE or FR, joined to plans',
+      stack: true,
+      code: `<QueryConstructor tables={schema} value={query} onChange={setQuery} />`,
+      render: () => <QueryConstructorDemo />,
+    },
   ],
 }

@@ -26,15 +26,41 @@ const PLAN: GanttTask[] = [
   { id: 'launch', label: 'Launch', start: day(32), end: day(32), dependsOn: ['qa'], milestone: true },
 ]
 
+function GanttDemo({
+  criticalPath = true,
+  rowHeight = 30,
+}: {
+  criticalPath?: boolean
+  rowHeight?: number
+}) {
+  const [tasks, setTasks] = useState<GanttTask[]>(PLAN)
+  return (
+    <div className="flex w-full flex-col gap-2">
+      <Gantt
+        className="w-full"
+        tasks={tasks}
+        onChange={setTasks}
+        criticalPath={criticalPath}
+        rowHeight={rowHeight}
+        today={day(14)}
+      />
+      <p className="text-muted-foreground text-xs">
+        Drag a bar to reschedule, its edges to change the start or end. Focus one and use the arrow
+        keys — shift-arrow changes the end.
+      </p>
+    </div>
+  )
+}
+
 export const ganttEntry: ComponentEntry = {
   id: 'gantt',
   label: 'Gantt',
   isNew: true,
   description:
-    'Work on a timeline: bars for duration, a computed critical path, and dependency conflicts drawn as conflicts rather than quietly rendered backwards.',
+    'Work on a timeline: drag a bar to reschedule and its edges to change the start or end, with a computed critical path and dependency conflicts surfaced as you create them.',
   usage: `import { Gantt } from '@/components/ui/gantt'
 
-<Gantt tasks={tasks} criticalPath today={new Date()} />`,
+<Gantt tasks={tasks} onChange={setTasks} criticalPath today={new Date()} />`,
   composer: {
     tall: true,
     controls: [
@@ -42,12 +68,9 @@ export const ganttEntry: ComponentEntry = {
       { type: 'number', prop: 'rowHeight', label: 'rowHeight', default: 30, min: 22, max: 48, step: 2 },
     ],
     render: (state) => (
-      <Gantt
-        className="w-full"
-        tasks={PLAN}
+      <GanttDemo
         criticalPath={Boolean(state.criticalPath)}
         rowHeight={Number(state.rowHeight) || 30}
-        today={day(14)}
       />
     ),
     code: (state) =>
@@ -57,15 +80,20 @@ export const ganttEntry: ComponentEntry = {
     { name: 'tasks', type: 'GanttTask[]', description: '{ id, label, start, end, progress?, dependsOn?, milestone? }.' },
     { name: 'vs Kanban / Timeline / Stepper', type: 'the missing view', description: 'Kanban shows state and hides time. A timeline shows moments, not spans. A stepper shows order, not overlap. Only this shows how long, and at the same time as what.' },
     { name: 'criticalPath', type: 'computed', description: 'The longest dependency chain is derived from the data. Marking it by hand is how a Gantt goes stale — someone slips a task, nobody re-marks the path, and it points at the wrong risk.' },
-    { name: 'conflicts', type: 'drawn as conflicts', description: 'A task starting before its predecessor ends is reported, not rendered as a line going backwards. An impossible schedule should look impossible.' },
+    { name: 'onChange / onTaskChange', type: 'the whole list / one task', description: 'Supplying either makes the chart editable; omitting both makes it read-only. A read-only Gantt is a printout of a plan, and the reason to look at one is usually that something needs moving.' },
+    { name: 'dragging', type: 'body and edges', description: 'The body moves the task and keeps its duration; the edges change the start and the end independently. Handles are 8px, which is the difference between resizing and moving by accident.' },
+    { name: 'keyboard', type: 'arrows and shift-arrow', description: 'Arrows move by one snap, shift-arrow changes the end, and the dates are announced through `aria-valuetext`. A chart editable only by pointer is not editable at all for a good number of people.' },
+    { name: 'snapMinutes', type: 'number', default: '1440', description: 'A day. Dragging to arbitrary millisecond boundaries produces a plan nobody can read back.' },
+    { name: 'conflicts', type: 'live', description: 'Recomputed against the drag rather than the saved data, so an impossible schedule looks impossible while you are making it.' },
+    { name: 'monochrome', type: 'shape, not hue', description: 'A plan is read for structure — what is long, what overlaps, what is late — and arbitrary per-task colour adds a legend without adding information. The critical path is ringed and a conflict is outlined in dashes, so neither state is carried by colour alone.' },
     { name: 'today', type: 'Date', description: 'A vertical marker. Omitted by default rather than assumed.' },
   ],
   demos: [
     {
       title: 'A release plan, critical path marked',
       stack: true,
-      code: `<Gantt tasks={plan} criticalPath today={new Date()} />`,
-      render: () => <Gantt className="w-full" tasks={PLAN} today={day(14)} />,
+      code: `<Gantt tasks={plan} onChange={setPlan} criticalPath today={new Date()} />`,
+      render: () => <GanttDemo />,
     },
   ],
 }
@@ -86,15 +114,52 @@ const WEEK: SchedulerEvent[] = [
   { id: 'offsite', title: 'Offsite', start: day(4), end: day(4), allDay: true },
 ]
 
+let created = 0
+
+function SchedulerDemo({
+  days = 5,
+  dayStart = 8,
+  dayEnd = 18,
+}: {
+  days?: number
+  dayStart?: number
+  dayEnd?: number
+}) {
+  const [events, setEvents] = useState<SchedulerEvent[]>(WEEK)
+  return (
+    <div className="flex w-full flex-col gap-2">
+      <Scheduler
+        className="w-full"
+        events={events}
+        onChange={setEvents}
+        onCreate={(start, end) => ({
+          id: `new-${++created}`,
+          title: 'New block',
+          start,
+          end,
+        })}
+        week={MONDAY}
+        days={days}
+        dayStart={dayStart}
+        dayEnd={dayEnd}
+      />
+      <p className="text-muted-foreground text-xs">
+        Drag an event to move it — across days too — its bottom edge to change the end, or drag on
+        empty grid to block out time.
+      </p>
+    </div>
+  )
+}
+
 export const schedulerEntry: ComponentEntry = {
   id: 'scheduler',
   label: 'Scheduler',
   isNew: true,
   description:
-    'A week of days with events laid out against the hours. Overlaps are split into columns rather than stacked, so a clash never hides the meeting you were about to miss.',
+    'A week of days with events laid out against the hours and edited in place — drag to move across days, drag an edge to change the end, drag empty grid to create. Overlaps split into columns rather than stacking.',
   usage: `import { Scheduler } from '@/components/ui/scheduler'
 
-<Scheduler events={events} week={new Date()} dayStart={8} dayEnd={20} />`,
+<Scheduler events={events} onChange={setEvents} onCreate={make} dayStart={8} dayEnd={20} />`,
   composer: {
     tall: true,
     controls: [
@@ -103,10 +168,7 @@ export const schedulerEntry: ComponentEntry = {
       { type: 'number', prop: 'days', label: 'days', default: 5, min: 1, max: 7, step: 1 },
     ],
     render: (state) => (
-      <Scheduler
-        className="w-full"
-        events={WEEK}
-        week={MONDAY}
+      <SchedulerDemo
         days={Number(state.days) || 5}
         dayStart={Number(state.dayStart) || 8}
         dayEnd={Number(state.dayEnd) || 18}
@@ -120,14 +182,20 @@ export const schedulerEntry: ComponentEntry = {
     { name: 'vs Calendar', type: 'different jobs', description: '`Calendar` picks a date; this shows what is in it. Conflating them produces a date picker with a broken agenda glued on.' },
     { name: 'overlaps', type: 'columns, not stacks', description: 'Two meetings drawn on top of each other means one is invisible — and the hidden one is the one you miss. Clusters are split into as many columns as they need.' },
     { name: 'timezone', type: 'local day keys', description: 'Keying by UTC date puts a 23:00 event on the wrong day for anyone west of Greenwich — common, and hard to spot from the timezone it was written in.' },
+    { name: 'onChange / onEventChange', type: 'the whole list / one event', description: 'Supplying either makes the grid editable. A calendar you cannot drag on is a printout.' },
+    { name: 'dragging', type: 'move, resize, create', description: 'The body moves the event across hours *and* days; the bottom edge changes the end; a drag on empty grid draws a new one. The grab offset is kept, so the event does not jump its top to the cursor.' },
+    { name: 'onCreate', type: '(start, end) => event | void', description: 'Return an event to add it, or nothing to decline — so a click-drag can open your own dialog instead.' },
+    { name: 'snapMinutes', type: 'number', default: '15', description: 'The unit calendars are actually kept in. Without a grid a drag produces 10:07–11:04.' },
+    { name: 'keyboard', type: 'arrows and shift-arrow', description: 'Up and down move by a snap, left and right move between days, shift-arrow changes the end.' },
+    { name: 'monochrome', type: 'a hairline, not a hue', description: 'Adjacent columns are separated by a border in the page background rather than by colour, so a clash stays readable at any theme and in print.' },
     { name: 'dayStart / dayEnd', type: 'number', default: '8 / 20', description: 'Crops to working hours; eight of the twenty-four rows carry all the information in most calendars.' },
   ],
   demos: [
     {
       title: 'A working week, with a clash',
       stack: true,
-      code: `<Scheduler events={events} week={monday} days={5} />`,
-      render: () => <Scheduler className="w-full" events={WEEK} week={MONDAY} days={5} dayStart={9} dayEnd={17} />,
+      code: `<Scheduler events={events} onChange={setEvents} onCreate={make} week={monday} days={5} />`,
+      render: () => <SchedulerDemo days={5} dayStart={9} dayEnd={17} />,
     },
   ],
 }

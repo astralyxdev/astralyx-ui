@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { ArrowLeft, ArrowUpRight } from 'lucide-react'
 import {
   Link,
@@ -235,8 +235,45 @@ function NavLink({
 }
 
 function Sidebar({ path }: { path: string }) {
+  const navRef = useRef<HTMLElement>(null)
+
+  /**
+   * Bring the current page into view in the sidebar.
+   *
+   * The list is several hundred entries long, so after a reload — or a jump
+   * from search, or a link from anywhere — the highlighted item is usually far
+   * outside the visible window, and the only way to see where you are is to
+   * scroll looking for it.
+   *
+   * The container is scrolled directly rather than through `scrollIntoView`,
+   * which walks up the ancestors and will happily scroll the page as well as
+   * the sidebar. It only moves when the item is actually out of view, so
+   * stepping between two adjacent components does not shunt the list around;
+   * and it is instant, because an animation the user did not ask for competes
+   * with the page navigation that just happened.
+   */
+  useLayoutEffect(() => {
+    const nav = navRef.current
+    const active = nav?.querySelector<HTMLElement>('[aria-current="page"]')
+    if (!nav || !active) return
+
+    const navBox = nav.getBoundingClientRect()
+    const box = active.getBoundingClientRect()
+
+    // Vertical on desktop, where the sidebar is a column.
+    if (nav.scrollHeight > nav.clientHeight && (box.top < navBox.top || box.bottom > navBox.bottom)) {
+      nav.scrollTop += box.top - navBox.top - (nav.clientHeight - box.height) / 2
+    }
+
+    // Horizontal on narrow screens, where it is a scrolling strip.
+    if (nav.scrollWidth > nav.clientWidth && (box.left < navBox.left || box.right > navBox.right)) {
+      nav.scrollLeft += box.left - navBox.left - (nav.clientWidth - box.width) / 2
+    }
+  }, [path])
+
   return (
     <nav
+      ref={navRef}
       aria-label="Documentation"
       className="border-border flex shrink-0 gap-4 overflow-x-auto overflow-y-hidden border-b px-4 py-2 md:w-56 md:flex-col md:gap-5 md:overflow-x-hidden md:overflow-y-auto md:border-r md:border-b-0 md:px-3 md:py-4"
     >

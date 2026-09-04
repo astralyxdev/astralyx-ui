@@ -6026,9 +6026,33 @@
       "optional": false
     },
     {
+      "name": "onChange",
+      "type": "(tasks: GanttTask[]) => void",
+      "optional": true,
+      "description": "The whole list after an edit. Omit to make the chart read-only."
+    },
+    {
+      "name": "onTaskChange",
+      "type": "(task: GanttTask, previous: GanttTask) => void",
+      "optional": true,
+      "description": "Just the task that moved, for a targeted PATCH."
+    },
+    {
       "name": "onSelect",
       "type": "(task: GanttTask) => void",
       "optional": true
+    },
+    {
+      "name": "selectedId",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "snapMinutes",
+      "type": "number",
+      "optional": true,
+      "default": "1440",
+      "description": "Grid the drag snaps to. A day by default."
     },
     {
       "name": "criticalPath",
@@ -6048,14 +6072,13 @@
       "name": "rowHeight",
       "type": "number",
       "optional": true,
-      "default": "30"
+      "default": "34"
     },
     {
       "name": "dateFormat",
       "type": "(date: Date) => string",
       "optional": true,
-      "default": "DEFAULT_DATE_FORMAT",
-      "description": "Formats the axis ticks."
+      "default": "DEFAULT_DATE_FORMAT"
     },
     {
       "name": "ticks",
@@ -6067,8 +6090,7 @@
     {
       "name": "today",
       "type": "Date",
-      "optional": true,
-      "description": "Drawn as a vertical marker. Defaults to no marker."
+      "optional": true
     },
     {
       "name": "emptyLabel",
@@ -11576,6 +11598,106 @@
       "description": "Rendered instead of the code when the value is too long to encode."
     }
   ],
+  "query-constructor": [
+    {
+      "name": "tables",
+      "type": "QueryTable[]",
+      "optional": false
+    },
+    {
+      "name": "value",
+      "type": "Query",
+      "optional": true
+    },
+    {
+      "name": "defaultValue",
+      "type": "Query",
+      "optional": true
+    },
+    {
+      "name": "onChange",
+      "type": "(query: Query) => void",
+      "optional": true
+    },
+    {
+      "name": "onCompile",
+      "type": "(sql: string, params: unknown[]) => void",
+      "optional": true,
+      "description": "The compiled statement and its parameters, on every change."
+    },
+    {
+      "name": "placeholders",
+      "type": "'numbered' | 'question'",
+      "optional": true,
+      "default": "'numbered'",
+      "description": "`$1` for Postgres, `?` for MySQL and SQLite."
+    },
+    {
+      "name": "preview",
+      "type": "boolean",
+      "optional": true,
+      "default": "true",
+      "description": "Hide the generated SQL."
+    },
+    {
+      "name": "defaultLimit",
+      "type": "number",
+      "optional": true,
+      "description": "Rows added to the statement when set."
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Query'"
+    },
+    {
+      "name": "runLabel",
+      "type": "ReactNode",
+      "optional": true
+    },
+    {
+      "name": "onRun",
+      "type": "(sql: string, params: unknown[]) => void",
+      "optional": true
+    },
+    {
+      "name": "from",
+      "type": "string",
+      "optional": false
+    },
+    {
+      "name": "joins",
+      "type": "QueryJoin[]",
+      "optional": false
+    },
+    {
+      "name": "select",
+      "type": "string[]",
+      "optional": false,
+      "description": "Qualified columns. Empty means every column."
+    },
+    {
+      "name": "where",
+      "type": "ConditionGroup",
+      "optional": false
+    },
+    {
+      "name": "groupBy",
+      "type": "string[]",
+      "optional": false
+    },
+    {
+      "name": "orderBy",
+      "type": "QuerySort[]",
+      "optional": false
+    },
+    {
+      "name": "limit",
+      "type": "number",
+      "optional": true
+    }
+  ],
   "query-editor": [
     {
       "name": "value",
@@ -13479,6 +13601,29 @@
       "optional": false
     },
     {
+      "name": "onChange",
+      "type": "(events: SchedulerEvent[]) => void",
+      "optional": true,
+      "description": "The whole list after an edit. Omit to make the grid read-only."
+    },
+    {
+      "name": "onEventChange",
+      "type": "(event: SchedulerEvent, previous: SchedulerEvent) => void",
+      "optional": true,
+      "description": "Just the event that moved."
+    },
+    {
+      "name": "onCreate",
+      "type": "(start: Date, end: Date) => SchedulerEvent | void",
+      "optional": true,
+      "description": "A drag on empty grid. Return an id, or nothing to decline."
+    },
+    {
+      "name": "onSelect",
+      "type": "(event: SchedulerEvent) => void",
+      "optional": true
+    },
+    {
       "name": "week",
       "type": "Date",
       "optional": true,
@@ -13514,17 +13659,15 @@
       "name": "hourHeight",
       "type": "number",
       "optional": true,
-      "default": "44"
+      "default": "64",
+      "description": "Pixels per hour. Generous by default — a week view is a reading surface, and an hour compressed to 40px cannot hold a title and a time."
     },
     {
-      "name": "onSelect",
-      "type": "(event: SchedulerEvent) => void",
-      "optional": true
-    },
-    {
-      "name": "onSelectSlot",
-      "type": "(start: Date) => void",
-      "optional": true
+      "name": "snapMinutes",
+      "type": "number",
+      "optional": true,
+      "default": "15",
+      "description": "Grid the drag snaps to."
     },
     {
       "name": "locale",

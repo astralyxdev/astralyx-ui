@@ -1,6 +1,6 @@
 {
   "name": "astralyx-ui",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "homepage": "https://ui.astralyx.dev",
   "items": [
     {
@@ -1763,7 +1763,7 @@
       "name": "gantt",
       "type": "registry:ui",
       "title": "Gantt",
-      "description": "Work on a timeline: bars for duration, a computed critical path, and dependency conflicts drawn as conflicts rather than quietly rendered backwards.",
+      "description": "Work on a timeline: drag a bar to reschedule and its edges to change the start or end, with a computed critical path and dependency conflicts surfaced as you create them.",
       "category": "Views",
       "dependencies": [],
       "registryDependencies": [
@@ -3281,6 +3281,26 @@
       ]
     },
     {
+      "name": "query-constructor",
+      "type": "registry:ui",
+      "title": "Query Constructor",
+      "description": "A SELECT assembled from your schema rather than typed — tables, joins from declared foreign keys, and a WHERE clause built with SegmentBuilder. Values compile to bound parameters and identifiers are allow-listed against the schema.",
+      "category": "Database",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "code-block",
+        "lib-styles",
+        "lib-utils",
+        "multi-select",
+        "schema-table",
+        "segment-builder",
+        "select"
+      ]
+    },
+    {
       "name": "query-editor",
       "type": "registry:ui",
       "title": "Query Editor",
@@ -3743,7 +3763,7 @@
       "name": "scheduler",
       "type": "registry:ui",
       "title": "Scheduler",
-      "description": "A week of days with events laid out against the hours. Overlaps are split into columns rather than stacked, so a clash never hides the meeting you were about to miss.",
+      "description": "A week of days with events laid out against the hours and edited in place — drag to move across days, drag an edge to change the end, drag empty grid to create. Overlaps split into columns rather than stacking.",
       "category": "Views",
       "dependencies": [],
       "registryDependencies": [
