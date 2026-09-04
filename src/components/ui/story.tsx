@@ -64,8 +64,19 @@ type StoryProps = Omit<ComponentProps<'div'>, 'content' | 'onSelect'> & {
   previousLabel?: string
   nextLabel?: string
   pausedLabel?: string
-  /** Width of the panel column. Stories are portrait by convention. */
+  /**
+   * Panel width. Stories are portrait by convention.
+   *
+   * Height follows from it at 9:16 unless you set one — a story is a fixed
+   * shape, not a column that stretches to the window. Tying the height to the
+   * viewport instead produced a 359x1163 sliver on a tall screen.
+   */
   width?: number | string
+  /** Panel height. Defaults to `width x 16/9` when `width` is a number. */
+  height?: number | string
+  /** Caps for small windows, so the fixed box still fits. */
+  maxWidth?: number | string
+  maxHeight?: number | string
 }
 
 function Story({
@@ -82,10 +93,17 @@ function Story({
   previousLabel = 'Previous',
   nextLabel = 'Next',
   pausedLabel = 'Paused',
-  width = 420,
+  width = 400,
+  height,
+  maxWidth = '92vw',
+  maxHeight = '88vh',
   className,
   ...props
 }: StoryProps) {
+  // Portrait 9:16 unless told otherwise — the shape the pattern is named for.
+  const resolvedHeight =
+    height ?? (typeof width === 'number' ? Math.round((width * 16) / 9) : maxHeight)
+
   const controlled = indexProp !== undefined
   const [uncontrolled, setUncontrolled] = useState(0)
   const index = controlled ? indexProp : uncontrolled
@@ -204,12 +222,27 @@ function Story({
       >
         <FocusTrap>
           <div
-            // Sized from the viewport, not `h-full`. A percentage height
-            // resolves against the parent box, and FocusTrap renders a
-            // wrapper between this and the overlay — so `h-full` measured
-            // against a content-sized div and the whole column collapsed.
-            className={cn('relative flex h-[88vh] w-full flex-col', className)}
-            style={{ maxWidth: width }}
+            className={cn('relative flex flex-col', className)}
+            // A fixed box, capped so it still fits a small window.
+            //
+            // Height plus `aspect-ratio` rather than width plus height: when
+            // `max-height` bites on a short window, width follows from the
+            // ratio and the story keeps its shape. Setting both explicitly
+            // would clamp the height alone and squash it.
+            //
+            // Neither can be a percentage — FocusTrap renders a bare wrapper
+            // between this and the overlay, so a percentage would resolve
+            // against a content-sized div.
+            style={{
+              height: resolvedHeight,
+              aspectRatio:
+                typeof width === 'number' && typeof resolvedHeight === 'number'
+                  ? `${width} / ${resolvedHeight}`
+                  : undefined,
+              width: typeof width === 'number' ? undefined : width,
+              maxWidth,
+              maxHeight,
+            }}
             onFocusCapture={() => setFocusInside(true)}
             onBlurCapture={() => setFocusInside(false)}
           >

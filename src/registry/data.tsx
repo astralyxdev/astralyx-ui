@@ -259,7 +259,15 @@ export const dataQualityEntry: ComponentEntry = {
 
 /* ----------------------------------------------------------------- story */
 
-function StoryDemo({ autoPlay = true, duration = 4000 }: { autoPlay?: boolean; duration?: number }) {
+function StoryDemo({
+  autoPlay = true,
+  duration = 4000,
+  width = 400,
+}: {
+  autoPlay?: boolean
+  duration?: number
+  width?: number
+}) {
   const [open, setOpen] = useState(false)
 
   const panels = [
@@ -334,6 +342,7 @@ function StoryDemo({ autoPlay = true, duration = 4000 }: { autoPlay?: boolean; d
         panels={panels}
         autoPlay={autoPlay}
         duration={duration}
+        width={width}
         header={
           <div className="flex items-center gap-2">
             <Avatar name="Astralyx" size="sm" />
@@ -365,8 +374,15 @@ export const storyEntry: ComponentEntry = {
     controls: [
       { type: 'boolean', prop: 'autoPlay', label: 'autoPlay', default: true },
       { type: 'number', prop: 'duration', label: 'duration (ms)', default: 4000, min: 1500, max: 10_000, step: 500 },
+      { type: 'number', prop: 'width', label: 'width', default: 400, min: 280, max: 560, step: 20 },
     ],
-    render: (state) => <StoryDemo autoPlay={Boolean(state.autoPlay)} duration={Number(state.duration)} />,
+    render: (state) => (
+      <StoryDemo
+        autoPlay={Boolean(state.autoPlay)}
+        duration={Number(state.duration)}
+        width={Number(state.width)}
+      />
+    ),
     code: (state) => `<Story\n  open={open}\n  onOpenChange={setOpen}\n  panels={panels}\n  autoPlay={${Boolean(state.autoPlay)}}\n  duration={${Number(state.duration)}}\n/>`,
   },
   api: [
@@ -374,6 +390,8 @@ export const storyEntry: ComponentEntry = {
     { name: 'timing', type: 'wall clock', description: 'Progress is recomputed from the animation frame rather than counted down on an interval. A story left in a background tab would otherwise race through every panel and be finished when you came back.' },
     { name: 'pausing', type: 'press, focus, reduced motion', description: 'Holding pauses — the gesture from the apps this comes from. Focus inside a panel pauses too, or a panel with a link is unusable while tabbing. prefers-reduced-motion starts it stopped.' },
     { name: 'index / onIndexChange', type: 'number / (index) => void', description: 'Controlled position. Uncontrolled by default, resetting to the first panel each time it opens.' },
+    { name: 'width / height', type: 'number | string', default: '400 / width x 16/9', description: 'A fixed box, not a column that stretches to the window. Tying the height to the viewport produced a 359x1163 sliver on a tall screen.' },
+    { name: 'maxWidth / maxHeight', type: 'number | string', default: "'92vw' / '88vh'", description: 'Caps, so the fixed box still fits a small window.' },
     { name: 'onFinish', type: '() => void', description: 'After the last panel. Defaults to closing.' },
     { name: 'keyboard', type: 'Escape / arrows', description: 'The tap zones are real buttons, so the sequence is navigable without a pointer.' },
   ],

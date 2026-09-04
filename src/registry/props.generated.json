@@ -12979,8 +12979,27 @@
       "name": "width",
       "type": "number | string",
       "optional": true,
-      "default": "420",
-      "description": "Width of the panel column. Stories are portrait by convention."
+      "default": "400",
+      "description": "Panel width. Stories are portrait by convention. Height follows from it at 9:16 unless you set one — a story is a fixed shape, not a column that stretches to the window. Tying the height to the viewport instead produced a 359x1163 sliver on a tall screen."
+    },
+    {
+      "name": "height",
+      "type": "number | string",
+      "optional": true,
+      "description": "Panel height. Defaults to `width x 16/9` when `width` is a number."
+    },
+    {
+      "name": "maxWidth",
+      "type": "number | string",
+      "optional": true,
+      "default": "'92vw'",
+      "description": "Caps for small windows, so the fixed box still fits."
+    },
+    {
+      "name": "maxHeight",
+      "type": "number | string",
+      "optional": true,
+      "default": "'88vh'"
     }
   ],
   "stream-inspector": [
