@@ -149,21 +149,21 @@ export const knowledgeGraphEntry: ComponentEntry = {
 
 const DOC = `# Release notes
 
-Astralyx UI **0.3.0** adds components for *data*, *storage* and \`agents\`.
+Astralyx UI **0.3.1** adds components for *knowledge*, *data* and \`storage\`.
 
 ## What changed
 
-- A [Story](https://ui.astralyx.dev/components/story) component
-- An audio player built on the real \`<audio>\` element
-- Fourteen components for databases and object storage
+- A note graph and a knowledge graph, sharing one force layout
+- This \`Markdown\` component, which renders nodes and never sets \`innerHTML\`
+- A [Story](https://ui.astralyx.dev/components/story) component, and an audio player
 
 > A backup nobody has restored is a hypothesis.
 
 | Area | Components |
 | --- | --- |
+| Knowledge | 3 |
 | Storage | 6 |
 | Data | 6 |
-| Media | 2 |
 
 \`\`\`tsx
 <Markdown>{notes}</Markdown>
