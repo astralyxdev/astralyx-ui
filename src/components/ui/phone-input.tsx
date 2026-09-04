@@ -1,5 +1,5 @@
 import { useId, useMemo, useState, type ComponentProps } from 'react'
-import { fieldBase, fieldSize, radius } from '@/lib/styles'
+import { fieldBase, fieldOutline, fieldSize, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
 /**
@@ -45,7 +45,6 @@ export const COMMON_COUNTRIES: Country[] = [
   { code: 'IT', name: 'Italy', dial: '39', flag: '🇮🇹' },
   { code: 'NL', name: 'Netherlands', dial: '31', flag: '🇳🇱' },
   { code: 'PL', name: 'Poland', dial: '48', flag: '🇵🇱' },
-  { code: 'UA', name: 'Ukraine', dial: '380', flag: '🇺🇦' },
   { code: 'AE', name: 'United Arab Emirates', dial: '971', flag: '🇦🇪' },
   { code: 'IN', name: 'India', dial: '91', flag: '🇮🇳' },
   { code: 'SG', name: 'Singapore', dial: '65', flag: '🇸🇬' },
@@ -133,7 +132,7 @@ function PhoneInput({
     <div
       data-slot="phone-input"
       className={cn(
-        fieldBase,
+        fieldBase, fieldOutline,
         fieldSize[size],
         'flex items-center gap-0 ps-0 pe-0',
         invalid || (current && !valid) ? 'border-[var(--destructive)]' : '',

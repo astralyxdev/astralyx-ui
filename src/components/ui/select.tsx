@@ -87,6 +87,15 @@ type SelectProps = Omit<ComponentProps<'div'>, 'onChange' | 'defaultValue'> &
     disabled?: boolean
     icon?: ReactNode
     triggerClassName?: string
+    /**
+     * Accessible name for the trigger.
+     *
+     * The trigger is a `role="combobox"` button, so it needs a name. A visible
+     * `<Label>` pointing at it is the better answer when there is room for one;
+     * this is for the cases where there is not — a filter bar, a row in a query
+     * builder — where the alternative is an unnamed control.
+     */
+    triggerLabel?: string
     /** Shown when `options` is empty. */
     emptyMessage?: ReactNode
   }
@@ -105,6 +114,7 @@ function Select({
   size,
   error,
   icon,
+  triggerLabel,
   ...props
 }: SelectProps) {
   const controlled = valueProp !== undefined
@@ -151,6 +161,7 @@ function Select({
         role="combobox"
         aria-haspopup="listbox"
         aria-expanded={open}
+        aria-label={triggerLabel}
         disabled={disabled}
         onClick={() => setOpen(!open)}
         onKeyDown={(event) => {

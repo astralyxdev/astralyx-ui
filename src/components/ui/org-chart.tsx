@@ -89,6 +89,7 @@ function Node({
   onSelect,
   selectedId,
   stackAfter,
+  position,
 }: {
   node: Built
   depth: number
@@ -97,6 +98,8 @@ function Node({
   onSelect?: (node: OrgNode) => void
   selectedId?: string
   stackAfter: number
+  /** Where this node sits in its parent's row, for the connector geometry. */
+  position?: { index: number; count: number; row: boolean }
 }) {
   const expanded = open.has(node.id)
   const hasChildren = node.children.length > 0
@@ -104,7 +107,38 @@ function Node({
 
   return (
     <li className="relative flex flex-col items-center">
-      {/* The stub joining this node up to its parent's horizontal rule. */}
+      {/*
+        Each child draws its own half of the horizontal rule, from its own
+        centre outward.
+
+        One rule spanning the row cannot be positioned correctly: it would have
+        to start at the first child's centre and end at the last child's, and
+        with variable-width names those centres are not at any percentage of the
+        row. (Sizing every child equally would fix the geometry by making the
+        layout worse.) Half-segments anchored to each child's own box meet in
+        the gaps regardless of how wide any name is, so the rule lands on the
+        stubs at every width.
+
+        The 0.5rem is half the row's `gap-4`, so adjacent halves meet.
+      */}
+      {position?.row && position.count > 1 && (
+        <>
+          {position.index > 0 && (
+            <span
+              aria-hidden="true"
+              className="bg-border absolute top-0 -start-2 h-px w-[calc(50%+0.5rem)]"
+            />
+          )}
+          {position.index < position.count - 1 && (
+            <span
+              aria-hidden="true"
+              className="bg-border absolute top-0 -end-2 h-px w-[calc(50%+0.5rem)]"
+            />
+          )}
+        </>
+      )}
+
+      {/* The stub joining this node up to that rule. */}
       {depth > 0 && <span aria-hidden="true" className="bg-border h-4 w-px shrink-0" />}
 
       <div
@@ -159,23 +193,13 @@ function Node({
               stacked ? 'flex-col items-start gap-2 ps-6' : 'flex-row items-start gap-4',
             )}
           >
-            {/* The horizontal rule joining siblings. Not drawn when stacked,
-                where a vertical spine reads better than a very long rule. */}
-            {!stacked && node.children.length > 1 && (
-              <span
-                aria-hidden="true"
-                className="bg-border absolute top-0 h-px"
-                style={{
-                  insetInlineStart: `calc(100% / ${node.children.length * 2})`,
-                  insetInlineEnd: `calc(100% / ${node.children.length * 2})`,
-                }}
-              />
-            )}
+            {/* Stacked children get a vertical spine instead; a very long
+                horizontal rule reads worse than a column. */}
             {stacked && (
               <span aria-hidden="true" className="bg-border absolute top-0 bottom-4 start-2 w-px" />
             )}
 
-            {node.children.map((child) => (
+            {node.children.map((child, index) => (
               <Node
                 key={child.id}
                 node={child}
@@ -185,6 +209,7 @@ function Node({
                 onSelect={onSelect}
                 selectedId={selectedId}
                 stackAfter={stackAfter}
+                position={{ index, count: node.children.length, row: !stacked }}
               />
             ))}
           </ul>

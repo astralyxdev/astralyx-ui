@@ -7851,7 +7851,28 @@
       "type": "number",
       "optional": true,
       "default": "12",
-      "description": "Rows for the textarea. The preview matches its height in split mode."
+      "description": "Starting rows. Also the minimum height when `autoResize` is on."
+    },
+    {
+      "name": "autoResize",
+      "type": "boolean",
+      "optional": true,
+      "default": "true",
+      "description": "Grow the textarea with its content, up to `maxRows`. A fixed-height box that scrolls internally is the wrong shape for writing: you lose the paragraph above as soon as you pass the fold, and the page's own scrollbar stops representing the document."
+    },
+    {
+      "name": "maxRows",
+      "type": "number",
+      "optional": true,
+      "default": "30",
+      "description": "Ceiling for `autoResize`. Past this the pane scrolls."
+    },
+    {
+      "name": "syncScroll",
+      "type": "boolean",
+      "optional": true,
+      "default": "true",
+      "description": "Keep the two panes aligned while scrolling in split mode. Proportional, not line-mapped: mapping source lines to rendered blocks needs a source map out of the renderer, and a heading plus a code fence occupy wildly different heights, so an honest proportional sync beats a precise-looking one that drifts."
     },
     {
       "name": "defaultMode",
@@ -13816,14 +13837,39 @@
   ],
   "segment-builder": [
     {
-      "name": "fields",
-      "type": "FieldSpec[]",
+      "name": "id",
+      "type": "string",
+      "optional": false
+    },
+    {
+      "name": "field",
+      "type": "string",
+      "optional": false
+    },
+    {
+      "name": "operator",
+      "type": "string",
       "optional": false
     },
     {
       "name": "value",
-      "type": "ConditionGroup",
-      "optional": true
+      "type": "string",
+      "optional": false
+    },
+    {
+      "name": "join",
+      "type": "'and' | 'or'",
+      "optional": false
+    },
+    {
+      "name": "conditions",
+      "type": "(Condition | ConditionGroup)[]",
+      "optional": false
+    },
+    {
+      "name": "fields",
+      "type": "FieldSpec[]",
+      "optional": false
     },
     {
       "name": "defaultValue",
@@ -13849,22 +13895,40 @@
       "description": "Depth of nesting allowed."
     },
     {
+      "name": "summary",
+      "type": "boolean",
+      "optional": true,
+      "default": "true",
+      "description": "Hide the plain-language summary."
+    },
+    {
       "name": "addLabel",
       "type": "string",
       "optional": true,
-      "default": "'Add condition'"
+      "default": "'Condition'"
     },
     {
       "name": "addGroupLabel",
       "type": "string",
       "optional": true,
-      "default": "'Add group'"
+      "default": "'Group'"
     },
     {
       "name": "label",
       "type": "string",
       "optional": true,
       "default": "'Segment'"
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'No conditions — this matches everyone.'"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "optional": true
     }
   ],
   "segmented-control": [
@@ -13960,6 +14024,12 @@
       "name": "triggerClassName",
       "type": "string",
       "optional": true
+    },
+    {
+      "name": "triggerLabel",
+      "type": "string",
+      "optional": true,
+      "description": "Accessible name for the trigger. The trigger is a `role=\"combobox\"` button, so it needs a name. A visible `<Label>` pointing at it is the better answer when there is room for one; this is for the cases where there is not — a filter bar, a row in a query builder — where the alternative is an unnamed control."
     },
     {
       "name": "emptyMessage",

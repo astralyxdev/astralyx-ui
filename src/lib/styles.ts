@@ -450,6 +450,18 @@ export const menuItem = [
 ].join(' ')
 
 /** The input inside a `fieldBase` wrapper: invisible, so the wrapper shows. */
+/**
+ * The visible box a field sits in — border, background, nothing else.
+ *
+ * Deliberately separate from `fieldBase`, which carries only behaviour (focus,
+ * disabled, adornment colours) because the filled and ghost variants paint
+ * their own surface instead. It is exported because every control that wants to
+ * look like a field needs exactly these three classes, and assuming `fieldBase`
+ * already includes them produces a control that works perfectly and is
+ * invisible — a mistake that is easy to make and hard to see in a diff.
+ */
+export const fieldOutline = 'border-border bg-background border'
+
 export const fieldInput = [
   'w-full min-w-0 bg-transparent outline-none',
   'placeholder:text-muted-foreground/70',

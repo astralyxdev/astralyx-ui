@@ -1,31 +1,38 @@
 import { useId, useState, type ComponentProps, type ReactNode } from 'react'
 import { Plus, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { fieldBase, radius, surface } from '@/lib/styles'
+import { Select } from '@/components/ui/select'
+import { fieldBase, fieldOutline, focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
 /**
- * Build an audience from conditions, with the groups made visible.
+ * Build an audience from conditions, with precedence visible rather than implied.
  *
- * **Precedence is shown as nesting, not implied by a word.** A flat list of
- * rows joined by AND and OR dropdowns is ambiguous — "A or B and C" means two
- * different audiences depending on how it binds, and users read it the way
- * English reads, which is not how the query engine evaluates it. Here a group
- * is a box with one join for everything inside it, so what you see is the
- * parse tree.
+ * **The join is a rail, not a column of dropdowns.** A flat list with an and/or
+ * select on every line is ambiguous — "A or B and C" is two different audiences
+ * depending on how it binds, and people read it the way English reads, not the
+ * way the engine evaluates. Here a group has exactly one join, shown once on a
+ * bracket down its left edge and clickable there. The bracket is the parse
+ * tree: what it spans is what the join applies to, and nesting is the only way
+ * to say anything else.
+ *
+ * **There is a plain-language summary underneath.** It is the cheapest possible
+ * check on the thing that goes wrong — parentheses — and it costs one pass over
+ * a tree the component already holds. If the sentence is not the audience you
+ * meant, the query is not either.
  *
  * **The output is a structure, not a string.** `onChange` hands back nested
- * groups, so it can be compiled to SQL, an API filter, or whatever the backend
- * takes — with the values still separated from the operators, which is what
- * keeps it parameterisable rather than concatenated into an injection.
+ * groups, so it compiles to SQL or an API filter with values still separated
+ * from operators, which is what keeps it parameterisable rather than
+ * concatenated into an injection.
  *
  * **Incomplete rows are marked, not silently dropped.** A condition with no
  * value is a half-written thought; treating it as absent means the segment
  * quietly matches more people than the person building it believes, which for a
  * marketing send is an expensive kind of wrong.
  *
- * The estimated size is a caller-supplied prop rather than something computed
- * here — only your backend knows how many people match.
+ * The estimate is a prop, not something computed here — only your backend knows
+ * how many people match.
  */
 export type FieldSpec = {
   key: string
@@ -48,28 +55,31 @@ export type ConditionGroup = {
   conditions: (Condition | ConditionGroup)[]
 }
 
-const isGroup = (node: Condition | ConditionGroup): node is ConditionGroup =>
-  'conditions' in node
+const isGroup = (node: Condition | ConditionGroup): node is ConditionGroup => 'conditions' in node
 
-const OPERATORS: Record<string, { value: string; label: string; unary?: boolean }[]> = {
+type Operator = { value: string; label: string; unary?: boolean }
+
+const OPERATORS: Record<string, Operator[]> = {
   string: [
     { value: 'eq', label: 'is' },
     { value: 'neq', label: 'is not' },
     { value: 'contains', label: 'contains' },
+    { value: 'starts', label: 'starts with' },
     { value: 'set', label: 'is set', unary: true },
     { value: 'unset', label: 'is not set', unary: true },
   ],
   number: [
     { value: 'eq', label: '=' },
+    { value: 'neq', label: '≠' },
     { value: 'gt', label: '>' },
-    { value: 'lt', label: '<' },
     { value: 'gte', label: '≥' },
+    { value: 'lt', label: '<' },
     { value: 'lte', label: '≤' },
   ],
   date: [
     { value: 'after', label: 'after' },
     { value: 'before', label: 'before' },
-    { value: 'within', label: 'within the last' },
+    { value: 'within', label: 'in the last (days)' },
   ],
   boolean: [
     { value: 'true', label: 'is true', unary: true },
@@ -78,8 +88,265 @@ const OPERATORS: Record<string, { value: string; label: string; unary?: boolean 
   enum: [
     { value: 'eq', label: 'is' },
     { value: 'neq', label: 'is not' },
+    { value: 'in', label: 'is one of' },
   ],
 }
+
+/**
+ * Everything the recursive rows need, passed down as one object.
+ *
+ * The subcomponents are declared at module scope rather than inside the
+ * builder: a component defined during render is a *new type* on every render,
+ * so React unmounts and remounts the whole subtree — losing focus mid-keystroke
+ * and resetting anything stateful inside it.
+ */
+type Ctx = {
+  fields: FieldSpec[]
+  disabled?: boolean
+  maxDepth: number
+  addLabel: string
+  addGroupLabel: string
+  emptyLabel: string
+  patch: (id: string, changes: Partial<Condition>) => void
+  drop: (id: string) => void
+  setJoin: (id: string, join: 'and' | 'or') => void
+  addCondition: (id: string) => void
+  addGroup: (id: string) => void
+}
+
+const operatorsFor = (fields: FieldSpec[], key: string) =>
+  OPERATORS[fields.find((field) => field.key === key)?.type ?? 'string'] ?? OPERATORS.string
+
+/* --------------------------------------------------------------- summary */
+
+/** The tree as a sentence, with real parentheses. */
+function describe(node: Condition | ConditionGroup, fields: FieldSpec[], top = true): string {
+  if (!isGroup(node)) {
+    const spec = fields.find((field) => field.key === node.field)
+    const operator = operatorsFor(fields, node.field).find((item) => item.value === node.operator)
+    const label = spec?.label ?? node.field
+    if (operator?.unary) return `${label} ${operator.label}`
+    const shown =
+      spec?.type === 'enum'
+        ? (spec.options?.find((option) => option.value === node.value)?.label ?? node.value)
+        : node.value
+    return `${label} ${operator?.label ?? node.operator} ${shown || '…'}`
+  }
+
+  if (node.conditions.length === 0) return 'everyone'
+  const parts = node.conditions.map((child) => describe(child, fields, false))
+  const joined = parts.join(` ${node.join} `)
+  // Only nested groups get brackets; wrapping the whole thing adds noise.
+  return top || parts.length < 2 ? joined : `(${joined})`
+}
+
+/* ------------------------------------------------------------------ row */
+
+function ConditionRow({ condition, ctx }: { condition: Condition; ctx: Ctx }) {
+  const operators = operatorsFor(ctx.fields, condition.field)
+  const operator = operators.find((item) => item.value === condition.operator)
+  const spec = ctx.fields.find((field) => field.key === condition.field)
+  const incomplete = !operator?.unary && condition.value.trim() === ''
+
+  const control = cn(fieldBase, fieldOutline, 'h-8 w-full min-w-0 px-2 text-sm')
+
+  return (
+    <div
+      className={cn(
+        'grid items-center gap-2',
+        // Container queries, not viewport ones: this sits in a sidebar as often
+        // as a full page, and the breakpoint that matters is its own width.
+        '@[30rem]:grid-cols-[minmax(6rem,1fr)_minmax(5rem,auto)_minmax(6rem,1.2fr)_auto]',
+      )}
+    >
+      {/*
+        The kit's own `Select`, not a native one.
+
+        A native `<select>` cannot be styled to match the rest of the kit — the
+        popup is drawn by the OS — so a builder built from them looks like a
+        different product wherever it is embedded. `Select` also brings the
+        typeahead, roving focus and popper placement the rest of the kit has,
+        which matters more here than anywhere: these rows nest inside scrolling
+        containers where a naively positioned menu gets clipped.
+      */}
+      <Select
+        size="sm"
+        triggerLabel="Field"
+        disabled={ctx.disabled}
+        value={condition.field}
+        options={ctx.fields.map((field) => ({ value: field.key, label: field.label }))}
+        onValueChange={(next) =>
+          ctx.patch(condition.id, {
+            field: next,
+            // The operator list changes with the type, so a stale operator
+            // would be unselectable and the value meaningless.
+            operator: operatorsFor(ctx.fields, next)[0]?.value ?? 'eq',
+            value: '',
+          })
+        }
+        triggerClassName="w-full font-medium"
+      />
+
+      <Select
+        size="sm"
+        triggerLabel="Operator"
+        disabled={ctx.disabled}
+        value={condition.operator}
+        options={operators.map((item) => ({ value: item.value, label: item.label }))}
+        onValueChange={(next) => ctx.patch(condition.id, { operator: next })}
+        triggerClassName="text-muted-foreground w-full"
+      />
+
+      {operator?.unary ? (
+        <span aria-hidden="true" className="hidden @[30rem]:block" />
+      ) : spec?.type === 'enum' && spec.options ? (
+        <Select
+          size="sm"
+          triggerLabel="Value"
+          placeholder="Choose…"
+          error={incomplete || undefined}
+          disabled={ctx.disabled}
+          value={condition.value}
+          options={spec.options.map((option) => ({ value: option.value, label: option.label }))}
+          onValueChange={(next) => ctx.patch(condition.id, { value: next })}
+          triggerClassName="w-full"
+        />
+      ) : (
+        <input
+          aria-label="Value"
+          disabled={ctx.disabled}
+          aria-invalid={incomplete || undefined}
+          type={spec?.type === 'number' || spec?.type === 'date' ? spec.type : 'text'}
+          placeholder="Value"
+          value={condition.value}
+          onChange={(event) => ctx.patch(condition.id, { value: event.target.value })}
+          // Marked, never silently ignored: an empty value matches more people
+          // than the author thinks.
+          className={cn(control, incomplete && 'border-[var(--destructive)]')}
+        />
+      )}
+
+      <Button
+        size="icon-sm"
+        variant="ghost"
+        disabled={ctx.disabled}
+        aria-label="Remove condition"
+        className="justify-self-end"
+        onClick={() => ctx.drop(condition.id)}
+      >
+        <X />
+      </Button>
+    </div>
+  )
+}
+
+/* ---------------------------------------------------------------- group */
+
+function Group({ group, depth, ctx }: { group: ConditionGroup; depth: number; ctx: Ctx }) {
+  const many = group.conditions.length > 1
+
+  return (
+    <div
+      data-slot="segment-group"
+      data-join={group.join}
+      className={cn(
+        '@container',
+        depth > 0 && cn(radius.surface, 'border-border bg-muted/30 border p-2'),
+      )}
+    >
+      <div className="flex gap-2">
+        {/*
+          The bracket. What it spans is what the join applies to — which is the
+          one thing a flat list of and/or dropdowns cannot show.
+        */}
+        <div className={cn('relative w-11 shrink-0', !many && 'w-0 overflow-hidden')}>
+          {many && (
+            <>
+              <span
+                aria-hidden="true"
+                className="border-border absolute inset-y-4 end-0 w-2.5 rounded-s-md border-y border-s"
+              />
+              <button
+                type="button"
+                disabled={ctx.disabled}
+                // One control, two states: a labelled toggle rather than a
+                // dropdown, because there are only ever two joins.
+                aria-label={`Join: ${group.join.toUpperCase()}. Switch to ${
+                  group.join === 'and' ? 'OR' : 'AND'
+                }`}
+                onClick={() => ctx.setJoin(group.id, group.join === 'and' ? 'or' : 'and')}
+                className={cn(
+                  'bg-background border-border absolute top-1/2 start-0 -translate-y-1/2 border',
+                  'px-1.5 py-0.5 font-mono text-[10px] font-medium tracking-wider uppercase',
+                  radius.xs,
+                  focusRing,
+                  'hover:bg-muted disabled:pointer-events-none disabled:opacity-50',
+                )}
+              >
+                {group.join}
+              </button>
+            </>
+          )}
+        </div>
+
+        <ul className="min-w-0 flex-1 list-none space-y-2">
+          {group.conditions.length === 0 ? (
+            <li className="text-muted-foreground py-1 text-xs">{ctx.emptyLabel}</li>
+          ) : (
+            group.conditions.map((node) => (
+              <li key={node.id} className="min-w-0">
+                {isGroup(node) ? (
+                  <Group group={node} depth={depth + 1} ctx={ctx} />
+                ) : (
+                  <ConditionRow condition={node} ctx={ctx} />
+                )}
+              </li>
+            ))
+          )}
+
+          <li className="flex flex-wrap items-center gap-1 pt-1">
+            <Button
+              size="sm"
+              variant="ghost"
+              disabled={ctx.disabled}
+              onClick={() => ctx.addCondition(group.id)}
+            >
+              <Plus />
+              {ctx.addLabel}
+            </Button>
+
+            {depth < ctx.maxDepth && (
+              <Button
+                size="sm"
+                variant="ghost"
+                disabled={ctx.disabled}
+                onClick={() => ctx.addGroup(group.id)}
+              >
+                <Plus />
+                {ctx.addGroupLabel}
+              </Button>
+            )}
+
+            {depth > 0 && (
+              <Button
+                size="sm"
+                variant="ghost"
+                disabled={ctx.disabled}
+                className="text-muted-foreground ms-auto"
+                onClick={() => ctx.drop(group.id)}
+              >
+                <X />
+                Remove group
+              </Button>
+            )}
+          </li>
+        </ul>
+      </div>
+    </div>
+  )
+}
+
+/* -------------------------------------------------------------- builder */
 
 type SegmentBuilderProps = Omit<ComponentProps<'div'>, 'onChange'> & {
   fields: FieldSpec[]
@@ -90,14 +357,17 @@ type SegmentBuilderProps = Omit<ComponentProps<'div'>, 'onChange'> & {
   estimate?: ReactNode
   /** Depth of nesting allowed. */
   maxDepth?: number
+  /** Hide the plain-language summary. */
+  summary?: boolean
   addLabel?: string
   addGroupLabel?: string
   label?: string
+  emptyLabel?: string
+  disabled?: boolean
 }
 
 let counter = 0
 const nextId = () => `c${++counter}`
-
 const emptyGroup = (): ConditionGroup => ({ id: nextId(), join: 'and', conditions: [] })
 
 function SegmentBuilder({
@@ -107,9 +377,12 @@ function SegmentBuilder({
   onChange,
   estimate,
   maxDepth = 2,
-  addLabel = 'Add condition',
-  addGroupLabel = 'Add group',
+  summary = true,
+  addLabel = 'Condition',
+  addGroupLabel = 'Group',
   label = 'Segment',
+  emptyLabel = 'No conditions — this matches everyone.',
+  disabled,
   className,
   ...props
 }: SegmentBuilderProps) {
@@ -123,238 +396,86 @@ function SegmentBuilder({
     onChange?.(next)
   }
 
-  /** Structural edit by id — the tree is small, so a rebuild is simplest. */
-  const replace = (
+  /* -------------------------------------------- structural edits, by id */
+
+  const editGroup = (
     group: ConditionGroup,
     id: string,
     fn: (node: ConditionGroup) => ConditionGroup,
-  ): ConditionGroup => {
-    if (group.id === id) return fn(group)
-    return {
-      ...group,
-      conditions: group.conditions.map((node) =>
-        isGroup(node) ? replace(node, id, fn) : node,
-      ),
-    }
-  }
+  ): ConditionGroup =>
+    group.id === id
+      ? fn(group)
+      : {
+          ...group,
+          conditions: group.conditions.map((node) =>
+            isGroup(node) ? editGroup(node, id, fn) : node,
+          ),
+        }
 
-  const updateCondition = (group: ConditionGroup, id: string, patch: Partial<Condition>): ConditionGroup => ({
+  const editCondition = (
+    group: ConditionGroup,
+    id: string,
+    changes: Partial<Condition>,
+  ): ConditionGroup => ({
     ...group,
     conditions: group.conditions.map((node) =>
       isGroup(node)
-        ? updateCondition(node, id, patch)
+        ? editCondition(node, id, changes)
         : node.id === id
-          ? { ...node, ...patch }
+          ? { ...node, ...changes }
           : node,
     ),
   })
 
-  const remove = (group: ConditionGroup, id: string): ConditionGroup => ({
+  const removeNode = (group: ConditionGroup, id: string): ConditionGroup => ({
     ...group,
     conditions: group.conditions
       .filter((node) => node.id !== id)
-      .map((node) => (isGroup(node) ? remove(node, id) : node)),
+      .map((node) => (isGroup(node) ? removeNode(node, id) : node)),
   })
 
-  const operatorsFor = (fieldKey: string) => {
-    const spec = fields.find((field) => field.key === fieldKey)
-    return OPERATORS[spec?.type ?? 'string'] ?? OPERATORS.string
+  const ctx: Ctx = {
+    fields,
+    disabled,
+    maxDepth,
+    addLabel,
+    addGroupLabel,
+    emptyLabel,
+    patch: (id, changes) => commit(editCondition(root, id, changes)),
+    drop: (id) => commit(removeNode(root, id)),
+    setJoin: (id, join) => commit(editGroup(root, id, (current) => ({ ...current, join }))),
+    addCondition: (id) =>
+      commit(
+        editGroup(root, id, (current) => ({
+          ...current,
+          conditions: [
+            ...current.conditions,
+            {
+              id: nextId(),
+              field: fields[0]?.key ?? '',
+              operator: operatorsFor(fields, fields[0]?.key ?? '')[0]?.value ?? 'eq',
+              value: '',
+            },
+          ],
+        })),
+      ),
+    addGroup: (id) =>
+      commit(
+        editGroup(root, id, (current) => ({
+          ...current,
+          conditions: [...current.conditions, emptyGroup()],
+        })),
+      ),
   }
-
-  const renderGroup = (group: ConditionGroup, depth: number): ReactNode => (
-    <div
-      key={group.id}
-      className={cn(
-        'flex flex-col gap-2',
-        depth > 0 && cn('border-border border-s-2 ps-3', radius.xs),
-      )}
-    >
-      {group.conditions.map((node, index) => (
-        <div key={node.id} className="flex items-start gap-2">
-          {/* The join word appears once per group, between rows — not as a
-              per-row dropdown, which is what makes precedence ambiguous. */}
-          <span className="w-12 shrink-0 pt-2 text-end">
-            {index === 0 ? (
-              <span className="text-muted-foreground text-xs">Where</span>
-            ) : index === 1 ? (
-              <select
-                aria-label="Join"
-                value={group.join}
-                onChange={(event) =>
-                  commit(
-                    replace(root, group.id, (current) => ({
-                      ...current,
-                      join: event.target.value as 'and' | 'or',
-                    })),
-                  )
-                }
-                className={cn(fieldBase, 'h-7 w-full px-1 text-xs')}
-              >
-                <option value="and">and</option>
-                <option value="or">or</option>
-              </select>
-            ) : (
-              <span className="text-muted-foreground text-xs">{group.join}</span>
-            )}
-          </span>
-
-          <div className="min-w-0 flex-1">
-            {isGroup(node) ? (
-              renderGroup(node, depth + 1)
-            ) : (
-              (() => {
-                const operators = operatorsFor(node.field)
-                const operator = operators.find((item) => item.value === node.operator)
-                const spec = fields.find((field) => field.key === node.field)
-                const incomplete = !operator?.unary && node.value.trim() === ''
-
-                return (
-                  <div className="flex flex-wrap items-center gap-2">
-                    <select
-                      aria-label="Field"
-                      value={node.field}
-                      onChange={(event) =>
-                        commit(
-                          updateCondition(root, node.id, {
-                            field: event.target.value,
-                            operator: operatorsFor(event.target.value)[0]?.value ?? 'eq',
-                            value: '',
-                          }),
-                        )
-                      }
-                      className={cn(fieldBase, 'h-8 px-2 text-sm')}
-                    >
-                      {fields.map((field) => (
-                        <option key={field.key} value={field.key}>
-                          {field.label}
-                        </option>
-                      ))}
-                    </select>
-
-                    <select
-                      aria-label="Operator"
-                      value={node.operator}
-                      onChange={(event) =>
-                        commit(updateCondition(root, node.id, { operator: event.target.value }))
-                      }
-                      className={cn(fieldBase, 'h-8 px-2 text-sm')}
-                    >
-                      {operators.map((item) => (
-                        <option key={item.value} value={item.value}>
-                          {item.label}
-                        </option>
-                      ))}
-                    </select>
-
-                    {!operator?.unary &&
-                      (spec?.type === 'enum' && spec.options ? (
-                        <select
-                          aria-label="Value"
-                          value={node.value}
-                          onChange={(event) =>
-                            commit(updateCondition(root, node.id, { value: event.target.value }))
-                          }
-                          className={cn(fieldBase, 'h-8 px-2 text-sm')}
-                        >
-                          <option value="">Choose…</option>
-                          {spec.options.map((option) => (
-                            <option key={option.value} value={option.value}>
-                              {option.label}
-                            </option>
-                          ))}
-                        </select>
-                      ) : (
-                        <input
-                          aria-label="Value"
-                          aria-invalid={incomplete || undefined}
-                          type={spec?.type === 'number' ? 'number' : spec?.type === 'date' ? 'date' : 'text'}
-                          value={node.value}
-                          onChange={(event) =>
-                            commit(updateCondition(root, node.id, { value: event.target.value }))
-                          }
-                          className={cn(
-                            fieldBase,
-                            'h-8 w-40 px-2 text-sm',
-                            // Marked, never silently ignored: an empty value
-                            // matches more people than the author thinks.
-                            incomplete && 'border-[var(--destructive)]',
-                          )}
-                        />
-                      ))}
-
-                    {incomplete && (
-                      <span className="text-[var(--destructive)] text-[11px]">needs a value</span>
-                    )}
-
-                    <Button
-                      size="icon-sm"
-                      variant="ghost"
-                      aria-label="Remove condition"
-                      onClick={() => commit(remove(root, node.id))}
-                    >
-                      <X />
-                    </Button>
-                  </div>
-                )
-              })()
-            )}
-          </div>
-        </div>
-      ))}
-
-      <div className="flex items-center gap-2 ps-14">
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={() =>
-            commit(
-              replace(root, group.id, (current) => ({
-                ...current,
-                conditions: [
-                  ...current.conditions,
-                  {
-                    id: nextId(),
-                    field: fields[0]?.key ?? '',
-                    operator: operatorsFor(fields[0]?.key ?? '')[0]?.value ?? 'eq',
-                    value: '',
-                  },
-                ],
-              })),
-            )
-          }
-        >
-          <Plus />
-          {addLabel}
-        </Button>
-
-        {depth < maxDepth && (
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() =>
-              commit(
-                replace(root, group.id, (current) => ({
-                  ...current,
-                  conditions: [...current.conditions, emptyGroup()],
-                })),
-              )
-            }
-          >
-            {addGroupLabel}
-          </Button>
-        )}
-      </div>
-    </div>
-  )
 
   return (
     <div
       data-slot="segment-builder"
-      className={cn(surface, radius.surface, 'p-4', className)}
+      className={cn('flex flex-col gap-2', className)}
       aria-labelledby={titleId}
       {...props}
     >
-      <div className="mb-3 flex items-center justify-between">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
         <p id={titleId} className="text-sm font-medium">
           {label}
         </p>
@@ -363,10 +484,19 @@ function SegmentBuilder({
         )}
       </div>
 
-      {renderGroup(root, 0)}
+      <div className={cn(surface, radius.surface, 'p-3')}>
+        <Group group={root} depth={0} ctx={ctx} />
+      </div>
+
+      {summary && (
+        <p className="text-muted-foreground text-xs leading-relaxed">
+          <span className="font-medium">Matches: </span>
+          <span className="font-mono">{describe(root, fields)}</span>
+        </p>
+      )}
     </div>
   )
 }
 
-export { SegmentBuilder }
+export { SegmentBuilder, describe as describeSegment }
 export type { SegmentBuilderProps }

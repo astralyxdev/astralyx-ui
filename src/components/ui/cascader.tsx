@@ -2,7 +2,7 @@ import { useMemo, useRef, useState, type ComponentProps, type ReactNode } from '
 import { Check, ChevronDown, ChevronRight } from 'lucide-react'
 import { useDismissable } from '@/components/primitives/dismissable'
 import { usePopper } from '@/components/primitives/popper'
-import { fieldBase, fieldSize, menuSurface, radius } from '@/lib/styles'
+import { fieldBase, fieldOutline, fieldSize, menuSurface, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
 /**
@@ -133,7 +133,7 @@ function Cascader({
         aria-invalid={invalid || undefined}
         onClick={() => setOpen((current) => !current)}
         className={cn(
-          fieldBase,
+          fieldBase, fieldOutline,
           fieldSize[size],
           'flex w-full items-center justify-between gap-2 text-start',
           invalid && 'border-[var(--destructive)]',

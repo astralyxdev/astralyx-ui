@@ -1,4 +1,12 @@
-import { useId, useRef, useState, type ComponentProps, type ReactNode } from 'react'
+import {
+  useCallback,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ComponentProps,
+  type ReactNode,
+} from 'react'
 import { Bold, Code2, Heading2, Italic, Link2, List, ListOrdered, Quote } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Markdown } from '@/components/ui/markdown'
@@ -34,8 +42,27 @@ type MarkdownEditorProps = Omit<ComponentProps<'div'>, 'onChange' | 'defaultValu
   defaultValue?: string
   onChange?: (value: string) => void
   placeholder?: string
-  /** Rows for the textarea. The preview matches its height in split mode. */
+  /** Starting rows. Also the minimum height when `autoResize` is on. */
   rows?: number
+  /**
+   * Grow the textarea with its content, up to `maxRows`.
+   *
+   * A fixed-height box that scrolls internally is the wrong shape for writing:
+   * you lose the paragraph above as soon as you pass the fold, and the page's
+   * own scrollbar stops representing the document.
+   */
+  autoResize?: boolean
+  /** Ceiling for `autoResize`. Past this the pane scrolls. */
+  maxRows?: number
+  /**
+   * Keep the two panes aligned while scrolling in split mode.
+   *
+   * Proportional, not line-mapped: mapping source lines to rendered blocks
+   * needs a source map out of the renderer, and a heading plus a code fence
+   * occupy wildly different heights, so an honest proportional sync beats a
+   * precise-looking one that drifts.
+   */
+  syncScroll?: boolean
   defaultMode?: Mode
   /** Drop 'split' on narrow screens by passing your own list. */
   modes?: Mode[]
@@ -72,6 +99,9 @@ function MarkdownEditor({
   onChange,
   placeholder = 'Write markdown…',
   rows = 12,
+  autoResize = true,
+  maxRows = 30,
+  syncScroll = true,
   defaultMode = 'write',
   modes = ['write', 'preview', 'split'],
   toolbar = true,
@@ -82,11 +112,78 @@ function MarkdownEditor({
   ...props
 }: MarkdownEditorProps) {
   const areaRef = useRef<HTMLTextAreaElement>(null)
+  const previewRef = useRef<HTMLDivElement>(null)
+  /** Which pane the pointer is driving, so the sync cannot feed back on itself. */
+  const scrolling = useRef<'write' | 'preview' | null>(null)
   const id = useId()
   const [internal, setInternal] = useState(defaultValue)
   const [mode, setMode] = useState<Mode>(defaultMode)
 
   const text = value ?? internal
+
+  /**
+   * Height follows content, measured rather than estimated.
+   *
+   * `scrollHeight` has to be read with the height reset, or it only ever
+   * reports the current (larger) box and the field can grow but never shrink.
+   */
+  useLayoutEffect(() => {
+    const area = areaRef.current
+    if (!area) return
+
+    /*
+     * Growing and split view want opposite things, so they do not both apply.
+     *
+     * Writing wants the field to grow: a box that scrolls internally loses the
+     * paragraph above as soon as you pass the fold. Comparing wants two panes
+     * of equal height that scroll together — a pane that grows to fit can never
+     * scroll, so there is nothing to sync. Growth is therefore a `write`-mode
+     * behaviour, and split falls back to the intrinsic `rows` height with both
+     * sides scrolling.
+     */
+    if (!autoResize || mode !== 'write') {
+      area.style.height = ''
+      area.style.overflowY = ''
+      return
+    }
+
+    const styles = getComputedStyle(area)
+    const lineHeight = Number.parseFloat(styles.lineHeight) || 20
+    const padding = Number.parseFloat(styles.paddingTop) + Number.parseFloat(styles.paddingBottom)
+
+    area.style.height = 'auto'
+    const ceiling = lineHeight * maxRows + padding
+    const wanted = Math.min(area.scrollHeight, ceiling)
+    area.style.height = `${Math.max(wanted, lineHeight * rows + padding)}px`
+    // Only scrolls once it has hit the ceiling.
+    area.style.overflowY = area.scrollHeight > ceiling ? 'auto' : 'hidden'
+  }, [text, autoResize, maxRows, rows, mode])
+
+  /** Proportional scroll sync, one direction at a time. */
+  const sync = useCallback(
+    (from: 'write' | 'preview') => {
+      if (!syncScroll || mode !== 'split') return
+      if (scrolling.current && scrolling.current !== from) return
+
+      const source = from === 'write' ? areaRef.current : previewRef.current
+      const target = from === 'write' ? previewRef.current : areaRef.current
+      if (!source || !target) return
+
+      const sourceRange = source.scrollHeight - source.clientHeight
+      const targetRange = target.scrollHeight - target.clientHeight
+      if (sourceRange <= 0 || targetRange <= 0) return
+
+      scrolling.current = from
+      target.scrollTop = (source.scrollTop / sourceRange) * targetRange
+
+      // Released after the frame, or the target's own scroll event would
+      // bounce straight back and the two panes would fight.
+      requestAnimationFrame(() => {
+        scrolling.current = null
+      })
+    },
+    [syncScroll, mode],
+  )
 
   const commit = (next: string) => {
     if (value === undefined) setInternal(next)
@@ -201,7 +298,7 @@ function MarkdownEditor({
         </div>
       )}
 
-      <div className={cn('grid', mode === 'split' && 'md:grid-cols-2')}>
+      <div className={cn('grid', mode === 'split' && 'md:grid-cols-2 md:items-stretch')}>
         {showWrite && (
           <textarea
             ref={areaRef}
@@ -213,6 +310,7 @@ function MarkdownEditor({
             placeholder={placeholder}
             spellCheck
             onChange={(event) => commit(event.target.value)}
+            onScroll={() => sync('write')}
             onKeyDown={(event) => {
               // The shortcuts people try first. Tab is left alone on purpose:
               // trapping it breaks keyboard navigation out of the field.
@@ -226,7 +324,8 @@ function MarkdownEditor({
             }}
             className={cn(
               fieldBase,
-              'min-h-40 resize-y rounded-none border-0 font-mono text-sm leading-relaxed',
+              'rounded-none border-0 font-mono text-sm leading-relaxed',
+              autoResize && mode === 'write' ? 'resize-none overflow-hidden' : 'min-h-40 resize-y',
               'focus-visible:ring-0 focus-visible:outline-none',
               mode === 'split' && 'md:border-border md:border-e',
             )}
@@ -234,7 +333,19 @@ function MarkdownEditor({
         )}
 
         {showPreview && (
-          <div className="min-w-0 overflow-x-auto">
+          <div
+            ref={previewRef}
+            onScroll={() => sync('preview')}
+            /*
+             * `min-h-0` is what makes this scroll rather than stretch the row.
+             *
+             * A grid item's default `min-height: auto` refuses to shrink below
+             * its content, so `overflow-y: auto` never engages and the taller
+             * pane pushes the row instead — which is why the two halves drift
+             * out of alignment. With it, the row is sized by the textarea and
+             * the preview scrolls inside it.
+             */
+            className="min-h-0 min-w-0 overflow-x-auto overflow-y-auto">
             <Markdown
               toggle={false}
               className="rounded-none border-0 bg-transparent"

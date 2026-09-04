@@ -1,7 +1,7 @@
 import { useId, useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { fieldBase, focusRing, radius, surface } from '@/lib/styles'
+import { fieldBase, fieldOutline, focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
 /**
@@ -93,7 +93,7 @@ function Panel({
 
       {searchable && (
         <div className="border-border border-b p-2">
-          <div className={cn(fieldBase, 'flex h-8 items-center gap-2 px-2')}>
+          <div className={cn(fieldBase, fieldOutline, 'flex h-8 items-center gap-2 px-2')}>
             <Search aria-hidden="true" className="text-muted-foreground size-3.5 shrink-0" />
             <input
               value={query}

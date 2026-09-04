@@ -1,7 +1,7 @@
 import { useEffect, useId, useMemo, useRef, useState, type ComponentProps, type ReactNode } from 'react'
 import { Pause, Play } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { fieldBase, radius, surface } from '@/lib/styles'
+import { fieldBase, fieldOutline, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
 /**
@@ -145,7 +145,7 @@ function EventStream({
         <span className="flex-1" />
 
         {filterable && (
-          <div className={cn(fieldBase, 'flex h-7 w-40 items-center px-2')}>
+          <div className={cn(fieldBase, fieldOutline, 'flex h-7 w-40 items-center px-2')}>
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}

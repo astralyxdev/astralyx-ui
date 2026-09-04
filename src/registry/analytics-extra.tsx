@@ -238,7 +238,8 @@ export const segmentBuilderEntry: ComponentEntry = {
   },
   api: [
     { name: 'value', type: 'ConditionGroup', description: 'Nested groups of conditions, each with one join. Not a string — so it compiles to SQL or an API filter with values still separated from operators, which is what keeps it parameterisable rather than concatenated.' },
-    { name: 'precedence', type: 'shown as nesting', description: '"A or B and C" means two different audiences depending on how it binds, and people read it the way English reads, not the way the engine evaluates. A group is a box with one join.' },
+    { name: 'precedence', type: 'one join per group', description: '"A or B and C" means two different audiences depending on how it binds. The join is set once at the head of a group and echoed read-only between its rows, so the box you see is the parse tree — a dropdown on every line is what makes a flat builder ambiguous.' },
+    { name: 'nesting', type: 'tinted, not just indented', description: 'The boundary of a group carries the precedence, so it is drawn as a filled box that deepens with depth rather than a margin you have to measure by eye.' },
     { name: 'incomplete rows', type: 'marked, not dropped', description: 'A condition with no value is a half-written thought. Treating it as absent means the segment quietly matches more people than the author believes — expensive for a marketing send.' },
     { name: 'fields', type: 'FieldSpec[]', description: '{ key, label, type?, options? }. The type picks the operator list and the value control.' },
     { name: 'estimate', type: 'ReactNode', description: 'Supplied by the caller — only your backend knows how many people match.' },

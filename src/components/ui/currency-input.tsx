@@ -1,5 +1,5 @@
 import { useId, useState, type ComponentProps } from 'react'
-import { fieldBase, fieldSize } from '@/lib/styles'
+import { fieldBase, fieldOutline, fieldSize } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
 /**
@@ -20,7 +20,12 @@ import { cn } from '@/lib/utils'
  * **The display is formatted only when the field is not focused.** Reformatting
  * under the caret while typing is the classic money-input bug — you type `1`,
  * it becomes `$1.00`, and the caret jumps behind the decimals. While focused
- * you edit a plain string; on blur it is parsed and formatted.
+ * you edit a plain string; on blur it is parsed and grouped.
+ *
+ * **The symbol is an adornment, and appears exactly once.** It is drawn beside
+ * the field and left out of the formatted value, so it cannot render twice and
+ * cannot vanish when the field takes focus. Which side it sits on comes from
+ * the locale — `en-US` writes `$1,299`, `fr-FR` writes `1 299 €`.
  */
 type CurrencyInputProps = Omit<
   ComponentProps<'input'>,
@@ -59,26 +64,51 @@ function decimalsFor(currency: string, locale: string) {
   }
 }
 
-function format(minor: number, currency: string, locale: string, decimals: number) {
+/**
+ * The number alone — grouped, with the currency's own decimal count, and
+ * **without** the symbol.
+ *
+ * The symbol is drawn once, as an adornment. Formatting the value with
+ * `style: 'currency'` as well renders it twice ("$ $1,299.00"), and then it
+ * disappears from inside the field the moment you focus it, because the
+ * editable draft is a plain number — so the control appears to lose a
+ * character as you start typing.
+ */
+function format(minor: number, locale: string, decimals: number) {
+  const major = minor / 10 ** decimals
   try {
-    return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(
-      minor / 10 ** decimals,
-    )
+    return new Intl.NumberFormat(locale, {
+      style: 'decimal',
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    }).format(major)
   } catch {
-    return String(minor / 10 ** decimals)
+    return String(major)
   }
 }
 
-/** The currency symbol on its own, for the leading adornment. */
-function symbolFor(currency: string, locale: string) {
+/**
+ * The symbol, and which side of the number it belongs on.
+ *
+ * Placement is per locale, not per currency: `en-US` writes `$1,299`, `fr-FR`
+ * writes `1 299 €`. Pinning the adornment to the leading edge is wrong in every
+ * locale that puts it after, so the position is read out of `formatToParts`.
+ */
+function currencyMeta(currency: string, locale: string) {
   try {
-    return (
-      new Intl.NumberFormat(locale, { style: 'currency', currency, currencyDisplay: 'narrowSymbol' })
-        .formatToParts(0)
-        .find((part) => part.type === 'currency')?.value ?? currency
-    )
+    const parts = new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency,
+      currencyDisplay: 'narrowSymbol',
+    }).formatToParts(1)
+    const symbolAt = parts.findIndex((part) => part.type === 'currency')
+    const numberAt = parts.findIndex((part) => part.type === 'integer')
+    return {
+      symbol: parts[symbolAt]?.value ?? currency,
+      leading: symbolAt !== -1 && numberAt !== -1 ? symbolAt < numberAt : true,
+    }
   } catch {
-    return currency
+    return { symbol: currency, leading: true }
   }
 }
 
@@ -123,18 +153,26 @@ function CurrencyInput({
     return Math.round(major * 10 ** decimals)
   }
 
+  const { symbol, leading } = currencyMeta(currency, locale)
+
   const display =
     draft !== null
       ? draft
       : current === null || current === undefined
         ? ''
-        : format(current, currency, locale, decimals)
+        : format(current, locale, decimals)
+
+  const adornment = (
+    <span aria-hidden="true" className="text-muted-foreground shrink-0 text-sm">
+      {symbol}
+    </span>
+  )
 
   return (
     <div
       data-slot="currency-input"
       className={cn(
-        fieldBase,
+        fieldBase, fieldOutline,
         fieldSize[size],
         'flex items-center gap-1.5',
         invalid && 'border-[var(--destructive)]',
@@ -142,9 +180,7 @@ function CurrencyInput({
         className,
       )}
     >
-      <span aria-hidden="true" className="text-muted-foreground shrink-0 text-sm">
-        {symbolFor(currency, locale)}
-      </span>
+      {leading && adornment}
 
       <input
         id={id}
@@ -178,6 +214,8 @@ function CurrencyInput({
         className="min-w-0 flex-1 bg-transparent text-sm tabular-nums outline-none"
         {...props}
       />
+
+      {!leading && adornment}
 
       {showCode && (
         <span aria-hidden="true" className="text-muted-foreground shrink-0 font-mono text-xs">
