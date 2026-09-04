@@ -113,6 +113,12 @@ export const checkoutSummaryEntry: ComponentEntry = {
     { name: 'total', type: 'summed here', description: 'From the rows shown, so it cannot disagree with them.' },
     { name: 'footer', type: 'ReactNode', description: 'Where the continue button goes.' },
   ],
+  demos: [
+    { title: 'With a discount and an unknown charge', stack: true, code: `<CheckoutSummary subtotal={193_300} currency="GBP" lines={adjustments} />`,
+      render: () => (<div className="w-full max-w-sm"><CheckoutSummary subtotal={193_300} currency="GBP" lines={ADJUSTMENTS} /></div>) },
+    { title: 'Nothing added', stack: true, code: `<CheckoutSummary subtotal={4_900} currency="GBP" />`,
+      render: () => (<div className="w-full max-w-sm"><CheckoutSummary subtotal={4_900} currency="GBP" /></div>) },
+  ],
 }
 
 /* -------------------------------------------------------- subscription state */
@@ -156,5 +162,9 @@ export const subscriptionStateEntry: ComponentEntry = {
     { name: 'trialEndsAt', type: 'Date', description: 'Rendered as days remaining. "Ends 14 March" needs a calendar; "4 days left" does not.' },
     { name: 'past_due', type: 'strongest treatment', description: 'The only state where a paying customer can lose access, and usually fixable in one click — so it gets a border and its own action.' },
     { name: 'price', type: 'number', description: 'Minor units per period. Whole amounts drop the decimals.' },
+  ],
+  demos: [
+    { title: 'Active, past due and cancelling', stack: true, code: `<SubscriptionState plan="Team" status="active" renewsAt={renewsAt} />`,
+      render: () => (<div className="flex w-full max-w-md flex-col gap-3"><SubscriptionState plan="Team" status="active" seats={{ used: 9, total: 12 }} price={4_900} currency="GBP" renewsAt={new Date(NOW.getTime() + 21 * 86_400_000)} /><SubscriptionState plan="Team" status="past_due" seats={{ used: 9, total: 12 }} price={4_900} currency="GBP" /><SubscriptionState plan="Pro" status="canceled" seats={{ used: 3, total: 3 }} price={1_900} currency="GBP" endsAt={new Date(NOW.getTime() + 6 * 86_400_000)} /></div>) },
   ],
 }

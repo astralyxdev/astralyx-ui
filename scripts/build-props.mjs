@@ -62,6 +62,39 @@ function propsFor(file) {
     ts.ScriptKind.TSX,
   )
 
+  // Only the components this file actually exports. A file often defines
+  // internal helpers — `Ring` inside lighthouse-score, a `Row` inside a table —
+  // and their parameters are not the component's public surface. Collecting
+  // them merged phantom props into the table.
+  const exported = new Set()
+  const findExports = (node) => {
+    if (ts.isExportDeclaration(node) && node.exportClause && ts.isNamedExports(node.exportClause)) {
+      for (const element of node.exportClause.elements) {
+        exported.add((element.propertyName ?? element.name).text)
+      }
+    }
+    if (
+      ts.canHaveModifiers(node) &&
+      ts.getModifiers(node)?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword) &&
+      ts.isFunctionDeclaration(node) &&
+      node.name
+    ) {
+      exported.add(node.name.text)
+    }
+    ts.forEachChild(node, findExports)
+  }
+  findExports(source)
+
+  // Type aliases declared in this file, so `type FooProps = BarProps | BazProps`
+  // can be followed. Calendar is exactly that shape, and without this its whole
+  // surface — mode, selected, onSelect — resolved to nothing.
+  const locals = new Map()
+  const findLocals = (node) => {
+    if (ts.isTypeAliasDeclaration(node)) locals.set(node.name.text, node.type)
+    ts.forEachChild(node, findLocals)
+  }
+  findLocals(source)
+
   const rows = new Map()
   let defaults = new Map()
 
@@ -71,6 +104,7 @@ function propsFor(file) {
     if (
       ts.isFunctionDeclaration(node) &&
       node.name &&
+      exported.has(node.name.text) &&
       /^[A-Z]/.test(node.name.text) &&
       defaults.size === 0
     ) {
@@ -89,8 +123,19 @@ function propsFor(file) {
    * `email` prop. Only the top level of the props object is the component's
    * surface.
    */
+  const seen = new Set()
   const collect = (node) => {
     if (ts.isParenthesizedTypeNode(node)) return collect(node.type)
+
+    // Follow a reference to another alias in this file, once.
+    if (ts.isTypeReferenceNode(node) && ts.isIdentifier(node.typeName)) {
+      const target = locals.get(node.typeName.text)
+      if (target && !seen.has(node.typeName.text)) {
+        seen.add(node.typeName.text)
+        collect(target)
+      }
+      return
+    }
 
     if (ts.isIntersectionTypeNode(node) || ts.isUnionTypeNode(node)) {
       for (const member of node.types) collect(member)
@@ -114,8 +159,18 @@ function propsFor(file) {
   }
 
   const visit = (node) => {
-    if (ts.isTypeAliasDeclaration(node) && /Props$/.test(node.name.text)) collect(node.type)
-    if (ts.isFunctionDeclaration(node) && node.parameters.length) {
+    // `FooProps` counts when `Foo` is exported — the props type is often
+    // exported alongside it, and sometimes only the component is.
+    if (ts.isTypeAliasDeclaration(node) && /Props$/.test(node.name.text)) {
+      const component = node.name.text.replace(/Props$/, '')
+      if (exported.has(component) || exported.has(node.name.text)) collect(node.type)
+    }
+    if (
+      ts.isFunctionDeclaration(node) &&
+      node.name &&
+      exported.has(node.name.text) &&
+      node.parameters.length
+    ) {
       const annotation = node.parameters[0].type
       if (annotation) collect(annotation)
     }

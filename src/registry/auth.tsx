@@ -54,6 +54,46 @@ export const loginFormEntry: ComponentEntry = {
     { name: 'loading', type: 'boolean', description: 'Disables the submit button and shows a spinner. The fields stay enabled, so a slow request does not eat a correction.' },
     { name: 'autocomplete', type: 'set', description: '`username` and `current-password`, which is what lets a password manager fill both in one gesture.' },
   ],
+  demos: [
+    {
+      title: 'With SSO providers and a failure',
+      stack: true,
+      code: `<LoginForm
+  error="Those credentials did not match an account."
+  providers={<><Button variant="secondary">GitHub</Button><Button variant="secondary">Google</Button></>}
+  onForgot={() => navigate('/reset')}
+/>`,
+      render: () => (
+        <div className="w-full max-w-sm">
+          <LoginForm
+            error="Those credentials did not match an account."
+            onForgot={() => {}}
+            providers={
+              <>
+                <Button variant="secondary" className="w-full">Continue with GitHub</Button>
+                <Button variant="secondary" className="w-full">Continue with Google</Button>
+              </>
+            }
+            footer={
+              <span className="text-muted-foreground text-xs">
+                No account? <a href="#" className="underline">Create one</a>
+              </span>
+            }
+          />
+        </div>
+      ),
+    },
+    {
+      title: 'Submitting',
+      stack: true,
+      code: `<LoginForm loading submitLabel="Signing in…" />`,
+      render: () => (
+        <div className="w-full max-w-sm">
+          <LoginForm loading submitLabel="Signing in…" onForgot={() => {}} />
+        </div>
+      ),
+    },
+  ],
 }
 
 /* --------------------------------------------------------- two-factor setup */
@@ -155,6 +195,28 @@ export const sessionListEntry: ComponentEntry = {
     { name: 'onRevokeOthers', type: '() => void', description: 'The "sign out everywhere" action. This is what someone reaching this screen after a scare actually wants.' },
     { name: 'location', type: 'ReactNode', description: 'Labelled as approximate. IP geolocation is routinely a hundred miles out, and presenting it as fact leads people to dismiss a real intrusion.' },
   ],
+  demos: [
+    {
+      title: 'One session flagged as suspicious',
+      stack: true,
+      code: `<SessionList sessions={sessions} now={now} onRevoke={revoke} onRevokeOthers={revokeOthers} />`,
+      render: () => (
+        <div className="w-full max-w-2xl">
+          <SessionList sessions={SESSIONS} now={NOW} onRevoke={() => {}} onRevokeOthers={() => {}} />
+        </div>
+      ),
+    },
+    {
+      title: 'Only this device',
+      stack: true,
+      code: `<SessionList sessions={[current]} now={now} />`,
+      render: () => (
+        <div className="w-full max-w-2xl">
+          <SessionList sessions={SESSIONS.slice(0, 1)} now={NOW} />
+        </div>
+      ),
+    },
+  ],
 }
 
 /* --------------------------------------------------------------- device list */
@@ -188,6 +250,28 @@ export const deviceListEntry: ComponentEntry = {
     { name: 'trustedUntil', type: 'Date', description: 'Expiry of the trust grant. Shown as a countdown while near, and marked expired once past — an expired grant is not a revoked device.' },
     { name: 'onRevoke', type: '(id: string) => void', description: 'Omit to render a read-only list.' },
     { name: 'now', type: 'Date', description: 'Reference for every relative time, so snapshots do not drift.' },
+  ],
+  demos: [
+    {
+      title: 'Trusted devices',
+      stack: true,
+      code: `<DeviceList devices={devices} now={now} onRevoke={revoke} />`,
+      render: () => (
+        <div className="w-full max-w-2xl">
+          <DeviceList devices={DEVICES} now={NOW} onRevoke={() => {}} />
+        </div>
+      ),
+    },
+    {
+      title: 'Nothing trusted yet',
+      stack: true,
+      code: `<DeviceList devices={[]} />`,
+      render: () => (
+        <div className="w-full max-w-2xl">
+          <DeviceList devices={[]} />
+        </div>
+      ),
+    },
   ],
 }
 
@@ -239,5 +323,17 @@ export const permissionMatrixEntry: ComponentEntry = {
     { name: 'inherited', type: 'string[]', description: 'Held via implication. Rendered distinctly and not directly revocable, because revoking it here would silently do nothing.' },
     { name: 'locked', type: 'boolean', description: 'For a role that cannot be edited at all — an Owner that must keep every permission.' },
     { name: 'onToggle', type: '(roleId, permissionId, granted) => void', description: 'Omit for a read-only matrix, which is the right thing for a permissions reference page.' },
+  ],
+  demos: [
+    {
+      title: 'Roles against permissions',
+      stack: true,
+      code: `<PermissionMatrix permissions={permissions} roles={roles} />`,
+      render: () => (
+        <div className="w-full">
+          <PermissionMatrix permissions={PERMISSIONS} roles={ROLES} />
+        </div>
+      ),
+    },
   ],
 }

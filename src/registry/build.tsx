@@ -53,6 +53,10 @@ export const buildLogEntry: ComponentEntry = {
     { name: 'duration bars', type: 'relative to slowest', description: 'The step making the build slow is visible without reading every number — the second reason anyone opens a build log.' },
     { name: 'running', type: 'spinner, no duration', description: 'A number that ticks while you read it is harder to compare than one that is absent until final.' },
   ],
+  demos: [
+    { title: 'A build in progress', stack: true, code: `<BuildLog steps={steps} />`,
+      render: () => (<div className="w-full"><BuildLog steps={STEPS} /></div>) },
+  ],
 }
 
 /* ------------------------------------------------------------ bundle treemap */
@@ -102,6 +106,10 @@ export const bundleTreemapEntry: ComponentEntry = {
     { name: 'layout', type: 'squarified', description: 'Not slice-and-dice: long thin slivers cannot be compared by eye or clicked, which defeats the shape.' },
     { name: 'why a treemap', type: 'composition', description: 'A sorted bar chart answers "what is largest". A treemap answers "what is this bundle made of", which is the question when a build doubles.' },
   ],
+  demos: [
+    { title: 'Where the bytes went', stack: true, code: `<BundleTreemap modules={modules} />`,
+      render: () => (<div className="w-full"><BundleTreemap modules={MODULES} /></div>) },
+  ],
 }
 
 /* ----------------------------------------------------------- coverage report */
@@ -145,6 +153,10 @@ export const coverageReportEntry: ComponentEntry = {
     { name: 'metric', type: 'branches by default', description: 'Statement coverage flatters: a file can hit every statement and miss half its branches, which is where the bugs are.' },
     { name: 'threshold', type: 'number', default: '0.8', description: 'Drawn as a line on every bar, so "below target" is visible per row without reading numbers.' },
     { name: 'uncovered', type: 'number[]', description: 'Expands to the actual line numbers — the thing you need to act.' },
+  ],
+  demos: [
+    { title: 'Per-file coverage', stack: true, code: `<CoverageReport files={files} />`,
+      render: () => (<div className="w-full"><CoverageReport files={FILES} /></div>) },
   ],
 }
 
@@ -201,6 +213,10 @@ export const flameGraphEntry: ComponentEntry = {
     { name: 'self time', type: 'shown on hover', description: 'A frame 400ms wide spending 3ms in itself is not the problem — its child is. Total alone cannot tell you which.' },
     { name: 'sub-pixel frames', type: 'dropped', description: 'Thousands of sliver rectangles cost real render time and show nothing.' },
   ],
+  demos: [
+    { title: 'A CPU profile', stack: true, code: `<FlameGraph root={profile} />`,
+      render: () => (<div className="w-full"><FlameGraph root={PROFILE} /></div>) },
+  ],
 }
 
 /* ------------------------------------------------------------ benchmark table */
@@ -243,6 +259,10 @@ export const benchmarkTableEntry: ComponentEntry = {
     { name: 'inconclusive', type: 'derived', description: 'Overlapping error bars against the leader. Refusing to call that a win is the point of the component.' },
     { name: 'higherIsBetter', type: 'boolean', default: 'true', description: 'ops/sec: true. Nanoseconds per op: false. "2.4×" is ambiguous without it, and both directions are normal.' },
     { name: 'scale', type: 'log past 100×', description: 'Linear bars turn a 1000× spread into one full bar and nine invisible ones.' },
+  ],
+  demos: [
+    { title: 'A run against a baseline', stack: true, code: `<BenchmarkTable results={results} />`,
+      render: () => (<div className="w-full"><BenchmarkTable results={RESULTS} /></div>) },
   ],
 }
 
@@ -294,5 +314,11 @@ export const lighthouseScoreEntry: ComponentEntry = {
     { name: 'bands', type: '50 / 90', description: 'Matching the reference tool. Inventing our own would make a green here mean something different from a green in the report the number came from.' },
     { name: 'metrics', type: 'shown, not hidden', description: 'The score summarises them; only the metrics can be acted on. `poor: true` tints one.' },
     { name: 'ring', type: 'SVG stroke-dasharray', description: 'Not a conic gradient — it prints, scales, and takes the theme\'s own colours.' },
+  ],
+  demos: [
+    { title: 'A passing audit', stack: true, code: `<LighthouseScore categories={categories} />`,
+      render: () => (<div className="w-full max-w-xl"><LighthouseScore categories={CATEGORIES} /></div>) },
+    { title: 'A failing one', stack: true, code: `<LighthouseScore categories={categories} ringSize={64} />`,
+      render: () => (<div className="w-full max-w-xl"><LighthouseScore ringSize={64} categories={CATEGORIES.map((category) => ({ ...category, score: Math.max(12, category.score - 45) }))} /></div>) },
   ],
 }

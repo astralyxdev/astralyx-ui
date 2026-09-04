@@ -1432,56 +1432,6 @@
       "name": "presets",
       "type": "never",
       "optional": true
-    },
-    {
-      "name": "onPick",
-      "type": "(range: DateRange) => void",
-      "optional": false
-    },
-    {
-      "name": "weekdays",
-      "type": "string[]",
-      "optional": false
-    },
-    {
-      "name": "range",
-      "type": "DateRange",
-      "optional": true
-    },
-    {
-      "name": "unavailable",
-      "type": "(date: Date) => boolean",
-      "optional": false
-    },
-    {
-      "name": "onDayDown",
-      "type": "(date: Date) => void",
-      "optional": false
-    },
-    {
-      "name": "onDayEnter",
-      "type": "(date: Date) => void",
-      "optional": false
-    },
-    {
-      "name": "showCaption",
-      "type": "boolean",
-      "optional": false
-    },
-    {
-      "name": "single",
-      "type": "Date",
-      "optional": true
-    },
-    {
-      "name": "step",
-      "type": "number",
-      "optional": false
-    },
-    {
-      "name": "onChange",
-      "type": "(value: Date | DateRange | undefined) => void",
-      "optional": false
     }
   ],
   "campaign-card": [
@@ -2232,33 +2182,19 @@
       "type": "boolean",
       "optional": true,
       "description": "Force the header on or off. Defaults to on when there is anything in it."
-    },
-    {
-      "name": "path",
-      "type": "string",
-      "optional": false
-    },
-    {
-      "name": "label",
-      "type": "string",
-      "optional": false
     }
   ],
   "code-search": [
     {
-      "name": "match",
-      "type": "CodeMatch",
+      "name": "files",
+      "type": "CodeSearchFile[]",
       "optional": false
     },
     {
       "name": "query",
       "type": "string",
-      "optional": true
-    },
-    {
-      "name": "files",
-      "type": "CodeSearchFile[]",
-      "optional": false
+      "optional": true,
+      "description": "Used to locate the hit when a match carries no explicit range."
     },
     {
       "name": "defaultCollapsed",
@@ -2566,12 +2502,6 @@
       "name": "onOpenChange",
       "type": "(open: boolean) => void",
       "optional": true
-    },
-    {
-      "name": "label",
-      "type": "string",
-      "optional": true,
-      "description": "Accessible name for the palette dialog."
     }
   ],
   "commit-graph": [
@@ -2726,26 +2656,6 @@
       "type": "ReactNode",
       "optional": true,
       "default": "'Reset'"
-    },
-    {
-      "name": "control",
-      "type": "ComposerControl",
-      "optional": false
-    },
-    {
-      "name": "value",
-      "type": "ComposerValue",
-      "optional": false
-    },
-    {
-      "name": "onChange",
-      "type": "(value: ComposerValue) => void",
-      "optional": false
-    },
-    {
-      "name": "scope",
-      "type": "string",
-      "optional": false
     }
   ],
   "confidence-meter": [
@@ -3264,26 +3174,6 @@
       "type": "(parts: { days: number hours: number minutes: number seconds: number total: number }) => ReactNode",
       "optional": true,
       "description": "Formats the parts. Defaults to `1d 04:12:09`."
-    },
-    {
-      "name": "days",
-      "type": "number",
-      "optional": false
-    },
-    {
-      "name": "hours",
-      "type": "number",
-      "optional": false
-    },
-    {
-      "name": "minutes",
-      "type": "number",
-      "optional": false
-    },
-    {
-      "name": "seconds",
-      "type": "number",
-      "optional": false
     }
   ],
   "coverage-report": [
@@ -3491,6 +3381,93 @@
     }
   ],
   "date-picker": [
+    {
+      "name": "placeholder",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "locale",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "fromDate",
+      "type": "Date",
+      "optional": true
+    },
+    {
+      "name": "toDate",
+      "type": "Date",
+      "optional": true
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "optional": true
+    },
+    {
+      "name": "disabledDate",
+      "type": "(date: Date) => boolean",
+      "optional": true
+    },
+    {
+      "name": "size",
+      "type": "keyof typeof fieldSize",
+      "optional": true
+    },
+    {
+      "name": "variant",
+      "type": "'default' | 'secondary' | 'ghost'",
+      "optional": true,
+      "description": "Matches Input and Select, so a form can be uniform."
+    },
+    {
+      "name": "error",
+      "type": "boolean",
+      "optional": true
+    },
+    {
+      "name": "numberOfMonths",
+      "type": "number",
+      "optional": true
+    },
+    {
+      "name": "weekStartsOn",
+      "type": "WeekStart",
+      "optional": true
+    },
+    {
+      "name": "captionLayout",
+      "type": "'label' | 'dropdown'",
+      "optional": true
+    },
+    {
+      "name": "showTime",
+      "type": "boolean",
+      "optional": true
+    },
+    {
+      "name": "timeStep",
+      "type": "number",
+      "optional": true
+    },
+    {
+      "name": "footer",
+      "type": "ReactNode",
+      "optional": true
+    },
+    {
+      "name": "closeOnSelect",
+      "type": "boolean",
+      "optional": true,
+      "description": "Keep the popover open after a pick — useful with times."
+    },
+    {
+      "name": "className",
+      "type": "string",
+      "optional": true
+    },
     {
       "name": "mode",
       "type": "'single'",
@@ -3894,11 +3871,6 @@
     }
   ],
   "diff-view": [
-    {
-      "name": "value",
-      "type": "number",
-      "optional": true
-    },
     {
       "name": "file",
       "type": "DiffFile",
@@ -4678,26 +4650,6 @@
       "optional": true,
       "default": "'Files'",
       "description": "Accessible name for the tree."
-    },
-    {
-      "name": "node",
-      "type": "FileNode",
-      "optional": false
-    },
-    {
-      "name": "path",
-      "type": "string",
-      "optional": false
-    },
-    {
-      "name": "level",
-      "type": "number",
-      "optional": false
-    },
-    {
-      "name": "selected",
-      "type": "string",
-      "optional": true
     }
   ],
   "fingerprint-diff": [
@@ -4739,6 +4691,22 @@
     }
   ],
   "flame-graph": [
+    {
+      "name": "name",
+      "type": "string",
+      "optional": false
+    },
+    {
+      "name": "value",
+      "type": "number",
+      "optional": false,
+      "description": "Total time in this frame, including children."
+    },
+    {
+      "name": "children",
+      "type": "FlameFrame[]",
+      "optional": true
+    },
     {
       "name": "root",
       "type": "FlameFrame",
@@ -4869,11 +4837,6 @@
     {
       "name": "children",
       "type": "( field: ControllerRenderProps<T, N> & ReturnType<typeof useFieldControl>, ) => ReactNode",
-      "optional": false
-    },
-    {
-      "name": "field",
-      "type": "ControllerRenderProps<T, N>",
       "optional": false
     }
   ],
@@ -5262,6 +5225,53 @@
     }
   ],
   "health-checks": [
+    {
+      "name": "id",
+      "type": "string",
+      "optional": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "optional": false
+    },
+    {
+      "name": "url",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "status",
+      "type": "'healthy' | 'degraded' | 'down'",
+      "optional": false
+    },
+    {
+      "name": "latency",
+      "type": "number",
+      "optional": true,
+      "description": "Milliseconds."
+    },
+    {
+      "name": "latencyThreshold",
+      "type": "number",
+      "optional": true,
+      "description": "Above this, a healthy response still reads as degraded."
+    },
+    {
+      "name": "code",
+      "type": "number",
+      "optional": true
+    },
+    {
+      "name": "history",
+      "type": "number[]",
+      "optional": true
+    },
+    {
+      "name": "region",
+      "type": "ReactNode",
+      "optional": true
+    },
     {
       "name": "checks",
       "type": "HealthCheck[]",
@@ -5730,11 +5740,6 @@
       "optional": true,
       "default": "'Nothing selected.'",
       "description": "Shown when nothing is selected. Pass `sections: []` alongside it."
-    },
-    {
-      "name": "field",
-      "type": "InspectorField",
-      "optional": false
     }
   ],
   "invoice-list": [
@@ -5775,25 +5780,16 @@
   ],
   "json-viewer": [
     {
-      "name": "name",
-      "type": "string",
-      "optional": true
-    },
-    {
       "name": "value",
       "type": "Json",
       "optional": false
     },
     {
-      "name": "depth",
-      "type": "number",
-      "optional": false
-    },
-    {
       "name": "defaultExpandedDepth",
       "type": "number",
-      "optional": false,
-      "default": "1"
+      "optional": true,
+      "default": "1",
+      "description": "Levels open on first render."
     }
   ],
   "jwt-inspector": [
@@ -5964,27 +5960,6 @@
   ],
   "leaderboard": [
     {
-      "name": "row",
-      "type": "RankedRow",
-      "optional": false
-    },
-    {
-      "name": "pinned",
-      "type": "boolean",
-      "optional": true
-    },
-    {
-      "name": "format",
-      "type": "(score: number) => ReactNode",
-      "optional": false
-    },
-    {
-      "name": "currentUserLabel",
-      "type": "ReactNode",
-      "optional": false,
-      "default": "'You'"
-    },
-    {
       "name": "entries",
       "type": "LeaderboardEntry[]",
       "optional": false
@@ -6023,6 +5998,13 @@
       "type": "ReactNode",
       "optional": true,
       "default": "'Player'"
+    },
+    {
+      "name": "currentUserLabel",
+      "type": "ReactNode",
+      "optional": true,
+      "default": "'You'",
+      "description": "Badge on the viewer's own row."
     }
   ],
   "ledger-table": [
@@ -6072,17 +6054,6 @@
   ],
   "lighthouse-score": [
     {
-      "name": "score",
-      "type": "number",
-      "optional": false
-    },
-    {
-      "name": "size",
-      "type": "number",
-      "optional": true,
-      "default": "56"
-    },
-    {
       "name": "categories",
       "type": "LighthouseCategory[]",
       "optional": false
@@ -6090,7 +6061,8 @@
     {
       "name": "ringSize",
       "type": "number",
-      "optional": true
+      "optional": true,
+      "default": "56"
     }
   ],
   "liquidity-position": [
@@ -6377,6 +6349,13 @@
       "optional": true,
       "default": "'or'",
       "description": "Separates the provider buttons from the fields."
+    },
+    {
+      "name": "titleAs",
+      "type": "'h1' | 'h2' | 'h3' | 'p'",
+      "optional": true,
+      "default": "'h2'",
+      "description": "Element for the title. `h2` by default — a form sits inside a page that already owns the `h1`, and a card-level component emitting one hijacks the document outline. Set `'p'` when the surrounding page already announces the same thing, or `'h1'` on a dedicated sign-in page where this really is the heading."
     }
   ],
   "logo": [
@@ -7273,41 +7252,6 @@
       "name": "menus",
       "type": "MenubarMenu[]",
       "optional": false
-    },
-    {
-      "name": "ref",
-      "type": "React.Ref<HTMLButtonElement>",
-      "optional": true
-    },
-    {
-      "name": "menu",
-      "type": "MenubarMenu",
-      "optional": false
-    },
-    {
-      "name": "open",
-      "type": "boolean",
-      "optional": false
-    },
-    {
-      "name": "tabIndex",
-      "type": "number",
-      "optional": false
-    },
-    {
-      "name": "onOpen",
-      "type": "() => void",
-      "optional": false
-    },
-    {
-      "name": "onHover",
-      "type": "() => void",
-      "optional": false
-    },
-    {
-      "name": "onClose",
-      "type": "() => void",
-      "optional": false
     }
   ],
   "merge-conflict": [
@@ -7991,31 +7935,6 @@
       "default": "250"
     },
     {
-      "name": "entry",
-      "type": "NavigationMenuEntry",
-      "optional": false
-    },
-    {
-      "name": "open",
-      "type": "boolean",
-      "optional": false
-    },
-    {
-      "name": "onHover",
-      "type": "() => void",
-      "optional": false
-    },
-    {
-      "name": "onToggle",
-      "type": "() => void",
-      "optional": false
-    },
-    {
-      "name": "onClose",
-      "type": "() => void",
-      "optional": false
-    },
-    {
       "name": "title",
       "type": "ReactNode",
       "optional": true
@@ -8306,6 +8225,16 @@
       "optional": true,
       "default": "'Add a connected step'",
       "description": "Accessible name for that button. Receives the source node's label."
+    },
+    {
+      "name": "x",
+      "type": "number",
+      "optional": false
+    },
+    {
+      "name": "y",
+      "type": "number",
+      "optional": false
     },
     {
       "name": "items",
@@ -8919,6 +8848,21 @@
   ],
   "pipeline": [
     {
+      "name": "id",
+      "type": "string",
+      "optional": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "optional": false
+    },
+    {
+      "name": "jobs",
+      "type": "PipelineJob[]",
+      "optional": false
+    },
+    {
       "name": "stages",
       "type": "PipelineStage[]",
       "optional": false
@@ -9516,16 +9460,6 @@
       "optional": true,
       "default": "60",
       "description": "Characters after which a field becomes a textarea automatically."
-    },
-    {
-      "name": "value",
-      "type": "string",
-      "optional": false
-    },
-    {
-      "name": "long",
-      "type": "boolean",
-      "optional": false
     }
   ],
   "prompt-versions": [
@@ -9756,6 +9690,49 @@
     }
   ],
   "query-plan": [
+    {
+      "name": "id",
+      "type": "string",
+      "optional": false
+    },
+    {
+      "name": "operation",
+      "type": "string",
+      "optional": false,
+      "description": "\"Seq Scan\", \"Hash Join\", \"Index Scan using …\"."
+    },
+    {
+      "name": "relation",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "estimatedRows",
+      "type": "number",
+      "optional": true,
+      "description": "Planner's estimate."
+    },
+    {
+      "name": "actualRows",
+      "type": "number",
+      "optional": true
+    },
+    {
+      "name": "cost",
+      "type": "number",
+      "optional": true,
+      "description": "Total cost including children."
+    },
+    {
+      "name": "actualMs",
+      "type": "number",
+      "optional": true
+    },
+    {
+      "name": "children",
+      "type": "PlanNode[]",
+      "optional": true
+    },
     {
       "name": "plan",
       "type": "PlanNode",
@@ -10417,26 +10394,6 @@
       "type": "string",
       "optional": true,
       "default": "'value'"
-    },
-    {
-      "name": "title",
-      "type": "ReactNode",
-      "optional": false
-    },
-    {
-      "name": "count",
-      "type": "number",
-      "optional": true
-    },
-    {
-      "name": "defaultOpen",
-      "type": "boolean",
-      "optional": true
-    },
-    {
-      "name": "children",
-      "type": "ReactNode",
-      "optional": false
     }
   ],
   "resizable": [
@@ -10592,26 +10549,6 @@
       "type": "ReactNode",
       "optional": true,
       "default": "'No body'"
-    },
-    {
-      "name": "title",
-      "type": "ReactNode",
-      "optional": false
-    },
-    {
-      "name": "count",
-      "type": "number",
-      "optional": true
-    },
-    {
-      "name": "defaultOpen",
-      "type": "boolean",
-      "optional": true
-    },
-    {
-      "name": "children",
-      "type": "ReactNode",
-      "optional": false
     }
   ],
   "retrieval-results": [
@@ -11262,11 +11199,6 @@
       "optional": true,
       "default": "'One per line.'",
       "description": "Hint under an array field."
-    },
-    {
-      "name": "property",
-      "type": "JsonSchema",
-      "optional": false
     }
   ],
   "schema-table": [
@@ -11344,6 +11276,91 @@
   ],
   "schema-viewer": [
     {
+      "name": "type",
+      "type": "string | string[]",
+      "optional": true
+    },
+    {
+      "name": "title",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "properties",
+      "type": "Record<string, JsonSchema>",
+      "optional": true
+    },
+    {
+      "name": "items",
+      "type": "JsonSchema",
+      "optional": true
+    },
+    {
+      "name": "required",
+      "type": "string[]",
+      "optional": true
+    },
+    {
+      "name": "enum",
+      "type": "unknown[]",
+      "optional": true
+    },
+    {
+      "name": "format",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "pattern",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "minLength",
+      "type": "number",
+      "optional": true
+    },
+    {
+      "name": "maxLength",
+      "type": "number",
+      "optional": true
+    },
+    {
+      "name": "minimum",
+      "type": "number",
+      "optional": true
+    },
+    {
+      "name": "maximum",
+      "type": "number",
+      "optional": true
+    },
+    {
+      "name": "default",
+      "type": "unknown",
+      "optional": true
+    },
+    {
+      "name": "oneOf",
+      "type": "JsonSchema[]",
+      "optional": true
+    },
+    {
+      "name": "anyOf",
+      "type": "JsonSchema[]",
+      "optional": true
+    },
+    {
+      "name": "deprecated",
+      "type": "boolean",
+      "optional": true
+    },
+    {
       "name": "schema",
       "type": "JsonSchema",
       "optional": false
@@ -11371,16 +11388,6 @@
       "type": "ReactNode",
       "optional": true,
       "default": "'deprecated'"
-    },
-    {
-      "name": "depth",
-      "type": "number",
-      "optional": false
-    },
-    {
-      "name": "required",
-      "type": "boolean",
-      "optional": false
     }
   ],
   "scroll-area": [
@@ -11479,71 +11486,6 @@
       "optional": true,
       "default": "'No options'",
       "description": "Shown when `options` is empty."
-    },
-    {
-      "name": "ref",
-      "type": "React.Ref<HTMLDivElement>",
-      "optional": true
-    },
-    {
-      "name": "onChoose",
-      "type": "(value: string) => void",
-      "optional": false
-    },
-    {
-      "name": "onClose",
-      "type": "() => void",
-      "optional": false
-    },
-    {
-      "name": "style",
-      "type": "React.CSSProperties",
-      "optional": true
-    },
-    {
-      "name": "autoFocus",
-      "type": "boolean",
-      "optional": true
-    },
-    {
-      "name": "labelledBy",
-      "type": "string",
-      "optional": true
-    },
-    {
-      "name": "option",
-      "type": "SelectOption",
-      "optional": false
-    },
-    {
-      "name": "selected",
-      "type": "boolean",
-      "optional": false
-    },
-    {
-      "name": "highlighted",
-      "type": "boolean",
-      "optional": false
-    },
-    {
-      "name": "subOpen",
-      "type": "boolean",
-      "optional": false
-    },
-    {
-      "name": "onHighlight",
-      "type": "() => void",
-      "optional": false
-    },
-    {
-      "name": "onActivate",
-      "type": "() => void",
-      "optional": false
-    },
-    {
-      "name": "onCloseSub",
-      "type": "() => void",
-      "optional": false
     }
   ],
   "separator": [
@@ -12279,6 +12221,44 @@
   ],
   "subagent-tree": [
     {
+      "name": "id",
+      "type": "string",
+      "optional": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "optional": false
+    },
+    {
+      "name": "task",
+      "type": "ReactNode",
+      "optional": true,
+      "description": "What it was asked to do."
+    },
+    {
+      "name": "status",
+      "type": "'running' | 'done' | 'failed'",
+      "optional": true
+    },
+    {
+      "name": "tokens",
+      "type": "number",
+      "optional": true,
+      "description": "Tokens this agent used, excluding its children."
+    },
+    {
+      "name": "duration",
+      "type": "ReactNode",
+      "optional": true,
+      "description": "Already formatted."
+    },
+    {
+      "name": "children",
+      "type": "Subagent[]",
+      "optional": true
+    },
+    {
       "name": "agents",
       "type": "Subagent[]",
       "optional": false
@@ -12317,16 +12297,6 @@
       "type": "string",
       "optional": true,
       "default": "'Subagents'"
-    },
-    {
-      "name": "agent",
-      "type": "Subagent",
-      "optional": false
-    },
-    {
-      "name": "depth",
-      "type": "number",
-      "optional": false
     }
   ],
   "subscription-state": [
@@ -12824,6 +12794,21 @@
   ],
   "test-results": [
     {
+      "name": "id",
+      "type": "string",
+      "optional": false
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "optional": false
+    },
+    {
+      "name": "tests",
+      "type": "TestCase[]",
+      "optional": false
+    },
+    {
       "name": "suites",
       "type": "TestSuite[]",
       "optional": false
@@ -13147,10 +13132,30 @@
       "default": "'bottom-end'"
     },
     {
-      "name": "label",
-      "type": "string",
+      "name": "title",
+      "type": "ReactNode",
+      "optional": true
+    },
+    {
+      "name": "description",
+      "type": "ReactNode",
+      "optional": true
+    },
+    {
+      "name": "color",
+      "type": "ColorSet",
+      "optional": true
+    },
+    {
+      "name": "duration",
+      "type": "number",
       "optional": true,
-      "description": "Accessible name for the live region."
+      "description": "Milliseconds before auto-dismiss. `0` keeps it until dismissed."
+    },
+    {
+      "name": "action",
+      "type": "ReactNode",
+      "optional": true
     },
     {
       "name": "onDismiss",
@@ -13944,24 +13949,39 @@
       "description": "Shown in place of a `$ref` this component will not resolve."
     },
     {
+      "name": "type",
+      "type": "string | string[]",
+      "optional": true
+    },
+    {
+      "name": "enum",
+      "type": "unknown[]",
+      "optional": true
+    },
+    {
+      "name": "default",
+      "type": "unknown",
+      "optional": true
+    },
+    {
+      "name": "properties",
+      "type": "Record<string, JsonSchema>",
+      "optional": true
+    },
+    {
+      "name": "items",
+      "type": "JsonSchema",
+      "optional": true
+    },
+    {
       "name": "required",
-      "type": "boolean",
-      "optional": false
+      "type": "string[]",
+      "optional": true
     },
     {
-      "name": "depth",
-      "type": "number",
-      "optional": false
-    },
-    {
-      "name": "openDepth",
-      "type": "number",
-      "optional": false
-    },
-    {
-      "name": "labels",
-      "type": "{ required: string optional: string expand: string collapse: string unresolvedRef: (ref: string) => string }",
-      "optional": false
+      "name": "$ref",
+      "type": "string",
+      "optional": true
     }
   ],
   "toolbar": [
@@ -14109,26 +14129,6 @@
       "optional": true,
       "default": "'Run trace'",
       "description": "Accessible name for the whole trace."
-    },
-    {
-      "name": "span",
-      "type": "TraceSpan",
-      "optional": false
-    },
-    {
-      "name": "depth",
-      "type": "number",
-      "optional": false
-    },
-    {
-      "name": "openDepth",
-      "type": "number",
-      "optional": false
-    },
-    {
-      "name": "format",
-      "type": "(ms: number) => string",
-      "optional": false
     }
   ],
   "traffic-split": [
@@ -14591,26 +14591,6 @@
     }
   ],
   "validator-list": [
-    {
-      "name": "label",
-      "type": "string",
-      "optional": false
-    },
-    {
-      "name": "sortKey",
-      "type": "SortKey",
-      "optional": false
-    },
-    {
-      "name": "sort",
-      "type": "{ key: SortKey; desc: boolean }",
-      "optional": false
-    },
-    {
-      "name": "onSort",
-      "type": "(key: SortKey) => void",
-      "optional": false
-    },
     {
       "name": "validators",
       "type": "Validator[]",

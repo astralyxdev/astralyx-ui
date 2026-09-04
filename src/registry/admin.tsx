@@ -46,6 +46,10 @@ export const auditLogEntry: ComponentEntry = {
     { name: 'searchable', type: 'boolean', description: 'Filters across actor, action and target at once. Which field a term belongs to is not something the reader should have to decide.' },
     { name: 'timestamps', type: 'both', description: 'Relative for scanning, exact on hover and in the `<time>` element — an audit log with only "2 hours ago" is not evidence.' },
   ],
+  demos: [
+    { title: 'Who did what', stack: true, code: `<AuditLog events={events} now={now} />`,
+      render: () => (<div className="w-full"><AuditLog events={EVENTS} now={NOW} /></div>) },
+  ],
 }
 
 /* ---------------------------------------------------------- bulk action bar */
@@ -143,5 +147,9 @@ export const moderationQueueEntry: ComponentEntry = {
     { name: 'reasons', type: 'Record<string, number>', description: 'Reason to count. Fourteen spam reports and one harassment report are a different case from the reverse.' },
     { name: 'onDecide', type: '(id, decision) => void', description: "'approve' | 'remove' for one item." },
     { name: 'onBulkDecide', type: '(ids, decision) => void', description: 'Enables selection. Omit it and each item is decided on its own, which is right for a small, high-stakes queue.' },
+  ],
+  demos: [
+    { title: 'A queue with bulk actions', stack: true, code: `<ModerationQueue items={items} now={now} onApprove={approve} onReject={reject} />`,
+      render: () => (<div className="w-full"><ModerationQueue items={ITEMS} now={NOW} /></div>) },
   ],
 }

@@ -1,4 +1,4 @@
-import { useState, type ComponentProps, type FormEvent, type ReactNode } from 'react'
+import { useId, useState, type ComponentProps, type FormEvent, type ReactNode } from 'react'
 import { TriangleAlert } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -34,6 +34,7 @@ function LoginForm({
   forgotLabel = 'Forgot password?',
   submitLabel = 'Sign in',
   dividerLabel = 'or',
+  titleAs: Title = 'h2',
   className,
   ...props
 }: Omit<ComponentProps<'form'>, 'onSubmit' | 'title'> & {
@@ -52,9 +53,26 @@ function LoginForm({
   submitLabel?: ReactNode
   /** Separates the provider buttons from the fields. */
   dividerLabel?: ReactNode
+  /**
+   * Element for the title.
+   *
+   * `h2` by default — a form sits inside a page that already owns the `h1`,
+   * and a card-level component emitting one hijacks the document outline. Set
+   * `'p'` when the surrounding page already announces the same thing, or `'h1'`
+   * on a dedicated sign-in page where this really is the heading.
+   */
+  titleAs?: 'h1' | 'h2' | 'h3' | 'p'
 }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+
+  // Namespaced per instance. Hardcoded ids collide the moment a page shows two
+  // of these — a sign-in beside a sign-up — and a colliding `htmlFor` focuses
+  // the *first* matching field, so the second form's labels point at the wrong
+  // inputs.
+  const scope = useId()
+  const emailId = `${scope}-email`
+  const passwordId = `${scope}-password`
 
   function submit(event: FormEvent) {
     event.preventDefault()
@@ -69,7 +87,7 @@ function LoginForm({
       {...props}
     >
       <div className="flex flex-col gap-1">
-        <h1 className="text-lg font-semibold tracking-tight">{title}</h1>
+        <Title className="text-lg font-semibold tracking-tight">{title}</Title>
         {description && <p className="text-muted-foreground text-sm">{description}</p>}
       </div>
 
@@ -101,9 +119,9 @@ function LoginForm({
       )}
 
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="login-email">{emailLabel}</Label>
+        <Label htmlFor={emailId}>{emailLabel}</Label>
         <Input
-          id="login-email"
+          id={emailId}
           name="username"
           type="email"
           autoComplete="username"
@@ -115,7 +133,7 @@ function LoginForm({
 
       <div className="flex flex-col gap-1.5">
         <div className="flex items-baseline justify-between gap-2">
-          <Label htmlFor="login-password">{passwordLabel}</Label>
+          <Label htmlFor={passwordId}>{passwordLabel}</Label>
           {onForgot && (
             <button
               type="button"
@@ -127,7 +145,7 @@ function LoginForm({
           )}
         </div>
         <PasswordInput
-          id="login-password"
+          id={passwordId}
           name="password"
           autoComplete="current-password"
           required

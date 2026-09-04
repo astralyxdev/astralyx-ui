@@ -94,6 +94,10 @@ export const cardInputEntry: ComponentEntry = {
     { name: 'focus', type: 'automatic', description: 'Advances to expiry and then CVC as each segment fills, and steps back on backspace from an empty field.' },
     { name: 'security', type: 'none stored', description: 'The component holds the number in local state only, and never in a `name`d field that a form serialiser would sweep up.' },
   ],
+  demos: [
+    { title: 'Default and small', stack: true, code: `<CardInput onCardChange={setCard} />`,
+      render: () => (<div className="flex w-full max-w-sm flex-col gap-4"><CardInput onCardChange={() => {}} /><CardInput size="sm" numberLabel="Card" onCardChange={() => {}} /></div>) },
+  ],
 }
 
 /* ----------------------------------------------------------- payment method */
@@ -196,6 +200,10 @@ export const payoutStatusEntry: ComponentEntry = {
     { name: 'expectedAt', type: 'Date', description: 'The arrival date. Shown prominently for anything not yet paid, because it is the only question being asked.' },
     { name: 'failureReason', type: 'ReactNode', description: 'Shown for failed and returned payouts. A failure with no stated reason generates a support ticket every time.' },
   ],
+  demos: [
+    { title: 'Every state', stack: true, code: `<PayoutStatus amount={128_40} state="paid" />`,
+      render: () => (<div className="flex w-full max-w-md flex-col gap-3">{(['pending', 'in_transit', 'paid', 'failed'] as const).map((state) => (<PayoutStatus key={state} amount={128_40} currency="GBP" state={state} reference="po_8f21" now={NOW} /> ))}</div>) },
+  ],
 }
 
 /* ------------------------------------------------------------ ledger table */
@@ -232,5 +240,9 @@ export const ledgerTableEntry: ComponentEntry = {
     { name: 'amounts', type: 'minor units', description: 'Integers throughout. Running balances accumulate, and a float error accumulates with them.' },
     { name: 'openingBalance', type: 'number', default: '0', description: 'Minor units. The running balance starts here rather than at zero.' },
     { name: 'totals', type: 'computed', description: 'Debit and credit columns are summed independently and shown in the footer, so an unbalanced set is visible rather than hidden in a net figure.' },
+  ],
+  demos: [
+    { title: 'A running balance', stack: true, code: `<LedgerTable entries={entries} currency="GBP" />`,
+      render: () => (<div className="w-full"><LedgerTable entries={LEDGER} currency="GBP" /></div>) },
   ],
 }

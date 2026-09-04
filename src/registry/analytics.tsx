@@ -41,6 +41,10 @@ export const cohortTableEntry: ComponentEntry = {
     { name: 'periodLabel', type: '(index) => ReactNode', default: "'M0', 'M1'…", description: 'For weeks, days, or whatever the cohort period actually is.' },
     { name: 'shading', type: 'by rate', description: 'Each cell is a share of its own cohort size, so rows are comparable across wildly different cohort sizes.' },
   ],
+  demos: [
+    { title: 'Weekly retention', stack: true, code: `<CohortTable cohorts={cohorts} />`,
+      render: () => (<div className="w-full"><CohortTable cohorts={COHORTS} /></div>) },
+  ],
 }
 
 /* ------------------------------------------------------ date range compare */
@@ -87,5 +91,9 @@ export const dateRangeCompareEntry: ComponentEntry = {
     { name: 'partial', type: 'boolean', description: 'Marks a range still in progress and mutes the delta. Nine days of a month against a full month is the most common dashboard falsehood there is.' },
     { name: 'goodDirection', type: "'up' | 'down' | 'none'", default: "'up'", description: 'Which way is good. Churn falling is green; use `none` for a metric with no better direction.' },
     { name: 'history', type: 'number[]', description: 'Optional sparkline. Shape often explains a delta that the single number cannot.' },
+  ],
+  demos: [
+    { title: 'Up and down against the previous period', stack: true, code: `<DateRangeCompare label="Revenue" value={128_400} previous={114_200} />`,
+      render: () => (<div className="grid w-full gap-3 sm:grid-cols-3"><DateRangeCompare label="Revenue" value={128_400} previous={114_200} format="currency" currency="GBP" /><DateRangeCompare label="Signups" value={412} previous={498} /><DateRangeCompare label="Churn" value={18} previous={18} /></div>) },
   ],
 }

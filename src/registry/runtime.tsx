@@ -51,6 +51,10 @@ export const containerListEntry: ComponentEntry = {
     { name: 'tag', type: 'rendered separately', description: '`:latest` is the detail that explains why two hosts are running different code.' },
     { name: 'actions', type: 'per state', description: 'Start is absent on a running container rather than disabled — a greyed control on every row is noise.' },
   ],
+  demos: [
+    { title: 'A compose stack', stack: true, code: `<ContainerList containers={containers} now={now} />`,
+      render: () => (<div className="w-full"><ContainerList containers={CONTAINERS} now={NOW} /></div>) },
+  ],
 }
 
 /* ----------------------------------------------------------------- port table */
@@ -87,6 +91,10 @@ export const portTableEntry: ComponentEntry = {
     { name: 'address', type: 'the finding', description: 'Bound to every interface is highlighted; loopback is not.' },
     { name: 'exposure', type: 'public + no TLS', description: 'That combination is the actual finding. Either alone is often fine.' },
     { name: 'service names', type: 'well-known ports', description: '5432 means nothing to someone who does not already know it is Postgres.' },
+  ],
+  demos: [
+    { title: 'What is listening', stack: true, code: `<PortTable ports={ports} />`,
+      render: () => (<div className="w-full"><PortTable ports={PORTS} /></div>) },
   ],
 }
 
@@ -140,6 +148,10 @@ export const envDiffEntry: ComponentEntry = {
     { name: 'whitespace', type: 'called out', description: 'Values differing only in whitespace are flagged — a trailing newline in a secret is invisible and takes a service down.' },
     { name: 'ordering', type: 'differences first', description: 'Missing and differing rows above identical ones, which are collapsed behind a count.' },
   ],
+  demos: [
+    { title: 'Staging against production', stack: true, code: `<EnvDiff left={staging} right={production} />`,
+      render: () => (<div className="w-full"><EnvDiff left={LEFT} right={RIGHT} /></div>) },
+  ],
 }
 
 /* ------------------------------------------------------------- queue monitor */
@@ -186,6 +198,12 @@ export const queueMonitorEntry: ComponentEntry = {
     { name: 'oldestAt', type: 'Date', description: 'Age of the oldest waiting job, not average wait — averages hide the one job stuck behind a poison message.' },
     { name: 'history', type: 'number[]', description: 'Optional depth sparkline.' },
   ],
+  demos: [
+    { title: 'A queue draining', stack: true, code: `<QueueMonitor name="emails.outbound" depth={1_920} arrivalRate={42} completionRate={61} />`,
+      render: () => (<div className="w-full max-w-xl"><QueueMonitor name="emails.outbound" depth={1_920} processing={18} failed={94} deadLettered={12} arrivalRate={42} completionRate={61} history={DEPTH} now={NOW} /></div>) },
+    { title: 'A queue backing up', stack: true, code: `<QueueMonitor name="webhooks.retry" depth={12_400} arrivalRate={310} completionRate={40} />`,
+      render: () => (<div className="w-full max-w-xl"><QueueMonitor name="webhooks.retry" depth={12_400} processing={8} failed={1_902} deadLettered={340} arrivalRate={310} completionRate={40} history={[...DEPTH].reverse()} now={NOW} /></div>) },
+  ],
 }
 
 /* ---------------------------------------------------------------- cache stats */
@@ -228,6 +246,12 @@ export const cacheStatsEntry: ComponentEntry = {
     { name: 'history', type: 'number[]', description: 'Hit rate over time, 0–1 per sample.' },
     { name: 'bytes / keys', type: 'number', description: 'Optional footprint figures.' },
   ],
+  demos: [
+    { title: 'A warm cache', stack: true, code: `<CacheStats hits={182_400} misses={9_600} history={history} />`,
+      render: () => (<div className="w-full max-w-xl"><CacheStats hits={182_400} misses={9_600} history={HITS} evictions={412} keys={48_200} /></div>) },
+    { title: 'A cold one', stack: true, code: `<CacheStats hits={1_200} misses={18_400} />`,
+      render: () => (<div className="w-full max-w-xl"><CacheStats hits={1_200} misses={18_400} history={[...HITS].map((h) => h * 0.3)} evictions={9_100} keys={2_400} /></div>) },
+  ],
 }
 
 /* ------------------------------------------------------------ rate limit meter */
@@ -266,6 +290,11 @@ export const rateLimitMeterEntry: ComponentEntry = {
     { name: 'windowSeconds', type: 'number', description: 'Enables the burn-rate projection: whether the quota runs out before the reset. Drop `remaining` low with a long window left to see it fire.' },
     { name: 'resetAt', type: 'Date', description: 'Given equal prominence to the count.' },
     { name: 'meter', type: 'role="meter"', description: 'With a window-elapsed marker for comparing spend against time.' },
+  ],
+  demos: [
+    { title: 'Room to spare, and nearly out', stack: true, code: `<RateLimitMeter limit={5_000} remaining={4_120} resetAt={resetsAt} />
+<RateLimitMeter limit={5_000} remaining={80} resetAt={resetsAt} />`,
+      render: () => (<div className="flex w-full max-w-xl flex-col gap-3"><RateLimitMeter limit={5_000} remaining={4_120} resetAt={new Date(NOW.getTime() + 22 * 60_000)} now={NOW} /><RateLimitMeter limit={5_000} remaining={80} resetAt={new Date(NOW.getTime() + 4 * 60_000)} now={NOW} /></div>) },
   ],
 }
 

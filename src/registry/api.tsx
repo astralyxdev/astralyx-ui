@@ -52,6 +52,15 @@ export const httpStatusEntry: ComponentEntry = {
     { name: 'colour', type: 'by class', description: 'One green for every 2xx, one red for every 5xx. 3xx is informational, not success: a redirect is not a completed request, and green hides a redirect loop.' },
     { name: 'showPhrase', type: 'boolean', default: 'true', description: 'Off gives a bare code, for a dense table.' },
   ],
+  demos: [
+    { title: 'Every class of response', stack: true, code: `<HttpStatus status={200} />
+<HttpStatus status={301} />
+<HttpStatus status={404} />
+<HttpStatus status={503} />`,
+      render: () => (<div className="flex flex-wrap gap-2">{[200, 201, 204, 301, 304, 400, 401, 403, 404, 409, 422, 429, 500, 502, 503].map((code) => (<HttpStatus key={code} status={code} />))}</div>) },
+    { title: 'Codes only', stack: true, code: `<HttpStatus status={429} showPhrase={false} />`,
+      render: () => (<div className="flex flex-wrap gap-1.5">{[200, 301, 404, 429, 500].map((code) => (<HttpStatus key={code} status={code} showPhrase={false} />))}</div>) },
+  ],
 }
 
 /* -------------------------------------------------------------- curl command */
@@ -94,6 +103,12 @@ export const curlCommandEntry: ComponentEntry = {
     { name: 'quoting', type: 'POSIX', description: "Single-quoted with `'\\''` for embedded quotes. A JSON body pasted raw truncates at the first apostrophe in someone's surname." },
     { name: 'body', type: 'string | object', description: 'An object is JSON-encoded before quoting.' },
     { name: 'line breaks', type: 'automatic', description: 'Backslash continuations — a 400-character single line cannot be reviewed.' },
+  ],
+  demos: [
+    { title: 'A POST with headers and a body', stack: true, code: `<CurlCommand method="POST" url="https://api.example.com/v1/refunds" headers={headers} body={body} />`,
+      render: () => (<div className="w-full max-w-2xl"><CurlCommand method="POST" url="https://api.example.com/v1/refunds" headers={[{ name: 'Authorization', value: 'Bearer sk_live_9f2a11c4' }, { name: 'Content-Type', value: 'application/json' }]} body={{ customer_id: 'cus_8812', amount: 34_000 }} /></div>) },
+    { title: 'A bare GET', stack: true, code: `<CurlCommand url="https://api.example.com/v1/customers/cus_8812" />`,
+      render: () => (<div className="w-full max-w-2xl"><CurlCommand url="https://api.example.com/v1/customers/cus_8812" /></div>) },
   ],
 }
 
@@ -219,6 +234,12 @@ export const responseViewerEntry: ComponentEntry = {
     { name: 'durationMs', type: 'number', description: 'Turns amber past a second.' },
     { name: 'sections', type: 'stacked disclosures', description: 'Not tabs: the three panels differ hugely in height, so a shared tab panel resizes the card on every switch and the strip moves out from under the pointer. Stacking also lets headers and body be read together.' },
   ],
+  demos: [
+    { title: 'A 200 with headers and a body', stack: true, code: `<ResponseViewer status={200} durationMs={128} sizeBytes={1042} body={body} headers={headers} />`,
+      render: () => (<div className="w-full"><ResponseViewer status={200} durationMs={128} sizeBytes={1042} headers={[{ name: 'content-type', value: 'application/json' }, { name: 'x-request-id', value: 'req_8f21' }]} body={{ id: 'cus_8812', plan: 'team', seats: 12 }} /></div>) },
+    { title: 'A 404', stack: true, code: `<ResponseViewer status={404} durationMs={38} body={{ error: 'not_found' }} />`,
+      render: () => (<div className="w-full"><ResponseViewer status={404} durationMs={38} sizeBytes={54} headers={[{ name: 'content-type', value: 'application/json' }]} body={{ error: 'not_found', message: 'No customer with that id.' }} /></div>) },
+  ],
 }
 
 /* -------------------------------------------------------------- endpoint list */
@@ -264,6 +285,10 @@ export const endpointListEntry: ComponentEntry = {
     { name: 'deprecated', type: 'boolean', description: 'Struck through but kept. Removing a deprecated route from the list is how a client keeps calling it for another year.' },
     { name: 'filtering', type: 'method + path', description: 'The method is part of the haystack, so "post /users" filters the way people type.' },
     { name: 'auth', type: 'boolean', description: 'Draws a lock. Whether a route needs credentials is the second thing anyone looks for.' },
+  ],
+  demos: [
+    { title: 'A REST surface', stack: true, code: `<EndpointList endpoints={endpoints} />`,
+      render: () => (<div className="w-full max-w-2xl"><EndpointList endpoints={ENDPOINTS} /></div>) },
   ],
 }
 
@@ -329,6 +354,10 @@ export const schemaViewerEntry: ComponentEntry = {
     { name: 'oneOf / anyOf', type: 'labelled alternatives', description: 'Rendered as branches, never flattened — a flattened union looks like an object with contradictory fields.' },
     { name: 'deprecated', type: 'boolean', description: 'Struck through and badged.' },
   ],
+  demos: [
+    { title: 'A nested response schema', stack: true, code: `<SchemaViewer schema={schema} />`,
+      render: () => (<div className="w-full max-w-2xl"><SchemaViewer schema={SCHEMA} /></div>) },
+  ],
 }
 
 /* ---------------------------------------------------------- webhook inspector */
@@ -379,5 +408,9 @@ export const webhookInspectorEntry: ComponentEntry = {
     { name: 'signature', type: "'valid' | 'invalid' | 'missing' | 'unchecked'", description: 'Separate from the status. A delivery that returned 200 with an invalid signature is called out explicitly.' },
     { name: 'both directions', type: 'kept', description: 'What arrived and what you answered. A webhook failure is a disagreement between the two, and storing only the payload cannot say which side was wrong.' },
     { name: 'onReplay', type: '(id) => void', description: 'Omit for a read-only log.' },
+  ],
+  demos: [
+    { title: 'Deliveries, one of them failing', stack: true, code: `<WebhookInspector deliveries={deliveries} now={now} onReplay={replay} />`,
+      render: () => (<div className="w-full"><WebhookInspector deliveries={DELIVERIES} now={NOW} onReplay={() => {}} /></div>) },
   ],
 }

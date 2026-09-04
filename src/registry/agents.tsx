@@ -1,5 +1,10 @@
 import { useState } from 'react'
 import { AgentCard } from '@/components/ui/agent-card'
+import { Avatar, AvatarGroup } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Sparkline } from '@/components/ui/sparkline'
+import { Switch } from '@/components/ui/switch'
 import { AgentMemory, type MemoryEntry } from '@/components/ui/agent-memory'
 import { AgentTasks, type AgentTask } from '@/components/ui/agent-tasks'
 import { BudgetGuard } from '@/components/ui/budget-guard'
@@ -151,6 +156,132 @@ function PipelineEditor({
   )
 }
 
+/**
+ * The freeform demo: nodes are DOM, and you can add empty ones.
+ *
+ * The pipeline demo above shows the canvas doing a specific job. This one shows
+ * the mechanism — a blank node you type into, a node holding real form
+ * controls, a node holding a chart — because "what can go inside a node" is the
+ * first question anyone has and a screenshot of a finished graph never answers
+ * it.
+ */
+const BLANK_START: CanvasNode[] = [
+  { id: 'n1', x: 20, y: 30, data: 'form', width: 240 },
+  { id: 'n2', x: 320, y: 140, data: 'people', width: 240 },
+]
+
+function FreeformCanvas() {
+  const [nodes, setNodes] = useState<CanvasNode[]>(BLANK_START)
+  const [edges, setEdges] = useState<CanvasEdge[]>([])
+  const [titles, setTitles] = useState<Record<string, string>>({})
+  const [selected, setSelected] = useState<string | null>(null)
+
+  function add(at: { x: number; y: number }, from?: string) {
+    const id = `n-${Date.now()}`
+    setNodes((current) => [...current, { id, x: at.x, y: at.y, data: 'blank', width: 240 }])
+    if (from) setEdges((current) => [...current, { id: `e-${id}`, from, to: id }])
+    setSelected(id)
+  }
+
+  return (
+    <div className="flex w-full flex-col gap-2">
+      <div className="flex flex-wrap items-center gap-2">
+        <Button size="sm" variant="secondary" onClick={() => add({ x: 60, y: 260 })}>
+          Add an empty node
+        </Button>
+        <p className="text-muted-foreground text-xs">
+          …or double-click the canvas, or press the <code className="font-mono">+</code> on a node
+          to add one already wired to it.
+        </p>
+      </div>
+
+      <NodeCanvas
+        height={380}
+        nodeWidth={240}
+        nodes={nodes}
+        edges={edges}
+        selectedId={selected}
+        onSelect={setSelected}
+        onNodesChange={setNodes}
+        onAddNode={(at) => add(at)}
+        onAddConnected={(from, at) => add(at, from)}
+        onRemoveNode={(id) => {
+          setNodes((current) => current.filter((node) => node.id !== id))
+          setEdges((current) => current.filter((e) => e.from !== id && e.to !== id))
+        }}
+        onConnect={(from, to) =>
+          setEdges((current) =>
+            current.some((e) => e.from === from && e.to === to)
+              ? current
+              : [...current, { id: `e-${from}-${to}`, from, to }],
+          )
+        }
+        label="Freeform canvas"
+        renderNode={(node) => {
+          // A blank node you can actually type into — the point being that the
+          // canvas owns position and wiring, and nothing else.
+          if (node.data === 'blank') {
+            return (
+              <div
+                className="space-y-1.5"
+                // The canvas starts a drag on pointerdown; a field inside a
+                // node needs that stopped or it can never take focus.
+                onPointerDown={(event) => event.stopPropagation()}
+              >
+                <p className="text-muted-foreground/70 text-[10px] tracking-[0.14em] uppercase">
+                  New node
+                </p>
+                <Input
+                  size="sm"
+                  placeholder="Name this step…"
+                  value={titles[node.id] ?? ''}
+                  onChange={(event) =>
+                    setTitles((current) => ({ ...current, [node.id]: event.target.value }))
+                  }
+                />
+              </div>
+            )
+          }
+
+          if (node.data === 'form') {
+            return (
+              <div className="space-y-2.5" onPointerDown={(event) => event.stopPropagation()}>
+                <div className="flex items-center gap-2">
+                  <Badge size="sm" color="amber">Webhook</Badge>
+                  <span className="text-xs font-medium">On completion</span>
+                </div>
+                <Input size="sm" placeholder="https://hooks.example.com/…" />
+                <Switch
+                  size="sm"
+                  label={<span className="text-xs">Retry on 5xx</span>}
+                  labelPosition="start"
+                  containerClassName="justify-between w-full"
+                  defaultChecked
+                />
+              </div>
+            )
+          }
+
+          return (
+            <div className="space-y-2.5">
+              <div className="flex items-center gap-2">
+                <Badge size="sm" color="violet">Reviewers</Badge>
+                <span className="text-xs font-medium">Needs two approvals</span>
+              </div>
+              <AvatarGroup max={4}>
+                {['Ada Okafor', 'Marc Laurent', 'Iris Chen', 'Devon Reyes'].map((name) => (
+                  <Avatar key={name} name={name} size="sm" />
+                ))}
+              </AvatarGroup>
+              <Sparkline values={[3, 5, 4, 8, 6, 9, 12]} variant="area" className="h-8" />
+            </div>
+          )
+        }}
+      />
+    </div>
+  )
+}
+
 export const nodeCanvasEntry: ComponentEntry = {
   id: 'node-canvas',
   label: 'Node Canvas',
@@ -205,6 +336,31 @@ export const nodeCanvasEntry: ComponentEntry = {
       stack: true,
       code: `<NodeCanvas nodes={nodes} edges={edges} onNodesChange={setNodes} onConnect={connect} />`,
       render: () => <PipelineEditor />,
+    },
+    {
+      title: 'Adding nodes, and putting anything inside them',
+      stack: true,
+      code: `// A node is real DOM, so renderNode can return whatever you like.
+<NodeCanvas
+  nodes={nodes}
+  edges={edges}
+  onNodesChange={setNodes}
+  onConnect={connect}
+  onAddNode={(at) => add('blank', at)}        // double-click empty canvas
+  onAddConnected={(from, at) => add('blank', at, from)}  // the + on a node
+  nodeWidth={240}
+  renderNode={(node) => {
+    if (node.data === 'blank') return <BlankCard id={node.id} />
+    if (node.data === 'form') return (
+      <div className="space-y-2">
+        <Input size="sm" placeholder="Webhook URL" />
+        <Switch size="sm" label="Retry on 5xx" labelPosition="start" />
+      </div>
+    )
+    return <AvatarRow />
+  }}
+/>`,
+      render: () => <FreeformCanvas />,
     },
     {
       title: 'Read-only',
@@ -263,6 +419,11 @@ export const agentCardEntry: ComponentEntry = {
   description:
     'One agent’s definition as a card: the model behind it, the tools it may reach for, and whether it is allowed to run. Tools are listed by name rather than counted, because a count tells you nothing about blast radius.',
   usage: `import { AgentCard } from '@/components/ui/agent-card'
+import { Avatar, AvatarGroup } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Sparkline } from '@/components/ui/sparkline'
+import { Switch } from '@/components/ui/switch'
 import { AgentMemory, type MemoryEntry } from '@/components/ui/agent-memory'
 import { AgentTasks, type AgentTask } from '@/components/ui/agent-tasks'
 import { BudgetGuard } from '@/components/ui/budget-guard'

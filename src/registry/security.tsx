@@ -47,6 +47,10 @@ export const riskScoreEntry: ComponentEntry = {
     { name: 'bar scale', type: 'relative to peak', description: 'Factor bars are drawn against the largest contributor, not against 100, so five small signals still show their shape.' },
     { name: 'role', type: 'meter', description: 'With `aria-valuetext` carrying both the number and the band name.' },
   ],
+  demos: [
+    { title: 'A high score and a low one', stack: true, code: `<RiskScore score={82} factors={factors} />`,
+      render: () => (<div className="flex w-full max-w-md flex-col gap-4"><RiskScore score={82} factors={FACTORS} /><RiskScore score={14} factors={FACTORS.map((f) => ({ ...f, weight: -Math.abs(f.weight) }))} /></div>) },
+  ],
 }
 
 /* ----------------------------------------------------------- fingerprint diff */
@@ -92,6 +96,10 @@ export const fingerprintDiffEntry: ComponentEntry = {
     { name: 'missing values', type: 'shown as absent', description: 'A `null` renders as "not reported", never as blank. A fingerprint that stopped reporting its canvas hash is itself a signal — usually an anti-detect browser.' },
     { name: 'significance', type: "'high' | 'normal'", description: 'Marks the attributes worth escalating on. A changed timezone is not a changed WebGL vendor.' },
     { name: 'defaultShowMatching', type: 'boolean', default: 'false', description: 'Matching rows are collapsed behind a count, and always reachable.' },
+  ],
+  demos: [
+    { title: 'Two devices compared', stack: true, code: `<FingerprintDiff attributes={attributes} />`,
+      render: () => (<div className="w-full"><FingerprintDiff attributes={ATTRIBUTES} /></div>) },
   ],
 }
 
@@ -149,6 +157,10 @@ export const ipClusterEntry: ComponentEntry = {
     { name: 'members[].focus', type: 'boolean', description: 'Marks the account under review so it stands out inside its own cluster.' },
     { name: 'onSelect', type: '(member, cluster) => void', description: 'Makes members real buttons. Omit for a read-only view.' },
   ],
+  demos: [
+    { title: 'Accounts sharing an address', stack: true, code: `<IpCluster clusters={clusters} />`,
+      render: () => (<div className="w-full"><IpCluster clusters={CLUSTERS} /></div>) },
+  ],
 }
 
 /* -------------------------------------------------------------- fraud verdict */
@@ -200,5 +212,9 @@ export const fraudVerdictEntry: ComponentEntry = {
     { name: 'reasons', type: 'ReactNode[]', description: 'Listed, not summarised. These get quoted in appeals and chargeback responses, and a paraphrase is not quotable.' },
     { name: 'onReopen', type: '() => void', description: 'The only way past a settled verdict, so a case cannot quietly acquire two.' },
     { name: 'actions', type: 'ReactNode', description: 'Rendered only while pending.' },
+  ],
+  demos: [
+    { title: 'Every verdict', stack: true, code: `<FraudVerdict verdict="declined" subject="Withdrawal #8814" reasons={reasons} />`,
+      render: () => (<div className="flex w-full max-w-md flex-col gap-3"><FraudVerdict verdict="approved" subject="Withdrawal #8812" reasons={['Nothing matched a rule.']} automated decidedAt={NOW} /><FraudVerdict verdict="review" subject="Withdrawal #8813" reasons={['Payout wallet is shared with two other accounts.', 'Account is 4 hours old.']} decidedAt={NOW} onReopen={() => {}} /><FraudVerdict verdict="declined" subject="Withdrawal #8814" reasons={['Device fingerprint matches a banned account.']} decidedBy="risk-team" decidedAt={NOW} /></div>) },
   ],
 }

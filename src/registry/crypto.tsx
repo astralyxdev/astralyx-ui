@@ -1167,6 +1167,10 @@ export const validatorListEntry: ComponentEntry = {
     { name: 'sort', type: 'ascending by default', description: 'Descending by voting power is the conventional order and it pushes delegators toward whoever is already largest.' },
     { name: 'onSelect', type: '(id) => void', description: 'Omit for a read-only table.' },
   ],
+  demos: [
+    { title: 'A validator set', stack: true, code: `<ValidatorList validators={validators} />`,
+      render: () => (<div className="w-full"><ValidatorList validators={VALIDATORS} /></div>) },
+  ],
 }
 
 /* ----------------------------------------------------------------- mint panel */
