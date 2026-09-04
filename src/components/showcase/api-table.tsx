@@ -33,7 +33,11 @@ function ApiTable({ props }: { props: ApiProp[] }) {
               {prop.default ?? '—'}
             </TableCell>
             <TableCell className="text-muted-foreground text-xs">
-              {prop.description}
+              {/* An em dash, like the Default column. A prop whose name, type
+                  and default say everything — `submitLabel: ReactNode = 'Sign
+                  in'` — needs no sentence, and inventing one for all of them
+                  would be filler that makes the table harder to scan. */}
+              {prop.description || <span className="text-muted-foreground/40">—</span>}
             </TableCell>
           </TableRow>
         ))}

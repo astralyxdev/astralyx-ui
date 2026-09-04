@@ -28,8 +28,8 @@ jobs:
       # and diffing is the only thing that keeps the committed copy honest.
       - name: Committed build output is up to date
         run: |
-          if [ -n "$(git status --porcelain bin registry)" ]; then
-            echo "bin/ or registry/ is out of date. Run: npm run build:package"
-            git --no-pager diff --stat bin registry
+          if [ -n "$(git status --porcelain bin registry src/registry/props.generated.json)" ]; then
+            echo "Generated output is out of date. Run: npm run build:package"
+            git --no-pager diff --stat bin registry src/registry/props.generated.json
             exit 1
           fi

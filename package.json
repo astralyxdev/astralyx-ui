@@ -51,12 +51,13 @@
   "sideEffects": false,
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && node scripts/build-seo.mjs",
+    "build": "node scripts/build-props.mjs && tsc -b && vite build && node scripts/build-seo.mjs",
     "lint": "oxlint",
     "preview": "vite preview",
+    "build:props": "node scripts/build-props.mjs",
     "build:registry": "node scripts/build-registry.mjs",
     "build:cli": "tsc -p tsconfig.cli.json",
-    "build:package": "npm run build:registry && npm run build:cli",
+    "build:package": "npm run build:props && npm run build:registry && npm run build:cli",
     "prepublishOnly": "npm run build:package",
     "cli": "node bin/index.js"
   },

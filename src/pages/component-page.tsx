@@ -18,6 +18,7 @@ import { componentPath, ENTRIES, findCategory, isReady, type ComponentEntry } fr
 import { focusRing, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 import { useSeo } from '@/lib/seo'
+import { apiRows, hasApi } from '@/registry/props'
 
 /**
  * A component page reads top to bottom: what it is, how to bring it in, a
@@ -95,9 +96,11 @@ function ComponentPage({ entry }: { entry: ComponentEntry }) {
         </Section>
       )}
 
-      {entry.api && (
+      {hasApi(entry.id, entry.api) && (
         <Section title="API">
-          <ApiTable props={entry.api} />
+          {/* Curated rows first, then every prop the source declares that none
+              of them mentioned — so the table cannot fall behind the code. */}
+          <ApiTable props={apiRows(entry.id, entry.api)} />
         </Section>
       )}
 
