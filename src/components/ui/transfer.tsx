@@ -1,7 +1,9 @@
 import { useId, useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { fieldBase, fieldOutline, focusRing, radius, surface } from '@/lib/styles'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Input } from '@/components/ui/input'
+import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
 /**
@@ -93,17 +95,15 @@ function Panel({
 
       {searchable && (
         <div className="border-border border-b p-2">
-          <div className={cn(fieldBase, fieldOutline, 'flex h-8 items-center gap-2 px-2')}>
-            <Search aria-hidden="true" className="text-muted-foreground size-3.5 shrink-0" />
-            <input
-              value={query}
-              disabled={disabled}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder={searchPlaceholder}
-              aria-label={searchPlaceholder}
-              className="min-w-0 flex-1 bg-transparent text-sm outline-none"
-            />
-          </div>
+          <Input
+            size="sm"
+            icon={<Search />}
+            value={query}
+            disabled={disabled}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder={searchPlaceholder}
+            aria-label={searchPlaceholder}
+          />
         </div>
       )}
 
@@ -130,13 +130,12 @@ function Panel({
                     (item.disabled || disabled) && 'pointer-events-none opacity-50',
                   )}
                 >
-                  <input
-                    type="checkbox"
+                  <Checkbox
+                    size="sm"
                     checked={on}
                     disabled={item.disabled || disabled}
                     onChange={() => onToggle(item.value)}
                     aria-labelledby={`${scope}-${item.value}`}
-                    className={cn('size-3.5 shrink-0 accent-[var(--primary)]', focusRing)}
                   />
                   <span id={`${scope}-${item.value}`} className="min-w-0 flex-1 truncate">
                     {item.label}

@@ -1,8 +1,9 @@
 import { useId, useState, type ComponentProps, type ReactNode } from 'react'
 import { Plus, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
-import { fieldBase, fieldOutline, focusRing, radius, surface } from '@/lib/styles'
+import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
 /**
@@ -148,15 +149,17 @@ function ConditionRow({ condition, ctx }: { condition: Condition; ctx: Ctx }) {
   const spec = ctx.fields.find((field) => field.key === condition.field)
   const incomplete = !operator?.unary && condition.value.trim() === ''
 
-  const control = cn(fieldBase, fieldOutline, 'h-8 w-full min-w-0 px-2 text-sm')
-
   return (
     <div
       className={cn(
         'grid items-center gap-2',
         // Container queries, not viewport ones: this sits in a sidebar as often
         // as a full page, and the breakpoint that matters is its own width.
-        '@[30rem]:grid-cols-[minmax(6rem,1fr)_minmax(5rem,auto)_minmax(6rem,1.2fr)_auto]',
+        // 20rem, not 30: every level of nesting takes a rail and padding off
+        // the width, so a breakpoint tuned to the outermost group leaves the
+        // inner ones stacked — which is exactly where the rows are hardest to
+        // read.
+        '@[20rem]:grid-cols-[minmax(5rem,1fr)_minmax(4rem,auto)_minmax(5rem,1.1fr)_auto]',
       )}
     >
       {/*
@@ -198,7 +201,7 @@ function ConditionRow({ condition, ctx }: { condition: Condition; ctx: Ctx }) {
       />
 
       {operator?.unary ? (
-        <span aria-hidden="true" className="hidden @[30rem]:block" />
+        <span aria-hidden="true" className="hidden @[20rem]:block" />
       ) : spec?.type === 'enum' && spec.options ? (
         <Select
           size="sm"
@@ -212,17 +215,19 @@ function ConditionRow({ condition, ctx }: { condition: Condition; ctx: Ctx }) {
           triggerClassName="w-full"
         />
       ) : (
-        <input
+        <Input
+          size="sm"
           aria-label="Value"
           disabled={ctx.disabled}
-          aria-invalid={incomplete || undefined}
+          // Marked, never silently ignored: an empty value matches more people
+          // than the author thinks. `error` is the kit's own invalid state, so
+          // it stays red while you type in it.
+          error={incomplete}
           type={spec?.type === 'number' || spec?.type === 'date' ? spec.type : 'text'}
           placeholder="Value"
           value={condition.value}
           onChange={(event) => ctx.patch(condition.id, { value: event.target.value })}
-          // Marked, never silently ignored: an empty value matches more people
-          // than the author thinks.
-          className={cn(control, incomplete && 'border-[var(--destructive)]')}
+          containerClassName="w-full min-w-0"
         />
       )}
 

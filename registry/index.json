@@ -1,6 +1,6 @@
 {
   "name": "astralyx-ui",
-  "version": "0.5.0",
+  "version": "0.5.2",
   "homepage": "https://ui.astralyx.dev",
   "items": [
     {
@@ -1074,6 +1074,7 @@
       "dependencies": [],
       "registryDependencies": [
         "button",
+        "checkbox",
         "lib-styles",
         "lib-utils"
       ]
@@ -1460,6 +1461,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "input",
         "lib-styles",
         "lib-utils"
       ]
@@ -1581,6 +1583,7 @@
       ],
       "registryDependencies": [
         "button",
+        "input",
         "lib-styles",
         "lib-utils"
       ]
@@ -3284,20 +3287,23 @@
       "name": "query-constructor",
       "type": "registry:ui",
       "title": "Query Constructor",
-      "description": "A SELECT assembled from your schema rather than typed — tables, joins from declared foreign keys, and a WHERE clause built with SegmentBuilder. Values compile to bound parameters and identifiers are allow-listed against the schema.",
+      "description": "A SELECT assembled from your schema and readable back out of one — paste a statement and the controls fill in. Laid out as the statement it produces, with values compiled to bound parameters and identifiers allow-listed against the schema.",
       "category": "Database",
       "dependencies": [
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
         "button",
+        "checkbox",
         "code-block",
+        "input",
+        "lib-sql-select",
         "lib-styles",
         "lib-utils",
-        "multi-select",
         "schema-table",
         "segment-builder",
-        "select"
+        "select",
+        "textarea"
       ]
     },
     {
@@ -3858,6 +3864,7 @@
       ],
       "registryDependencies": [
         "button",
+        "input",
         "lib-styles",
         "lib-utils",
         "select"
@@ -4828,6 +4835,8 @@
       ],
       "registryDependencies": [
         "button",
+        "checkbox",
+        "input",
         "lib-styles",
         "lib-utils"
       ]
@@ -4842,6 +4851,8 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "checkbox",
+        "input",
         "lib-styles",
         "lib-utils",
         "primitive-dismissable",
@@ -5218,6 +5229,13 @@
       "name": "lib-qr",
       "type": "registry:lib",
       "title": "qr",
+      "dependencies": [],
+      "registryDependencies": []
+    },
+    {
+      "name": "lib-sql-select",
+      "type": "registry:lib",
+      "title": "sql-select",
       "dependencies": [],
       "registryDependencies": []
     },

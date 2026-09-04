@@ -11606,17 +11606,17 @@
     },
     {
       "name": "value",
-      "type": "Query",
+      "type": "SelectQuery",
       "optional": true
     },
     {
       "name": "defaultValue",
-      "type": "Query",
+      "type": "SelectQuery",
       "optional": true
     },
     {
       "name": "onChange",
-      "type": "(query: Query) => void",
+      "type": "(query: SelectQuery) => void",
       "optional": true
     },
     {
@@ -11627,7 +11627,7 @@
     },
     {
       "name": "placeholders",
-      "type": "'numbered' | 'question'",
+      "type": "Placeholders",
       "optional": true,
       "default": "'numbered'",
       "description": "`$1` for Postgres, `?` for MySQL and SQLite."
@@ -11640,10 +11640,23 @@
       "description": "Hide the generated SQL."
     },
     {
-      "name": "defaultLimit",
+      "name": "importable",
+      "type": "boolean",
+      "optional": true,
+      "default": "true",
+      "description": "Hide the paste-a-statement panel."
+    },
+    {
+      "name": "schemaHeight",
       "type": "number",
       "optional": true,
-      "description": "Rows added to the statement when set."
+      "default": "260",
+      "description": "Least height for the schema list; it grows to match the query panel."
+    },
+    {
+      "name": "defaultLimit",
+      "type": "number",
+      "optional": true
     },
     {
       "name": "label",
@@ -11659,42 +11672,6 @@
     {
       "name": "onRun",
       "type": "(sql: string, params: unknown[]) => void",
-      "optional": true
-    },
-    {
-      "name": "from",
-      "type": "string",
-      "optional": false
-    },
-    {
-      "name": "joins",
-      "type": "QueryJoin[]",
-      "optional": false
-    },
-    {
-      "name": "select",
-      "type": "string[]",
-      "optional": false,
-      "description": "Qualified columns. Empty means every column."
-    },
-    {
-      "name": "where",
-      "type": "ConditionGroup",
-      "optional": false
-    },
-    {
-      "name": "groupBy",
-      "type": "string[]",
-      "optional": false
-    },
-    {
-      "name": "orderBy",
-      "type": "QuerySort[]",
-      "optional": false
-    },
-    {
-      "name": "limit",
-      "type": "number",
       "optional": true
     }
   ],

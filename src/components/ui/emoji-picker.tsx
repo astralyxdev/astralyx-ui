@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState, type ComponentProps } from 'react'
 import { Search } from 'lucide-react'
-import { fieldBase, fieldOutline, focusRing, radius, surface } from '@/lib/styles'
+import { Input } from '@/components/ui/input'
+import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
 /**
@@ -180,19 +181,17 @@ function EmojiPicker({
     >
       {searchable && (
         <div className="border-border border-b p-2">
-          <div className={cn(fieldBase, fieldOutline, 'flex h-8 items-center gap-2 px-2')}>
-            <Search aria-hidden="true" className="text-muted-foreground size-3.5 shrink-0" />
-            <input
-              value={query}
-              onChange={(event) => {
-                setQuery(event.target.value)
-                setActive(0)
-              }}
-              placeholder={searchPlaceholder}
-              aria-label={searchPlaceholder}
-              className="min-w-0 flex-1 bg-transparent text-sm outline-none"
-            />
-          </div>
+          <Input
+            size="sm"
+            icon={<Search />}
+            value={query}
+            onChange={(event) => {
+              setQuery(event.target.value)
+              setActive(0)
+            }}
+            placeholder={searchPlaceholder}
+            aria-label={searchPlaceholder}
+          />
         </div>
       )}
 

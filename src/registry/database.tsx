@@ -370,7 +370,7 @@ export const queryConstructorEntry: ComponentEntry = {
   label: 'Query Constructor',
   isNew: true,
   description:
-    'A SELECT assembled from your schema rather than typed — tables, joins from declared foreign keys, and a WHERE clause built with SegmentBuilder. Values compile to bound parameters and identifiers are allow-listed against the schema.',
+    'A SELECT assembled from your schema and readable back out of one — paste a statement and the controls fill in. Laid out as the statement it produces, with values compiled to bound parameters and identifiers allow-listed against the schema.',
   usage: `import { QueryConstructor } from '@/components/ui/query-constructor'
 
 <QueryConstructor tables={schema} onCompile={(sql, params) => preview(sql, params)} />`,
@@ -404,6 +404,10 @@ export const queryConstructorEntry: ComponentEntry = {
     { name: 'joins', type: 'from foreign keys', description: 'A `references` on a column is a join the schema already knows about, so it is suggested rather than retyped.' },
     { name: 'where', type: 'a SegmentBuilder', description: 'The same nested-precedence problem, so the same component — solving it twice would give two answers to "what does A or B and C mean".' },
     { name: 'what it will not build', type: 'stated', description: 'Sub-queries, CTEs, window functions and unions. Past a certain complexity a builder is slower than typing, which is what the editor is for.' },
+    { name: 'reads both ways', type: 'paste a SELECT', description: 'The Paste SQL panel parses a statement back into the controls, seeded with the current one so it doubles as "edit this as text". A builder that only compiles is a dead end — you can construct a query but never open the one you already have.' },
+    { name: 'the parser', type: '@/lib/sql-select', description: 'Tokeniser plus recursive descent over the same subset it emits, so a compile/parse round trip is lossless. Bare columns are qualified against the tables in scope, and `a AND b OR c` is read as `(a AND b) OR c` rather than flattened into something that means something else.' },
+    { name: 'pasted SQL is not trusted', type: 'same two rules', description: 'A literal in a pasted WHERE becomes a bound parameter when it compiles back, and a table you did not declare is dropped with a reason rather than carried through.' },
+    { name: 'inline layout', type: 'clause keywords', description: 'Keywords run down the leading edge with their controls beside them, so the shape on screen is the shape of the SQL. Giving each clause its own titled card makes a form that happens to emit SQL.' },
     { name: 'onCompile', type: '(sql, params) => void', description: 'Fires when the statement changes, keyed on the output rather than the callback identity so an inline arrow does not loop.' },
   ],
   demos: [

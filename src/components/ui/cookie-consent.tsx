@@ -1,5 +1,6 @@
 import { useId, useState, type ComponentProps, type ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -153,15 +154,14 @@ function CookieConsent({
               key={category.id}
               className={cn('border-border flex items-start gap-3 border p-3', radius.control)}
             >
-              <input
+              <Checkbox
                 id={`${scope}-${category.id}`}
-                type="checkbox"
                 checked={enabled[category.id] ?? false}
                 disabled={category.required}
                 onChange={(event) =>
                   setEnabled((current) => ({ ...current, [category.id]: event.target.checked }))
                 }
-                className={cn('mt-0.5 size-4 shrink-0 accent-[var(--primary)]', focusRing)}
+                containerClassName="mt-0.5 shrink-0"
               />
               <label htmlFor={`${scope}-${category.id}`} className="min-w-0 flex-1 cursor-pointer">
                 <span className="flex items-center gap-2 text-sm font-medium">

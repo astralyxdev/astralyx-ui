@@ -1,5 +1,7 @@
 import { useMemo, useRef, useState, type ComponentProps, type ReactNode } from 'react'
 import { ChevronDown, ChevronRight, Search } from 'lucide-react'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Input } from '@/components/ui/input'
 import { useDismissable } from '@/components/primitives/dismissable'
 import { usePopper } from '@/components/primitives/popper'
 import { fieldBase, fieldOutline, fieldSize, focusRing, menuSurface, radius } from '@/lib/styles'
@@ -122,18 +124,15 @@ function Row({
         )}
 
         <label className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 text-sm">
-          <input
-            type="checkbox"
+          {/* The kit's own Checkbox, which already owns the tri-state: it sets
+              the `indeterminate` property (never an attribute, so it cannot be
+              written in JSX) and reports `aria-checked="mixed"`. */}
+          <Checkbox
+            size="sm"
             checked={all}
+            indeterminate={some}
             disabled={node.disabled || disabled}
-            // `indeterminate` is a property, never an attribute — a ref
-            // callback is the only way to express it from JSX.
-            ref={(element) => {
-              if (element) element.indeterminate = some
-            }}
-            aria-checked={some ? 'mixed' : all}
             onChange={(event) => onToggle(node, event.target.checked)}
-            className={cn('size-3.5 shrink-0 accent-[var(--primary)]', focusRing)}
           />
           <span className="min-w-0 flex-1 truncate">{node.label}</span>
           {branch && (
@@ -262,17 +261,15 @@ function TreeSelect({
         >
           {searchable && (
             <div className="border-border border-b p-2">
-              <div className={cn(fieldBase, fieldOutline, 'flex h-8 items-center gap-2 px-2')}>
-                <Search aria-hidden="true" className="text-muted-foreground size-3.5 shrink-0" />
-                <input
-                  autoFocus
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-                  placeholder={searchPlaceholder}
-                  aria-label={searchPlaceholder}
-                  className="min-w-0 flex-1 bg-transparent text-sm outline-none"
-                />
-              </div>
+              <Input
+                size="sm"
+                autoFocus
+                icon={<Search />}
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder={searchPlaceholder}
+                aria-label={searchPlaceholder}
+              />
             </div>
           )}
 
