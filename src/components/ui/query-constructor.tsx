@@ -1,9 +1,11 @@
-import { useEffect, useMemo, useRef, useState, type ComponentProps, type ReactNode } from 'react'
-import { ChevronDown, ChevronRight, ClipboardPaste, Table2, X } from 'lucide-react'
+import { useEffect, useId, useMemo, useRef, useState, type ComponentProps, type ReactNode } from 'react'
+import { ClipboardPaste, Plus, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import { CodeBlock } from '@/components/ui/code-block'
+import { CommandList, type CommandItem } from '@/components/ui/command'
 import { Input } from '@/components/ui/input'
+import { MultiSelect } from '@/components/ui/multi-select'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { SegmentBuilder, type ConditionGroup } from '@/components/ui/segment-builder'
 import { Select } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
@@ -16,33 +18,35 @@ import {
   splitQualified,
   type Placeholders,
   type SelectQuery,
+  type SqlGroup,
   type SqlJoin,
 } from '@/lib/sql-select'
-import { focusRing, radius, surface } from '@/lib/styles'
+import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
 /**
- * A SQL `SELECT` built against a schema you can see, and readable back out of a
+ * A SQL `SELECT` assembled a clause at a time, and readable back out of a
  * statement you paste.
  *
- * The counterpart to `QueryEditor`: that one is for people who already know SQL
- * and want a console; this is for people who know the *question* and not the
- * dialect. They are meant to sit beside each other, which is why this reads
- * both ways — paste a statement and the panels fill in, change the panels and
- * the statement follows. A builder that only goes one way is a dead end: you
- * can construct a query but never open the one you already have.
+ * The counterpart to `QueryEditor`: that one is a console for people who
+ * already know SQL; this is for people who know the *question* and not the
+ * dialect. It reads both ways — paste a statement and the blocks fill in,
+ * change a block and the statement follows — because a builder that only
+ * compiles is a dead end: you can construct a query but never open the one you
+ * already have.
  *
- * **The schema is a panel, not a dropdown.** Columns are the thing you are
- * choosing, and there are usually far more of them than fit in a select — so
- * they are browsed in a list beside the query, grouped under their table, with
- * their types visible. Ticking a column adds it to the result; the tables in
- * play are the ones with content, and the rest are dimmed until a join brings
- * them in. That is the same information a `SELECT` list holds, laid out so you
- * can read the shape of the database while you work.
+ * **One block per decision.** Sources, columns, filter, then the three small
+ * ones that shape the result. Each is a titled card holding only its own
+ * controls, so the query is read as a short list of choices rather than a long
+ * form — and each block carries its own action, which is why joining a table is
+ * a button on *Sources* rather than a control floating between clauses.
  *
- * **The query panel holds only what a picker cannot express**: the source, the
- * joins, the filter, the ordering. Splitting it this way keeps each side short
- * enough to take in at a glance, which a single column of clauses never was.
+ * **It follows the schema.** Every picker offers only columns of the tables in
+ * play, qualified as `table.column` and annotated with their type; joining a
+ * table brings its columns into the pool, and removing one takes its columns
+ * out of the filter, the ordering and the grouping with it rather than leaving
+ * a statement that names a table it no longer joins. A `references` on a column
+ * is a join the schema already knows about, so it is offered as one click.
  *
  * **Values become parameters and identifiers are allow-listed** — see
  * `@/lib/sql-select`, which owns the grammar and is tested without a DOM. That
@@ -75,12 +79,47 @@ type QueryConstructorProps = Omit<ComponentProps<'div'>, 'onChange'> & {
   preview?: boolean
   /** Hide the paste-a-statement panel. */
   importable?: boolean
-  /** Least height for the schema list; it grows to match the query panel. */
-  schemaHeight?: number
   defaultLimit?: number
   label?: string
   runLabel?: ReactNode
   onRun?: (sql: string, params: unknown[]) => void
+}
+
+/**
+ * One titled block.
+ *
+ * A `<section>` named by its own label rather than a heading: these are regions
+ * of a control, not divisions of the document, and adding `h3`s inside a page
+ * that already has its own outline would put headings in the document map that
+ * are not part of it.
+ */
+function Block({
+  title,
+  action,
+  children,
+  className,
+}: {
+  title: string
+  action?: ReactNode
+  children: ReactNode
+  className?: string
+}) {
+  const id = useId()
+
+  return (
+    <section
+      aria-labelledby={id}
+      className={cn(surface, radius.surface, 'flex min-w-0 flex-col', className)}
+    >
+      <div className="border-border flex items-center justify-between gap-2 border-b px-3 py-1.5">
+        <p id={id} className="text-xs font-medium">
+          {title}
+        </p>
+        {action}
+      </div>
+      <div className="min-w-0 flex-1 p-3">{children}</div>
+    </section>
+  )
 }
 
 let counter = 0
@@ -95,16 +134,6 @@ const emptyQuery = (from: string): SelectQuery => ({
   orderBy: [],
 })
 
-/** A labelled strip in the query panel. */
-function Row({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <div className="flex flex-wrap items-center gap-2">
-      <span className="text-muted-foreground w-14 shrink-0 text-[11px] font-medium">{label}</span>
-      {children}
-    </div>
-  )
-}
-
 function QueryConstructor({
   tables,
   value,
@@ -114,7 +143,6 @@ function QueryConstructor({
   placeholders = 'numbered',
   preview = true,
   importable = true,
-  schemaHeight = 260,
   defaultLimit,
   label = 'Query',
   runLabel,
@@ -128,7 +156,7 @@ function QueryConstructor({
   const [importing, setImporting] = useState(false)
   const [draft, setDraft] = useState('')
   const [importIssues, setImportIssues] = useState<string[] | null>(null)
-  const [collapsed, setCollapsed] = useState<Set<string>>(new Set())
+  const [joinOpen, setJoinOpen] = useState(false)
 
   const query = value ?? internal
 
@@ -143,35 +171,32 @@ function QueryConstructor({
     [query.from, query.joins],
   )
 
-  const chosen = useMemo(() => new Set(query.select), [query.select])
+  const inScope = useMemo(() => tables.filter((table) => scope.has(table.name)), [tables, scope])
 
-  /** Qualified columns of the tables in play — what every picker offers. */
+  /** Qualified columns of the tables in play, with their types alongside. */
   const columnOptions = useMemo(
     () =>
-      tables
-        .filter((table) => scope.has(table.name))
-        .flatMap((table) =>
-          table.columns.map((column) => ({
-            value: qualify(table.name, column.name),
-            label: qualify(table.name, column.name),
-          })),
-        ),
-    [tables, scope],
+      inScope.flatMap((table) =>
+        table.columns.map((column) => ({
+          value: qualify(table.name, column.name),
+          label: qualify(table.name, column.name),
+          description: column.type,
+        })),
+      ),
+    [inScope],
   )
 
   /** The same columns as `SegmentBuilder` fields. */
   const whereFields = useMemo(
     () =>
-      tables
-        .filter((table) => scope.has(table.name))
-        .flatMap((table) =>
-          table.columns.map((column) => ({
-            key: qualify(table.name, column.name),
-            label: qualify(table.name, column.name),
-            type: familyOf(column.type),
-          })),
-        ),
-    [tables, scope],
+      inScope.flatMap((table) =>
+        table.columns.map((column) => ({
+          key: qualify(table.name, column.name),
+          label: qualify(table.name, column.name),
+          type: familyOf(column.type),
+        })),
+      ),
+    [inScope],
   )
 
   const compiled = useMemo(
@@ -191,12 +216,14 @@ function QueryConstructor({
     latest.current?.(compiled.sql, compiled.params)
   }, [compiledKey, compiled.sql, compiled.params])
 
+  /* ------------------------------------------------------------ sources */
+
   /** Changing the source invalidates everything that named the old one. */
   const setFrom = (from: string) => commit({ ...emptyQuery(from), limit: query.limit })
 
   /** How a table could be joined, from a foreign key either way round. */
   const joinPath = (target: string) => {
-    for (const table of tables.filter((item) => scope.has(item.name))) {
+    for (const table of inScope) {
       for (const column of table.columns) {
         if (!column.references) continue
         const [to, toColumn] = splitQualified(column.references)
@@ -205,53 +232,51 @@ function QueryConstructor({
         }
       }
     }
-    const candidate = tables.find((item) => item.name === target)
-    for (const column of candidate?.columns ?? []) {
+    for (const column of tables.find((item) => item.name === target)?.columns ?? []) {
       if (!column.references) continue
       const [to, toColumn] = splitQualified(column.references)
       if (scope.has(to)) {
-        return {
-          leftColumn: qualify(to, toColumn),
-          rightColumn: qualify(target, column.name),
-        }
+        return { leftColumn: qualify(to, toColumn), rightColumn: qualify(target, column.name) }
       }
     }
     return null
   }
 
-  const joinTable = (target: string) => {
+  const addJoin = (target: string) => {
     const path = joinPath(target) ?? {
-      leftColumn: qualify(query.from, tables.find((t) => t.name === query.from)?.columns[0]?.name ?? ''),
-      rightColumn: qualify(target, tables.find((t) => t.name === target)?.columns[0]?.name ?? ''),
+      leftColumn: qualify(
+        query.from,
+        tables.find((item) => item.name === query.from)?.columns[0]?.name ?? '',
+      ),
+      rightColumn: qualify(
+        target,
+        tables.find((item) => item.name === target)?.columns[0]?.name ?? '',
+      ),
     }
-    commit({ ...query, joins: [...query.joins, { id: nextId(), type: 'inner', table: target, ...path }] })
+    commit({
+      ...query,
+      joins: [...query.joins, { id: nextId(), type: 'inner', table: target, ...path }],
+    })
   }
 
-  const dropTable = (target: string) => {
-    const joins = query.joins.filter((join) => join.table !== target)
-    // Everything that named the table goes with it, or the statement breaks.
+  /** Dropping a table takes everything that named it, or the statement breaks. */
+  const dropJoin = (target: string) => {
     const keeps = (key: string) => splitQualified(key)[0] !== target
-    const prune = (group: ConditionGroup): ConditionGroup => ({
+    const prune = (group: SqlGroup): SqlGroup => ({
       ...group,
       conditions: group.conditions
         .filter((node) => ('conditions' in node ? true : keeps(node.field)))
-        .map((node) => ('conditions' in node ? prune(node as ConditionGroup) : node)),
+        .map((node) => ('conditions' in node ? prune(node) : node)),
     })
     commit({
       ...query,
-      joins,
+      joins: query.joins.filter((join) => join.table !== target),
       select: query.select.filter(keeps),
       groupBy: query.groupBy.filter(keeps),
       orderBy: query.orderBy.filter((sort) => keeps(sort.column)),
-      where: prune(query.where as ConditionGroup),
+      where: prune(query.where),
     })
   }
-
-  const toggleColumn = (key: string) =>
-    commit({
-      ...query,
-      select: chosen.has(key) ? query.select.filter((item) => item !== key) : [...query.select, key],
-    })
 
   const patchJoin = (id: string, changes: Partial<SqlJoin>) =>
     commit({
@@ -259,7 +284,16 @@ function QueryConstructor({
       joins: query.joins.map((join) => (join.id === id ? { ...join, ...changes } : join)),
     })
 
-  /** Read a pasted statement into the panels. */
+  const joinable = tables.filter((table) => !scope.has(table.name))
+  const joinItems: CommandItem[] = joinable.map((table) => ({
+    id: table.name,
+    label: table.name,
+    // A declared foreign key means this is one click, not a form.
+    shortcut: joinPath(table.name) ? 'fk' : undefined,
+  }))
+
+  /* ------------------------------------------------------------- import */
+
   const importSql = () => {
     // The current parameters are passed so a statement copied straight out of
     // the preview — placeholders and all — round-trips with its values.
@@ -275,141 +309,44 @@ function QueryConstructor({
     }
   }
 
-  const toggleCollapsed = (name: string) => {
-    const next = new Set(collapsed)
-    if (next.has(name)) next.delete(name)
-    else next.add(name)
-    setCollapsed(next)
-  }
-
   return (
     <div
       data-slot="query-constructor"
       className={cn('@container flex flex-col gap-3', className)}
       {...props}
     >
-      <div className="grid gap-3 @[46rem]:grid-cols-[16rem_minmax(0,1fr)]">
-        {/* ------------------------------------------------- the schema */}
-        <section className={cn(surface, radius.surface, 'flex flex-col overflow-hidden')}>
-          <div className="border-border flex items-center gap-2 border-b px-3 py-2">
-            <Table2 aria-hidden="true" className="text-muted-foreground size-3.5" />
-            <p className="text-xs font-medium">Schema</p>
-            <span className="text-muted-foreground ms-auto text-[11px] tabular-nums">
-              {query.select.length || 'all'} selected
+      {/* ------------------------------------------------------ sources */}
+      <Block
+        title="Sources"
+        action={
+          joinable.length > 0 && (
+            <Popover open={joinOpen} onOpenChange={setJoinOpen}>
+              <PopoverTrigger asChild>
+                <Button size="xs" variant="ghost">
+                  <Plus />
+                  Join
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-56 p-0">
+                <CommandList
+                  items={joinItems}
+                  placeholder="Table to join…"
+                  emptyMessage="Nothing left to join"
+                  onRun={(item) => {
+                    addJoin(item.id)
+                    setJoinOpen(false)
+                  }}
+                />
+              </PopoverContent>
+            </Popover>
+          )
+        }
+      >
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-muted-foreground w-10 shrink-0 font-mono text-[11px] uppercase">
+              from
             </span>
-          </div>
-
-          {/* Fills the card rather than stopping at a fixed height: the panel
-              is as tall as the query beside it, and a list that stops early
-              leaves a column of dead space next to a full one. */}
-          <div style={{ minHeight: schemaHeight }} className="min-h-0 flex-1 overflow-y-auto p-1">
-            {tables.map((table) => {
-              const inPlay = scope.has(table.name)
-              const isSource = table.name === query.from
-              const open = !collapsed.has(table.name)
-              const joinable = !inPlay && Boolean(query.from)
-
-              return (
-                <div key={table.name} className="mb-0.5">
-                  <div
-                    className={cn(
-                      'flex items-center gap-1 px-1.5 py-1',
-                      radius.xs,
-                      inPlay ? 'text-foreground' : 'text-muted-foreground',
-                    )}
-                  >
-                    <button
-                      type="button"
-                      aria-label={open ? `Collapse ${table.name}` : `Expand ${table.name}`}
-                      aria-expanded={open}
-                      onClick={() => toggleCollapsed(table.name)}
-                      className={cn('shrink-0', radius.xs, focusRing)}
-                    >
-                      {open ? (
-                        <ChevronDown className="size-3.5" />
-                      ) : (
-                        <ChevronRight className="size-3.5 rtl:rotate-180" />
-                      )}
-                    </button>
-
-                    <span className="min-w-0 flex-1 truncate font-mono text-xs">{table.name}</span>
-
-                    {isSource ? (
-                      <span className="text-muted-foreground shrink-0 text-[10px] tracking-wide uppercase">
-                        from
-                      </span>
-                    ) : inPlay ? (
-                      <Button
-                        size="icon-xs"
-                        variant="ghost"
-                        aria-label={`Remove ${table.name} from the query`}
-                        onClick={() => dropTable(table.name)}
-                      >
-                        <X />
-                      </Button>
-                    ) : (
-                      joinable && (
-                        <Button
-                          size="xs"
-                          variant="ghost"
-                          onClick={() => joinTable(table.name)}
-                          className="text-[11px]"
-                        >
-                          {/* A declared foreign key means this is one click,
-                              not a form. */}
-                          {joinPath(table.name) ? 'join' : 'join…'}
-                        </Button>
-                      )
-                    )}
-                  </div>
-
-                  {open && (
-                    <ul className="list-none ps-6">
-                      {table.columns.map((column) => {
-                        const key = qualify(table.name, column.name)
-                        return (
-                          <li key={column.name}>
-                            <label
-                              className={cn(
-                                'flex cursor-pointer items-center gap-2 py-0.5 pe-1.5',
-                                radius.xs,
-                                inPlay ? 'hover:bg-muted' : 'cursor-default opacity-45',
-                              )}
-                            >
-                              <Checkbox
-                                size="sm"
-                                checked={chosen.has(key)}
-                                disabled={!inPlay}
-                                onChange={() => toggleColumn(key)}
-                                aria-label={key}
-                              />
-                              <span className="min-w-0 flex-1 truncate font-mono text-[11px]">
-                                {column.name}
-                              </span>
-                              <span className="text-muted-foreground shrink-0 text-[10px]">
-                                {column.type}
-                              </span>
-                            </label>
-                          </li>
-                        )
-                      })}
-                    </ul>
-                  )}
-                </div>
-              )
-            })}
-          </div>
-
-          <p className="border-border text-muted-foreground border-t px-3 py-1.5 text-[11px]">
-            {query.select.length === 0
-              ? 'Nothing ticked — every column.'
-              : `${query.select.length} column${query.select.length === 1 ? '' : 's'}`}
-          </p>
-        </section>
-
-        {/* -------------------------------------------------- the query */}
-        <section className={cn(surface, radius.surface, 'flex flex-col gap-3 p-3')}>
-          <Row label="Source">
             <Select
               size="sm"
               triggerLabel="Source table"
@@ -419,150 +356,201 @@ function QueryConstructor({
               className="w-44"
               triggerClassName="w-full"
             />
-          </Row>
+          </div>
 
-          {query.joins.map((join) => {
-            const joined = tables.find((table) => table.name === join.table)
-            return (
-              <Row key={join.id} label="Join">
-                <Select
-                  size="sm"
-                  triggerLabel="Join type"
-                  value={join.type}
-                  options={[
-                    { value: 'inner', label: 'inner' },
-                    { value: 'left', label: 'left' },
-                  ]}
-                  onValueChange={(next) => patchJoin(join.id, { type: next as 'inner' | 'left' })}
-                  className="w-24"
-                  triggerClassName="w-full"
-                />
-                {/* The joined table is not repeated here: it is already the
-                    table half of the right-hand column, and it is listed in the
-                    schema panel. Repeating it cost the row its single line. */}
-                <Select
-                  size="sm"
-                  triggerLabel="Left column"
-                  value={join.leftColumn}
-                  options={columnOptions.filter(
-                    (option) => splitQualified(option.value)[0] !== join.table,
-                  )}
-                  onValueChange={(next) => patchJoin(join.id, { leftColumn: next })}
-                  className="w-36"
-                  triggerClassName="w-full"
-                />
-                <span aria-hidden="true" className="text-muted-foreground">
-                  =
-                </span>
-                <Select
-                  size="sm"
-                  triggerLabel="Right column"
-                  value={join.rightColumn}
-                  options={(joined?.columns ?? []).map((column) => ({
+          {query.joins.map((join) => (
+            <div key={join.id} className="flex flex-wrap items-center gap-2">
+              <Select
+                size="sm"
+                triggerLabel="Join type"
+                value={join.type}
+                options={[
+                  { value: 'inner', label: 'inner' },
+                  { value: 'left', label: 'left' },
+                ]}
+                onValueChange={(next) => patchJoin(join.id, { type: next as 'inner' | 'left' })}
+                className="w-[4.5rem] shrink-0"
+                triggerClassName="w-full"
+              />
+              <span className="w-16 shrink-0 truncate font-mono text-xs">{join.table}</span>
+              <span className="text-muted-foreground shrink-0 font-mono text-[11px] uppercase">
+                on
+              </span>
+              <Select
+                size="sm"
+                triggerLabel="Left column"
+                value={join.leftColumn}
+                options={columnOptions.filter(
+                  (option) => splitQualified(option.value)[0] !== join.table,
+                )}
+                onValueChange={(next) => patchJoin(join.id, { leftColumn: next })}
+                className="w-36"
+                triggerClassName="w-full"
+              />
+              <span aria-hidden="true" className="text-muted-foreground shrink-0">
+                =
+              </span>
+              <Select
+                size="sm"
+                triggerLabel="Right column"
+                value={join.rightColumn}
+                options={(tables.find((table) => table.name === join.table)?.columns ?? []).map(
+                  (column) => ({
                     value: qualify(join.table, column.name),
                     label: qualify(join.table, column.name),
-                  }))}
-                  onValueChange={(next) => patchJoin(join.id, { rightColumn: next })}
-                  className="w-36"
-                  triggerClassName="w-full"
-                />
-                <Button
-                  size="icon-sm"
-                  variant="ghost"
-                  aria-label="Remove join"
-                  onClick={() => dropTable(join.table)}
-                >
-                  <X />
-                </Button>
-              </Row>
-            )
-          })}
+                  }),
+                )}
+                onValueChange={(next) => patchJoin(join.id, { rightColumn: next })}
+                className="w-36"
+                triggerClassName="w-full"
+              />
+              <Button
+                size="icon-sm"
+                variant="ghost"
+                aria-label={`Remove the ${join.table} join`}
+                onClick={() => dropJoin(join.table)}
+              >
+                <X />
+              </Button>
+            </div>
+          ))}
+        </div>
+      </Block>
 
-          <div className="border-border border-t pt-3">
-            <SegmentBuilder
-              label="Filter"
-              fields={whereFields}
-              value={query.where as ConditionGroup}
-              onChange={(where) => commit({ ...query, where })}
-              summary={false}
-              emptyLabel="No filter — every row."
+      {/* ------------------------------------------------------ columns */}
+      <Block
+        title="Columns"
+        action={
+          <span className="text-muted-foreground text-[11px] tabular-nums">
+            {query.select.length === 0 ? 'all' : `${query.select.length} of ${columnOptions.length}`}
+          </span>
+        }
+      >
+        <MultiSelect
+          size="sm"
+          options={columnOptions}
+          value={query.select}
+          onValueChange={(next) => commit({ ...query, select: next })}
+          placeholder="* — every column"
+          searchLabel="Filter columns"
+          triggerClassName="w-full"
+        />
+      </Block>
+
+      {/* ------------------------------------------------------- filter */}
+      <Block title="Filter">
+        <SegmentBuilder
+          fields={whereFields}
+          value={query.where as ConditionGroup}
+          onChange={(where) => commit({ ...query, where })}
+          summary={false}
+          label=""
+          emptyLabel="No filter — every row."
+        />
+      </Block>
+
+      {/* ------------------------------------ order / group / limit */}
+      <div className="grid gap-3 @[42rem]:grid-cols-3">
+        <Block
+          title="Order"
+          action={
+            query.orderBy[0] && (
+              <Button
+                size="icon-xs"
+                variant="ghost"
+                aria-label="Remove ordering"
+                onClick={() => commit({ ...query, orderBy: [] })}
+              >
+                <X />
+              </Button>
+            )
+          }
+        >
+          <div className="flex flex-wrap items-center gap-2">
+            <Select
+              size="sm"
+              triggerLabel="Order by"
+              placeholder="none"
+              value={query.orderBy[0]?.column ?? ''}
+              options={columnOptions}
+              onValueChange={(next) =>
+                commit({
+                  ...query,
+                  orderBy: [{ column: next, direction: query.orderBy[0]?.direction ?? 'asc' }],
+                })
+              }
+              className="min-w-0 flex-1"
+              triggerClassName="w-full"
+            />
+            <Select
+              size="sm"
+              triggerLabel="Direction"
+              value={query.orderBy[0]?.direction ?? 'asc'}
+              options={[
+                { value: 'asc', label: 'asc' },
+                { value: 'desc', label: 'desc' },
+              ]}
+              disabled={!query.orderBy[0]}
+              onValueChange={(next) =>
+                commit({
+                  ...query,
+                  orderBy: query.orderBy[0]
+                    ? [{ ...query.orderBy[0], direction: next as 'asc' | 'desc' }]
+                    : [],
+                })
+              }
+              className="w-20 shrink-0"
+              triggerClassName="w-full"
             />
           </div>
+        </Block>
 
-          <div className="border-border flex flex-wrap items-center gap-x-4 gap-y-2 border-t pt-3">
-            <Row label="Sort">
-              <Select
-                size="sm"
-                triggerLabel="Order by"
-                placeholder="none"
-                value={query.orderBy[0]?.column ?? ''}
-                options={columnOptions}
-                onValueChange={(next) =>
-                  commit({
-                    ...query,
-                    orderBy: [{ column: next, direction: query.orderBy[0]?.direction ?? 'asc' }],
-                  })
-                }
-                className="w-40"
-                triggerClassName="w-full"
-              />
-              <Select
-                size="sm"
-                triggerLabel="Direction"
-                value={query.orderBy[0]?.direction ?? 'asc'}
-                options={[
-                  { value: 'asc', label: 'asc' },
-                  { value: 'desc', label: 'desc' },
-                ]}
-                disabled={!query.orderBy[0]}
-                onValueChange={(next) =>
-                  commit({
-                    ...query,
-                    orderBy: query.orderBy[0]
-                      ? [{ ...query.orderBy[0], direction: next as 'asc' | 'desc' }]
-                      : [],
-                  })
-                }
-                className="w-24"
-                triggerClassName="w-full"
-              />
-            </Row>
+        <Block
+          title="Group"
+          action={
+            query.groupBy.length > 0 && (
+              <Button
+                size="icon-xs"
+                variant="ghost"
+                aria-label="Remove grouping"
+                onClick={() => commit({ ...query, groupBy: [] })}
+              >
+                <X />
+              </Button>
+            )
+          }
+        >
+          <MultiSelect
+            size="sm"
+            options={columnOptions}
+            value={query.groupBy}
+            onValueChange={(next) => commit({ ...query, groupBy: next })}
+            placeholder="none"
+            searchLabel="Filter columns"
+            triggerClassName="w-full"
+          />
+        </Block>
 
-            <Row label="Group">
-              <Select
-                size="sm"
-                triggerLabel="Group by"
-                placeholder="none"
-                value={query.groupBy[0] ?? ''}
-                options={columnOptions}
-                onValueChange={(next) => commit({ ...query, groupBy: next ? [next] : [] })}
-                className="w-40"
-                triggerClassName="w-full"
-              />
-            </Row>
-
-            <Row label="Limit">
-              <Input
-                size="sm"
-                type="number"
-                min={0}
-                aria-label="Limit"
-                placeholder="none"
-                value={query.limit ?? ''}
-                onChange={(event) =>
-                  commit({
-                    ...query,
-                    limit: event.target.value === '' ? undefined : Number(event.target.value),
-                  })
-                }
-                containerClassName="w-24"
-              />
-            </Row>
-          </div>
-        </section>
+        <Block title="Limit">
+          <Input
+            size="sm"
+            type="number"
+            min={0}
+            aria-label="Limit"
+            placeholder="none"
+            value={query.limit ?? ''}
+            onChange={(event) =>
+              commit({
+                ...query,
+                limit: event.target.value === '' ? undefined : Number(event.target.value),
+              })
+            }
+            containerClassName="w-full"
+          />
+        </Block>
       </div>
 
-      {/* ------------------------------------------------------- output */}
+      {/* ------------------------------------------------- the statement */}
       {(preview || importable) && (
         <section className="flex flex-col gap-2">
           <div className="flex flex-wrap items-center justify-between gap-2">
@@ -597,7 +585,7 @@ function QueryConstructor({
           {importable && importing && (
             <div className={cn(surface, radius.surface, 'flex flex-col gap-2 p-3')}>
               <label htmlFor="query-constructor-import" className="text-xs font-medium">
-                Paste a SELECT and fill the builder
+                Paste a SELECT and fill the blocks
               </label>
               <Textarea
                 id="query-constructor-import"

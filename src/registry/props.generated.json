@@ -11647,13 +11647,6 @@
       "description": "Hide the paste-a-statement panel."
     },
     {
-      "name": "schemaHeight",
-      "type": "number",
-      "optional": true,
-      "default": "260",
-      "description": "Least height for the schema list; it grows to match the query panel."
-    },
-    {
       "name": "defaultLimit",
       "type": "number",
       "optional": true

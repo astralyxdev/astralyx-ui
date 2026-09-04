@@ -1,6 +1,6 @@
 {
   "name": "astralyx-ui",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "homepage": "https://ui.astralyx.dev",
   "items": [
     {
@@ -3287,19 +3287,21 @@
       "name": "query-constructor",
       "type": "registry:ui",
       "title": "Query Constructor",
-      "description": "A SELECT assembled from your schema and readable back out of one — paste a statement and the controls fill in. Laid out as the statement it produces, with values compiled to bound parameters and identifiers allow-listed against the schema.",
+      "description": "A SELECT assembled a clause at a time — sources with a join button, columns, filter, then order, group and limit — with the finished statement underneath. Reads both ways: paste a SELECT and the blocks fill in. Values compile to bound parameters and identifiers are allow-listed against the schema.",
       "category": "Database",
       "dependencies": [
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
         "button",
-        "checkbox",
         "code-block",
+        "command",
         "input",
         "lib-sql-select",
         "lib-styles",
         "lib-utils",
+        "multi-select",
+        "popover",
         "schema-table",
         "segment-builder",
         "select",

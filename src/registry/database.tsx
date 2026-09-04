@@ -370,7 +370,7 @@ export const queryConstructorEntry: ComponentEntry = {
   label: 'Query Constructor',
   isNew: true,
   description:
-    'A SELECT assembled from your schema and readable back out of one — paste a statement and the controls fill in. Laid out as the statement it produces, with values compiled to bound parameters and identifiers allow-listed against the schema.',
+    'A SELECT assembled a clause at a time — sources with a join button, columns, filter, then order, group and limit — with the finished statement underneath. Reads both ways: paste a SELECT and the blocks fill in. Values compile to bound parameters and identifiers are allow-listed against the schema.',
   usage: `import { QueryConstructor } from '@/components/ui/query-constructor'
 
 <QueryConstructor tables={schema} onCompile={(sql, params) => preview(sql, params)} />`,
@@ -407,7 +407,8 @@ export const queryConstructorEntry: ComponentEntry = {
     { name: 'reads both ways', type: 'paste a SELECT', description: 'The Paste SQL panel parses a statement back into the controls, seeded with the current one so it doubles as "edit this as text". A builder that only compiles is a dead end — you can construct a query but never open the one you already have.' },
     { name: 'the parser', type: '@/lib/sql-select', description: 'Tokeniser plus recursive descent over the same subset it emits, so a compile/parse round trip is lossless. Bare columns are qualified against the tables in scope, and `a AND b OR c` is read as `(a AND b) OR c` rather than flattened into something that means something else.' },
     { name: 'pasted SQL is not trusted', type: 'same two rules', description: 'A literal in a pasted WHERE becomes a bound parameter when it compiles back, and a table you did not declare is dropped with a reason rather than carried through.' },
-    { name: 'inline layout', type: 'clause keywords', description: 'Keywords run down the leading edge with their controls beside them, so the shape on screen is the shape of the SQL. Giving each clause its own titled card makes a form that happens to emit SQL.' },
+    { name: 'one block per decision', type: 'sources, columns, filter…', description: 'Each clause is a titled card holding only its own controls, and each carries its own action — which is why joining a table is a button on Sources rather than a control floating between clauses. Order, group and limit sit in a row, because three small choices do not each deserve a full-width band.' },
+    { name: 'removing a table', type: 'takes its columns', description: 'Dropping a join also clears that table from the columns, the filter, the ordering and the grouping, rather than leaving a statement that names a table it no longer joins.' },
     { name: 'onCompile', type: '(sql, params) => void', description: 'Fires when the statement changes, keyed on the output rather than the callback identity so an inline arrow does not loop.' },
   ],
   demos: [
