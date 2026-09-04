@@ -49,6 +49,8 @@ export type ComponentEntry = {
   description: string
   /** Import line shown under Usage. */
   usage?: string
+  /** Flags the entry as recently added — a NEW tag in the nav and the index. */
+  isNew?: boolean
   composer?: ComposerSpec
   demos?: DemoSpec[]
   api?: ApiProp[]

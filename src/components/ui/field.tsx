@@ -75,7 +75,11 @@ function Field({
         error: `${id}-error`,
       },
       invalid: Boolean(error),
-      hasDescription: Boolean(description),
+      // Only when it will actually be rendered. The description element is
+      // replaced by the error one, so advertising its id while an error is
+      // showing points `aria-describedby` at a node that does not exist —
+      // and a screen reader announces nothing where the hint used to be.
+      hasDescription: Boolean(description) && !error,
     }),
     [id, error, description],
   )

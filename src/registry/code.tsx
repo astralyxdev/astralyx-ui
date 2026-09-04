@@ -1,6 +1,7 @@
 import { CodeSearch, type CodeSearchFile } from '@/components/ui/code-search'
 import { DiffView, parseUnifiedDiff, type DiffFile } from '@/components/ui/diff-view'
 import { InputFile } from '@/components/ui/input-file'
+import type { FileUpload, UploadControl } from '@/lib/use-uploads'
 import { JsonViewer } from '@/components/ui/json-viewer'
 import { LogViewer, type LogEntry } from '@/components/ui/log-viewer'
 import { ShortcutSheet, type ShortcutGroup } from '@/components/ui/shortcut-sheet'
@@ -395,20 +396,67 @@ export const shortcutSheetEntry: ComponentEntry = {
 const FILE_SIZES = ['xs', 'sm', 'md', 'lg', 'xl'] as const
 const FILE_VARIANTS = ['default', 'secondary', 'ghost'] as const
 
+/**
+ * A stand-in for a real endpoint, so the docs demo the actual state machine.
+ *
+ * Ticks progress on a timer and honours the abort signal, which is the part
+ * worth showing: removing a row mid-flight has to stop the request, not just
+ * hide it.
+ */
+function fakeUpload(shouldFail: boolean) {
+  return (upload: FileUpload, { signal, onProgress }: UploadControl) =>
+    new Promise((resolve, reject) => {
+      let sent = 0
+
+      const tick = setInterval(() => {
+        sent += 0.12
+        if (sent >= 1) {
+          clearInterval(tick)
+          if (shouldFail) reject(new Error('Storage rejected the file (507)'))
+          else resolve({ url: `https://cdn.example.com/${upload.name}` })
+          return
+        }
+        onProgress(sent)
+      }, 220)
+
+      signal.addEventListener('abort', () => {
+        clearInterval(tick)
+        reject(new Error('Aborted'))
+      })
+    })
+}
+
 export const inputFileEntry: ComponentEntry = {
   id: 'input-file',
   label: 'Input File',
+  isNew: true,
   description:
-    'A file picker shaped like an Input, for a form row. The native control is replaced rather than restyled — its button text is not settable and its layout is unreachable, so matching the field metrics means driving a hidden input.',
-  usage: `import { InputFile } from '@/components/ui/input-file'
+    'A file picker shaped like an Input that also runs the upload. Hand it onUpload and it moves each file through queued, uploading, done or error, reports progress, and keeps failures on screen with a retry.',
+  usage: `import { InputFile, type FileUpload } from '@/components/ui/input-file'
 
-<InputFile accept=".zip" onFiles={setFiles} />`,
+<InputFile
+  multiple
+  accept="image/*"
+  maxSize={5_000_000}
+  onUpload={async (upload, { signal, onProgress }) => {
+    const body = new FormData()
+    body.append('file', upload.file)
+
+    const response = await fetch('/api/upload', { method: 'POST', body, signal })
+    if (!response.ok) throw new Error(await response.text())
+
+    onProgress(1)
+    return response.json()
+  }}
+/>`,
   composer: {
+    tall: true,
     controls: [
       { type: 'select', prop: 'size', label: 'size', options: FILE_SIZES, default: 'md' },
       { type: 'select', prop: 'variant', label: 'variant', options: FILE_VARIANTS, default: 'default' },
-      { type: 'boolean', prop: 'multiple', label: 'multiple', default: false },
-      { type: 'boolean', prop: 'error', label: 'error', default: false },
+      { type: 'boolean', prop: 'multiple', label: 'multiple', default: true },
+      { type: 'boolean', prop: 'showList', label: 'showList', default: true },
+      { type: 'boolean', prop: 'fails', label: 'upload fails', default: false },
     ],
     render: (state) => (
       <div className="w-full max-w-md">
@@ -416,21 +464,35 @@ export const inputFileEntry: ComponentEntry = {
           size={String(state.size) as (typeof FILE_SIZES)[number]}
           variant={String(state.variant) as (typeof FILE_VARIANTS)[number]}
           multiple={Boolean(state.multiple)}
-          error={Boolean(state.error)}
+          showList={Boolean(state.showList)}
+          onUpload={fakeUpload(Boolean(state.fails))}
         />
       </div>
     ),
     code: (state: ComposerState) =>
-      `<InputFile\n  size="${state.size}"\n  variant="${state.variant}"\n  multiple={${Boolean(state.multiple)}}\n  error={${Boolean(state.error)}}\n/>`,
+      `<InputFile\n  size="${state.size}"\n  variant="${state.variant}"\n  multiple={${Boolean(state.multiple)}}\n  showList={${Boolean(state.showList)}}\n  onUpload={async (upload, { signal, onProgress }) => {\n    // upload.file, upload.name, upload.size, upload.type\n    await putToApi(upload.file, { signal, onProgress })\n  }}\n/>`,
   },
   api: [
-    { name: 'size / variant', type: "'xs'…'xl' / 'default' | 'secondary' | 'ghost'", description: 'The same field scales as Input, so the two line up in a form.' },
-    { name: 'onFiles', type: '(files: File[]) => void', description: 'Fires alongside the native change event.' },
-    { name: 'clearable', type: 'boolean', default: 'true', description: 'Adds an X that resets the underlying input, so re-picking the same file still fires.' },
-    { name: 'buttonLabel / placeholder', type: 'ReactNode / string', description: 'Trigger text, and what shows before a selection.' },
+    { name: 'onUpload', type: '(upload: FileUpload, control: UploadControl) => Promise<unknown>', description: 'Runs the upload. Resolve to succeed — the value lands on upload.result; throw to fail, and the thrown message shows on the row with a retry.' },
+    { name: 'FileUpload', type: '{ id, file, name, size, type, lastModified, status, progress, result?, error? }', description: 'The structured payload handed to onUpload. `file` is the browser File — put it straight in a FormData.' },
+    { name: 'UploadControl', type: '{ signal: AbortSignal; onProgress: (fraction: number) => void }', description: 'Pass the signal to fetch so removing a file aborts its request; call onProgress with 0–1 to drive the bar.' },
+    { name: 'onSelect / onUploadsChange', type: '(uploads: FileUpload[]) => void', description: 'Selection before any upload starts, and every transition after — for a form that needs the ids.' },
+    { name: 'maxSize / maxSizeLabel', type: 'number / (limit: string) => string', description: 'Rejected before the request is made, so an oversized file never leaves the browser.' },
+    { name: 'size / variant', type: "'xs'…'xl' / 'default' | 'secondary' | 'ghost'", description: 'The same field scales as Input, so the two line up in a form. The trigger is capped at sm, since the xs control is a true pill and reads wrong inside a field.' },
+    { name: 'showList', type: 'boolean', default: 'true', description: 'Renders UploadList underneath, with per-file progress, retry and remove.' },
     { name: 'accessibility', type: 'aria-labelledby', description: 'The hidden native input stays the focusable control and is named by the visible summary; the ring is drawn on the wrapper with focus-within.' },
   ],
   demos: [
+    {
+      title: 'Uploading, with progress and a failure',
+      stack: true,
+      code: `<InputFile multiple onUpload={upload} />`,
+      render: () => (
+        <div className="flex w-full max-w-md flex-col gap-3">
+          <InputFile multiple onUpload={fakeUpload(false)} />
+        </div>
+      ),
+    },
     {
       title: 'Sizes',
       stack: true,
@@ -439,9 +501,9 @@ export const inputFileEntry: ComponentEntry = {
 <InputFile variant="secondary" size="lg" />`,
       render: () => (
         <div className="flex w-full max-w-md flex-col gap-3">
-          <InputFile size="sm" />
-          <InputFile multiple buttonLabel="Choose files" />
-          <InputFile variant="secondary" size="lg" />
+          <InputFile size="sm" showList={false} />
+          <InputFile multiple buttonLabel="Choose files" showList={false} />
+          <InputFile variant="secondary" size="lg" showList={false} />
         </div>
       ),
     },

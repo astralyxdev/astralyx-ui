@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Composer } from '@/components/ui/composer'
 import { readableInk } from '@/components/ui/label-picker'
 import { CopyButton } from '@/components/ui/copy-button'
+import { Countdown } from '@/components/ui/countdown'
 import { ErrorBoundary } from '@/components/ui/error-boundary'
 import { LiveAnnouncer, useAnnouncer } from '@/components/ui/live-announcer'
 import { PageHeader } from '@/components/ui/page-header'
@@ -19,6 +20,7 @@ export const copyButtonEntry: ComponentEntry = {
   description:
     'Copies a string and says so. Extracted after the same clipboard-plus-timer was written four times in this kit — CodeBlock, Terminal, EnvVars and Message all route through it now.',
   usage: `import { CopyButton } from '@/components/ui/copy-button'
+import { Countdown } from '@/components/ui/countdown'
 import { useClipboard } from '@/lib/use-clipboard'
 
 <CopyButton value={snippet} />
@@ -451,6 +453,78 @@ import { readableInk } from '@/components/ui/label-picker'
             )}
             code={(state) => `<Badge color="${state.tone}">${state.label}</Badge>`}
           />
+        </div>
+      ),
+    },
+  ],
+}
+
+/* -------------------------------------------------------------- countdown */
+
+// Fixed points rather than `Date.now()`, so the docs page renders the same on
+// the server and in the SSR audit.
+const NOW = new Date('2026-09-04T09:00:00Z')
+const IN_AN_HOUR = new Date(NOW.getTime() + 74 * 60_000 + 9_000)
+const IN_TWO_DAYS = new Date(NOW.getTime() + 2 * 86_400_000 + 4 * 3_600_000)
+
+export const countdownEntry: ComponentEntry = {
+  id: 'countdown',
+  label: 'Countdown',
+  isNew: true,
+  description:
+    'Time remaining until a deadline, ticking. It counts toward a Date rather than decrementing a number, because setInterval is throttled in a background tab — a decremented timer drifts and then confidently shows the wrong number.',
+  usage: `import { Countdown } from '@/components/ui/countdown'
+
+<Countdown to={rateLimit.resetsAt} onExpire={refetch} />`,
+  composer: {
+    controls: [
+      { type: 'boolean', prop: 'showSeconds', label: 'showSeconds', default: true },
+      { type: 'boolean', prop: 'showDays', label: 'showDays', default: true },
+      { type: 'boolean', prop: 'expired', label: 'past the deadline', default: false },
+    ],
+    render: (state) => (
+      <div className="text-center">
+        <Countdown
+          className="text-3xl"
+          to={state.expired ? new Date(NOW.getTime() - 1000) : IN_AN_HOUR}
+          now={NOW}
+          showSeconds={Boolean(state.showSeconds)}
+          showDays={Boolean(state.showDays)}
+        />
+      </div>
+    ),
+    code: (state: ComposerState) =>
+      `<Countdown\n  to={resetsAt}\n  showSeconds={${Boolean(state.showSeconds)}}\n  showDays={${Boolean(state.showDays)}}\n  onExpire={refetch}\n/>`,
+  },
+  api: [
+    { name: 'to', type: 'Date', description: 'The deadline. Recomputed from the clock on every tick, so an interval that fired late — or not at all, in a suspended tab — cannot make it drift.' },
+    { name: 'onExpire', type: '() => void', description: 'Fires once, at zero. It never renders negative time; that reads as a bug rather than as elapsed time.' },
+    { name: 'showSeconds', type: 'boolean', default: 'true', description: 'Also sets the tick rate: 1s when seconds are shown, 15s when they are not. Waking the main thread every second to redraw a number that changes every minute is a battery cost with nothing to show for it.' },
+    { name: 'showDays', type: 'boolean', default: 'true', description: 'Off folds days into hours, so a two-day countdown does not read as 00:12:09.' },
+    { name: 'now', type: 'Date', description: 'A fixed reference instead of the clock — for tests and deterministic server rendering.' },
+    { name: 'format', type: '(parts) => ReactNode', description: 'Receives { days, hours, minutes, seconds, total }.' },
+  ],
+  demos: [
+    {
+      title: 'Deadlines',
+      stack: true,
+      code: `<Countdown to={resetsAt} />
+<Countdown to={windowClosesAt} showSeconds={false} />
+<Countdown to={new Date(Date.now() - 1)} />`,
+      render: () => (
+        <div className="flex flex-col gap-3 font-mono">
+          <span className="flex items-baseline gap-3">
+            <span className="text-muted-foreground w-40 font-sans text-xs">Rate limit resets</span>
+            <Countdown to={IN_AN_HOUR} now={NOW} />
+          </span>
+          <span className="flex items-baseline gap-3">
+            <span className="text-muted-foreground w-40 font-sans text-xs">Maintenance window</span>
+            <Countdown to={IN_TWO_DAYS} now={NOW} showSeconds={false} />
+          </span>
+          <span className="flex items-baseline gap-3">
+            <span className="text-muted-foreground w-40 font-sans text-xs">Signed URL</span>
+            <Countdown to={new Date(NOW.getTime() - 1)} now={NOW} expiredLabel="Expired" />
+          </span>
         </div>
       ),
     },

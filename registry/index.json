@@ -1,6 +1,6 @@
 {
   "name": "astralyx-ui",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "homepage": "https://ui.astralyx.dev",
   "items": [
     {
@@ -33,6 +33,40 @@
       ]
     },
     {
+      "name": "agent-card",
+      "type": "registry:ui",
+      "title": "Agent Card",
+      "description": "One agent’s definition as a card: the model behind it, the tools it may reach for, and whether it is allowed to run. Tools are listed by name rather than counted, because a count tells you nothing about blast radius.",
+      "category": "Agents",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils",
+        "switch"
+      ]
+    },
+    {
+      "name": "agent-memory",
+      "type": "registry:ui",
+      "title": "Agent Memory",
+      "description": "What an agent has remembered and where each piece came from. Distinct from retrieval: these are injected into every future run whether relevant or not, which is why a person has to be able to inspect and delete them.",
+      "category": "Agents",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "empty",
+        "input",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
       "name": "agent-steps",
       "type": "registry:ui",
       "title": "Agent Steps",
@@ -46,6 +80,21 @@
         "lib-styles",
         "lib-utils",
         "spinner"
+      ]
+    },
+    {
+      "name": "agent-tasks",
+      "type": "registry:ui",
+      "title": "Agent Tasks",
+      "description": "The plan an agent is working from, as it works through it. Not a trace of what happened — a list of what it intends to do, which is what lets you see it heading somewhere wrong while there is still time to stop it.",
+      "category": "Agents",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils"
       ]
     },
     {
@@ -302,6 +351,21 @@
         "lib-utils",
         "progress",
         "spinner"
+      ]
+    },
+    {
+      "name": "budget-guard",
+      "type": "registry:ui",
+      "title": "Budget Guard",
+      "description": "Spend and token caps against what a run has consumed. A soft limit warns and a hard limit stops — collapsing them into one bar is how a team ends up believing they have a spend cap when what they have is a notification.",
+      "category": "Agents",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils"
       ]
     },
     {
@@ -721,6 +785,18 @@
       ]
     },
     {
+      "name": "compare-slider",
+      "type": "registry:ui",
+      "title": "Compare Slider",
+      "description": "Two images stacked, with a handle that wipes between them. Side-by-side thumbnails make the reader diff from memory; a wipe puts both states in the same pixels, so the difference is the only thing that moves.",
+      "category": "Media",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
       "name": "composer",
       "type": "registry:ui",
       "title": "Composer",
@@ -820,6 +896,18 @@
       ]
     },
     {
+      "name": "context-window",
+      "type": "registry:ui",
+      "title": "Context Window",
+      "description": "What is in the context right now and how much room is left. Segments are drawn to scale against the window, not against what is used — a bar normalised to the used total always looks full, which is exactly backwards.",
+      "category": "Agents",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
       "name": "coordinate-input",
       "type": "registry:ui",
       "title": "Coordinate Input",
@@ -858,6 +946,17 @@
       "registryDependencies": [
         "fmt",
         "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "countdown",
+      "type": "registry:ui",
+      "title": "Countdown",
+      "description": "Time remaining until a deadline, ticking. It counts toward a Date rather than decrementing a number, because setInterval is throttled in a background tab — a decremented timer drifts and then confidently shows the wrong number.",
+      "category": "Utility",
+      "dependencies": [],
+      "registryDependencies": [
         "lib-utils"
       ]
     },
@@ -1124,15 +1223,18 @@
       "name": "dropzone",
       "type": "registry:ui",
       "title": "Dropzone",
-      "description": "A drop target that is also a button, so the file picker stays reachable from the keyboard. Drag highlighting counts enter and leave rather than tracking a flag, which is what stops it flickering over child elements.",
+      "description": "The upload card: click it or drag onto it, and it runs the upload. Hand it onUpload and it moves each file through queued, uploading, done or error, reports progress, and keeps failures on screen with a retry.",
       "category": "Forms",
       "dependencies": [
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
-        "button",
+        "attachment-preview",
         "lib-styles",
-        "lib-utils"
+        "lib-use-uploads",
+        "lib-utils",
+        "spinner",
+        "upload-list"
       ]
     },
     {
@@ -1213,6 +1315,21 @@
       ]
     },
     {
+      "name": "eval-board",
+      "type": "registry:ui",
+      "title": "Eval Board",
+      "description": "Which model to ship, and what is still broken — as a ranking plus a case list rather than a grid. Chips carry their own model name, so there is no column header to align to and nothing that scrolls sideways at four models.",
+      "category": "Agents",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
       "name": "eval-results",
       "type": "registry:ui",
       "title": "Eval Results",
@@ -1252,6 +1369,23 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils",
+        "textarea"
+      ]
+    },
+    {
+      "name": "few-shot-editor",
+      "type": "registry:ui",
+      "title": "Few-Shot Editor",
+      "description": "The worked examples in a prompt, as editable pairs rather than one long string. Structured pairs can be counted, reordered, costed and switched off one at a time — a textarea holding six examples supports none of that.",
+      "category": "Prompts",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
         "button",
         "lib-styles",
         "lib-utils",
@@ -1420,6 +1554,36 @@
       ]
     },
     {
+      "name": "guardrail-list",
+      "type": "registry:ui",
+      "title": "Guardrail List",
+      "description": "The safety checks around a run and how each one landed, ordered by consequence rather than by execution. A skipped check is its own state — “we did not scan” and “the scan found nothing” are opposite facts.",
+      "category": "Agents",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "handoff-trail",
+      "type": "registry:ui",
+      "title": "Handoff Trail",
+      "description": "Who handled a request, in order, and why each handover happened. The hardest question in a multi-agent system is “why did this agent answer”, and the answer is never in one agent’s transcript — it is in the chain.",
+      "category": "Agents",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
       "name": "health-checks",
       "type": "registry:ui",
       "title": "Health Checks",
@@ -1473,6 +1637,20 @@
       ]
     },
     {
+      "name": "image",
+      "type": "registry:ui",
+      "title": "Image",
+      "description": "An img that reserves its space, covers its own load with a skeleton, shimmer or blurred thumbnail, builds a srcset from a list of widths, and renders a fallback in the same box when the URL is dead.",
+      "category": "Media",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
       "name": "incident-card",
       "type": "registry:ui",
       "title": "Incident Card",
@@ -1493,15 +1671,19 @@
       "name": "input-file",
       "type": "registry:ui",
       "title": "Input File",
-      "description": "A file picker shaped like an Input, for a form row. The native control is replaced rather than restyled — its button text is not settable and its layout is unreachable, so matching the field metrics means driving a hidden input.",
+      "description": "A file picker shaped like an Input that also runs the upload. Hand it onUpload and it moves each file through queued, uploading, done or error, reports progress, and keeps failures on screen with a retry.",
       "category": "Forms",
       "dependencies": [
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "attachment-preview",
         "button",
         "lib-styles",
-        "lib-utils"
+        "lib-use-uploads",
+        "lib-utils",
+        "spinner",
+        "upload-list"
       ]
     },
     {
@@ -1530,6 +1712,24 @@
         "lib-styles",
         "lib-utils",
         "primitive-field"
+      ]
+    },
+    {
+      "name": "inspector",
+      "type": "registry:ui",
+      "title": "Inspector",
+      "description": "The properties panel for whatever is selected — the other half of a canvas. Driven by a field schema rather than by children, because the fields change with the selection and writing that as JSX means a switch statement per kind at the call site.",
+      "category": "Agents",
+      "dependencies": [],
+      "registryDependencies": [
+        "field",
+        "input",
+        "lib-styles",
+        "lib-utils",
+        "number-input",
+        "select",
+        "switch",
+        "textarea"
       ]
     },
     {
@@ -1815,6 +2015,166 @@
       ]
     },
     {
+      "name": "masonry",
+      "type": "registry:ui",
+      "title": "Masonry",
+      "description": "A column layout for items of unequal height, built on CSS columns rather than a JS layout pass — so it packs before paint and reflows on resize for free. Items order top-to-bottom within a column, which is the trade.",
+      "category": "Media",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "mcp-capability-matrix",
+      "type": "registry:ui",
+      "title": "MCP Capability Matrix",
+      "description": "Which server provides which capability, and where two of them collide. MCP names are not namespaced by the protocol, so two servers exposing `search` is decided by your client’s merge order — silently. A per-server list can never show that.",
+      "category": "MCP",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "mcp-config-editor",
+      "type": "registry:ui",
+      "title": "MCP Config Editor",
+      "description": "The mcpServers config with the mistakes people actually make called out. The usual failure parses cleanly and the server silently never appears — the error is in the shape, not the syntax, so a JSON editor catches none of it.",
+      "category": "MCP",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "code-block",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "mcp-elicitation",
+      "type": "registry:ui",
+      "title": "MCP Elicitation",
+      "description": "A server asking the user for structured input mid-run. Useful, and a good phishing surface — the prompt text is written by the server and appears wearing your client’s chrome, so the requesting server is named outside its own copy.",
+      "category": "MCP",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "lib-styles",
+        "lib-utils",
+        "schema-form",
+        "tool-schema"
+      ]
+    },
+    {
+      "name": "mcp-prompt-list",
+      "type": "registry:ui",
+      "title": "MCP Prompt List",
+      "description": "The prompts a server offers, with the arguments each one takes. How much has to be filled in is visible without expanding, because that is what decides which prompt you pick.",
+      "category": "MCP",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "mcp-resource-list",
+      "type": "registry:ui",
+      "title": "MCP Resource List",
+      "description": "The resources a server exposes, addressed by URI. The URI is always shown in full and is what search matches first — “SSH key” and file:///Users/me/.ssh/id_rsa are the same resource, and only one of them makes anyone look twice.",
+      "category": "MCP",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "empty",
+        "input",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "mcp-roots",
+      "type": "registry:ui",
+      "title": "MCP Roots",
+      "description": "The roots a client has granted its servers — the closest thing MCP has to a permission boundary, and invisible in most clients. A root covering a whole home directory is drawn as a warning rather than as another grey row.",
+      "category": "MCP",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "mcp-sampling",
+      "type": "registry:ui",
+      "title": "MCP Sampling",
+      "description": "A server asking the client to run a model on its behalf. Sampling inverts the usual direction — the server sends the request, your model and your budget answer it — so the messages are shown verbatim before the buttons.",
+      "category": "MCP",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "mcp-server-card",
+      "type": "registry:ui",
+      "title": "MCP Server Card",
+      "description": "One MCP server: what it is, how it is attached, and what it brought with it. Leads with the transport and the actual command line, because a server named “filesystem” tells you nothing and `--root /` tells you everything.",
+      "category": "MCP",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "copy-button",
+        "lib-styles",
+        "lib-utils",
+        "spinner"
+      ]
+    },
+    {
+      "name": "mcp-server-picker",
+      "type": "registry:ui",
+      "title": "MCP Server Picker",
+      "description": "A catalogue of servers you could install. Installing one is running someone else’s code with your credentials, so the card leads with publisher and verification rather than with the blurb — which is written by the person asking to be trusted.",
+      "category": "MCP",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "empty",
+        "input",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
       "name": "media-gallery",
       "type": "registry:ui",
       "title": "Media Gallery",
@@ -2055,6 +2415,18 @@
       "registryDependencies": [
         "aspect-ratio",
         "badge",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "node-canvas",
+      "type": "registry:ui",
+      "title": "Node Canvas",
+      "description": "A pannable, zoomable canvas of draggable nodes and the edges between them — the substrate for an agent pipeline, a retrieval chain or a build DAG. Nodes are real DOM, so you put your own components inside them.",
+      "category": "Agents",
+      "dependencies": [],
+      "registryDependencies": [
         "lib-styles",
         "lib-utils"
       ]
@@ -2361,6 +2733,19 @@
       ]
     },
     {
+      "name": "prompt-diff",
+      "type": "registry:ui",
+      "title": "Prompt Diff",
+      "description": "Two versions of a prompt with what changed between them. Prompts are the source code of an agent and almost never treated that way — the reason a run regressed is usually a sentence somebody rewrote three days ago.",
+      "category": "Agents",
+      "dependencies": [],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
       "name": "prompt-input",
       "type": "registry:ui",
       "title": "Prompt Input",
@@ -2390,6 +2775,38 @@
         "copy-button",
         "input",
         "label",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "prompt-variables",
+      "type": "registry:ui",
+      "title": "Prompt Variables",
+      "description": "A prompt template with its slots filled in, beside the exact text the model receives. Variables are parsed out of the template rather than declared separately, so they cannot drift out of sync with it.",
+      "category": "Prompts",
+      "dependencies": [],
+      "registryDependencies": [
+        "badge",
+        "field",
+        "input",
+        "lib-styles",
+        "lib-utils",
+        "textarea"
+      ]
+    },
+    {
+      "name": "prompt-versions",
+      "type": "registry:ui",
+      "title": "Prompt Versions",
+      "description": "A prompt’s history with what each change did to the score. The pairing is the point: a history without outcomes says what happened, a score chart without edits says something changed, and neither answers which edit made it worse.",
+      "category": "Prompts",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
         "lib-styles",
         "lib-utils"
       ]
@@ -2648,6 +3065,19 @@
       ]
     },
     {
+      "name": "retry-policy",
+      "type": "registry:ui",
+      "title": "Retry Policy",
+      "description": "A retry policy and the attempts it produced. A policy shown alone reads as reasonable right up until you see it fired four times in ninety milliseconds — the attempt list is what proves the policy running is the one configured.",
+      "category": "Agents",
+      "dependencies": [],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
       "name": "revenue-share-table",
       "type": "registry:ui",
       "title": "Revenue Share Table",
@@ -2717,6 +3147,38 @@
       ]
     },
     {
+      "name": "rpc-console",
+      "type": "registry:ui",
+      "title": "RPC Console",
+      "description": "The JSON-RPC wire between a client and an MCP server. Requests and responses are paired by id, which is what produces the latency figure and what makes an unanswered request visible — the single most useful thing this view can show.",
+      "category": "MCP",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "run-controls",
+      "type": "registry:ui",
+      "title": "Run Controls",
+      "description": "The transport bar for an agent run: start, pause, step, stop, replay. Which buttons exist is derived from status, so the invalid combinations — running and paused, replay while live — cannot be expressed.",
+      "category": "Agents",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "lib-styles",
+        "lib-utils",
+        "spinner"
+      ]
+    },
+    {
       "name": "runbook-steps",
       "type": "registry:ui",
       "title": "Runbook Steps",
@@ -2731,6 +3193,42 @@
         "lib-styles",
         "lib-utils",
         "spinner"
+      ]
+    },
+    {
+      "name": "sandbox-policy",
+      "type": "registry:ui",
+      "title": "Sandbox Policy",
+      "description": "The permissions an agent actually runs under — filesystem, network and process execution. Built to make the dangerous configuration look dangerous: an allow-list of `/` is functionally no sandbox, and it says so.",
+      "category": "Agents",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils",
+        "switch"
+      ]
+    },
+    {
+      "name": "schema-form",
+      "type": "registry:ui",
+      "title": "Schema Form",
+      "description": "A form generated from a JSON Schema, so a person can invoke a tool by hand. The counterpart to Tool Schema: that one explains the parameters, this one collects them — together they are how you test an MCP tool without writing a client.",
+      "category": "MCP",
+      "dependencies": [],
+      "registryDependencies": [
+        "button",
+        "field",
+        "input",
+        "lib-styles",
+        "lib-utils",
+        "number-input",
+        "select",
+        "switch",
+        "textarea",
+        "tool-schema"
       ]
     },
     {
@@ -3049,6 +3547,19 @@
       ]
     },
     {
+      "name": "stream-inspector",
+      "type": "registry:ui",
+      "title": "Stream Inspector",
+      "description": "A model’s token stream event by event, with the timing between them. An average tokens-per-second hides both numbers that matter — time to first token, and the stalls after it.",
+      "category": "Agents",
+      "dependencies": [],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
       "name": "streaming-text",
       "type": "registry:ui",
       "title": "Streaming Text",
@@ -3058,6 +3569,22 @@
       "registryDependencies": [
         "lib-utils",
         "primitive-media-query"
+      ]
+    },
+    {
+      "name": "subagent-tree",
+      "type": "registry:ui",
+      "title": "Subagent Tree",
+      "description": "The tree of subagents a run spawned and what each is costing. Cost aggregates up the tree — a parent that spent 400 tokens itself and fanned out to children that spent 90,000 is cheap by its own line and ruinous in total.",
+      "category": "Agents",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils",
+        "spinner"
       ]
     },
     {
@@ -3373,6 +3900,19 @@
       ]
     },
     {
+      "name": "token-inspector",
+      "type": "registry:ui",
+      "title": "Token Inspector",
+      "description": "Text broken into tokens, so a prompt’s cost stops being a mystery number. Tokenisation is not words — `astralyx` is three tokens — and people shorten prose while a JSON blob below costs ten times more.",
+      "category": "Prompts",
+      "dependencies": [],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
       "name": "token-select",
       "type": "registry:ui",
       "title": "Token Select",
@@ -3404,6 +3944,22 @@
       ]
     },
     {
+      "name": "tool-approval",
+      "type": "registry:ui",
+      "title": "Tool Approval",
+      "description": "The consent prompt before a tool runs. The arguments are shown in full above the buttons, because “Allow issue_refund?” asks you to approve a function name — what matters is that it wants to move £3,400.",
+      "category": "MCP",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
       "name": "tool-call",
       "type": "registry:ui",
       "title": "Tool Call",
@@ -3418,6 +3974,83 @@
         "lib-styles",
         "lib-utils",
         "spinner"
+      ]
+    },
+    {
+      "name": "tool-diff",
+      "type": "registry:ui",
+      "title": "Tool Diff",
+      "description": "What changed in a tool’s contract between two server versions, with breaking changes classified rather than just listed. Adding an optional parameter and making one required are both edits to `properties`; only one breaks every existing call.",
+      "category": "MCP",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils",
+        "tool-schema"
+      ]
+    },
+    {
+      "name": "tool-latency",
+      "type": "registry:ui",
+      "title": "Tool Latency",
+      "description": "Per-tool latency and failure rate — the ops view of a tool fleet. Bars are drawn from p95, not the mean: a tool averaging 200ms that spikes to nine seconds one call in twenty is the one blowing your timeout, and the mean hides it.",
+      "category": "Agents",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "tool-picker",
+      "type": "registry:ui",
+      "title": "Tool Picker",
+      "description": "The catalogue of tools an agent may call, with a switch on each. Destructive capabilities are marked rather than hidden — the whole risk of an agent is a capability nobody noticed it had.",
+      "category": "Agents",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "empty",
+        "input",
+        "lib-styles",
+        "lib-utils",
+        "switch"
+      ]
+    },
+    {
+      "name": "tool-result",
+      "type": "registry:ui",
+      "title": "Tool Result",
+      "description": "What a tool actually returned, rendered by content type. An MCP result is a list of blocks that can mix text, images and embedded resources — JSON.stringify turns a returned screenshot into four thousand characters of base64.",
+      "category": "MCP",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "copy-button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "tool-schema",
+      "type": "registry:ui",
+      "title": "Tool Schema",
+      "description": "A tool’s parameter schema, rendered as something a person can read. Required, type and default get their own column, because those are the three questions anyone actually has about a parameter.",
+      "category": "Agents",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "lib-styles",
+        "lib-utils"
       ]
     },
     {
@@ -3473,6 +4106,20 @@
         "primitive-focus-trap",
         "primitive-popper",
         "primitive-portal"
+      ]
+    },
+    {
+      "name": "trace-waterfall",
+      "type": "registry:ui",
+      "title": "Trace Waterfall",
+      "description": "An agent run as a waterfall of spans. Bars are positioned against the whole run rather than each row’s own width, which is what makes concurrency visible — two tools that ran in parallel look identical to two that ran in sequence until you share the axis.",
+      "category": "Agents",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
       ]
     },
     {
@@ -3887,6 +4534,13 @@
       "name": "lib-use-clipboard",
       "type": "registry:lib",
       "title": "use-clipboard",
+      "dependencies": [],
+      "registryDependencies": []
+    },
+    {
+      "name": "lib-use-uploads",
+      "type": "registry:lib",
+      "title": "use-uploads",
       "dependencies": [],
       "registryDependencies": []
     },

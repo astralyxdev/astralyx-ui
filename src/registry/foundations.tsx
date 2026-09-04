@@ -13,6 +13,7 @@ import {
   DescriptionTerm,
 } from '@/components/ui/description-list'
 import { Dropzone } from '@/components/ui/dropzone'
+import type { FileUpload, UploadControl } from '@/lib/use-uploads'
 import { Badge } from '@/components/ui/badge'
 import { Sparkline } from '@/components/ui/sparkline'
 import { Stat } from '@/components/ui/stat'
@@ -424,18 +425,64 @@ export const stepperEntry: ComponentEntry = {
 
 /* ----------------------------------------------------------------- dropzone */
 
+/**
+ * A stand-in for a real endpoint, so the docs demo the actual state machine
+ * rather than a static picture of it. Honours the abort signal, which is the
+ * part worth showing: removing a row mid-flight stops the request.
+ */
+function demoUpload(shouldFail: boolean) {
+  return (upload: FileUpload, { signal, onProgress }: UploadControl) =>
+    new Promise((resolve, reject) => {
+      let sent = 0
+
+      const tick = setInterval(() => {
+        sent += 0.12
+        if (sent >= 1) {
+          clearInterval(tick)
+          if (shouldFail) reject(new Error('Storage rejected the file (507)'))
+          else resolve({ url: `https://cdn.example.com/${upload.name}` })
+          return
+        }
+        onProgress(sent)
+      }, 220)
+
+      signal.addEventListener('abort', () => {
+        clearInterval(tick)
+        reject(new Error('Aborted'))
+      })
+    })
+}
+
 export const dropzoneEntry: ComponentEntry = {
   id: 'dropzone',
   label: 'Dropzone',
+  isNew: true,
   description:
-    'A drop target that is also a button, so the file picker stays reachable from the keyboard. Drag highlighting counts enter and leave rather than tracking a flag, which is what stops it flickering over child elements.',
+    'The upload card: click it or drag onto it, and it runs the upload. Hand it onUpload and it moves each file through queued, uploading, done or error, reports progress, and keeps failures on screen with a retry.',
   usage: `import { Dropzone } from '@/components/ui/dropzone'
+import type { FileUpload, UploadControl } from '@/lib/use-uploads'
 
-<Dropzone multiple accept="image/*" maxSize={5_000_000} onFiles={setFiles} />`,
+<Dropzone
+  multiple
+  accept="image/*"
+  maxSize={5_000_000}
+  onUpload={async (upload, { signal, onProgress }) => {
+    const body = new FormData()
+    body.append('file', upload.file)
+
+    const response = await fetch('/api/upload', { method: 'POST', body, signal })
+    if (!response.ok) throw new Error(await response.text())
+
+    onProgress(1)
+    return response.json()
+  }}
+/>`,
   composer: {
+    tall: true,
     controls: [
       { type: 'boolean', prop: 'multiple', label: 'multiple', default: true },
       { type: 'boolean', prop: 'showList', label: 'showList', default: true },
+      { type: 'boolean', prop: 'fails', label: 'upload fails', default: false },
       { type: 'boolean', prop: 'disabled', label: 'disabled', default: false },
     ],
     render: (state) => (
@@ -445,29 +492,42 @@ export const dropzoneEntry: ComponentEntry = {
           showList={Boolean(state.showList)}
           disabled={Boolean(state.disabled)}
           maxSize={5_000_000}
+          accept="image/*"
+          onUpload={demoUpload(Boolean(state.fails))}
         />
       </div>
     ),
     code: (state: ComposerState) =>
-      `<Dropzone\n  multiple={${Boolean(state.multiple)}}\n  showList={${Boolean(state.showList)}}\n  maxSize={5_000_000}\n  onFiles={setFiles}\n/>`,
+      `<Dropzone\n  multiple={${Boolean(state.multiple)}}\n  showList={${Boolean(state.showList)}}\n  accept="image/*"\n  maxSize={5_000_000}\n  onUpload={async (upload, { signal, onProgress }) => {\n    await putToApi(upload.file, { signal, onProgress })\n  }}\n/>`,
   },
   api: [
-    { name: 'onFiles', type: '(files: File[]) => void', description: 'Fires with the full accepted list after every add or remove.' },
-    { name: 'accept / multiple', type: 'string / boolean', description: 'Passed to the underlying input. Single mode replaces rather than appends.' },
-    { name: 'maxSize', type: 'number', description: 'Bytes. A file over the limit is rejected with a message wired up through aria-describedby.' },
-    { name: 'showList', type: 'boolean', default: 'true', description: 'List accepted files under the zone, each removable.' },
-    { name: 'accessibility', type: 'button + sr-only input', description: 'The zone is a real button wrapping a hidden file input, so there is one tab stop and drag-and-drop is never the only way in.' },
+    { name: 'onUpload', type: '(upload: FileUpload, control: UploadControl) => Promise<unknown>', description: 'Runs the upload. Resolve to succeed — the value lands on upload.result; throw to fail, and the message shows on the row with a retry.' },
+    { name: 'FileUpload', type: '{ id, file, name, size, type, lastModified, status, progress, result?, error? }', description: 'The structured payload handed to onUpload. `file` is the browser File — put it straight into a FormData.' },
+    { name: 'UploadControl', type: '{ signal: AbortSignal; onProgress: (fraction: number) => void }', description: 'Pass the signal to fetch so removing a file aborts its request; call onProgress with 0–1 to drive the bar.' },
+    { name: 'isUploading', type: 'boolean', description: 'Forces the busy state, for when the request is yours rather than onUpload’s. Shows the spinner and blocks further picking.' },
+    { name: 'uploadingLabel / doneLabel', type: '(name: string) => ReactNode / (count: number) => ReactNode', description: 'The card names the file in flight and reports the total when it settles.' },
+    { name: 'accept / multiple', type: 'string / boolean', description: 'Both are enforced on drop as well as on pick — a dropped file never went through the picker, so the browser never filtered it.' },
+    { name: 'maxSize', type: 'number', description: 'Bytes. Rejected before the request is made, so an oversized file never leaves the browser.' },
+    { name: 'accessibility', type: 'button + sr-only input', description: 'The card is a real button wrapping a hidden file input, so there is one tab stop and drag-and-drop is never the only way in.' },
   ],
   demos: [
     {
-      title: 'Single and multiple',
+      title: 'Uploading, with progress and retry',
       stack: true,
-      code: `<Dropzone label="Drop an avatar" accept="image/*" maxSize={2_000_000} />
-<Dropzone multiple label="Drop build artefacts" hint="Any file type" />`,
+      code: `<Dropzone multiple onUpload={upload} />`,
       render: () => (
-        <div className="flex w-full max-w-md flex-col gap-4">
-          <Dropzone label="Drop an avatar" accept="image/*" maxSize={2_000_000} />
-          <Dropzone multiple label="Drop build artefacts" hint="Any file type" />
+        <div className="w-full max-w-md">
+          <Dropzone multiple onUpload={demoUpload(false)} hint="Any file type" />
+        </div>
+      ),
+    },
+    {
+      title: 'When the endpoint refuses it',
+      stack: true,
+      code: `<Dropzone onUpload={upload} accept="image/*" maxSize={2_000_000} />`,
+      render: () => (
+        <div className="w-full max-w-md">
+          <Dropzone accept="image/*" maxSize={2_000_000} onUpload={demoUpload(true)} />
         </div>
       ),
     },

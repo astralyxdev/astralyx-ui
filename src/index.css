@@ -713,3 +713,24 @@ dialog[open][data-side='bottom'] {
   0%, 60%, 100% { opacity: 0.3; }
   30% { opacity: 1; }
 }
+
+/*
+ * Contain visually hidden elements.
+ *
+ * Tailwind's `sr-only` is `position: absolute`. An absolutely positioned box
+ * whose ancestors are all `static` resolves against the *initial containing
+ * block* — the document — and it contributes to the document's scrollable
+ * overflow. So a page full of switches, checkboxes and radios (each of which
+ * hides its real input this way) becomes scrollable far past its own content,
+ * and because it is the document scrolling rather than the main region, the
+ * header and the sidebar slide away with it. The symptom is a screen of blank
+ * space under the last section.
+ *
+ * Giving the direct parent a containing block costs nothing and closes the
+ * whole class of bug rather than the three components that happen to show it
+ * today. `:where()` keeps the specificity at zero, so any component that sets
+ * its own `position` still wins.
+ */
+:where(*:has(> .sr-only)) {
+  position: relative;
+}

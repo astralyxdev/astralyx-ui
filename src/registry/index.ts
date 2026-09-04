@@ -33,7 +33,8 @@ import {
   presenceEntry, userMenuEntry,
 } from './product'
 import {
-  composerEntry, copyButtonEntry, errorBoundaryEntry, liveAnnouncerEntry, pageHeaderEntry,
+  composerEntry, copyButtonEntry,
+  countdownEntry, errorBoundaryEntry, liveAnnouncerEntry, pageHeaderEntry,
   skipLinkEntry, themeToggleEntry, visuallyHiddenEntry,
 } from './utility'
 import {
@@ -137,6 +138,51 @@ import {
   typingIndicatorEntry,
 } from './messaging'
 import { mediaGalleryEntry, uploadListEntry, videoPlayerEntry } from './media'
+import {
+  agentCardEntry,
+  agentMemoryEntry,
+  agentTasksEntry,
+  budgetGuardEntry,
+  retryPolicyEntry,
+  streamInspectorEntry,
+  subagentTreeEntry,
+  contextWindowEntry,
+  evalBoardEntry,
+  promptDiffEntry,
+  runControlsEntry,
+  sandboxPolicyEntry,
+  toolLatencyEntry,
+  guardrailListEntry,
+  handoffTrailEntry,
+  inspectorEntry,
+  nodeCanvasEntry,
+  toolPickerEntry,
+  toolSchemaEntry,
+  traceWaterfallEntry,
+} from './agents'
+import { compareSliderEntry, imageEntry, masonryEntry } from './media'
+import {
+  fewShotEditorEntry,
+  promptVariablesEntry,
+  promptVersionsEntry,
+  tokenInspectorEntry,
+} from './prompts'
+import {
+  mcpCapabilityMatrixEntry,
+  mcpConfigEditorEntry,
+  mcpElicitationEntry,
+  mcpRootsEntry,
+  mcpSamplingEntry,
+  mcpServerPickerEntry,
+  toolDiffEntry,
+  mcpPromptListEntry,
+  mcpResourceListEntry,
+  mcpServerCardEntry,
+  rpcConsoleEntry,
+  schemaFormEntry,
+  toolApprovalEntry,
+  toolResultEntry,
+} from './mcp'
 import {
   betInputEntry, leaderboardEntry, multiplierChartEntry, oddsDisplayEntry,
   roundHistoryEntry,
@@ -320,6 +366,7 @@ export const CATEGORIES: Category[] = [
   {
     label: 'Utility',
     items: [
+      countdownEntry,
       copyButtonEntry,
       composerEntry,
       themeToggleEntry,
@@ -369,6 +416,59 @@ export const CATEGORIES: Category[] = [
       labelPickerEntry,
       releaseListEntry,
       commitGraphEntry,
+    ],
+  },
+  {
+    label: 'Agents',
+    items: [
+      nodeCanvasEntry,
+      inspectorEntry,
+      agentCardEntry,
+      toolPickerEntry,
+      toolSchemaEntry,
+      runControlsEntry,
+      agentTasksEntry,
+      subagentTreeEntry,
+      traceWaterfallEntry,
+      streamInspectorEntry,
+      contextWindowEntry,
+      guardrailListEntry,
+      sandboxPolicyEntry,
+      handoffTrailEntry,
+      agentMemoryEntry,
+      budgetGuardEntry,
+      retryPolicyEntry,
+      promptDiffEntry,
+      evalBoardEntry,
+      toolLatencyEntry,
+    ],
+  },
+  {
+    label: 'MCP',
+    items: [
+      mcpServerCardEntry,
+      mcpServerPickerEntry,
+      mcpConfigEditorEntry,
+      mcpRootsEntry,
+      mcpCapabilityMatrixEntry,
+      mcpResourceListEntry,
+      mcpPromptListEntry,
+      rpcConsoleEntry,
+      toolApprovalEntry,
+      toolResultEntry,
+      toolDiffEntry,
+      schemaFormEntry,
+      mcpSamplingEntry,
+      mcpElicitationEntry,
+    ],
+  },
+  {
+    label: 'Prompts',
+    items: [
+      promptVariablesEntry,
+      promptVersionsEntry,
+      fewShotEditorEntry,
+      tokenInspectorEntry,
     ],
   },
   {
@@ -474,6 +574,9 @@ export const CATEGORIES: Category[] = [
   {
     label: 'Media',
     items: [
+      imageEntry,
+      compareSliderEntry,
+      masonryEntry,
       videoPlayerEntry,
       mediaGalleryEntry,
       uploadListEntry,

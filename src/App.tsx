@@ -184,6 +184,28 @@ function Routes() {
   return <NotFound path={path} />
 }
 
+/**
+ * The NEW marker.
+ *
+ * The word is in the accessible name rather than conveyed by colour alone, so
+ * it survives a screen reader and a monochrome display. `aria-hidden` on a
+ * coloured dot would have been the cheaper version of the same idea and says
+ * nothing to anyone who cannot see it.
+ */
+function NewTag() {
+  return (
+    <span
+      className={cn(
+        'ms-auto shrink-0 px-1.5 py-px text-[10px] font-medium tracking-wide uppercase',
+        'bg-[var(--green-soft)] text-[var(--green-soft-foreground)]',
+        radius.control,
+      )}
+    >
+      New
+    </span>
+  )
+}
+
 function NavLink({
   to,
   current,
@@ -277,6 +299,7 @@ function Sidebar({ path }: { path: string }) {
             return (
               <NavLink key={entry.id} to={to} current={path === to}>
                 {entry.label}
+                {entry.isNew && <NewTag />}
               </NavLink>
             )
           })}
