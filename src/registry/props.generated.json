@@ -12976,17 +12976,35 @@
       "default": "'Paused'"
     },
     {
+      "name": "pauseLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Pause'"
+    },
+    {
+      "name": "resumeLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Resume'"
+    },
+    {
       "name": "width",
       "type": "number | string",
       "optional": true,
-      "default": "400",
       "description": "Panel width. Stories are portrait by convention. Height follows from it at 9:16 unless you set one — a story is a fixed shape, not a column that stretches to the window. Tying the height to the viewport instead produced a 359x1163 sliver on a tall screen."
     },
     {
       "name": "height",
       "type": "number | string",
       "optional": true,
-      "description": "Panel height. Defaults to `width x 16/9` when `width` is a number."
+      "description": "Panel height. Defaults to filling `maxHeight`."
+    },
+    {
+      "name": "ratio",
+      "type": "number",
+      "optional": true,
+      "default": "9 / 16",
+      "description": "Width over height. 9:16 — the shape the pattern is named for."
     },
     {
       "name": "maxWidth",

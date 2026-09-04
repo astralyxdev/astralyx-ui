@@ -6,7 +6,7 @@ import {
   type ComponentProps,
   type ReactNode,
 } from 'react'
-import { Pause, X } from 'lucide-react'
+import { Pause, Play, X } from 'lucide-react'
 import { Portal } from '@/components/primitives/portal'
 import { FocusTrap } from '@/components/primitives/focus-trap'
 import { Button } from '@/components/ui/button'
@@ -20,20 +20,26 @@ import { cn } from '@/lib/utils'
  * scroll lock. What makes it a story rather than a modal is that it **advances
  * on its own**, and everything below follows from that.
  *
- * **The timer is wall-clock, not a tick count.** A `setInterval` that
- * decrements a counter drifts, and browsers throttle intervals in background
- * tabs — so a story left in another tab races through every panel and is
- * finished when you come back. Progress is recomputed from `Date.now()` on each
- * animation frame instead, which survives throttling and a suspended tab.
+ * **The timer is wall-clock, and it does not use `requestAnimationFrame`.**
+ * rAF does not fire at all in a hidden tab, so a story in a background tab
+ * simply stops — and a counter decremented on an interval drifts instead.
+ * Elapsed time is recomputed from `Date.now()` on a coarse interval, which is
+ * correct whatever the interval actually did, and a CSS transition on the bar
+ * makes 20fps of state look continuous.
  *
  * **It pauses on press, and on focus.** Holding to read is the gesture everyone
  * already knows. Focus matters more: a panel containing a link or a button is
  * unusable if it advances while you are tabbing through it, so any focus inside
  * the content stops the clock.
  *
- * **It pauses for `prefers-reduced-motion`.** An auto-advancing carousel is
- * exactly what that setting is asking not to happen, so the timer starts
- * stopped and the viewer moves by tap or arrow key.
+ * **`prefers-reduced-motion` removes the animation, not the story.** An earlier
+ * version froze the timer outright, which meant anyone with that setting on
+ * opened a story that silently never advanced and said nothing about why. Now
+ * the bar jumps between steps instead of gliding, and the panels still turn.
+ *
+ * **There is a real pause button.** Holding to pause is the expected gesture
+ * but it is neither discoverable nor reachable from a keyboard, and
+ * auto-advancing content has to be pausable by everyone.
  *
  * Panels are `ReactNode`, so a story panel is not limited to an image — a chart,
  * a form, a changelog entry all work.
@@ -64,6 +70,8 @@ type StoryProps = Omit<ComponentProps<'div'>, 'content' | 'onSelect'> & {
   previousLabel?: string
   nextLabel?: string
   pausedLabel?: string
+  pauseLabel?: string
+  resumeLabel?: string
   /**
    * Panel width. Stories are portrait by convention.
    *
@@ -72,8 +80,10 @@ type StoryProps = Omit<ComponentProps<'div'>, 'content' | 'onSelect'> & {
    * viewport instead produced a 359x1163 sliver on a tall screen.
    */
   width?: number | string
-  /** Panel height. Defaults to `width x 16/9` when `width` is a number. */
+  /** Panel height. Defaults to filling `maxHeight`. */
   height?: number | string
+  /** Width over height. 9:16 — the shape the pattern is named for. */
+  ratio?: number
   /** Caps for small windows, so the fixed box still fits. */
   maxWidth?: number | string
   maxHeight?: number | string
@@ -93,16 +103,31 @@ function Story({
   previousLabel = 'Previous',
   nextLabel = 'Next',
   pausedLabel = 'Paused',
-  width = 400,
+  pauseLabel = 'Pause',
+  resumeLabel = 'Resume',
+  width,
   height,
+  ratio = 9 / 16,
   maxWidth = '92vw',
   maxHeight = '88vh',
   className,
   ...props
 }: StoryProps) {
-  // Portrait 9:16 unless told otherwise — the shape the pattern is named for.
-  const resolvedHeight =
-    height ?? (typeof width === 'number' ? Math.round((width * 16) / 9) : maxHeight)
+  /**
+   * One dimension plus an aspect ratio, never both dimensions.
+   *
+   * With both set, `max-height` biting on a short window clamps the height
+   * alone and squashes the shape. With a ratio, the other side follows and the
+   * story stays a story.
+   *
+   * The default fills the available height, because on a desktop a fixed 400px
+   * box floats in the middle of a large screen looking like a dialog rather
+   * than a story.
+   */
+  const box: React.CSSProperties =
+    width !== undefined
+      ? { width, aspectRatio: ratio, maxWidth, maxHeight }
+      : { height: height ?? maxHeight, aspectRatio: ratio, maxWidth, maxHeight }
 
   const controlled = indexProp !== undefined
   const [uncontrolled, setUncontrolled] = useState(0)
@@ -124,7 +149,19 @@ function Story({
     setReducedMotion(window.matchMedia('(prefers-reduced-motion: reduce)').matches)
   }, [open])
 
-  const paused = held || focusInside || reducedMotion || !autoPlay
+  const [manuallyPaused, setManuallyPaused] = useState(false)
+  const paused = held || focusInside || manuallyPaused || !autoPlay
+
+  /**
+   * The current panel's length, as a number.
+   *
+   * The animation effect depends on this rather than on `panels`, because an
+   * array literal built in the caller's render is a new identity every time —
+   * and this effect sets state on every frame. Depending on the array meant
+   * tearing the loop down and rebuilding it sixty times a second, which ran the
+   * story at several times real speed and then wedged it.
+   */
+  const panelDuration = panels[index]?.duration ?? duration
 
   const go = useCallback(
     (next: number) => {
@@ -160,13 +197,14 @@ function Story({
   useEffect(() => {
     if (!open || paused) return
 
-    const total = panels[index]?.duration ?? duration
-    let frame = 0
-    let last = performance.now()
+    const total = panelDuration
+    let last = Date.now()
 
-    const tick = (now: number) => {
+    const id = setInterval(() => {
+      const now = Date.now()
       // Accumulates only while running, so pausing does not silently consume
-      // the panel's time — the classic bug in a story built on setInterval.
+      // the panel's time. Recomputed from the clock, so an interval that fired
+      // late — or a tab that was throttled — cannot make it drift.
       elapsedRef.current += now - last
       last = now
 
@@ -174,12 +212,10 @@ function Story({
       setProgress(fraction)
 
       if (fraction >= 1) go(index + 1)
-      else frame = requestAnimationFrame(tick)
-    }
+    }, 50)
 
-    frame = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(frame)
-  }, [open, paused, index, duration, panels, go])
+    return () => clearInterval(id)
+  }, [open, paused, index, panelDuration, go])
 
   useEffect(() => {
     if (!open) return
@@ -223,28 +259,10 @@ function Story({
         <FocusTrap>
           <div
             className={cn('relative flex flex-col', className)}
-            // A fixed box, capped so it still fits a small window.
-            //
-            // Height plus `aspect-ratio` rather than width plus height: when
-            // `max-height` bites on a short window, width follows from the
-            // ratio and the story keeps its shape. Setting both explicitly
-            // would clamp the height alone and squash it.
-            //
-            // Neither can be a percentage — FocusTrap renders a bare wrapper
-            // between this and the overlay, so a percentage would resolve
-            // against a content-sized div.
-            style={{
-              height: resolvedHeight,
-              aspectRatio:
-                typeof width === 'number' && typeof resolvedHeight === 'number'
-                  ? `${width} / ${resolvedHeight}`
-                  : undefined,
-              width: typeof width === 'number' ? undefined : width,
-              maxWidth,
-              maxHeight,
-            }}
-            onFocusCapture={() => setFocusInside(true)}
-            onBlurCapture={() => setFocusInside(false)}
+            // Neither dimension can be a percentage — FocusTrap renders a
+            // bare wrapper between this and the overlay, so a percentage would
+            // resolve against a content-sized div and collapse the column.
+            style={box}
           >
             {/* One segment per panel: filled behind, animating on the current
                 one, empty ahead. The whole sequence has to be legible at a
@@ -253,7 +271,12 @@ function Story({
               {panels.map((item, position) => (
                 <span key={item.id} className="h-0.5 flex-1 overflow-hidden rounded-full bg-white/30">
                   <span
-                    className="block h-full rounded-full bg-white"
+                    className={cn(
+                      'block h-full rounded-full bg-white',
+                      // 20fps of state looks continuous with a transition, and
+                      // reduced motion gets the steps instead of the glide.
+                      !reducedMotion && 'transition-[width] duration-100 ease-linear',
+                    )}
                     style={{
                       width:
                         position < index ? '100%' : position === index ? `${progress * 100}%` : '0%',
@@ -265,11 +288,19 @@ function Story({
 
             <div className="flex shrink-0 items-center gap-2 py-3 text-white">
               <div className="min-w-0 flex-1">{header}</div>
-              {paused && autoPlay && !reducedMotion && (
-                <span className="flex items-center gap-1 text-[11px] text-white/70">
-                  <Pause className="size-3" aria-hidden="true" />
-                  {pausedLabel}
-                </span>
+              {autoPlay && (
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label={manuallyPaused ? resumeLabel : pauseLabel}
+                  className="text-white hover:bg-white/15 hover:text-white"
+                  onClick={() => setManuallyPaused((current) => !current)}
+                >
+                  {manuallyPaused ? <Play /> : <Pause />}
+                </Button>
+              )}
+              {paused && autoPlay && (
+                <span className="text-[11px] text-white/60">{pausedLabel}</span>
               )}
               <Button
                 variant="ghost"
@@ -293,7 +324,17 @@ function Story({
               onPointerUp={() => setHeld(false)}
               onPointerLeave={() => setHeld(false)}
             >
-              <div className="h-full overflow-auto">{panel?.content}</div>
+              {/* Focus-pausing is scoped to the content, not the whole
+                  column. On the column it also caught the tap zones and the
+                  close button — so one tap focused a zone, `focusInside`
+                  latched true, and the story never advanced again. */}
+              <div
+                className="h-full overflow-auto"
+                onFocusCapture={() => setFocusInside(true)}
+                onBlurCapture={() => setFocusInside(false)}
+              >
+                {panel?.content}
+              </div>
 
               {/* Tap zones sit above the content but below anything focusable
                   in it, so a button inside a panel still takes its own click.

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ConnectionPool } from '@/components/ui/connection-pool'
 import { CsvPreview, type CsvColumn } from '@/components/ui/csv-preview'
 import { DataQuality, type ColumnProfile } from '@/components/ui/data-quality'
@@ -262,7 +262,7 @@ export const dataQualityEntry: ComponentEntry = {
 function StoryDemo({
   autoPlay = true,
   duration = 4000,
-  width = 400,
+  width,
 }: {
   autoPlay?: boolean
   duration?: number
@@ -270,7 +270,9 @@ function StoryDemo({
 }) {
   const [open, setOpen] = useState(false)
 
-  const panels = [
+  // Memoised: Story's animation loop keys off the panel list, and a literal
+  // rebuilt each render would restart it on every frame.
+  const panels = useMemo(() => [
     {
       id: 'p1',
       content: (
@@ -328,7 +330,7 @@ function StoryDemo({
         </div>
       ),
     },
-  ]
+  ], [])
 
   return (
     <div className="flex w-full flex-col items-center gap-3">
@@ -374,13 +376,13 @@ export const storyEntry: ComponentEntry = {
     controls: [
       { type: 'boolean', prop: 'autoPlay', label: 'autoPlay', default: true },
       { type: 'number', prop: 'duration', label: 'duration (ms)', default: 4000, min: 1500, max: 10_000, step: 500 },
-      { type: 'number', prop: 'width', label: 'width', default: 400, min: 280, max: 560, step: 20 },
+      { type: 'boolean', prop: 'fixedWidth', label: 'fixed width', default: false },
     ],
     render: (state) => (
       <StoryDemo
         autoPlay={Boolean(state.autoPlay)}
         duration={Number(state.duration)}
-        width={Number(state.width)}
+        width={state.fixedWidth ? 360 : undefined}
       />
     ),
     code: (state) => `<Story\n  open={open}\n  onOpenChange={setOpen}\n  panels={panels}\n  autoPlay={${Boolean(state.autoPlay)}}\n  duration={${Number(state.duration)}}\n/>`,
@@ -390,7 +392,7 @@ export const storyEntry: ComponentEntry = {
     { name: 'timing', type: 'wall clock', description: 'Progress is recomputed from the animation frame rather than counted down on an interval. A story left in a background tab would otherwise race through every panel and be finished when you came back.' },
     { name: 'pausing', type: 'press, focus, reduced motion', description: 'Holding pauses — the gesture from the apps this comes from. Focus inside a panel pauses too, or a panel with a link is unusable while tabbing. prefers-reduced-motion starts it stopped.' },
     { name: 'index / onIndexChange', type: 'number / (index) => void', description: 'Controlled position. Uncontrolled by default, resetting to the first panel each time it opens.' },
-    { name: 'width / height', type: 'number | string', default: '400 / width x 16/9', description: 'A fixed box, not a column that stretches to the window. Tying the height to the viewport produced a 359x1163 sliver on a tall screen.' },
+    { name: 'width / height / ratio', type: 'number | string / number', default: '— / fills maxHeight / 9:16', description: 'One dimension plus a ratio, never both: with both set, max-height biting on a short window clamps the height alone and squashes the shape. By default it fills the available height, since a fixed 400px box on a desktop reads as a dialog rather than a story.' },
     { name: 'maxWidth / maxHeight', type: 'number | string', default: "'92vw' / '88vh'", description: 'Caps, so the fixed box still fits a small window.' },
     { name: 'onFinish', type: '() => void', description: 'After the last panel. Defaults to closing.' },
     { name: 'keyboard', type: 'Escape / arrows', description: 'The tap zones are real buttons, so the sequence is navigable without a pointer.' },
