@@ -1965,6 +1965,19 @@
       ]
     },
     {
+      "name": "knowledge-graph",
+      "type": "registry:ui",
+      "title": "Knowledge Graph",
+      "description": "Entities and the named relations between them. Where a note graph answers what is connected, this answers how — and the edge label carries as much meaning as the nodes, so relations are labelled and directed.",
+      "category": "Knowledge",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-use-force-graph",
+        "lib-utils"
+      ]
+    },
+    {
       "name": "label-picker",
       "type": "registry:ui",
       "title": "Label Picker",
@@ -2126,6 +2139,23 @@
       ],
       "registryDependencies": [
         "button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "markdown",
+      "type": "registry:ui",
+      "title": "Markdown",
+      "description": "Rendered markdown with a switch to the source. It builds React nodes and never sets innerHTML, so a document you did not write cannot execute — and the RAW toggle is there because rendered output hides exactly what you look at when it renders wrongly.",
+      "category": "Knowledge",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "code-block",
+        "copy-button",
         "lib-styles",
         "lib-utils"
       ]
@@ -2572,6 +2602,19 @@
       "dependencies": [],
       "registryDependencies": [
         "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "note-graph",
+      "type": "registry:ui",
+      "title": "Note Graph",
+      "description": "A vault of linked notes laid out by force — the Obsidian-shaped view. Nodes are sized by how many links touch them, hovering dims everything outside the neighbourhood, and orphans are drawn hollow rather than hidden.",
+      "category": "Knowledge",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-use-force-graph",
         "lib-utils"
       ]
     },
@@ -4758,6 +4801,13 @@
       "name": "lib-use-clipboard",
       "type": "registry:lib",
       "title": "use-clipboard",
+      "dependencies": [],
+      "registryDependencies": []
+    },
+    {
+      "name": "lib-use-force-graph",
+      "type": "registry:lib",
+      "title": "use-force-graph",
       "dependencies": [],
       "registryDependencies": []
     },

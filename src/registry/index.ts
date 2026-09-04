@@ -171,6 +171,11 @@ import {
   storageUsageEntry,
 } from './storage'
 import {
+  knowledgeGraphEntry,
+  markdownEntry,
+  noteGraphEntry,
+} from './knowledge'
+import {
   connectionPoolEntry,
   csvPreviewEntry,
   dataQualityEntry,
@@ -642,6 +647,10 @@ export const CATEGORIES: Category[] = [
       curlCommandEntry,
       httpStatusEntry,
     ],
+  },
+  {
+    label: 'Knowledge',
+    items: [noteGraphEntry, knowledgeGraphEntry, markdownEntry],
   },
   {
     label: 'Storage',

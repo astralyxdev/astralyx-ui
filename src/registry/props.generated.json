@@ -6452,6 +6452,58 @@
       "optional": true
     }
   ],
+  "knowledge-graph": [
+    {
+      "name": "entities",
+      "type": "Entity[]",
+      "optional": false
+    },
+    {
+      "name": "relations",
+      "type": "Relation[]",
+      "optional": false
+    },
+    {
+      "name": "onSelect",
+      "type": "(entity: Entity) => void",
+      "optional": true
+    },
+    {
+      "name": "selectedId",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "height",
+      "type": "number | string",
+      "optional": true,
+      "default": "460"
+    },
+    {
+      "name": "showRelationLabels",
+      "type": "boolean",
+      "optional": true,
+      "default": "true",
+      "description": "Hide relation labels when the graph is dense enough that they collide."
+    },
+    {
+      "name": "colorFor",
+      "type": "(type: string | undefined) => string",
+      "optional": true
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Nothing in this graph yet.'"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Knowledge graph'"
+    }
+  ],
   "label-picker": [
     {
       "name": "label",
@@ -7012,6 +7064,58 @@
       "type": "ReactNode",
       "optional": true,
       "default": "'Open map'"
+    }
+  ],
+  "markdown": [
+    {
+      "name": "children",
+      "type": "string",
+      "optional": false
+    },
+    {
+      "name": "defaultRaw",
+      "type": "boolean",
+      "optional": true,
+      "default": "false",
+      "description": "Start on the source rather than the preview."
+    },
+    {
+      "name": "toggle",
+      "type": "boolean",
+      "optional": true,
+      "default": "true",
+      "description": "Hide the toggle entirely for a fixed, rendered-only view."
+    },
+    {
+      "name": "previewLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Preview'"
+    },
+    {
+      "name": "rawLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Raw'"
+    },
+    {
+      "name": "copyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Copy markdown'"
+    },
+    {
+      "name": "actions",
+      "type": "ReactNode",
+      "optional": true,
+      "description": "Trailing slot in the toolbar."
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Nothing to show.'",
+      "description": "Rendered when the source is empty."
     }
   ],
   "market-table": [
@@ -8801,6 +8905,72 @@
       "type": "(id: string) => void",
       "optional": true,
       "description": "Clicked rather than dragged — place it wherever your layout prefers."
+    }
+  ],
+  "note-graph": [
+    {
+      "name": "notes",
+      "type": "Note[]",
+      "optional": false
+    },
+    {
+      "name": "links",
+      "type": "ForceLink[]",
+      "optional": false
+    },
+    {
+      "name": "onSelect",
+      "type": "(note: Note) => void",
+      "optional": true
+    },
+    {
+      "name": "selectedId",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "height",
+      "type": "number | string",
+      "optional": true,
+      "default": "460"
+    },
+    {
+      "name": "showAllLabels",
+      "type": "boolean",
+      "optional": true,
+      "default": "false",
+      "description": "Show every title, rather than only hubs and the hovered neighbourhood."
+    },
+    {
+      "name": "labelFrom",
+      "type": "number",
+      "optional": true,
+      "default": "4",
+      "description": "Degree at or above which a title is always drawn."
+    },
+    {
+      "name": "colorFor",
+      "type": "(group: string | undefined) => string",
+      "optional": true,
+      "description": "Map a group to a CSS colour."
+    },
+    {
+      "name": "orphanLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'no links'"
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'This vault has no notes.'"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Note graph'"
     }
   ],
   "notification-inbox": [
