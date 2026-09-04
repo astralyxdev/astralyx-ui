@@ -268,10 +268,8 @@ function KnowledgeGraph({
                   >
                     {entity.label}
                   </text>
-                  <title>
-                    {entity.label}
-                    {entity.type ? ` — ${entity.type}` : ''}
-                  </title>
+                  {/* One string: React cannot join multiple children into a <title>. */}
+                  <title>{`${entity.label}${entity.type ? ` — ${entity.type}` : ''}`}</title>
                 </g>
               )
             })}

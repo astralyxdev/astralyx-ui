@@ -1,8 +1,22 @@
 {
   "name": "astralyx-ui",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "homepage": "https://ui.astralyx.dev",
   "items": [
+    {
+      "name": "ab-test-results",
+      "type": "registry:ui",
+      "title": "A/B Test Results",
+      "description": "Variants with lift, a confidence interval and a two-proportion z-test — plus the peeking warning, because stopping at the first significant reading is the failure that actually happens.",
+      "category": "Analytics",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
     {
       "name": "accordion",
       "type": "registry:ui",
@@ -217,6 +231,18 @@
       ]
     },
     {
+      "name": "attribution",
+      "type": "registry:ui",
+      "title": "Attribution",
+      "description": "Credit for a conversion split across touchpoints, with the model as a control rather than a buried setting — because the disagreement between models is the whole finding.",
+      "category": "Analytics",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
       "name": "audio-player",
       "type": "registry:ui",
       "title": "Audio Player",
@@ -258,6 +284,20 @@
       "category": "Display",
       "dependencies": [
         "class-variance-authority@^0.7.1"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "back-to-top",
+      "type": "registry:ui",
+      "title": "Back To Top",
+      "description": "Appears once you have scrolled, driven by an IntersectionObserver sentinel rather than a scroll handler — and it moves focus, not just the viewport.",
+      "category": "Navigation",
+      "dependencies": [
+        "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
         "lib-styles",
@@ -353,6 +393,30 @@
         "lib-styles",
         "lib-utils",
         "tooltip"
+      ]
+    },
+    {
+      "name": "bottom-nav",
+      "type": "registry:ui",
+      "title": "Bottom Nav",
+      "description": "The mobile tab bar — three to five destinations, pinned to the bottom where thumbs are, with the home-indicator safe area accounted for.",
+      "category": "Navigation",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "box-plot",
+      "type": "registry:ui",
+      "title": "Box Plot",
+      "description": "Quartiles, Tukey whiskers and outliers — the distribution an average hides. Quartiles use linear interpolation, so they agree with what your analytics stack reports.",
+      "category": "Charts",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
       ]
     },
     {
@@ -620,6 +684,22 @@
         "fmt",
         "lib-styles",
         "lib-utils"
+      ]
+    },
+    {
+      "name": "cascader",
+      "type": "registry:ui",
+      "title": "Cascader",
+      "description": "A regular hierarchy picked one level at a time, in side-by-side columns — so the path stays readable and the siblings you passed are still visible.",
+      "category": "Forms",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "primitive-dismissable",
+        "primitive-popper"
       ]
     },
     {
@@ -986,6 +1066,19 @@
       ]
     },
     {
+      "name": "cookie-consent",
+      "type": "registry:ui",
+      "title": "Cookie Consent",
+      "description": "A consent banner with reject as easy as accept, nothing pre-ticked, and no cookie written by the component itself — the arrangement regulators have repeatedly ruled is the compliant one.",
+      "category": "Utility",
+      "dependencies": [],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
       "name": "coordinate-input",
       "type": "registry:ui",
       "title": "Coordinate Input",
@@ -1094,6 +1187,18 @@
       "dependencies": [],
       "registryDependencies": [
         "code-block"
+      ]
+    },
+    {
+      "name": "currency-input",
+      "type": "registry:ui",
+      "title": "Currency Input",
+      "description": "A money field whose value is an integer number of minor units, formatted only while unfocused. Reads its decimal count from Intl, so zero-decimal currencies work without a special case.",
+      "category": "Forms",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
       ]
     },
     {
@@ -1346,6 +1451,20 @@
       ]
     },
     {
+      "name": "emoji-picker",
+      "type": "registry:ui",
+      "title": "Emoji Picker",
+      "description": "A grouped, searchable grid with recents, rendered as text rather than sprites. One tab stop with arrow-key movement, and it never touches localStorage.",
+      "category": "Forms",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
       "name": "empty",
       "type": "registry:ui",
       "title": "Empty",
@@ -1447,6 +1566,21 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "event-stream",
+      "type": "registry:ui",
+      "title": "Event Stream",
+      "description": "A live tail of analytics events with their payloads — the tool for debugging the tracking itself. Autoscroll pauses when you scroll away and the list is capped rather than unbounded.",
+      "category": "Analytics",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
         "lib-styles",
         "lib-utils"
       ]
@@ -1626,6 +1760,18 @@
       ]
     },
     {
+      "name": "gantt",
+      "type": "registry:ui",
+      "title": "Gantt",
+      "description": "Work on a timeline: bars for duration, a computed critical path, and dependency conflicts drawn as conflicts rather than quietly rendered backwards.",
+      "category": "Views",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
       "name": "gas-tracker",
       "type": "registry:ui",
       "title": "Gas Tracker",
@@ -1761,6 +1907,19 @@
       "dependencies": [],
       "registryDependencies": [
         "badge",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "image-cropper",
+      "type": "registry:ui",
+      "title": "Image Cropper",
+      "description": "The step between picking an image and saving it. The crop is stored in natural image coordinates and exported with toBlob, so it survives a resize and uploads directly.",
+      "category": "Media",
+      "dependencies": [],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
         "lib-utils"
       ]
     },
@@ -2141,6 +2300,22 @@
         "button",
         "lib-styles",
         "lib-utils"
+      ]
+    },
+    {
+      "name": "markdown-editor",
+      "type": "registry:ui",
+      "title": "Markdown Editor",
+      "description": "A real textarea, a toolbar that edits the selection through setRangeText — so the browser undo stack survives — and the Markdown component as its preview.",
+      "category": "Knowledge",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils",
+        "markdown"
       ]
     },
     {
@@ -2713,6 +2888,20 @@
       ]
     },
     {
+      "name": "org-chart",
+      "type": "registry:ui",
+      "title": "Org Chart",
+      "description": "A reporting hierarchy drawn top-down with connectors, built from flat { id, managerId } rows. Orphans and multiple roots are rendered rather than dropped; cycles are reported.",
+      "category": "Views",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
       "name": "page-header",
       "type": "registry:ui",
       "title": "Page Header",
@@ -2785,6 +2974,21 @@
       ]
     },
     {
+      "name": "pdf-viewer",
+      "type": "registry:ui",
+      "title": "PDF Viewer",
+      "description": "A PDF in the browser’s own viewer with a toolbar around it. It delegates the rendering on purpose, and always shows a download link — because embedded PDFs fail routinely.",
+      "category": "Media",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
       "name": "permission-matrix",
       "type": "registry:ui",
       "title": "Permission Matrix",
@@ -2795,6 +2999,18 @@
       ],
       "registryDependencies": [
         "checkbox",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "phone-input",
+      "type": "registry:ui",
+      "title": "Phone Input",
+      "description": "A country selector and a national number that together produce E.164 — the shape every telephony API wants. Honest about not being a validator.",
+      "category": "Forms",
+      "dependencies": [],
+      "registryDependencies": [
         "lib-styles",
         "lib-utils"
       ]
@@ -2813,6 +3029,23 @@
         "lib-styles",
         "lib-utils",
         "spinner"
+      ]
+    },
+    {
+      "name": "popconfirm",
+      "type": "registry:ui",
+      "title": "Popconfirm",
+      "description": "A confirmation anchored to the control that triggered it, for reversible or single-item actions — so the row you are asking about stays visible.",
+      "category": "Overlays",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils",
+        "primitive-dismissable",
+        "primitive-popper"
       ]
     },
     {
@@ -3035,6 +3268,19 @@
       ]
     },
     {
+      "name": "qr-code",
+      "type": "registry:ui",
+      "title": "QR Code",
+      "description": "A QR code encoded in the browser and drawn as SVG. No dependency and no network round trip — which matters, because the two things people encode most are a TOTP secret and a wallet address.",
+      "category": "Utility",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-qr",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
       "name": "query-editor",
       "type": "registry:ui",
       "title": "Query Editor",
@@ -3081,6 +3327,18 @@
         "lib-styles",
         "lib-utils",
         "sparkline"
+      ]
+    },
+    {
+      "name": "radar-chart",
+      "type": "registry:ui",
+      "title": "Radar Chart",
+      "description": "Several measures for one subject on axes radiating from a centre. Good for recognising a profile’s shape; documented plainly as the wrong chart when the reader needs to compare values.",
+      "category": "Charts",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
       ]
     },
     {
@@ -3269,6 +3527,32 @@
       ]
     },
     {
+      "name": "result",
+      "type": "registry:ui",
+      "title": "Result",
+      "description": "The whole-page outcome — not found, forbidden, server error, done. Announced on render, so a client-side route change to an error page is not silent for a screen reader.",
+      "category": "Feedback",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "retention-curve",
+      "type": "registry:ui",
+      "title": "Retention Curve",
+      "description": "What fraction of each cohort is still here, period by period — normalised so growth cannot hide churn. Later cohorts are drawn shorter, not padded with zeroes.",
+      "category": "Analytics",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
       "name": "retrieval-results",
       "type": "registry:ui",
       "title": "Retrieval Results",
@@ -3432,6 +3716,42 @@
       ]
     },
     {
+      "name": "sankey",
+      "type": "registry:ui",
+      "title": "Sankey",
+      "description": "Flow between stages, where band width is the quantity moving. Nodes are layered by longest path so every link runs forward, and a cycle is reported rather than drawn as something plausible.",
+      "category": "Charts",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "scatter-plot",
+      "type": "registry:ui",
+      "title": "Scatter Plot",
+      "description": "Two measured variables plotted against each other, with an optional least-squares trend line and Pearson’s r. Points can carry a third dimension as area and a fourth as colour.",
+      "category": "Charts",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "scheduler",
+      "type": "registry:ui",
+      "title": "Scheduler",
+      "description": "A week of days with events laid out against the hours. Overlaps are split into columns rather than stacked, so a clash never hides the meeting you were about to miss.",
+      "category": "Views",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
       "name": "schema-form",
       "type": "registry:ui",
       "title": "Schema Form",
@@ -3503,6 +3823,33 @@
       ],
       "registryDependencies": [
         "button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "segment-builder",
+      "type": "registry:ui",
+      "title": "Segment Builder",
+      "description": "Build an audience from conditions, with precedence shown as nesting rather than implied by a word — and the output a structure, not a concatenated string.",
+      "category": "Analytics",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "segmented-control",
+      "type": "registry:ui",
+      "title": "Segmented Control",
+      "description": "A small set of mutually exclusive choices shown at once, built from real radio inputs in a fieldset — so arrow keys, form submission and screen-reader announcement all work without any script.",
+      "category": "Forms",
+      "dependencies": [],
+      "registryDependencies": [
         "lib-styles",
         "lib-utils"
       ]
@@ -3610,6 +3957,19 @@
         "primitive-media-query",
         "primitive-slot",
         "tooltip"
+      ]
+    },
+    {
+      "name": "signature-pad",
+      "type": "registry:ui",
+      "title": "Signature Pad",
+      "description": "A canvas you sign with a finger, stylus or mouse. Strokes are kept as points and redrawn, so undo, resize and export all work — and stylus pressure varies the line.",
+      "category": "Forms",
+      "dependencies": [],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils"
       ]
     },
     {
@@ -4437,6 +4797,37 @@
       ]
     },
     {
+      "name": "transfer",
+      "type": "registry:ui",
+      "title": "Transfer",
+      "description": "Two lists and the movement between them, for choosing a subset from a large pool. Both sides are searchable — filtering the target is what makes a 200-item selection usable.",
+      "category": "Forms",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "button",
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "tree-select",
+      "type": "registry:ui",
+      "title": "Tree Select",
+      "description": "A tree in a popover with real tri-state parents. Checking a branch checks its subtree, the value holds only leaves, and searching keeps the ancestors of every match.",
+      "category": "Forms",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils",
+        "primitive-dismissable",
+        "primitive-popper"
+      ]
+    },
+    {
       "name": "tree",
       "type": "registry:ui",
       "title": "Tree",
@@ -4445,6 +4836,18 @@
       "dependencies": [
         "lucide-react@^1.39.0"
       ],
+      "registryDependencies": [
+        "lib-styles",
+        "lib-utils"
+      ]
+    },
+    {
+      "name": "treemap",
+      "type": "registry:ui",
+      "title": "Treemap",
+      "description": "Part-to-whole as nested rectangles sized by area, laid out with the squarify algorithm so tiles stay close to square instead of degenerating into slivers.",
+      "category": "Charts",
+      "dependencies": [],
       "registryDependencies": [
         "lib-styles",
         "lib-utils"
@@ -4788,6 +5191,13 @@
       "dependencies": [
         "shiki@^4.4.3"
       ],
+      "registryDependencies": []
+    },
+    {
+      "name": "lib-qr",
+      "type": "registry:lib",
+      "title": "qr",
+      "dependencies": [],
       "registryDependencies": []
     },
     {

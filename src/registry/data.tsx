@@ -26,7 +26,6 @@ const QUERIES: SlowQuery[] = [
 export const slowQueryLogEntry: ComponentEntry = {
   id: 'slow-query-log',
   label: 'Slow Query Log',
-  isNew: true,
   description:
     'The queries costing you the most, ranked by total time rather than mean. The 9-second report running twice a day is easy to find; the 40ms lookup running four thousand times a minute is the one saturating the database.',
   usage: `import { SlowQueryLog } from '@/components/ui/slow-query-log'
@@ -62,7 +61,6 @@ const INDEXES: DatabaseIndex[] = [
 export const indexListEntry: ComponentEntry = {
   id: 'index-list',
   label: 'Index List',
-  isNew: true,
   description:
     'The indexes on a table and which are dead weight. An unused index is written on every insert and makes the planner’s job harder — but a primary key with no scans is not flagged, because suggesting you drop one is advice that loses data.',
   usage: `import { IndexList, duplicateIndexes } from '@/components/ui/index-list'
@@ -96,7 +94,6 @@ const REPLICAS: Replica[] = [
 export const replicationStatusEntry: ComponentEntry = {
   id: 'replication-status',
   label: 'Replication Status',
-  isNew: true,
   description:
     'A primary and its replicas with how far behind each one is, in seconds and bytes. Seconds say how stale a read is; bytes say whether it is catching up or falling further behind — a replica idling on 200MB of unsent log shows 0s until traffic arrives.',
   usage: `import { ReplicationStatus } from '@/components/ui/replication-status'
@@ -132,7 +129,6 @@ export const replicationStatusEntry: ComponentEntry = {
 export const connectionPoolEntry: ComponentEntry = {
   id: 'connection-pool',
   label: 'Connection Pool',
-  isNew: true,
   description:
     'What is checked out, idle and waiting. A pool at 100% with nothing queued is exactly the right size; the same pool with twelve waiting is an outage forming — so waiters are drawn beyond the bar rather than folded into it.',
   usage: `import { ConnectionPool } from '@/components/ui/connection-pool'
@@ -188,7 +184,6 @@ const CSV_ROWS = [
 export const csvPreviewEntry: ComponentEntry = {
   id: 'csv-preview',
   label: 'CSV Preview',
-  isNew: true,
   description:
     'A parsed CSV before you import it, showing the rows that will break the import. A preview that renders the first ten rows of a clean file has shown you nothing — mismatched column counts are what abort an import halfway.',
   usage: `import { CsvPreview } from '@/components/ui/csv-preview'
@@ -234,7 +229,6 @@ const PROFILE: ColumnProfile[] = [
 export const dataQualityEntry: ComponentEntry = {
   id: 'data-quality',
   label: 'Data Quality',
-  isNew: true,
   description:
     'A column profile: how complete, how varied, and what the values look like. Sample values are the fastest way to spot that a “date” column holds three different formats — no summary statistic catches that.',
   usage: `import { DataQuality } from '@/components/ui/data-quality'
@@ -360,7 +354,6 @@ function StoryDemo({
 export const storyEntry: ComponentEntry = {
   id: 'story',
   label: 'Story',
-  isNew: true,
   description:
     'A full-screen sequence of panels over a darkened page. A dialog underneath — same overlay, focus trap, Escape and scroll lock — but it advances on its own, and everything else follows from that.',
   usage: `import { Story } from '@/components/ui/story'

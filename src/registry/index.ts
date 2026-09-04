@@ -1,5 +1,22 @@
 import { accordionEntry } from './accordion'
 import {
+  abTestResultsEntry, attributionEntry, eventStreamEntry, retentionCurveEntry,
+  segmentBuilderEntry,
+} from './analytics-extra'
+import {
+  boxPlotEntry, radarChartEntry, sankeyEntry, scatterPlotEntry, treemapEntry,
+} from './charts'
+import {
+  cascaderEntry, currencyInputEntry, emojiPickerEntry, phoneInputEntry,
+  segmentedControlEntry, signaturePadEntry, transferEntry, treeSelectEntry,
+} from './inputs'
+import { imageCropperEntry, pdfViewerEntry } from './media-extra'
+import {
+  backToTopEntry, bottomNavEntry, cookieConsentEntry, popconfirmEntry,
+  qrCodeEntry, resultEntry,
+} from './patterns'
+import { ganttEntry, orgChartEntry, schedulerEntry } from './views'
+import {
   contextPickerEntry, messageEntry, modelSelectEntry, promptInputEntry,
   suggestionsEntry, tokenUsageEntry, toolCallEntry,
 } from './ai'
@@ -172,6 +189,7 @@ import {
 } from './storage'
 import {
   knowledgeGraphEntry,
+  markdownEditorEntry,
   markdownEntry,
   noteGraphEntry,
 } from './knowledge'
@@ -275,6 +293,15 @@ export const CATEGORIES: Category[] = [
       colorPickerEntry,
       rangeSliderEntry,
       ratingEntry,
+      segmentedControlEntry,
+      phoneInputEntry,
+      currencyInputEntry,
+      signaturePadEntry,
+      transferEntry,
+      cascaderEntry,
+      treeSelectEntry,
+      emojiPickerEntry,
+    
     ],
   },
   {
@@ -326,6 +353,9 @@ export const CATEGORIES: Category[] = [
       sidebarEntry,
       scrollAreaEntry,
       resizableEntry,
+      bottomNavEntry,
+      backToTopEntry,
+    
     ],
   },
   {
@@ -343,11 +373,15 @@ export const CATEGORIES: Category[] = [
       hoverCardEntry,
       contextMenuEntry,
       commandEntry,
+      popconfirmEntry,
+    
     ],
   },
   {
     label: 'Feedback',
-    items: [alertEntry, bannerEntry, toastEntry, progressEntry, spinnerEntry],
+    items: [alertEntry, bannerEntry, toastEntry, progressEntry, spinnerEntry,
+      resultEntry,
+    ],
   },
   {
     label: 'Crypto',
@@ -399,6 +433,9 @@ export const CATEGORIES: Category[] = [
       visuallyHiddenEntry,
       liveAnnouncerEntry,
       errorBoundaryEntry,
+      qrCodeEntry,
+      cookieConsentEntry,
+    
     ],
   },
   {
@@ -576,6 +613,12 @@ export const CATEGORIES: Category[] = [
     items: [
       dateRangeCompareEntry,
       cohortTableEntry,
+      abTestResultsEntry,
+      retentionCurveEntry,
+      eventStreamEntry,
+      segmentBuilderEntry,
+      attributionEntry,
+    
     ],
   },
   {
@@ -605,6 +648,9 @@ export const CATEGORIES: Category[] = [
       videoPlayerEntry,
       mediaGalleryEntry,
       uploadListEntry,
+      pdfViewerEntry,
+      imageCropperEntry,
+    
     ],
   },
   {
@@ -650,7 +696,15 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Knowledge',
-    items: [noteGraphEntry, knowledgeGraphEntry, markdownEntry],
+    items: [noteGraphEntry, knowledgeGraphEntry, markdownEntry, markdownEditorEntry],
+  },
+  {
+    label: 'Charts',
+    items: [scatterPlotEntry, radarChartEntry, sankeyEntry, treemapEntry, boxPlotEntry],
+  },
+  {
+    label: 'Views',
+    items: [ganttEntry, schedulerEntry, orgChartEntry],
   },
   {
     label: 'Storage',

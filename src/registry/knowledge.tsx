@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { KnowledgeGraph, type Entity, type Relation } from '@/components/ui/knowledge-graph'
 import { Markdown } from '@/components/ui/markdown'
+import { MarkdownEditor } from '@/components/ui/markdown-editor'
 import { NoteGraph, type Note } from '@/components/ui/note-graph'
 import type { ForceLink } from '@/lib/use-force-graph'
 import type { ComponentEntry } from './types'
@@ -149,21 +150,21 @@ export const knowledgeGraphEntry: ComponentEntry = {
 
 const DOC = `# Release notes
 
-Astralyx UI **0.3.1** adds components for *knowledge*, *data* and \`storage\`.
+Astralyx UI **0.4.0** adds thirty components — *charts*, *views* and *analytics*.
 
 ## What changed
 
-- A note graph and a knowledge graph, sharing one force layout
-- This \`Markdown\` component, which renders nodes and never sets \`innerHTML\`
-- A [Story](https://ui.astralyx.dev/components/story) component, and an audio player
+- A \`QrCode\` that encodes in the page — no dependency, nothing sent anywhere
+- Sankey, treemap, radar, scatter and box plots
+- Gantt, scheduler and org chart
 
 > A backup nobody has restored is a hypothesis.
 
 | Area | Components |
 | --- | --- |
-| Knowledge | 3 |
-| Storage | 6 |
-| Data | 6 |
+| Charts | 5 |
+| Analytics | 5 |
+| Views | 3 |
 
 \`\`\`tsx
 <Markdown>{notes}</Markdown>
@@ -182,6 +183,7 @@ export const markdownEntry: ComponentEntry = {
   description:
     'Rendered markdown with a switch to the source. It builds React nodes and never sets innerHTML, so a document you did not write cannot execute — and the RAW toggle is there because rendered output hides exactly what you look at when it renders wrongly.',
   usage: `import { Markdown } from '@/components/ui/markdown'
+import { MarkdownEditor } from '@/components/ui/markdown-editor'
 
 <Markdown>{notes}</Markdown>`,
   composer: {
@@ -211,5 +213,74 @@ export const markdownEntry: ComponentEntry = {
       render: () => (<div className="w-full max-w-2xl"><Markdown>{DOC}</Markdown></div>) },
     { title: 'Opened on the source', stack: true, code: `<Markdown defaultRaw>{notes}</Markdown>`,
       render: () => (<div className="w-full max-w-2xl"><Markdown defaultRaw>{DOC}</Markdown></div>) },
+  ],
+}
+
+/* --------------------------------------------------------- markdown editor */
+
+function MarkdownEditorDemo({ defaultMode = 'split' }: { defaultMode?: 'write' | 'preview' | 'split' }) {
+  const [text, setText] = useState(`## Pull request
+
+Adds a **QR encoder** so \`TwoFactorSetup\` can fill its own \`qr\` slot.
+
+- Byte mode, versions 1-10
+- All eight masks scored, per the spec
+- Verified against an independent decoder
+
+> Nothing leaves the page.
+`)
+  return (
+    <MarkdownEditor
+      className="w-full"
+      key={defaultMode}
+      value={text}
+      onChange={setText}
+      defaultMode={defaultMode}
+      rows={10}
+    />
+  )
+}
+
+export const markdownEditorEntry: ComponentEntry = {
+  id: 'markdown-editor',
+  label: 'Markdown Editor',
+  isNew: true,
+  description:
+    'A real textarea, a toolbar that edits the selection through setRangeText — so the browser undo stack survives — and the Markdown component as its preview.',
+  usage: `import { MarkdownEditor } from '@/components/ui/markdown-editor'
+
+<MarkdownEditor value={text} onChange={setText} defaultMode="split" />`,
+  composer: {
+    tall: true,
+    controls: [
+      {
+        type: 'select',
+        prop: 'defaultMode',
+        label: 'defaultMode',
+        default: 'split',
+        options: ['write', 'preview', 'split'],
+      },
+    ],
+    render: (state) => (
+      <MarkdownEditorDemo defaultMode={state.defaultMode as 'write' | 'preview' | 'split'} />
+    ),
+    code: (state) =>
+      `<MarkdownEditor\n  value={text}\n  onChange={setText}\n  defaultMode="${state.defaultMode}"\n/>`,
+  },
+  api: [
+    { name: 'value / onChange', type: 'string', description: 'The markdown source. Controlled or uncontrolled.' },
+    { name: 'a plain textarea', type: 'not contenteditable', description: 'Rich editors reimplement undo, IME composition, spellcheck, autocorrect, mobile keyboards and every accessibility affordance a textarea gets free — and get the undo stack wrong first.' },
+    { name: 'setRangeText', type: 'keeps undo', description: 'The toolbar edits through the element, so ctrl-Z after clicking Bold does what you expect. Rewriting `value` from React state does not.' },
+    { name: 'preview', type: 'the same renderer', description: 'An editor whose preview differs from the reader’s view teaches a formatting model your readers will not see — including where [[markdown]] stops.' },
+    { name: 'wrapping', type: 'selection-aware', description: 'With text selected the markers go around it; with nothing selected the caret lands between them; applying the same marker again unwraps it.' },
+    { name: 'shortcuts', type: 'B / I / K', description: 'Tab is deliberately left alone — trapping it breaks keyboard navigation out of the field.' },
+  ],
+  demos: [
+    {
+      title: 'Write and preview together',
+      stack: true,
+      code: `<MarkdownEditor value={text} onChange={setText} defaultMode="split" />`,
+      render: () => <MarkdownEditorDemo />,
+    },
   ],
 }

@@ -23,7 +23,6 @@ const SEGMENTS = [
 export const storageUsageEntry: ComponentEntry = {
   id: 'storage-usage',
   label: 'Storage Usage',
-  isNew: true,
   description:
     'A quota and what is filling it. The bar is scaled to the quota, not to what is used, so free space reads as free space — a bar normalised to the total consumed is always full, which is backwards for a component answering “how much room is left”.',
   usage: `import { StorageUsage } from '@/components/ui/storage-usage'
@@ -63,7 +62,6 @@ const BUCKETS: Bucket[] = [
 export const bucketListEntry: ComponentEntry = {
   id: 'bucket-list',
   label: 'Bucket List',
-  isNew: true,
   description:
     'Object-storage buckets, with public access rendered as a warning rather than as one small grey tag among five. Every storage breach of the last decade is a bucket nobody realised was world-readable.',
   usage: `import { BucketList } from '@/components/ui/bucket-list'
@@ -100,7 +98,6 @@ const OBJECTS: StorageObject[] = [
 export const objectListEntry: ComponentEntry = {
   id: 'object-list',
   label: 'Object List',
-  isNew: true,
   description:
     'Objects in a bucket, with the prefix hierarchy object stores only pretend to have. There are no folders in S3-shaped storage — `a/b/c.png` is one flat key — so keys deeper than the current prefix collapse into a prefix row with a count.',
   usage: `import { ObjectList } from '@/components/ui/object-list'
@@ -144,7 +141,6 @@ function AssetGridDemo({ single = false }: { single?: boolean }) {
 export const assetGridEntry: ComponentEntry = {
   id: 'asset-grid',
   label: 'Asset Grid',
-  isNew: true,
   description:
     'A media library as a selectable grid, built on this kit’s Image so every tile gets a placeholder, a reserved box and a failure state. A broken asset stays in the grid — it is exactly the one someone came to find and replace.',
   usage: `import { AssetGrid } from '@/components/ui/asset-grid'
@@ -178,7 +174,6 @@ cus_8814,iris@example.com,team,8,2026-05-19`
 export const filePreviewEntry: ComponentEntry = {
   id: 'file-preview',
   label: 'File Preview',
-  isNew: true,
   description:
     'One file rendered as whatever it actually is — image, text, audio, or an honest “no preview” panel. The MIME type decides, never the extension: a .png served as text/html is the oldest upload attack there is.',
   usage: `import { FilePreview } from '@/components/ui/file-preview'
@@ -219,7 +214,6 @@ export const filePreviewEntry: ComponentEntry = {
 export const audioPlayerEntry: ComponentEntry = {
   id: 'audio-player',
   label: 'Audio Player',
-  isNew: true,
   description:
     'A player built on the real <audio> element, so buffering, codecs, media keys, the OS lock screen and Bluetooth controls all keep working. State is read back off the element rather than mirrored, so anything else touching playback stays in sync.',
   usage: `import { AudioPlayer } from '@/components/ui/audio-player'
@@ -274,7 +268,6 @@ const BACKUPS: Backup[] = [
 export const backupListEntry: ComponentEntry = {
   id: 'backup-list',
   label: 'Backup List',
-  isNew: true,
   description:
     'Snapshots, and whether any of them would actually restore. A backup nobody has restored is a hypothesis, so an untested one is drawn as a warning rather than as a success.',
   usage: `import { BackupList } from '@/components/ui/backup-list'

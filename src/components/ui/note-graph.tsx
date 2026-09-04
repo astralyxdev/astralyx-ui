@@ -240,10 +240,8 @@ function NoteGraph({
                       {note.title}
                     </text>
                   )}
-                  <title>
-                    {note.title}
-                    {orphan ? ` — ${orphanLabel}` : ` — ${links}`}
-                  </title>
+                  {/* One string: React cannot join multiple children into a <title>. */}
+                  <title>{`${note.title}${orphan ? ` — ${orphanLabel}` : ` — ${links}`}`}</title>
                 </g>
               )
             })}

@@ -1,4 +1,47 @@
 {
+  "ab-test-results": [
+    {
+      "name": "variants",
+      "type": "Variant[]",
+      "optional": false
+    },
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "optional": true
+    },
+    {
+      "name": "alpha",
+      "type": "number",
+      "optional": true,
+      "default": "0.05",
+      "description": "Two-sided significance threshold."
+    },
+    {
+      "name": "targetSample",
+      "type": "number",
+      "optional": true,
+      "description": "Per-arm sample size the test was planned for. Enables the peeking warning."
+    },
+    {
+      "name": "metricLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Conversion'"
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'No variants.'"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Experiment results'"
+    }
+  ],
   "accordion": [
     {
       "name": "type",
@@ -680,6 +723,66 @@
       "default": "false"
     }
   ],
+  "attribution": [
+    {
+      "name": "journeys",
+      "type": "Journey[]",
+      "optional": false
+    },
+    {
+      "name": "model",
+      "type": "AttributionModel",
+      "optional": true
+    },
+    {
+      "name": "defaultModel",
+      "type": "AttributionModel",
+      "optional": true,
+      "default": "'last'"
+    },
+    {
+      "name": "onModelChange",
+      "type": "(model: AttributionModel) => void",
+      "optional": true
+    },
+    {
+      "name": "models",
+      "type": "AttributionModel[]",
+      "optional": true,
+      "default": "['first', 'last', 'linear', 'decay', 'position']",
+      "description": "Models offered in the switcher."
+    },
+    {
+      "name": "halfLife",
+      "type": "number",
+      "optional": true,
+      "default": "7",
+      "description": "Half-life in days for time decay."
+    },
+    {
+      "name": "valueFormat",
+      "type": "(value: number) => string",
+      "optional": true,
+      "default": "(value) => value.toFixed(1)"
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'No journeys.'"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Attribution'"
+    },
+    {
+      "name": "footnote",
+      "type": "ReactNode",
+      "optional": true
+    }
+  ],
   "audio-player": [
     {
       "name": "src",
@@ -885,6 +988,45 @@
       "type": "string",
       "optional": true,
       "description": "Accessible name. A bare status dot is invisible without one."
+    }
+  ],
+  "back-to-top": [
+    {
+      "name": "showAfter",
+      "type": "number",
+      "optional": true,
+      "default": "400",
+      "description": "How far down before it appears."
+    },
+    {
+      "name": "targetRef",
+      "type": "React.RefObject<HTMLElement | null>",
+      "optional": true,
+      "description": "Scrolled instead of the window. Pass a ref to a scroll container."
+    },
+    {
+      "name": "focusRef",
+      "type": "React.RefObject<HTMLElement | null>",
+      "optional": true,
+      "description": "Focused after scrolling. Defaults to the first heading or the body."
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Back to top'"
+    },
+    {
+      "name": "children",
+      "type": "ReactNode",
+      "optional": true
+    },
+    {
+      "name": "fixed",
+      "type": "boolean",
+      "optional": true,
+      "default": "true",
+      "description": "Fixed to the corner of the viewport."
     }
   ],
   "backup-list": [
@@ -1158,6 +1300,100 @@
       "name": "onSelectCommit",
       "type": "(sha: string) => void",
       "optional": true
+    }
+  ],
+  "bottom-nav": [
+    {
+      "name": "items",
+      "type": "BottomNavItem[]",
+      "optional": false
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "onChange",
+      "type": "(value: string, item: BottomNavItem) => void",
+      "optional": true
+    },
+    {
+      "name": "showLabels",
+      "type": "boolean",
+      "optional": true,
+      "default": "true",
+      "description": "Hide the text, leaving icons only. Costs clarity; buys room."
+    },
+    {
+      "name": "fixed",
+      "type": "boolean",
+      "optional": true,
+      "default": "false",
+      "description": "Position it fixed to the viewport bottom, as it would be in an app."
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Primary'"
+    }
+  ],
+  "box-plot": [
+    {
+      "name": "series",
+      "type": "BoxSeries[]",
+      "optional": false
+    },
+    {
+      "name": "height",
+      "type": "number",
+      "optional": true,
+      "default": "260"
+    },
+    {
+      "name": "domain",
+      "type": "[number, number]",
+      "optional": true,
+      "description": "Fixed axis bounds. Defaults to the data, padded."
+    },
+    {
+      "name": "horizontal",
+      "type": "boolean",
+      "optional": true,
+      "default": "false",
+      "description": "Horizontal rows instead of vertical columns. Better for long names."
+    },
+    {
+      "name": "valueFormat",
+      "type": "(value: number) => string",
+      "optional": true,
+      "default": "DEFAULT_FORMAT"
+    },
+    {
+      "name": "whisker",
+      "type": "number",
+      "optional": true,
+      "default": "1.5",
+      "description": "Whisker reach, in IQRs. 1.5 is Tukey's convention."
+    },
+    {
+      "name": "showOutliers",
+      "type": "boolean",
+      "optional": true,
+      "default": "true"
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'No data.'"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Box plot'"
     }
   ],
   "branch-select": [
@@ -2048,6 +2284,84 @@
       "optional": true,
       "default": "DEFAULT_STOCK_NOTE",
       "description": "Shown once a line hits its stock cap."
+    }
+  ],
+  "cascader": [
+    {
+      "name": "options",
+      "type": "CascaderOption[]",
+      "optional": false
+    },
+    {
+      "name": "value",
+      "type": "string[]",
+      "optional": true,
+      "description": "The path from the root, e.g. `['eu', 'de', 'berlin']`."
+    },
+    {
+      "name": "defaultValue",
+      "type": "string[]",
+      "optional": true,
+      "default": "[]"
+    },
+    {
+      "name": "onChange",
+      "type": "(path: string[], options: CascaderOption[]) => void",
+      "optional": true
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "optional": true,
+      "default": "'Select…'"
+    },
+    {
+      "name": "changeOnSelect",
+      "type": "boolean",
+      "optional": true,
+      "default": "false",
+      "description": "Allow a non-leaf to be the answer."
+    },
+    {
+      "name": "separator",
+      "type": "string",
+      "optional": true,
+      "default": "' / '",
+      "description": "Joins the path for display."
+    },
+    {
+      "name": "size",
+      "type": "'sm' | 'md' | 'lg'",
+      "optional": true,
+      "default": "'md'"
+    },
+    {
+      "name": "expandOnHover",
+      "type": "boolean",
+      "optional": true,
+      "default": "true",
+      "description": "Open a level by hovering it as well as clicking."
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "optional": true
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "optional": true
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Nothing here.'"
     }
   ],
   "chain-select": [
@@ -3285,6 +3599,91 @@
       "default": "'Context window'"
     }
   ],
+  "cookie-consent": [
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "optional": true,
+      "default": "'Cookies'"
+    },
+    {
+      "name": "description",
+      "type": "ReactNode",
+      "optional": true,
+      "default": "'We use cookies to run the site, and — with your permission — to understand how it is used.'"
+    },
+    {
+      "name": "categories",
+      "type": "ConsentCategory[]",
+      "optional": true,
+      "default": "DEFAULT_CATEGORIES"
+    },
+    {
+      "name": "onSave",
+      "type": "(accepted: string[]) => void",
+      "optional": true,
+      "description": "Called with the ids that were consented to."
+    },
+    {
+      "name": "onAcceptAll",
+      "type": "(accepted: string[]) => void",
+      "optional": true
+    },
+    {
+      "name": "onRejectAll",
+      "type": "(accepted: string[]) => void",
+      "optional": true
+    },
+    {
+      "name": "acceptAllLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Accept all'"
+    },
+    {
+      "name": "rejectAllLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Reject all'"
+    },
+    {
+      "name": "customiseLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Customise'"
+    },
+    {
+      "name": "saveLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Save choices'"
+    },
+    {
+      "name": "policyHref",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "policyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Privacy policy'"
+    },
+    {
+      "name": "defaultOpen",
+      "type": "boolean",
+      "optional": true,
+      "default": "false",
+      "description": "Start with the categories expanded."
+    },
+    {
+      "name": "fixed",
+      "type": "boolean",
+      "optional": true,
+      "default": "false",
+      "description": "Fixed to the bottom of the viewport, as it would be in production."
+    }
+  ],
   "coordinate-input": [
     {
       "name": "value",
@@ -3701,6 +4100,74 @@
       "type": "string",
       "optional": true,
       "default": "'curl'"
+    }
+  ],
+  "currency-input": [
+    {
+      "name": "value",
+      "type": "number | null",
+      "optional": true,
+      "description": "Minor units — cents, pence, yen. `1234` is $12.34."
+    },
+    {
+      "name": "defaultValue",
+      "type": "number | null",
+      "optional": true,
+      "default": "null"
+    },
+    {
+      "name": "onChange",
+      "type": "(minorUnits: number | null) => void",
+      "optional": true
+    },
+    {
+      "name": "currency",
+      "type": "string",
+      "optional": true,
+      "default": "'USD'",
+      "description": "ISO 4217. Decides the symbol, the decimals and the placement."
+    },
+    {
+      "name": "locale",
+      "type": "string",
+      "optional": true,
+      "default": "'en-US'"
+    },
+    {
+      "name": "size",
+      "type": "'sm' | 'md' | 'lg'",
+      "optional": true,
+      "default": "'md'"
+    },
+    {
+      "name": "min",
+      "type": "number",
+      "optional": true,
+      "description": "Clamp on blur. Also in minor units."
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "optional": true
+    },
+    {
+      "name": "showCode",
+      "type": "boolean",
+      "optional": true,
+      "default": "false",
+      "description": "Show the code (`USD`) after the field as well as the symbol."
+    },
+    {
+      "name": "amountLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Amount'",
+      "description": "Accessible name for the amount field. The currency symbol beside it is decorative and `aria-hidden`, so without this the input has no name."
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "optional": true
     }
   ],
   "data-grid": [
@@ -4545,6 +5012,69 @@
       "optional": true
     }
   ],
+  "emoji-picker": [
+    {
+      "name": "emoji",
+      "type": "Emoji[]",
+      "optional": true,
+      "default": "COMMON_EMOJI"
+    },
+    {
+      "name": "onSelect",
+      "type": "(emoji: Emoji) => void",
+      "optional": true
+    },
+    {
+      "name": "recent",
+      "type": "string[]",
+      "optional": true,
+      "default": "[]",
+      "description": "Characters, most recent first. Persisted by the caller, not by this."
+    },
+    {
+      "name": "recentLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Recent'"
+    },
+    {
+      "name": "columns",
+      "type": "number",
+      "optional": true,
+      "default": "8"
+    },
+    {
+      "name": "searchable",
+      "type": "boolean",
+      "optional": true,
+      "default": "true"
+    },
+    {
+      "name": "searchPlaceholder",
+      "type": "string",
+      "optional": true,
+      "default": "'Search emoji'"
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'No emoji matches.'"
+    },
+    {
+      "name": "height",
+      "type": "number",
+      "optional": true,
+      "default": "240",
+      "description": "Height of the scrolling area."
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Emoji picker'"
+    }
+  ],
   "empty": [
     {
       "name": "icon",
@@ -4846,6 +5376,78 @@
       "optional": true,
       "default": "'best for this benchmark'",
       "description": "Screen-reader note on the winning cell."
+    }
+  ],
+  "event-stream": [
+    {
+      "name": "events",
+      "type": "StreamEvent[]",
+      "optional": false
+    },
+    {
+      "name": "limit",
+      "type": "number",
+      "optional": true,
+      "default": "500",
+      "description": "Rows kept. The oldest beyond this are dropped."
+    },
+    {
+      "name": "height",
+      "type": "number",
+      "optional": true,
+      "default": "360"
+    },
+    {
+      "name": "filterable",
+      "type": "boolean",
+      "optional": true,
+      "default": "true",
+      "description": "Filter box over event names."
+    },
+    {
+      "name": "onSelect",
+      "type": "(event: StreamEvent) => void",
+      "optional": true
+    },
+    {
+      "name": "colorFor",
+      "type": "(kind: string | undefined) => string",
+      "optional": true,
+      "description": "Kinds mapped to a CSS colour."
+    },
+    {
+      "name": "paused",
+      "type": "boolean",
+      "optional": true
+    },
+    {
+      "name": "onPausedChange",
+      "type": "(paused: boolean) => void",
+      "optional": true
+    },
+    {
+      "name": "timeFormat",
+      "type": "(date: Date) => string",
+      "optional": true,
+      "default": "DEFAULT_TIME"
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Waiting for events…'"
+    },
+    {
+      "name": "filterPlaceholder",
+      "type": "string",
+      "optional": true,
+      "default": "'Filter by name'"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Event stream'"
     }
   ],
   "feature-flag": [
@@ -5417,6 +6019,70 @@
       "default": "DEFAULT_FORMAT"
     }
   ],
+  "gantt": [
+    {
+      "name": "tasks",
+      "type": "GanttTask[]",
+      "optional": false
+    },
+    {
+      "name": "onSelect",
+      "type": "(task: GanttTask) => void",
+      "optional": true
+    },
+    {
+      "name": "criticalPath",
+      "type": "boolean",
+      "optional": true,
+      "default": "true",
+      "description": "Derive and highlight the longest dependency chain."
+    },
+    {
+      "name": "labelWidth",
+      "type": "number",
+      "optional": true,
+      "default": "160",
+      "description": "Column width for the task names."
+    },
+    {
+      "name": "rowHeight",
+      "type": "number",
+      "optional": true,
+      "default": "30"
+    },
+    {
+      "name": "dateFormat",
+      "type": "(date: Date) => string",
+      "optional": true,
+      "default": "DEFAULT_DATE_FORMAT",
+      "description": "Formats the axis ticks."
+    },
+    {
+      "name": "ticks",
+      "type": "number",
+      "optional": true,
+      "default": "5",
+      "description": "Number of ticks along the top."
+    },
+    {
+      "name": "today",
+      "type": "Date",
+      "optional": true,
+      "description": "Drawn as a vertical marker. Defaults to no marker."
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Nothing scheduled.'"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Gantt chart'"
+    }
+  ],
   "gas-tracker": [
     {
       "name": "tiers",
@@ -5894,6 +6560,97 @@
       "type": "'sm' | 'default'",
       "optional": true,
       "default": "'sm'"
+    }
+  ],
+  "image-cropper": [
+    {
+      "name": "src",
+      "type": "string",
+      "optional": false
+    },
+    {
+      "name": "aspect",
+      "type": "number",
+      "optional": true,
+      "description": "Width divided by height. Omit to crop freely."
+    },
+    {
+      "name": "value",
+      "type": "CropRect",
+      "optional": true,
+      "description": "Controlled crop, in natural image pixels."
+    },
+    {
+      "name": "defaultValue",
+      "type": "CropRect",
+      "optional": true
+    },
+    {
+      "name": "onChange",
+      "type": "(crop: CropRect) => void",
+      "optional": true
+    },
+    {
+      "name": "onCrop",
+      "type": "(blob: Blob, crop: CropRect) => void",
+      "optional": true,
+      "description": "The cropped image. Fires on demand, not on every drag."
+    },
+    {
+      "name": "onError",
+      "type": "(error: Error) => void",
+      "optional": true
+    },
+    {
+      "name": "outputType",
+      "type": "string",
+      "optional": true,
+      "default": "'image/png'",
+      "description": "Output type and quality for the exported blob."
+    },
+    {
+      "name": "outputQuality",
+      "type": "number",
+      "optional": true,
+      "default": "0.92"
+    },
+    {
+      "name": "maxOutput",
+      "type": "number",
+      "optional": true,
+      "description": "Longest side of the export. The crop is scaled to fit."
+    },
+    {
+      "name": "round",
+      "type": "boolean",
+      "optional": true,
+      "default": "false",
+      "description": "Round mask, for avatars. Cosmetic — the export is still a rectangle."
+    },
+    {
+      "name": "cropLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Crop'"
+    },
+    {
+      "name": "resetLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Reset'"
+    },
+    {
+      "name": "actions",
+      "type": "boolean",
+      "optional": true,
+      "default": "true",
+      "description": "Hide the built-in buttons to drive it from your own footer."
+    },
+    {
+      "name": "alt",
+      "type": "string",
+      "optional": true,
+      "default": "'Image to crop'"
     }
   ],
   "image": [
@@ -7064,6 +7821,73 @@
       "type": "ReactNode",
       "optional": true,
       "default": "'Open map'"
+    }
+  ],
+  "markdown-editor": [
+    {
+      "name": "value",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "defaultValue",
+      "type": "string",
+      "optional": true,
+      "default": "''"
+    },
+    {
+      "name": "onChange",
+      "type": "(value: string) => void",
+      "optional": true
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "optional": true,
+      "default": "'Write markdown…'"
+    },
+    {
+      "name": "rows",
+      "type": "number",
+      "optional": true,
+      "default": "12",
+      "description": "Rows for the textarea. The preview matches its height in split mode."
+    },
+    {
+      "name": "defaultMode",
+      "type": "Mode",
+      "optional": true,
+      "default": "'write'"
+    },
+    {
+      "name": "modes",
+      "type": "Mode[]",
+      "optional": true,
+      "default": "['write', 'preview', 'split']",
+      "description": "Drop 'split' on narrow screens by passing your own list."
+    },
+    {
+      "name": "toolbar",
+      "type": "boolean",
+      "optional": true,
+      "default": "true"
+    },
+    {
+      "name": "actions",
+      "type": "ReactNode",
+      "optional": true,
+      "description": "Trailing slot in the toolbar — a save button, a character count."
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Markdown editor'"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "optional": true
     }
   ],
   "markdown": [
@@ -9317,6 +10141,54 @@
       "default": "'Spread'"
     }
   ],
+  "org-chart": [
+    {
+      "name": "nodes",
+      "type": "OrgNode[]",
+      "optional": false
+    },
+    {
+      "name": "onSelect",
+      "type": "(node: OrgNode) => void",
+      "optional": true
+    },
+    {
+      "name": "selectedId",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "defaultDepth",
+      "type": "number",
+      "optional": true,
+      "default": "2",
+      "description": "Depth open on first render. `Infinity` expands everything."
+    },
+    {
+      "name": "stackAfter",
+      "type": "number",
+      "optional": true,
+      "default": "4",
+      "description": "Lay a node's children out in a column past this many."
+    },
+    {
+      "name": "onError",
+      "type": "(error: Error) => void",
+      "optional": true
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'No people.'"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Organisation chart'"
+    }
+  ],
   "page-header": [
     {
       "name": "eyebrow",
@@ -9586,6 +10458,86 @@
       "optional": true
     }
   ],
+  "pdf-viewer": [
+    {
+      "name": "src",
+      "type": "string",
+      "optional": false
+    },
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "optional": true
+    },
+    {
+      "name": "size",
+      "type": "string",
+      "optional": true,
+      "description": "Bytes, shown beside the title when known."
+    },
+    {
+      "name": "height",
+      "type": "number | string",
+      "optional": true,
+      "default": "520",
+      "description": "Viewer height. A PDF has no intrinsic height to grow into."
+    },
+    {
+      "name": "page",
+      "type": "number",
+      "optional": true,
+      "default": "1",
+      "description": "Opening page, passed to the viewer as `#page=`."
+    },
+    {
+      "name": "pageCount",
+      "type": "number",
+      "optional": true,
+      "description": "Total pages, when the caller knows it. Enables the page counter."
+    },
+    {
+      "name": "zoom",
+      "type": "number",
+      "optional": true,
+      "default": "100",
+      "description": "Start zoom, as a percentage."
+    },
+    {
+      "name": "toolbar",
+      "type": "boolean",
+      "optional": true,
+      "default": "true",
+      "description": "Hide the toolbar for a bare embed."
+    },
+    {
+      "name": "downloadName",
+      "type": "string",
+      "optional": true,
+      "description": "Suggested filename for the download action."
+    },
+    {
+      "name": "onPageChange",
+      "type": "(page: number) => void",
+      "optional": true
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'PDF document'"
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'No document.'"
+    },
+    {
+      "name": "fallback",
+      "type": "ReactNode",
+      "optional": true
+    }
+  ],
   "permission-matrix": [
     {
       "name": "permissions",
@@ -9642,6 +10594,67 @@
       "default": "'Not granted'"
     }
   ],
+  "phone-input": [
+    {
+      "name": "value",
+      "type": "string",
+      "optional": true,
+      "description": "E.164, including the plus."
+    },
+    {
+      "name": "defaultValue",
+      "type": "string",
+      "optional": true,
+      "default": "''"
+    },
+    {
+      "name": "onChange",
+      "type": "(value: string) => void",
+      "optional": true
+    },
+    {
+      "name": "onValidChange",
+      "type": "(valid: boolean) => void",
+      "optional": true
+    },
+    {
+      "name": "countries",
+      "type": "Country[]",
+      "optional": true,
+      "default": "COMMON_COUNTRIES"
+    },
+    {
+      "name": "defaultCountry",
+      "type": "string",
+      "optional": true,
+      "default": "'US'",
+      "description": "Selected when the value has no dial code to infer one from."
+    },
+    {
+      "name": "size",
+      "type": "'sm' | 'md' | 'lg'",
+      "optional": true,
+      "default": "'md'"
+    },
+    {
+      "name": "countryLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Country'"
+    },
+    {
+      "name": "numberLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Phone number'",
+      "description": "Accessible name for the number field. The wrapper looks like one control, but it is two: without this the number input has no name at all, because the country `<select>` carries the only label in sight."
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "optional": true
+    }
+  ],
   "pipeline": [
     {
       "name": "id",
@@ -9662,6 +10675,86 @@
       "name": "stages",
       "type": "PipelineStage[]",
       "optional": false
+    }
+  ],
+  "popconfirm": [
+    {
+      "name": "children",
+      "type": "ReactElement",
+      "optional": false,
+      "description": "The control the confirmation hangs off. Must accept a ref."
+    },
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "optional": false
+    },
+    {
+      "name": "description",
+      "type": "ReactNode",
+      "optional": true
+    },
+    {
+      "name": "onConfirm",
+      "type": "() => void",
+      "optional": true
+    },
+    {
+      "name": "onCancel",
+      "type": "() => void",
+      "optional": true
+    },
+    {
+      "name": "confirmLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Confirm'"
+    },
+    {
+      "name": "cancelLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Cancel'"
+    },
+    {
+      "name": "destructive",
+      "type": "boolean",
+      "optional": true,
+      "default": "false",
+      "description": "Red confirm button, for a destructive action."
+    },
+    {
+      "name": "loading",
+      "type": "boolean",
+      "optional": true,
+      "default": "false",
+      "description": "Spinner on the confirm button while an async action runs."
+    },
+    {
+      "name": "side",
+      "type": "'top' | 'bottom' | 'left' | 'right'",
+      "optional": true,
+      "default": "'top'"
+    },
+    {
+      "name": "icon",
+      "type": "ReactNode",
+      "optional": true
+    },
+    {
+      "name": "open",
+      "type": "boolean",
+      "optional": true
+    },
+    {
+      "name": "onOpenChange",
+      "type": "(open: boolean) => void",
+      "optional": true
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "optional": true
     }
   ],
   "popover": [
@@ -10394,6 +11487,74 @@
       "default": "'Reviewers'"
     }
   ],
+  "qr-code": [
+    {
+      "name": "value",
+      "type": "string",
+      "optional": false,
+      "description": "The text to encode. A URL, an `otpauth://` string, an address."
+    },
+    {
+      "name": "level",
+      "type": "EccLevel",
+      "optional": true,
+      "default": "'M'",
+      "description": "Error correction. Higher survives more damage and holds less: `H` is worth it when a logo covers the middle or the code is printed on something that creases."
+    },
+    {
+      "name": "size",
+      "type": "number",
+      "optional": true,
+      "default": "160",
+      "description": "Rendered size in pixels. The SVG scales, so this is a hint, not a raster."
+    },
+    {
+      "name": "quietZone",
+      "type": "number",
+      "optional": true,
+      "default": "4",
+      "description": "Quiet zone in modules. Four is the spec minimum and the default."
+    },
+    {
+      "name": "darkColor",
+      "type": "string",
+      "optional": true,
+      "default": "'#000000'",
+      "description": "Any CSS colour. Keep the contrast high and the dark one dark."
+    },
+    {
+      "name": "lightColor",
+      "type": "string",
+      "optional": true,
+      "default": "'#ffffff'"
+    },
+    {
+      "name": "logo",
+      "type": "React.ReactNode",
+      "optional": true,
+      "description": "Centred over the code. Needs `level=\"H\"` to stay scannable."
+    },
+    {
+      "name": "logoSize",
+      "type": "number",
+      "optional": true,
+      "default": "0.22",
+      "description": "Fraction of the code the logo may cover. Past ~0.25 it stops scanning."
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'QR code'",
+      "description": "Accessible name. The encoded value is not read out — it is rarely useful."
+    },
+    {
+      "name": "fallback",
+      "type": "React.ReactNode",
+      "optional": true,
+      "description": "Rendered instead of the code when the value is too long to encode."
+    }
+  ],
   "query-editor": [
     {
       "name": "value",
@@ -10697,6 +11858,69 @@
       "type": "ReactNode",
       "optional": true,
       "default": "'idle'"
+    }
+  ],
+  "radar-chart": [
+    {
+      "name": "axes",
+      "type": "RadarAxis[]",
+      "optional": false
+    },
+    {
+      "name": "series",
+      "type": "RadarSeries[]",
+      "optional": false
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "optional": true,
+      "default": "100",
+      "description": "Shared maximum for every axis."
+    },
+    {
+      "name": "size",
+      "type": "number",
+      "optional": true,
+      "default": "260"
+    },
+    {
+      "name": "rings",
+      "type": "number",
+      "optional": true,
+      "default": "4",
+      "description": "Rings drawn behind the shapes."
+    },
+    {
+      "name": "legend",
+      "type": "boolean",
+      "optional": true,
+      "default": "true"
+    },
+    {
+      "name": "fillOpacity",
+      "type": "number",
+      "optional": true,
+      "default": "0.18",
+      "description": "Fill opacity. Lower it when shapes overlap heavily."
+    },
+    {
+      "name": "valueFormat",
+      "type": "(value: number) => string",
+      "optional": true,
+      "default": "DEFAULT_FORMAT"
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'No data.'"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Radar chart'"
     }
   ],
   "radio-group": [
@@ -11396,6 +12620,103 @@
       "default": "'No body'"
     }
   ],
+  "result": [
+    {
+      "name": "status",
+      "type": "ResultStatus",
+      "optional": true,
+      "default": "'info'"
+    },
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "optional": false
+    },
+    {
+      "name": "description",
+      "type": "ReactNode",
+      "optional": true
+    },
+    {
+      "name": "actions",
+      "type": "ReactNode",
+      "optional": true,
+      "description": "Buttons or links. A result with no way onward is a dead end."
+    },
+    {
+      "name": "icon",
+      "type": "ReactNode",
+      "optional": true,
+      "description": "Replaces the preset icon."
+    },
+    {
+      "name": "details",
+      "type": "ReactNode",
+      "optional": true,
+      "description": "Stack traces, request ids — anything a support ticket would want."
+    },
+    {
+      "name": "compact",
+      "type": "boolean",
+      "optional": true,
+      "default": "false"
+    }
+  ],
+  "retention-curve": [
+    {
+      "name": "cohorts",
+      "type": "Cohort[]",
+      "optional": false
+    },
+    {
+      "name": "height",
+      "type": "number",
+      "optional": true,
+      "default": "260"
+    },
+    {
+      "name": "periodLabel",
+      "type": "(index: number) => string",
+      "optional": true,
+      "default": "(index) => `P${index}`"
+    },
+    {
+      "name": "flattenThreshold",
+      "type": "number",
+      "optional": true,
+      "default": "0.02",
+      "description": "Highlighted as the point the curve stops falling meaningfully."
+    },
+    {
+      "name": "showFlatten",
+      "type": "boolean",
+      "optional": true,
+      "default": "true"
+    },
+    {
+      "name": "legend",
+      "type": "boolean",
+      "optional": true,
+      "default": "true"
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'No cohorts.'"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Retention curve'"
+    },
+    {
+      "name": "footnote",
+      "type": "ReactNode",
+      "optional": true
+    }
+  ],
   "retrieval-results": [
     {
       "name": "chunks",
@@ -11991,6 +13312,217 @@
       "default": "'Sandbox policy'"
     }
   ],
+  "sankey": [
+    {
+      "name": "nodes",
+      "type": "SankeyNode[]",
+      "optional": false
+    },
+    {
+      "name": "links",
+      "type": "SankeyLink[]",
+      "optional": false
+    },
+    {
+      "name": "height",
+      "type": "number",
+      "optional": true,
+      "default": "320"
+    },
+    {
+      "name": "nodeWidth",
+      "type": "number",
+      "optional": true,
+      "default": "3",
+      "description": "Width of a node column, in the 100-wide coordinate space."
+    },
+    {
+      "name": "nodePadding",
+      "type": "number",
+      "optional": true,
+      "default": "2",
+      "description": "Vertical gap between nodes in the same layer."
+    },
+    {
+      "name": "valueFormat",
+      "type": "(value: number) => string",
+      "optional": true,
+      "default": "DEFAULT_FORMAT"
+    },
+    {
+      "name": "showValues",
+      "type": "boolean",
+      "optional": true,
+      "default": "true"
+    },
+    {
+      "name": "onError",
+      "type": "(error: Error) => void",
+      "optional": true
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'No flows.'"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Sankey diagram'"
+    }
+  ],
+  "scatter-plot": [
+    {
+      "name": "points",
+      "type": "ScatterPoint[]",
+      "optional": false
+    },
+    {
+      "name": "height",
+      "type": "number",
+      "optional": true,
+      "default": "240"
+    },
+    {
+      "name": "xLabel",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "yLabel",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "trend",
+      "type": "boolean",
+      "optional": true,
+      "default": "false",
+      "description": "Fit and draw a least-squares line, with Pearson's r."
+    },
+    {
+      "name": "grid",
+      "type": "boolean",
+      "optional": true,
+      "default": "true"
+    },
+    {
+      "name": "radiusRange",
+      "type": "[number, number]",
+      "optional": true,
+      "default": "[3, 14]",
+      "description": "Radius range in pixels, when points carry `size`."
+    },
+    {
+      "name": "xDomain",
+      "type": "[number, number]",
+      "optional": true,
+      "description": "Fixed axis bounds. Defaults to the data range, padded."
+    },
+    {
+      "name": "yDomain",
+      "type": "[number, number]",
+      "optional": true
+    },
+    {
+      "name": "valueFormat",
+      "type": "(value: number) => string",
+      "optional": true,
+      "default": "DEFAULT_FORMAT"
+    },
+    {
+      "name": "legend",
+      "type": "boolean",
+      "optional": true,
+      "default": "true"
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'No data.'"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Scatter plot'"
+    }
+  ],
+  "scheduler": [
+    {
+      "name": "events",
+      "type": "SchedulerEvent[]",
+      "optional": false
+    },
+    {
+      "name": "week",
+      "type": "Date",
+      "optional": true,
+      "description": "Any date inside the week to show."
+    },
+    {
+      "name": "weekStartsOn",
+      "type": "number",
+      "optional": true,
+      "default": "1",
+      "description": "0 is Sunday, 1 Monday."
+    },
+    {
+      "name": "days",
+      "type": "number",
+      "optional": true,
+      "default": "7"
+    },
+    {
+      "name": "dayStart",
+      "type": "number",
+      "optional": true,
+      "default": "8",
+      "description": "First and last hour drawn."
+    },
+    {
+      "name": "dayEnd",
+      "type": "number",
+      "optional": true,
+      "default": "20"
+    },
+    {
+      "name": "hourHeight",
+      "type": "number",
+      "optional": true,
+      "default": "44"
+    },
+    {
+      "name": "onSelect",
+      "type": "(event: SchedulerEvent) => void",
+      "optional": true
+    },
+    {
+      "name": "onSelectSlot",
+      "type": "(start: Date) => void",
+      "optional": true
+    },
+    {
+      "name": "locale",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Nothing this week.'"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Schedule'"
+    }
+  ],
   "schema-form": [
     {
       "name": "schema",
@@ -12279,6 +13811,110 @@
     {
       "name": "onConfirm",
       "type": "(correct: boolean) => void",
+      "optional": true
+    }
+  ],
+  "segment-builder": [
+    {
+      "name": "fields",
+      "type": "FieldSpec[]",
+      "optional": false
+    },
+    {
+      "name": "value",
+      "type": "ConditionGroup",
+      "optional": true
+    },
+    {
+      "name": "defaultValue",
+      "type": "ConditionGroup",
+      "optional": true
+    },
+    {
+      "name": "onChange",
+      "type": "(group: ConditionGroup) => void",
+      "optional": true
+    },
+    {
+      "name": "estimate",
+      "type": "ReactNode",
+      "optional": true,
+      "description": "Matching people, from your backend."
+    },
+    {
+      "name": "maxDepth",
+      "type": "number",
+      "optional": true,
+      "default": "2",
+      "description": "Depth of nesting allowed."
+    },
+    {
+      "name": "addLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Add condition'"
+    },
+    {
+      "name": "addGroupLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Add group'"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Segment'"
+    }
+  ],
+  "segmented-control": [
+    {
+      "name": "options",
+      "type": "Segment[]",
+      "optional": false
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "defaultValue",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "onValueChange",
+      "type": "(value: string) => void",
+      "optional": true
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "description": "Accessible name for the group. Required unless one is supplied elsewhere."
+    },
+    {
+      "name": "size",
+      "type": "'sm' | 'md' | 'lg'",
+      "optional": true,
+      "default": "'md'"
+    },
+    {
+      "name": "fullWidth",
+      "type": "boolean",
+      "optional": true,
+      "default": "false",
+      "description": "Fill the container, splitting the width evenly."
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
       "optional": true
     }
   ],
@@ -12590,6 +14226,110 @@
       "type": "ReactNode",
       "optional": true,
       "description": "Shown on hover while collapsed. Defaults to the row's own label."
+    }
+  ],
+  "signature-pad": [
+    {
+      "name": "value",
+      "type": "Stroke[]",
+      "optional": true,
+      "description": "Controlled strokes, in CSS pixels relative to the canvas."
+    },
+    {
+      "name": "defaultValue",
+      "type": "Stroke[]",
+      "optional": true
+    },
+    {
+      "name": "onChange",
+      "type": "(strokes: Stroke[]) => void",
+      "optional": true
+    },
+    {
+      "name": "onSign",
+      "type": "(blob: Blob, strokes: Stroke[]) => void",
+      "optional": true,
+      "description": "Fires with the flattened image on demand."
+    },
+    {
+      "name": "height",
+      "type": "number",
+      "optional": true,
+      "default": "180"
+    },
+    {
+      "name": "penColor",
+      "type": "string",
+      "optional": true,
+      "default": "'currentColor'"
+    },
+    {
+      "name": "penWidth",
+      "type": "number",
+      "optional": true,
+      "default": "2",
+      "description": "Base stroke width. Stylus pressure scales it."
+    },
+    {
+      "name": "background",
+      "type": "string",
+      "optional": true,
+      "default": "'transparent'",
+      "description": "Transparent by default, so it composites onto a document."
+    },
+    {
+      "name": "outputType",
+      "type": "string",
+      "optional": true,
+      "default": "'image/png'"
+    },
+    {
+      "name": "clearLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Clear'"
+    },
+    {
+      "name": "undoLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Undo'"
+    },
+    {
+      "name": "saveLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Save'"
+    },
+    {
+      "name": "actions",
+      "type": "boolean",
+      "optional": true,
+      "default": "true"
+    },
+    {
+      "name": "guideline",
+      "type": "boolean",
+      "optional": true,
+      "default": "true",
+      "description": "The line people sign above."
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "optional": true,
+      "default": "'Sign here'"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Signature'"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "optional": true
     }
   ],
   "skeleton": [
@@ -15308,6 +17048,166 @@
       "description": "Accessible name for the explorer link."
     }
   ],
+  "transfer": [
+    {
+      "name": "items",
+      "type": "TransferItem[]",
+      "optional": false
+    },
+    {
+      "name": "value",
+      "type": "string[]",
+      "optional": true,
+      "description": "Values on the right-hand side."
+    },
+    {
+      "name": "defaultValue",
+      "type": "string[]",
+      "optional": true,
+      "default": "[]"
+    },
+    {
+      "name": "onChange",
+      "type": "(value: string[]) => void",
+      "optional": true
+    },
+    {
+      "name": "titles",
+      "type": "[ReactNode, ReactNode]",
+      "optional": true,
+      "default": "['Available', 'Selected']"
+    },
+    {
+      "name": "searchable",
+      "type": "boolean",
+      "optional": true,
+      "default": "true"
+    },
+    {
+      "name": "height",
+      "type": "number",
+      "optional": true,
+      "default": "240"
+    },
+    {
+      "name": "searchPlaceholder",
+      "type": "string",
+      "optional": true,
+      "default": "'Search'"
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Nothing here.'"
+    },
+    {
+      "name": "toTargetLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Move to selected'"
+    },
+    {
+      "name": "toSourceLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Move to available'"
+    },
+    {
+      "name": "countLabel",
+      "type": "(selected: number, total: number) => ReactNode",
+      "optional": true,
+      "default": "(selected, total) => `${selected} of ${total} selected`",
+      "description": "Rendered under each title. Defaults to \"n of m\"."
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "optional": true
+    }
+  ],
+  "tree-select": [
+    {
+      "name": "nodes",
+      "type": "TreeSelectNode[]",
+      "optional": false
+    },
+    {
+      "name": "value",
+      "type": "string[]",
+      "optional": true,
+      "description": "Selected leaf values."
+    },
+    {
+      "name": "defaultValue",
+      "type": "string[]",
+      "optional": true,
+      "default": "[]"
+    },
+    {
+      "name": "onChange",
+      "type": "(value: string[]) => void",
+      "optional": true
+    },
+    {
+      "name": "placeholder",
+      "type": "string",
+      "optional": true,
+      "default": "'Select…'"
+    },
+    {
+      "name": "searchable",
+      "type": "boolean",
+      "optional": true,
+      "default": "true"
+    },
+    {
+      "name": "searchPlaceholder",
+      "type": "string",
+      "optional": true,
+      "default": "'Search'"
+    },
+    {
+      "name": "defaultExpanded",
+      "type": "string[]",
+      "optional": true,
+      "default": "[]",
+      "description": "Values of branches open on first render."
+    },
+    {
+      "name": "size",
+      "type": "'sm' | 'md' | 'lg'",
+      "optional": true,
+      "default": "'md'"
+    },
+    {
+      "name": "summary",
+      "type": "(values: string[]) => ReactNode",
+      "optional": true,
+      "description": "Summarises the selection on the trigger."
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Nothing matches.'"
+    },
+    {
+      "name": "disabled",
+      "type": "boolean",
+      "optional": true
+    },
+    {
+      "name": "invalid",
+      "type": "boolean",
+      "optional": true
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true
+    }
+  ],
   "tree": [
     {
       "name": "nodes",
@@ -15346,6 +17246,56 @@
       "optional": true,
       "default": "true",
       "description": "Indent guide lines."
+    }
+  ],
+  "treemap": [
+    {
+      "name": "nodes",
+      "type": "TreemapNode[]",
+      "optional": false
+    },
+    {
+      "name": "height",
+      "type": "number",
+      "optional": true,
+      "default": "320"
+    },
+    {
+      "name": "depth",
+      "type": "number",
+      "optional": true,
+      "default": "2",
+      "description": "Levels to draw. 1 flattens the hierarchy to its top level."
+    },
+    {
+      "name": "valueFormat",
+      "type": "(value: number) => string",
+      "optional": true,
+      "default": "DEFAULT_FORMAT"
+    },
+    {
+      "name": "onSelect",
+      "type": "(node: TreemapNode) => void",
+      "optional": true
+    },
+    {
+      "name": "gap",
+      "type": "number",
+      "optional": true,
+      "default": "2",
+      "description": "Gap between tiles, in pixels."
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Nothing to show.'"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Treemap'"
     }
   ],
   "two-factor-setup": [
