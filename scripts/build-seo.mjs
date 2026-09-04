@@ -41,6 +41,9 @@ const { ENTRIES, componentPath, findCategory } = await server.ssrLoadModule('/sr
 const { DOCS } = await server.ssrLoadModule('/src/docs/pages.tsx')
 const { EXAMPLES, examplePath } = await server.ssrLoadModule('/src/examples/index.ts')
 const { canonicalUrl, clampDescription, pageTitle } = await server.ssrLoadModule('/src/lib/seo.ts')
+// The same merge the component page renders, so the markdown twin cannot show
+// a smaller API than the HTML one.
+const { apiRows } = await server.ssrLoadModule('/src/registry/props.ts')
 // Doc bodies contain `Link`, which reads router context and throws without a
 // provider. Same wrapper the SSR audit uses.
 const { Router } = await server.ssrLoadModule('/src/components/primitives/router.tsx')
@@ -218,9 +221,10 @@ function componentMarkdown(entry) {
     lines.push('', '## Import', '', '```tsx', entry.usage.trim(), '```')
   }
 
-  if (entry.api?.length) {
+  const api = apiRows(entry.id, entry.api)
+  if (api.length) {
     lines.push('', '## Props', '', '| Prop | Type | Default | Description |', '| --- | --- | --- | --- |')
-    for (const prop of entry.api) {
+    for (const prop of api) {
       // Pipes inside a type union would split the row.
       const cell = (value) => String(value ?? '').replace(/\|/g, '\\|').replace(/\n/g, ' ')
       lines.push(
