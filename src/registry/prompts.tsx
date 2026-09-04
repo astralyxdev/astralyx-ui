@@ -37,7 +37,6 @@ function VariablesDemo() {
 export const promptVariablesEntry: ComponentEntry = {
   id: 'prompt-variables',
   label: 'Prompt Variables',
-  isNew: true,
   description:
     'A prompt template with its slots filled in, beside the exact text the model receives. Variables are parsed out of the template rather than declared separately, so they cannot drift out of sync with it.',
   usage: `import { PromptVariables } from '@/components/ui/prompt-variables'
@@ -66,7 +65,6 @@ const VERSIONS: PromptVersion[] = [
 export const promptVersionsEntry: ComponentEntry = {
   id: 'prompt-versions',
   label: 'Prompt Versions',
-  isNew: true,
   description:
     'A prompt’s history with what each change did to the score. The pairing is the point: a history without outcomes says what happened, a score chart without edits says something changed, and neither answers which edit made it worse.',
   usage: `import { PromptVersions } from '@/components/ui/prompt-versions'
@@ -118,7 +116,6 @@ function FewShotDemo() {
 export const fewShotEditorEntry: ComponentEntry = {
   id: 'few-shot-editor',
   label: 'Few-Shot Editor',
-  isNew: true,
   description:
     'The worked examples in a prompt, as editable pairs rather than one long string. Structured pairs can be counted, reordered, costed and switched off one at a time — a textarea holding six examples supports none of that.',
   usage: `import { FewShotEditor, type FewShotExample } from '@/components/ui/few-shot-editor'
@@ -151,7 +148,6 @@ const TOKENS: InspectedToken[] = [
 export const tokenInspectorEntry: ComponentEntry = {
   id: 'token-inspector',
   label: 'Token Inspector',
-  isNew: true,
   description:
     'Text broken into tokens, so a prompt’s cost stops being a mystery number. Tokenisation is not words — `astralyx` is three tokens — and people shorten prose while a JSON blob below costs ten times more.',
   usage: `import { TokenInspector } from '@/components/ui/token-inspector'

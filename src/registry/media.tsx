@@ -155,7 +155,6 @@ const PHOTO = 'https://images.unsplash.com/photo-1517816743773-6e0fd518b4a6'
 export const imageEntry: ComponentEntry = {
   id: 'image',
   label: 'Image',
-  isNew: true,
   description:
     'An img that reserves its space, covers its own load with a skeleton, shimmer or blurred thumbnail, builds a srcset from a list of widths, and renders a fallback in the same box when the URL is dead.',
   usage: `import { CompareSlider } from '@/components/ui/compare-slider'
@@ -255,7 +254,6 @@ const AFTER_SRC = `${PHOTO}?auto=format&fit=crop&w=800&q=80`
 export const compareSliderEntry: ComponentEntry = {
   id: 'compare-slider',
   label: 'Compare Slider',
-  isNew: true,
   description:
     'Two images stacked, with a handle that wipes between them. Side-by-side thumbnails make the reader diff from memory; a wipe puts both states in the same pixels, so the difference is the only thing that moves.',
   usage: `import { CompareSlider } from '@/components/ui/compare-slider'
@@ -331,7 +329,6 @@ const TILES = [
 export const masonryEntry: ComponentEntry = {
   id: 'masonry',
   label: 'Masonry',
-  isNew: true,
   description:
     'A column layout for items of unequal height, built on CSS columns rather than a JS layout pass — so it packs before paint and reflows on resize for free. Items order top-to-bottom within a column, which is the trade.',
   usage: `import { Masonry } from '@/components/ui/masonry'

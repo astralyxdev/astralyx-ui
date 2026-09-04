@@ -285,7 +285,6 @@ function FreeformCanvas() {
 export const nodeCanvasEntry: ComponentEntry = {
   id: 'node-canvas',
   label: 'Node Canvas',
-  isNew: true,
   description:
     'A pannable, zoomable canvas of draggable nodes and the edges between them — the substrate for an agent pipeline, a retrieval chain or a build DAG. Nodes are real DOM, so you put your own components inside them.',
   usage: `import { NodeCanvas, NodePalette } from '@/components/ui/node-canvas'
@@ -415,7 +414,6 @@ function Roster({ enabled: withSwitch = true }: { enabled?: boolean }) {
 export const agentCardEntry: ComponentEntry = {
   id: 'agent-card',
   label: 'Agent Card',
-  isNew: true,
   description:
     'One agent’s definition as a card: the model behind it, the tools it may reach for, and whether it is allowed to run. Tools are listed by name rather than counted, because a count tells you nothing about blast radius.',
   usage: `import { AgentCard } from '@/components/ui/agent-card'
@@ -492,7 +490,6 @@ function ToolPickerDemo({ searchable = true }: { searchable?: boolean }) {
 export const toolPickerEntry: ComponentEntry = {
   id: 'tool-picker',
   label: 'Tool Picker',
-  isNew: true,
   description:
     'The catalogue of tools an agent may call, with a switch on each. Destructive capabilities are marked rather than hidden — the whole risk of an agent is a capability nobody noticed it had.',
   usage: `import { GuardrailList, type Guardrail } from '@/components/ui/guardrail-list'
@@ -550,7 +547,6 @@ const SCHEMA = {
 export const toolSchemaEntry: ComponentEntry = {
   id: 'tool-schema',
   label: 'Tool Schema',
-  isNew: true,
   description:
     'A tool’s parameter schema, rendered as something a person can read. Required, type and default get their own column, because those are the three questions anyone actually has about a parameter.',
   usage: `import { ToolSchema } from '@/components/ui/tool-schema'
@@ -610,7 +606,6 @@ const SPANS: TraceSpan[] = [
 export const traceWaterfallEntry: ComponentEntry = {
   id: 'trace-waterfall',
   label: 'Trace Waterfall',
-  isNew: true,
   description:
     'An agent run as a waterfall of spans. Bars are positioned against the whole run rather than each row’s own width, which is what makes concurrency visible — two tools that ran in parallel look identical to two that ran in sequence until you share the axis.',
   usage: `import { TraceWaterfall, type TraceSpan } from '@/components/ui/trace-waterfall'
@@ -656,7 +651,6 @@ const RAILS: Guardrail[] = [
 export const guardrailListEntry: ComponentEntry = {
   id: 'guardrail-list',
   label: 'Guardrail List',
-  isNew: true,
   description:
     'The safety checks around a run and how each one landed, ordered by consequence rather than by execution. A skipped check is its own state — “we did not scan” and “the scan found nothing” are opposite facts.',
   usage: `import { GuardrailList, type Guardrail } from '@/components/ui/guardrail-list'
@@ -705,7 +699,6 @@ const HOPS: Handoff[] = [
 export const handoffTrailEntry: ComponentEntry = {
   id: 'handoff-trail',
   label: 'Handoff Trail',
-  isNew: true,
   description:
     'Who handled a request, in order, and why each handover happened. The hardest question in a multi-agent system is “why did this agent answer”, and the answer is never in one agent’s transcript — it is in the chain.',
   usage: `import { HandoffTrail, type Handoff } from '@/components/ui/handoff-trail'
@@ -793,7 +786,6 @@ function InspectorDemo({ withPanel = true }: { withPanel?: boolean }) {
 export const inspectorEntry: ComponentEntry = {
   id: 'inspector',
   label: 'Inspector',
-  isNew: true,
   description:
     'The properties panel for whatever is selected — the other half of a canvas. Driven by a field schema rather than by children, because the fields change with the selection and writing that as JSX means a switch statement per kind at the call site.',
   usage: `import { Inspector, type InspectorSection } from '@/components/ui/inspector'
@@ -826,7 +818,6 @@ export const inspectorEntry: ComponentEntry = {
 export const contextWindowEntry: ComponentEntry = {
   id: 'context-window',
   label: 'Context Window',
-  isNew: true,
   description:
     'What is in the context right now and how much room is left. Segments are drawn to scale against the window, not against what is used — a bar normalised to the used total always looks full, which is exactly backwards.',
   usage: `import { AgentMemory, type MemoryEntry } from '@/components/ui/agent-memory'
@@ -891,7 +882,6 @@ const OPEN_SCOPES: SandboxScope[] = [
 export const sandboxPolicyEntry: ComponentEntry = {
   id: 'sandbox-policy',
   label: 'Sandbox Policy',
-  isNew: true,
   description:
     'The permissions an agent actually runs under — filesystem, network and process execution. Built to make the dangerous configuration look dangerous: an allow-list of `/` is functionally no sandbox, and it says so.',
   usage: `import { SandboxPolicy, type SandboxScope } from '@/components/ui/sandbox-policy'
@@ -947,7 +937,6 @@ function RunControlsDemo() {
 export const runControlsEntry: ComponentEntry = {
   id: 'run-controls',
   label: 'Run Controls',
-  isNew: true,
   description:
     'The transport bar for an agent run: start, pause, step, stop, replay. Which buttons exist is derived from status, so the invalid combinations — running and paused, replay while live — cannot be expressed.',
   usage: `import { RunControls } from '@/components/ui/run-controls'
@@ -977,7 +966,6 @@ const LATENCY: ToolLatencyRow[] = [
 export const toolLatencyEntry: ComponentEntry = {
   id: 'tool-latency',
   label: 'Tool Latency',
-  isNew: true,
   description:
     'Per-tool latency and failure rate — the ops view of a tool fleet. Bars are drawn from p95, not the mean: a tool averaging 200ms that spikes to nine seconds one call in twenty is the one blowing your timeout, and the mean hides it.',
   usage: `import { ToolLatency } from '@/components/ui/tool-latency'
@@ -1036,7 +1024,6 @@ function MemoryDemo() {
 export const agentMemoryEntry: ComponentEntry = {
   id: 'agent-memory',
   label: 'Agent Memory',
-  isNew: true,
   description:
     'What an agent has remembered and where each piece came from. Distinct from retrieval: these are injected into every future run whether relevant or not, which is why a person has to be able to inspect and delete them.',
   usage: `import { AgentMemory, type MemoryEntry } from '@/components/ui/agent-memory'
@@ -1076,7 +1063,6 @@ const CASES: EvalCase[] = [
 export const evalBoardEntry: ComponentEntry = {
   id: 'eval-board',
   label: 'Eval Board',
-  isNew: true,
   description:
     'Which model to ship, and what is still broken — as a ranking plus a case list rather than a grid. Chips carry their own model name, so there is no column header to align to and nothing that scrolls sideways at four models.',
   usage: `import { EvalBoard, type EvalCase } from '@/components/ui/eval-board'
@@ -1135,7 +1121,6 @@ Never quote a price you have not read from the pricing tool.`
 export const promptDiffEntry: ComponentEntry = {
   id: 'prompt-diff',
   label: 'Prompt Diff',
-  isNew: true,
   description:
     'Two versions of a prompt with what changed between them. Prompts are the source code of an agent and almost never treated that way — the reason a run regressed is usually a sentence somebody rewrote three days ago.',
   usage: `import { PromptDiff } from '@/components/ui/prompt-diff'
@@ -1179,7 +1164,6 @@ const TASKS: AgentTask[] = [
 export const agentTasksEntry: ComponentEntry = {
   id: 'agent-tasks',
   label: 'Agent Tasks',
-  isNew: true,
   description:
     'The plan an agent is working from, as it works through it. Not a trace of what happened — a list of what it intends to do, which is what lets you see it heading somewhere wrong while there is still time to stop it.',
   usage: `import { AgentTasks, type AgentTask } from '@/components/ui/agent-tasks'
@@ -1212,7 +1196,6 @@ const SUBAGENTS: Subagent[] = [
 export const subagentTreeEntry: ComponentEntry = {
   id: 'subagent-tree',
   label: 'Subagent Tree',
-  isNew: true,
   description:
     'The tree of subagents a run spawned and what each is costing. Cost aggregates up the tree — a parent that spent 400 tokens itself and fanned out to children that spent 90,000 is cheap by its own line and ruinous in total.',
   usage: `import { SubagentTree, subtreeTokens } from '@/components/ui/subagent-tree'
@@ -1243,7 +1226,6 @@ const money = (value: number) => `£${(value / 100).toFixed(2)}`
 export const budgetGuardEntry: ComponentEntry = {
   id: 'budget-guard',
   label: 'Budget Guard',
-  isNew: true,
   description:
     'Spend and token caps against what a run has consumed. A soft limit warns and a hard limit stops — collapsing them into one bar is how a team ends up believing they have a spend cap when what they have is a notification.',
   usage: `import { BudgetGuard } from '@/components/ui/budget-guard'
@@ -1279,7 +1261,6 @@ export const budgetGuardEntry: ComponentEntry = {
 export const retryPolicyEntry: ComponentEntry = {
   id: 'retry-policy',
   label: 'Retry Policy',
-  isNew: true,
   description:
     'A retry policy and the attempts it produced. A policy shown alone reads as reasonable right up until you see it fired four times in ninety milliseconds — the attempt list is what proves the policy running is the one configured.',
   usage: `import { RetryPolicy } from '@/components/ui/retry-policy'
@@ -1334,7 +1315,6 @@ const STREAM: StreamEvent[] = [
 export const streamInspectorEntry: ComponentEntry = {
   id: 'stream-inspector',
   label: 'Stream Inspector',
-  isNew: true,
   description:
     'A model’s token stream event by event, with the timing between them. An average tokens-per-second hides both numbers that matter — time to first token, and the stalls after it.',
   usage: `import { StreamInspector, type StreamEvent } from '@/components/ui/stream-inspector'

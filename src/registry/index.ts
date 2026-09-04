@@ -162,6 +162,24 @@ import {
 } from './agents'
 import { compareSliderEntry, imageEntry, masonryEntry } from './media'
 import {
+  assetGridEntry,
+  audioPlayerEntry,
+  backupListEntry,
+  bucketListEntry,
+  filePreviewEntry,
+  objectListEntry,
+  storageUsageEntry,
+} from './storage'
+import {
+  connectionPoolEntry,
+  csvPreviewEntry,
+  dataQualityEntry,
+  indexListEntry,
+  replicationStatusEntry,
+  slowQueryLogEntry,
+  storyEntry,
+} from './data'
+import {
   fewShotEditorEntry,
   promptVariablesEntry,
   promptVersionsEntry,
@@ -308,6 +326,7 @@ export const CATEGORIES: Category[] = [
   {
     label: 'Overlays',
     items: [
+      storyEntry,
       dialogEntry,
       alertDialogEntry,
       sheetEntry,
@@ -575,6 +594,7 @@ export const CATEGORIES: Category[] = [
     label: 'Media',
     items: [
       imageEntry,
+      audioPlayerEntry,
       compareSliderEntry,
       masonryEntry,
       videoPlayerEntry,
@@ -621,6 +641,28 @@ export const CATEGORIES: Category[] = [
       webhookInspectorEntry,
       curlCommandEntry,
       httpStatusEntry,
+    ],
+  },
+  {
+    label: 'Storage',
+    items: [
+      storageUsageEntry,
+      bucketListEntry,
+      objectListEntry,
+      assetGridEntry,
+      filePreviewEntry,
+      backupListEntry,
+    ],
+  },
+  {
+    label: 'Data',
+    items: [
+      slowQueryLogEntry,
+      indexListEntry,
+      replicationStatusEntry,
+      connectionPoolEntry,
+      csvPreviewEntry,
+      dataQualityEntry,
     ],
   },
   {

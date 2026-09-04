@@ -456,7 +456,6 @@ function demoUpload(shouldFail: boolean) {
 export const dropzoneEntry: ComponentEntry = {
   id: 'dropzone',
   label: 'Dropzone',
-  isNew: true,
   description:
     'The upload card: click it or drag onto it, and it runs the upload. Hand it onUpload and it moves each file through queued, uploading, done or error, reports progress, and keeps failures on screen with a retry.',
   usage: `import { Dropzone } from '@/components/ui/dropzone'

@@ -470,7 +470,6 @@ const IN_TWO_DAYS = new Date(NOW.getTime() + 2 * 86_400_000 + 4 * 3_600_000)
 export const countdownEntry: ComponentEntry = {
   id: 'countdown',
   label: 'Countdown',
-  isNew: true,
   description:
     'Time remaining until a deadline, ticking. It counts toward a Date rather than decrementing a number, because setInterval is throttled in a background tab — a decremented timer drifts and then confidently shows the wrong number.',
   usage: `import { Countdown } from '@/components/ui/countdown'

@@ -47,7 +47,6 @@ function ServerFleet({ withError = true }: { withError?: boolean }) {
 export const mcpServerCardEntry: ComponentEntry = {
   id: 'mcp-server-card',
   label: 'MCP Server Card',
-  isNew: true,
   description:
     'One MCP server: what it is, how it is attached, and what it brought with it. Leads with the transport and the actual command line, because a server named “filesystem” tells you nothing and `--root /` tells you everything.',
   usage: `import { McpServerCard } from '@/components/ui/mcp-server-card'
@@ -100,7 +99,6 @@ function ResourcePicker() {
 export const mcpResourceListEntry: ComponentEntry = {
   id: 'mcp-resource-list',
   label: 'MCP Resource List',
-  isNew: true,
   description:
     'The resources a server exposes, addressed by URI. The URI is always shown in full and is what search matches first — “SSH key” and file:///Users/me/.ssh/id_rsa are the same resource, and only one of them makes anyone look twice.',
   usage: `import { McpResourceList } from '@/components/ui/mcp-resource-list'
@@ -132,7 +130,6 @@ const PROMPTS: McpPrompt[] = [
 export const mcpPromptListEntry: ComponentEntry = {
   id: 'mcp-prompt-list',
   label: 'MCP Prompt List',
-  isNew: true,
   description:
     'The prompts a server offers, with the arguments each one takes. How much has to be filled in is visible without expanding, because that is what decides which prompt you pick.',
   usage: `import { McpPromptList } from '@/components/ui/mcp-prompt-list'
@@ -176,7 +173,6 @@ const CAPS: CapabilityRow[] = [
 export const mcpCapabilityMatrixEntry: ComponentEntry = {
   id: 'mcp-capability-matrix',
   label: 'MCP Capability Matrix',
-  isNew: true,
   description:
     'Which server provides which capability, and where two of them collide. MCP names are not namespaced by the protocol, so two servers exposing `search` is decided by your client’s merge order — silently. A per-server list can never show that.',
   usage: `import { McpCapabilityMatrix } from '@/components/ui/mcp-capability-matrix'
@@ -216,7 +212,6 @@ const TRAFFIC: RpcMessage[] = [
 export const rpcConsoleEntry: ComponentEntry = {
   id: 'rpc-console',
   label: 'RPC Console',
-  isNew: true,
   description:
     'The JSON-RPC wire between a client and an MCP server. Requests and responses are paired by id, which is what produces the latency figure and what makes an unanswered request visible — the single most useful thing this view can show.',
   usage: `import { RpcConsole, type RpcMessage } from '@/components/ui/rpc-console'
@@ -282,7 +277,6 @@ function ApprovalDemo({ destructive = true }: { destructive?: boolean }) {
 export const toolApprovalEntry: ComponentEntry = {
   id: 'tool-approval',
   label: 'Tool Approval',
-  isNew: true,
   description:
     'The consent prompt before a tool runs. The arguments are shown in full above the buttons, because “Allow issue_refund?” asks you to approve a function name — what matters is that it wants to move £3,400.',
   usage: `import { ToolApproval } from '@/components/ui/tool-approval'
@@ -324,7 +318,6 @@ const BLOCKS: ToolContent[] = [
 export const toolResultEntry: ComponentEntry = {
   id: 'tool-result',
   label: 'Tool Result',
-  isNew: true,
   description:
     'What a tool actually returned, rendered by content type. An MCP result is a list of blocks that can mix text, images and embedded resources — JSON.stringify turns a returned screenshot into four thousand characters of base64.',
   usage: `import { ToolResult, type ToolContent } from '@/components/ui/tool-result'
@@ -393,7 +386,6 @@ function SchemaFormDemo() {
 export const schemaFormEntry: ComponentEntry = {
   id: 'schema-form',
   label: 'Schema Form',
-  isNew: true,
   description:
     'A form generated from a JSON Schema, so a person can invoke a tool by hand. The counterpart to Tool Schema: that one explains the parameters, this one collects them — together they are how you test an MCP tool without writing a client.',
   usage: `import { SchemaForm } from '@/components/ui/schema-form'
@@ -426,7 +418,6 @@ const CONFIG: Record<string, McpServerConfig> = {
 export const mcpConfigEditorEntry: ComponentEntry = {
   id: 'mcp-config-editor',
   label: 'MCP Config Editor',
-  isNew: true,
   description:
     'The mcpServers config with the mistakes people actually make called out. The usual failure parses cleanly and the server silently never appears — the error is in the shape, not the syntax, so a JSON editor catches none of it.',
   usage: `import { McpConfigEditor, inspectMcpConfig } from '@/components/ui/mcp-config-editor'
@@ -462,7 +453,6 @@ const ROOTS: McpRoot[] = [
 export const mcpRootsEntry: ComponentEntry = {
   id: 'mcp-roots',
   label: 'MCP Roots',
-  isNew: true,
   description:
     'The roots a client has granted its servers — the closest thing MCP has to a permission boundary, and invisible in most clients. A root covering a whole home directory is drawn as a warning rather than as another grey row.',
   usage: `import { McpRoots } from '@/components/ui/mcp-roots'
@@ -501,7 +491,6 @@ const SAMPLING: SamplingMessage[] = [
 export const mcpSamplingEntry: ComponentEntry = {
   id: 'mcp-sampling',
   label: 'MCP Sampling',
-  isNew: true,
   description:
     'A server asking the client to run a model on its behalf. Sampling inverts the usual direction — the server sends the request, your model and your budget answer it — so the messages are shown verbatim before the buttons.',
   usage: `import { McpSampling } from '@/components/ui/mcp-sampling'
@@ -548,7 +537,6 @@ const ELICIT_SCHEMA: JsonSchema = {
 export const mcpElicitationEntry: ComponentEntry = {
   id: 'mcp-elicitation',
   label: 'MCP Elicitation',
-  isNew: true,
   description:
     'A server asking the user for structured input mid-run. Useful, and a good phishing surface — the prompt text is written by the server and appears wearing your client’s chrome, so the requesting server is named outside its own copy.',
   usage: `import { McpElicitation } from '@/components/ui/mcp-elicitation'
@@ -591,7 +579,6 @@ const CATALOGUE: CatalogueServer[] = [
 export const mcpServerPickerEntry: ComponentEntry = {
   id: 'mcp-server-picker',
   label: 'MCP Server Picker',
-  isNew: true,
   description:
     'A catalogue of servers you could install. Installing one is running someone else’s code with your credentials, so the card leads with publisher and verification rather than with the blurb — which is written by the person asking to be trusted.',
   usage: `import { McpServerPicker } from '@/components/ui/mcp-server-picker'
@@ -632,7 +619,6 @@ const TOOL_AFTER: JsonSchema = {
 export const toolDiffEntry: ComponentEntry = {
   id: 'tool-diff',
   label: 'Tool Diff',
-  isNew: true,
   description:
     'What changed in a tool’s contract between two server versions, with breaking changes classified rather than just listed. Adding an optional parameter and making one required are both edits to `properties`; only one breaks every existing call.',
   usage: `import { ToolDiff, diffToolSchemas } from '@/components/ui/tool-diff'

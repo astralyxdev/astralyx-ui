@@ -602,6 +602,61 @@
       "default": "16 / 9"
     }
   ],
+  "asset-grid": [
+    {
+      "name": "assets",
+      "type": "Asset[]",
+      "optional": false
+    },
+    {
+      "name": "value",
+      "type": "string[]",
+      "optional": true,
+      "description": "Selected ids. Omit both to render a read-only library."
+    },
+    {
+      "name": "onValueChange",
+      "type": "(next: string[]) => void",
+      "optional": true
+    },
+    {
+      "name": "single",
+      "type": "boolean",
+      "optional": true,
+      "default": "false",
+      "description": "One at a time."
+    },
+    {
+      "name": "onOpen",
+      "type": "(asset: Asset) => void",
+      "optional": true
+    },
+    {
+      "name": "minTile",
+      "type": "number",
+      "optional": true,
+      "default": "150",
+      "description": "Minimum tile width; the grid fills the rest."
+    },
+    {
+      "name": "ratio",
+      "type": "number",
+      "optional": true,
+      "default": "1"
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Nothing in this library yet.'"
+    },
+    {
+      "name": "format",
+      "type": "(bytes: number) => string",
+      "optional": true,
+      "default": "formatBytes"
+    }
+  ],
   "attachment-preview": [
     {
       "name": "attachment",
@@ -623,6 +678,110 @@
       "type": "boolean",
       "optional": true,
       "default": "false"
+    }
+  ],
+  "audio-player": [
+    {
+      "name": "src",
+      "type": "string",
+      "optional": false
+    },
+    {
+      "name": "title",
+      "type": "ReactNode",
+      "optional": true
+    },
+    {
+      "name": "artist",
+      "type": "ReactNode",
+      "optional": true
+    },
+    {
+      "name": "peaks",
+      "type": "number[]",
+      "optional": true,
+      "description": "Precomputed amplitudes, 0–1. Drawn behind the scrubber."
+    },
+    {
+      "name": "defaultMuted",
+      "type": "boolean",
+      "optional": true,
+      "default": "false",
+      "description": "Start muted — required for anything that also autoplays."
+    },
+    {
+      "name": "skipBy",
+      "type": "number",
+      "optional": true,
+      "default": "15",
+      "description": "Seconds a skip button moves."
+    },
+    {
+      "name": "showSkip",
+      "type": "boolean",
+      "optional": true,
+      "default": "true",
+      "description": "Hide the skip buttons for a short clip."
+    },
+    {
+      "name": "artwork",
+      "type": "ReactNode",
+      "optional": true,
+      "description": "Cover art."
+    },
+    {
+      "name": "onEnded",
+      "type": "() => void",
+      "optional": true
+    },
+    {
+      "name": "playLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Play'"
+    },
+    {
+      "name": "pauseLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Pause'"
+    },
+    {
+      "name": "muteLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Mute'"
+    },
+    {
+      "name": "unmuteLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Unmute'"
+    },
+    {
+      "name": "seekLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Seek'"
+    },
+    {
+      "name": "backLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Back'"
+    },
+    {
+      "name": "forwardLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Forward'"
+    },
+    {
+      "name": "formatTime",
+      "type": "(seconds: number) => string",
+      "optional": true,
+      "default": "defaultTime",
+      "description": "Formats the clock. Defaults to `m:ss`, and `h:mm:ss` past an hour."
     }
   ],
   "audit-log": [
@@ -726,6 +885,60 @@
       "type": "string",
       "optional": true,
       "description": "Accessible name. A bare status dot is invisible without one."
+    }
+  ],
+  "backup-list": [
+    {
+      "name": "backups",
+      "type": "Backup[]",
+      "optional": false
+    },
+    {
+      "name": "onRestore",
+      "type": "(backup: Backup) => void",
+      "optional": true
+    },
+    {
+      "name": "newestAge",
+      "type": "ReactNode",
+      "optional": true,
+      "description": "How old the newest backup is, already formatted."
+    },
+    {
+      "name": "restoreLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Restore'"
+    },
+    {
+      "name": "unverifiedLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'never test-restored'"
+    },
+    {
+      "name": "verifiedLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'verified'"
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'No backups exist for this database.'"
+    },
+    {
+      "name": "format",
+      "type": "(bytes: number) => string",
+      "optional": true,
+      "default": "formatBytes"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Backups'"
     }
   ],
   "badge": [
@@ -1020,6 +1233,59 @@
       "name": "error",
       "type": "ReactNode",
       "optional": true
+    }
+  ],
+  "bucket-list": [
+    {
+      "name": "buckets",
+      "type": "Bucket[]",
+      "optional": false
+    },
+    {
+      "name": "onSelect",
+      "type": "(bucket: Bucket) => void",
+      "optional": true
+    },
+    {
+      "name": "selectedName",
+      "type": "string",
+      "optional": true
+    },
+    {
+      "name": "publicLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Public'"
+    },
+    {
+      "name": "privateLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Private'"
+    },
+    {
+      "name": "objectsLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'objects'"
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'No buckets.'"
+    },
+    {
+      "name": "format",
+      "type": "(bytes: number) => string",
+      "optional": true,
+      "default": "formatBytes"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Buckets'"
     }
   ],
   "budget-guard": [
@@ -2689,6 +2955,69 @@
       "default": "'default'"
     }
   ],
+  "connection-pool": [
+    {
+      "name": "active",
+      "type": "number",
+      "optional": false,
+      "description": "Checked out and running a query."
+    },
+    {
+      "name": "idle",
+      "type": "number",
+      "optional": false,
+      "description": "Open but unused."
+    },
+    {
+      "name": "max",
+      "type": "number",
+      "optional": false,
+      "description": "Pool ceiling."
+    },
+    {
+      "name": "waiting",
+      "type": "number",
+      "optional": true,
+      "default": "0",
+      "description": "Requests queued for a connection. The number that signals trouble."
+    },
+    {
+      "name": "waitMs",
+      "type": "number",
+      "optional": true,
+      "description": "Mean wait before a connection is handed over, in ms."
+    },
+    {
+      "name": "label",
+      "type": "ReactNode",
+      "optional": true,
+      "default": "'Connection pool'"
+    },
+    {
+      "name": "activeLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'active'"
+    },
+    {
+      "name": "idleLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'idle'"
+    },
+    {
+      "name": "waitingLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'waiting'"
+    },
+    {
+      "name": "saturatedLabel",
+      "type": "(waiting: number) => ReactNode",
+      "optional": true,
+      "default": "(count) => `${count} request${count === 1 ? '' : 's'} queued for a connection`"
+    }
+  ],
   "connection-string": [
     {
       "name": "value",
@@ -3273,6 +3602,56 @@
       "description": "Precedes the last run's duration."
     }
   ],
+  "csv-preview": [
+    {
+      "name": "columns",
+      "type": "CsvColumn[]",
+      "optional": false
+    },
+    {
+      "name": "rows",
+      "type": "string[][]",
+      "optional": false,
+      "description": "Already parsed. This component renders; it does not parse."
+    },
+    {
+      "name": "totalRows",
+      "type": "number",
+      "optional": true,
+      "description": "Total rows in the file, when more than are shown here."
+    },
+    {
+      "name": "malformed",
+      "type": "number[]",
+      "optional": true,
+      "default": "[]",
+      "description": "Indices into `rows` whose column count did not match the header."
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'This file has no rows.'"
+    },
+    {
+      "name": "malformedLabel",
+      "type": "(count: number) => ReactNode",
+      "optional": true,
+      "default": "(count) => `${count} row${count === 1 ? '' : 's'} do not match the header and will fail the import.`"
+    },
+    {
+      "name": "showingLabel",
+      "type": "(shown: number, total: number) => ReactNode",
+      "optional": true,
+      "default": "(shown, total) => `Showing ${shown} of ${total.toLocaleString()} rows`"
+    },
+    {
+      "name": "nullsLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'empty'"
+    }
+  ],
   "curl-command": [
     {
       "name": "method",
@@ -3378,6 +3757,50 @@
       "optional": true,
       "default": "'No rows'",
       "description": "Tooltip on the empty state."
+    }
+  ],
+  "data-quality": [
+    {
+      "name": "columns",
+      "type": "ColumnProfile[]",
+      "optional": false
+    },
+    {
+      "name": "nullWarnAt",
+      "type": "number",
+      "optional": true,
+      "default": "0.3",
+      "description": "Null fraction above this is flagged."
+    },
+    {
+      "name": "constantLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'single value'"
+    },
+    {
+      "name": "uniqueLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'unique per row'"
+    },
+    {
+      "name": "sparseLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'mostly empty'"
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Nothing profiled.'"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Column profile'"
     }
   ],
   "date-picker": [
@@ -4620,6 +5043,83 @@
       "optional": true
     }
   ],
+  "file-preview": [
+    {
+      "name": "file",
+      "type": "PreviewFile",
+      "optional": false
+    },
+    {
+      "name": "onDownload",
+      "type": "(file: PreviewFile) => void",
+      "optional": true
+    },
+    {
+      "name": "maxChars",
+      "type": "number",
+      "optional": true,
+      "default": "20_000",
+      "description": "Characters of `text` to render."
+    },
+    {
+      "name": "downloadLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Download'"
+    },
+    {
+      "name": "noPreviewLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'No preview for this file type.'"
+    },
+    {
+      "name": "truncatedLabel",
+      "type": "(shown: number, total: number) => ReactNode",
+      "optional": true,
+      "default": "(shown, total) => `Showing the first ${shown.toLocaleString()} of ${total.toLocaleString()} characters.`"
+    },
+    {
+      "name": "actions",
+      "type": "ReactNode",
+      "optional": true
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "optional": false
+    },
+    {
+      "name": "type",
+      "type": "string",
+      "optional": true,
+      "description": "MIME type from the store. Trusted over the extension."
+    },
+    {
+      "name": "size",
+      "type": "number",
+      "optional": true,
+      "description": "Bytes."
+    },
+    {
+      "name": "url",
+      "type": "string",
+      "optional": true,
+      "description": "For images, audio and video."
+    },
+    {
+      "name": "text",
+      "type": "string",
+      "optional": true,
+      "description": "Already-fetched contents, for text and code."
+    },
+    {
+      "name": "language",
+      "type": "string",
+      "optional": true,
+      "description": "Highlighting hint for `text`."
+    }
+  ],
   "file-tree": [
     {
       "name": "nodes",
@@ -5526,6 +6026,61 @@
       "type": "Date",
       "optional": true,
       "description": "Reference point for the age. Defaults to now."
+    }
+  ],
+  "index-list": [
+    {
+      "name": "indexes",
+      "type": "DatabaseIndex[]",
+      "optional": false
+    },
+    {
+      "name": "unusedLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'never scanned'"
+    },
+    {
+      "name": "duplicateLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'duplicate'"
+    },
+    {
+      "name": "primaryLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'primary'"
+    },
+    {
+      "name": "uniqueLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'unique'"
+    },
+    {
+      "name": "scansLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'scans'"
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'No indexes on this table.'"
+    },
+    {
+      "name": "format",
+      "type": "(bytes: number) => string",
+      "optional": true,
+      "default": "formatBytes"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Indexes'"
     }
   ],
   "input-file": [
@@ -8361,6 +8916,77 @@
       "optional": true
     }
   ],
+  "object-list": [
+    {
+      "name": "objects",
+      "type": "StorageObject[]",
+      "optional": false
+    },
+    {
+      "name": "prefix",
+      "type": "string",
+      "optional": true,
+      "description": "Current prefix. Controlled when paired with `onPrefixChange`."
+    },
+    {
+      "name": "onPrefixChange",
+      "type": "(prefix: string) => void",
+      "optional": true
+    },
+    {
+      "name": "onSelect",
+      "type": "(object: StorageObject) => void",
+      "optional": true
+    },
+    {
+      "name": "searchable",
+      "type": "boolean",
+      "optional": true,
+      "default": "true"
+    },
+    {
+      "name": "searchPlaceholder",
+      "type": "string",
+      "optional": true,
+      "default": "'Filter by key…'"
+    },
+    {
+      "name": "searchLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Filter objects'"
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Nothing here'"
+    },
+    {
+      "name": "emptyHint",
+      "type": "string",
+      "optional": true,
+      "default": "'This prefix has no objects.'"
+    },
+    {
+      "name": "archivedLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'archived'"
+    },
+    {
+      "name": "itemsLabel",
+      "type": "(count: number) => string",
+      "optional": true,
+      "default": "(count) => `${count} item${count === 1 ? '' : 's'}`"
+    },
+    {
+      "name": "format",
+      "type": "(bytes: number) => string",
+      "optional": true,
+      "default": "formatBytes"
+    }
+  ],
   "odds-display": [
     {
       "name": "label",
@@ -10262,6 +10888,55 @@
       "description": "Badge on the newest release."
     }
   ],
+  "replication-status": [
+    {
+      "name": "primary",
+      "type": "{ name: string; region?: string; writes?: ReactNode }",
+      "optional": false
+    },
+    {
+      "name": "replicas",
+      "type": "Replica[]",
+      "optional": false
+    },
+    {
+      "name": "warnSeconds",
+      "type": "number",
+      "optional": true,
+      "default": "10",
+      "description": "Lag above this many seconds is a problem."
+    },
+    {
+      "name": "formatBytes",
+      "type": "(bytes: number) => string",
+      "optional": true,
+      "default": "(bytes) => `${(bytes / 1_048_576).toFixed(1)} MB`"
+    },
+    {
+      "name": "primaryLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Primary'"
+    },
+    {
+      "name": "readableLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'reads'"
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'No replicas — this database has no read redundancy.'"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Replication'"
+    }
+  ],
   "request-builder": [
     {
       "name": "method",
@@ -11848,6 +12523,49 @@
       "description": "Precedes the consumed share."
     }
   ],
+  "slow-query-log": [
+    {
+      "name": "queries",
+      "type": "SlowQuery[]",
+      "optional": false
+    },
+    {
+      "name": "rankByTotal",
+      "type": "boolean",
+      "optional": true,
+      "default": "true",
+      "description": "Rank by total time rather than by mean."
+    },
+    {
+      "name": "seqScanLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'no index'"
+    },
+    {
+      "name": "emptyLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'No queries in this window.'"
+    },
+    {
+      "name": "formatDuration",
+      "type": "(ms: number) => string",
+      "optional": true,
+      "default": "defaultDuration"
+    },
+    {
+      "name": "headers",
+      "type": "{ query?: string; calls?: string; mean?: string; total?: string }",
+      "optional": true
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "optional": true,
+      "default": "'Slow queries'"
+    }
+  ],
   "sparkline": [
     {
       "name": "values",
@@ -12134,6 +12852,135 @@
       "type": "Responsive",
       "optional": true,
       "default": "'sm'"
+    }
+  ],
+  "storage-usage": [
+    {
+      "name": "segments",
+      "type": "StorageSegment[]",
+      "optional": false
+    },
+    {
+      "name": "quota",
+      "type": "number",
+      "optional": true,
+      "description": "Bytes. Omit for an unmetered store — the bar then scales to the total."
+    },
+    {
+      "name": "warnAt",
+      "type": "number",
+      "optional": true,
+      "default": "0.85",
+      "description": "Warn past this fraction of the quota."
+    },
+    {
+      "name": "label",
+      "type": "ReactNode",
+      "optional": true,
+      "default": "'Storage'"
+    },
+    {
+      "name": "freeLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Free'"
+    },
+    {
+      "name": "overLabel",
+      "type": "(over: string) => ReactNode",
+      "optional": true,
+      "default": "(over) => `${over} over quota`"
+    },
+    {
+      "name": "format",
+      "type": "(bytes: number) => string",
+      "optional": true,
+      "default": "formatBytes"
+    }
+  ],
+  "story": [
+    {
+      "name": "open",
+      "type": "boolean",
+      "optional": false
+    },
+    {
+      "name": "onOpenChange",
+      "type": "(open: boolean) => void",
+      "optional": false
+    },
+    {
+      "name": "panels",
+      "type": "StoryPanel[]",
+      "optional": false
+    },
+    {
+      "name": "index",
+      "type": "number",
+      "optional": true,
+      "description": "Panel to start on. Controlled when paired with `onIndexChange`."
+    },
+    {
+      "name": "onIndexChange",
+      "type": "(index: number) => void",
+      "optional": true
+    },
+    {
+      "name": "duration",
+      "type": "number",
+      "optional": true,
+      "default": "5000",
+      "description": "Default panel duration."
+    },
+    {
+      "name": "autoPlay",
+      "type": "boolean",
+      "optional": true,
+      "default": "true",
+      "description": "Advance automatically. Off makes it a plain panel viewer."
+    },
+    {
+      "name": "onFinish",
+      "type": "() => void",
+      "optional": true,
+      "description": "Fires after the last panel finishes. Defaults to closing."
+    },
+    {
+      "name": "header",
+      "type": "ReactNode",
+      "optional": true,
+      "description": "Header slot — an avatar, a name, a timestamp."
+    },
+    {
+      "name": "closeLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Close'"
+    },
+    {
+      "name": "previousLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Previous'"
+    },
+    {
+      "name": "nextLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Next'"
+    },
+    {
+      "name": "pausedLabel",
+      "type": "string",
+      "optional": true,
+      "default": "'Paused'"
+    },
+    {
+      "name": "width",
+      "type": "number | string",
+      "optional": true,
+      "default": "420",
+      "description": "Width of the panel column. Stories are portrait by convention."
     }
   ],
   "stream-inspector": [
