@@ -93,7 +93,7 @@ export const cardEntry: ComponentEntry = {
     { name: 'CardHeader / CardFooter', type: 'section', description: 'Optional. Each draws its own divider, so omitting them leaves no stray rule.' },
     { name: 'CardBody', type: 'section', description: 'Grows to fill. The only section a Card needs.' },
     { name: 'CardTitle / CardDescription', type: 'text', description: 'Heading and secondary line, normally inside CardHeader.' },
-    { name: 'section size', type: SIZES.map((s) => `'${s}'`).join(' | '), description: 'Overrides the inherited padding for one section.' },
+    { name: 'CardHeader / CardBody / CardFooter size', type: SIZES.map((s) => `'${s}'`).join(' | '), description: 'Overrides the inherited padding for one section.' },
   ],
   demos: [
     {

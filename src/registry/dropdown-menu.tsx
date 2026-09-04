@@ -103,7 +103,7 @@ export const dropdownMenuEntry: ComponentEntry = {
     { name: 'side / align / offset', type: 'placement', description: 'Same popper placement options as Popover.' },
     { name: 'DropdownMenuItem onSelect', type: '() => void', description: 'Fires on activation, before the menu closes.' },
     { name: 'DropdownMenuCheckboxItem', type: 'checked, onCheckedChange', description: 'A menu item that carries state. Uses role="menuitemcheckbox".' },
-    { name: 'DropdownMenuLabel / Separator / Shortcut', type: 'presentational', description: 'Section heading, divider, and right-aligned key hint.' },
+    { name: 'DropdownMenuLabel / DropdownMenuSeparator / DropdownMenuShortcut', type: 'presentational', description: 'Section heading, divider, and right-aligned key hint.' },
   ],
   demos: [
     { title: 'Default', code: `<DropdownMenu>…</DropdownMenu>`, render: () => <MenuPreview side="bottom" align="start" checkboxes={false} /> },

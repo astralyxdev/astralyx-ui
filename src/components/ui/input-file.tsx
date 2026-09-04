@@ -236,3 +236,4 @@ function InputFile({
 
 export { InputFile }
 export type { InputFileProps }
+export type { FileUpload, UploadControl, UploadHandler } from '@/lib/use-uploads'

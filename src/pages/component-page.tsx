@@ -8,7 +8,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
-import { ApiTable } from '@/components/showcase/api-table'
+import { ApiReference } from '@/components/showcase/api-table'
 import { PageHeader } from '@/components/ui/page-header'
 import { Composer } from '@/components/ui/composer'
 import { Demo } from '@/components/showcase/demo'
@@ -18,7 +18,7 @@ import { componentPath, ENTRIES, findCategory, isReady, type ComponentEntry } fr
 import { focusRing, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 import { useSeo } from '@/lib/seo'
-import { apiRows, hasApi } from '@/registry/props'
+import { apiDocs, hasApi } from '@/registry/props'
 
 /**
  * A component page reads top to bottom: what it is, how to bring it in, a
@@ -68,6 +68,10 @@ function ComponentPage({ entry }: { entry: ComponentEntry }) {
         }
       />
 
+      <Section title="Install">
+        <CodeBlock code={`npx astralyx-ui add ${entry.id}`} language="bash" header={false} />
+      </Section>
+
       {entry.usage && (
         <Section title="Usage">
           <CodeBlock code={entry.usage} language="tsx" header={false} />
@@ -97,10 +101,11 @@ function ComponentPage({ entry }: { entry: ComponentEntry }) {
       )}
 
       {hasApi(entry.id, entry.api) && (
-        <Section title="API">
-          {/* Curated rows first, then every prop the source declares that none
-              of them mentioned — so the table cannot fall behind the code. */}
-          <ApiTable props={apiRows(entry.id, entry.api)} />
+        <Section
+          title="API"
+          description="Generated from the source, so it cannot fall behind the code. One table per exported component, then hooks, functions and types."
+        >
+          <ApiReference api={apiDocs(entry.id, entry.api)} />
         </Section>
       )}
 
@@ -190,7 +195,7 @@ function NotBuilt({ entry }: { entry: ComponentEntry }) {
         <CodeBlock
           language="bash"
           title="Scaffold it"
-          code={`npx shadcn@latest add ${entry.id}`}
+          code={`npx astralyx-ui add ${entry.id}`}
         />
       </div>
     </article>

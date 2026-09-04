@@ -81,7 +81,7 @@ ${state.footer ? '  <TableFooter>…</TableFooter>\n' : ''}</Table>`,
   api: [
     { name: 'Table containerClassName', type: 'string', description: 'Styles the scrolling wrapper; className styles the <table> itself.' },
     { name: 'TableRow data-state', type: '"selected"', description: 'Marks a row as selected, which tints its background.' },
-    { name: 'TableHeader / Body / Footer', type: 'section', description: 'Map to thead, tbody and tfoot. The footer is tinted and divided.' },
+    { name: 'TableHeader / TableBody / TableFooter', type: 'section', description: 'Map to thead, tbody and tfoot. The footer is tinted and divided.' },
     { name: 'TableCaption', type: 'caption', description: 'Rendered below the table, per caption-side.' },
   ],
   demos: [

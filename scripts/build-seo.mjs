@@ -43,7 +43,7 @@ const { EXAMPLES, examplePath } = await server.ssrLoadModule('/src/examples/inde
 const { canonicalUrl, clampDescription, pageTitle } = await server.ssrLoadModule('/src/lib/seo.ts')
 // The same merge the component page renders, so the markdown twin cannot show
 // a smaller API than the HTML one.
-const { apiRows } = await server.ssrLoadModule('/src/registry/props.ts')
+const { apiDocs, hasApi } = await server.ssrLoadModule('/src/registry/props.ts')
 // Doc bodies contain `Link`, which reads router context and throws without a
 // provider. Same wrapper the SSR audit uses.
 const { Router } = await server.ssrLoadModule('/src/components/primitives/router.tsx')
@@ -221,15 +221,62 @@ function componentMarkdown(entry) {
     lines.push('', '## Import', '', '```tsx', entry.usage.trim(), '```')
   }
 
-  const api = apiRows(entry.id, entry.api)
-  if (api.length) {
-    lines.push('', '## Props', '', '| Prop | Type | Default | Description |', '| --- | --- | --- | --- |')
-    for (const prop of api) {
-      // Pipes inside a type union would split the row.
-      const cell = (value) => String(value ?? '').replace(/\|/g, '\\|').replace(/\n/g, ' ')
-      lines.push(
-        `| \`${cell(prop.name)}\` | \`${cell(prop.type)}\` | ${prop.default ? `\`${cell(prop.default)}\`` : '—'} | ${cell(prop.description)} |`,
-      )
+  if (hasApi(entry.id, entry.api)) {
+    const api = apiDocs(entry.id, entry.api)
+    // Pipes inside a type union would split the row.
+    const cell = (value) => String(value ?? '').replace(/\|/g, '\\|').replace(/\n/g, ' ')
+    const code = (value) => (value ? `\`${cell(value)}\`` : '—')
+    lines.push('', '## API')
+
+    for (const component of api.components) {
+      lines.push('', `### ${component.name}${component.generics ?? ''}`)
+      if (component.description) lines.push('', component.description)
+      if (component.extends?.length) {
+        lines.push('', `Extends ${component.extends.map((base) => `\`${base}\``).join(', ')}.`)
+      } else if (!component.props.length) {
+        lines.push('', 'Takes no props.')
+      }
+      if (component.props.length) {
+        lines.push('', '| Prop | Type | Default | Description |', '| --- | --- | --- | --- |')
+        for (const prop of component.props) {
+          const fallback = prop.required ? 'required' : '—'
+          lines.push(
+            `| ${code(prop.name)} | ${code(prop.type)} | ${prop.default ? code(prop.default) : fallback} | ${cell(prop.description)} |`,
+          )
+        }
+      }
+    }
+
+    for (const [title, rows] of [['Hooks', api.hooks], ['Functions', api.functions]]) {
+      if (!rows.length) continue
+      lines.push('', `### ${title}`, '', '| Name | Signature | Description |', '| --- | --- | --- |')
+      for (const row of rows) {
+        lines.push(`| ${code(row.name)} | ${code(row.signature)} | ${cell(row.description)} |`)
+      }
+    }
+
+    if (api.types.length) {
+      lines.push('', '### Types')
+      for (const type of api.types) {
+        const names = [type.name, ...(type.aliases ?? [])].join(' = ')
+        lines.push('', `#### ${names}${type.generics ?? ''}`)
+        if (type.description) lines.push('', type.description)
+        if (type.fields) {
+          lines.push('', '| Field | Type | Description |', '| --- | --- | --- |')
+          for (const field of type.fields) {
+            lines.push(`| ${code(`${field.name}${field.required ? '' : '?'}`)} | ${code(field.type)} | ${cell(field.description)} |`)
+          }
+        } else {
+          lines.push('', '```ts', `type ${type.name}${type.generics ?? ''} = ${type.definition}`, '```')
+        }
+      }
+    }
+
+    if (api.notes.length) {
+      lines.push('', '### Behaviour', '', '| Topic | Detail | Description |', '| --- | --- | --- |')
+      for (const note of api.notes) {
+        lines.push(`| ${cell(note.name)} | ${code(note.type)} | ${cell(note.description)} |`)
+      }
     }
   }
 

@@ -232,3 +232,4 @@ function Dropzone({
 
 export { Dropzone }
 export type { DropzoneProps }
+export type { FileUpload, UploadControl, UploadHandler } from '@/lib/use-uploads'

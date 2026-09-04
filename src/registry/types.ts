@@ -24,7 +24,14 @@ export type ComposerSpec = {
   tall?: boolean
 }
 
-/** One row of the props table. */
+/**
+ * One curated row of the API reference.
+ *
+ * Its `name` decides where it lands: a prop, hook, function, type or field
+ * of the component file takes the description; anything else — `keyboard`,
+ * `accessibility` — is shown as a behaviour note. Types and defaults are read
+ * from the source, so `type` here only matters for a note.
+ */
 export type ApiProp = {
   name: string
   type: string
