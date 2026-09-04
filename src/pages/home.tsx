@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { ArrowRight, ArrowUpRight, Check, Copy } from 'lucide-react'
 import { Link } from '@/components/primitives/router'
 import { Avatar, AvatarGroup } from '@/components/ui/avatar'
@@ -7,23 +8,18 @@ import { Card, CardBody } from '@/components/ui/card'
 import { CodeBlock } from '@/components/ui/code-block'
 import { Cart } from '@/components/ui/cart'
 import { CheckoutSummary } from '@/components/ui/checkout-summary'
-import { HttpStatus } from '@/components/ui/http-status'
 import { Input } from '@/components/ui/input'
+import { composerInitialState } from '@/components/ui/composer'
 import { Logo } from '@/components/ui/logo'
+import { Masonry } from '@/components/ui/masonry'
 import { Message } from '@/components/ui/message'
-import { PriceTicker } from '@/components/ui/price-ticker'
 import { PromptInput } from '@/components/ui/prompt-input'
-import { QueueMonitor } from '@/components/ui/queue-monitor'
-import { RiskScore } from '@/components/ui/risk-score'
 import { SessionList } from '@/components/ui/session-list'
-import { Sparkline } from '@/components/ui/sparkline'
-import { Stat } from '@/components/ui/stat'
 import { Switch } from '@/components/ui/switch'
 import { ToolCall } from '@/components/ui/tool-call'
-import { UptimeStrip } from '@/components/ui/uptime-strip'
 import { useClipboard } from '@/lib/use-clipboard'
 import { EXAMPLES, examplePath } from '@/examples'
-import { CATEGORIES, componentPath, ENTRIES } from '@/registry'
+import { CATEGORIES, componentPath, ENTRIES, type ComponentEntry } from '@/registry'
 import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 import { useSeo } from '@/lib/seo'
@@ -38,13 +34,9 @@ const ago = (minutes: number) => new Date(NOW.getTime() - minutes * 60_000)
  * component library tells you nothing a design file would not; the argument is
  * that you can type into these, open their menus and drag their handles.
  *
- * Which is also the trap. Components have intrinsic minimum widths — the uptime
- * strip is 90 buckets at a 3px floor, so it cannot render below ~470px no
- * matter what box you put it in — and a showcase that sizes cells by eye will
- * eventually put one in a box too small and have it burst out the side. So the
- * showcase is a grid whose cells are sized against those minimums, every cell
- * clips as a backstop, and anything with a hard floor gets a span wide enough
- * for it at every breakpoint. See `Showcase`.
+ * The catalogue at the foot of the page runs every one of them at once, which
+ * is the strongest version of that argument and also the reason the previews
+ * there are clipped, inert and mounted only when scrolled near.
  */
 function Home() {
   useSeo({
@@ -56,7 +48,6 @@ function Home() {
   return (
     <div className="-mx-4 -mt-4 sm:-mx-6 sm:-mt-6 lg:-mx-8 lg:-mt-8">
       <Hero />
-      <Showcase />
       <Install />
       <Anatomy />
       <Breadth />
@@ -167,139 +158,6 @@ function InstallPill({ command }: { command: string }) {
         <Copy className="text-muted-foreground size-3.5 shrink-0" />
       )}
     </button>
-  )
-}
-
-/* --------------------------------------------------------------- showcase */
-
-/**
- * The breadth argument, as a grid of live components.
- *
- * Spans are chosen from each component's measured minimum width, not by eye:
- *
- * - `QueueMonitor` lays its counters out at `sm:grid-cols-4`, a *viewport*
- *   breakpoint, so between 640px and the two-column layout it wants roughly
- *   360px of its own or the labels collide. It takes the full row on `md`.
- * - `UptimeStrip` is 90 buckets with a 3px floor — about 470px, more than a
- *   sixth of the grid — so it runs at 45 buckets across two columns.
- *
- * `Frame` clips as a backstop. A caption naming the component is the point of
- * the section: this is a catalogue, and an unlabelled screenshot is decoration.
- */
-function Showcase() {
-  return (
-    <Bleed tint className="border-border border-y py-16 lg:py-20">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-6">
-        <Frame name="Stat · Sparkline" className="lg:col-span-2">
-          <Stat
-            label="Monthly revenue"
-            value="$128,400"
-            delta={12.4}
-            bordered={false}
-            chart={
-              <Sparkline
-                values={[42, 48, 45, 61, 58, 72, 69, 84, 91, 88, 104, 118]}
-                variant="area"
-                className="h-10"
-              />
-            }
-          />
-        </Frame>
-
-        <Frame name="Price Ticker" className="lg:col-span-2">
-          <PriceTicker
-            symbol="BTC"
-            price={67_240}
-            change={2.41}
-            history={[62, 63, 61, 64, 66, 65, 67]}
-          />
-        </Frame>
-
-        <Frame name="HTTP Status" className="lg:col-span-2">
-          <div className="flex flex-wrap gap-1.5">
-            {[200, 201, 204, 301, 400, 401, 404, 409, 422, 429, 500, 503].map((code) => (
-              <HttpStatus key={code} status={code} showPhrase={false} />
-            ))}
-          </div>
-        </Frame>
-
-        <Frame name="Risk Score" className="lg:col-span-2">
-          <RiskScore
-            score={82}
-            factors={[
-              { label: 'Payout wallet shared with 3 accounts', weight: 28 },
-              { label: 'Datacenter IP', weight: 9 },
-              { label: 'Identity verified', weight: -12 },
-            ]}
-          />
-        </Frame>
-
-        <Frame name="Queue Monitor" className="md:col-span-2 lg:col-span-2">
-          <QueueMonitor
-            name="emails.outbound"
-            depth={1_920}
-            processing={18}
-            failed={94}
-            deadLettered={12}
-            arrivalRate={42}
-            completionRate={61}
-            now={NOW}
-          />
-        </Frame>
-
-        <Frame name="Uptime Strip" className="md:col-span-2 lg:col-span-2">
-          <p className="text-muted-foreground mb-3 text-xs font-medium">
-            api.astralyx.dev — 45 days
-          </p>
-          <UptimeStrip
-            summary="99.94%"
-            buckets={Array.from({ length: 45 }, (_, index) => ({
-              label: `Day ${45 - index}`,
-              status:
-                index === 31
-                  ? ('down' as const)
-                  : index === 6 || index === 20
-                    ? ('degraded' as const)
-                    : ('up' as const),
-            }))}
-          />
-        </Frame>
-      </div>
-    </Bleed>
-  )
-}
-
-/**
- * One showcase cell.
- *
- * `min-w-0` stops a wide child from forcing the grid track open — without it a
- * single component pushes its column past its share and the whole row skews.
- * `overflow-hidden` is the backstop for the same class of bug: if a component
- * ever does exceed its cell, it gets clipped at the card edge rather than
- * drawn across its neighbour.
- */
-function Frame({
-  name,
-  className,
-  children,
-}: {
-  name: string
-  className?: string
-  children: React.ReactNode
-}) {
-  return (
-    <div className={cn('flex min-w-0 flex-col gap-2.5', className)}>
-      <div
-        className={cn(
-          surface,
-          radius.surface,
-          'flex min-w-0 flex-1 items-center overflow-hidden p-5',
-        )}
-      >
-        <div className="min-w-0 flex-1">{children}</div>
-      </div>
-      <p className="text-muted-foreground/60 px-1 text-[11px] tracking-wide">{name}</p>
-    </div>
   )
 }
 
@@ -620,17 +478,38 @@ function Examples() {
 
 /* -------------------------------------------------------------- catalogue */
 
+/**
+ * Every component in the kit, running, one card each.
+ *
+ * Not a shortlist and not a list of names — 309 live components, because the
+ * honest answer to "what is in it" is the thing itself, and a landing page
+ * showing twelve highlights invites you to go and count.
+ *
+ * Each preview is the component's own composer at its default state, so the
+ * cards cannot drift from the components: adding one to the registry puts it
+ * here, correctly configured, with no second copy of the setup to maintain.
+ *
+ * **Mounted only when scrolled near.** Rendering three hundred live components
+ * at once is not a page anyone can use — some of them fetch map tiles, decode
+ * audio, or run animation loops. `LazyMount` keeps a reserved box until the
+ * card is close to the viewport, so the cost is paid for the dozen on screen
+ * rather than for all of them.
+ *
+ * Previews are inert: `pointer-events-none` means a click lands on the card
+ * and navigates, rather than being swallowed by an input inside the preview.
+ */
 function Catalogue() {
   return (
     <Bleed className="py-20 lg:py-28">
       <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
         <div className="max-w-xl">
           <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            Everything, in {CATEGORIES.length} categories.
+            All {ENTRIES.length}, running.
           </h2>
           <p className="text-muted-foreground mt-4 text-sm leading-relaxed">
-            Each has a page with a live composer, worked examples and a full
-            props table.
+            Every component across {CATEGORIES.length} categories — no shortlist, and none of them
+            a screenshot. Each has a page with a live composer, worked examples and a full props
+            table.
           </p>
         </div>
         <Button asChild variant="secondary" size="sm">
@@ -640,36 +519,141 @@ function Catalogue() {
         </Button>
       </div>
 
-      <div className="columns-1 gap-10 md:columns-2 xl:columns-3">
-        {CATEGORIES.map((category) => (
-          <div key={category.label} className="mb-9 break-inside-avoid">
-            <div className="mb-3 flex items-baseline gap-2">
-              <h3 className="text-[11px] font-medium tracking-[0.14em] uppercase">
-                {category.label}
-              </h3>
-              <span className="text-muted-foreground/50 text-[11px] tabular-nums">
-                {category.items.length}
-              </span>
-            </div>
-            <div className="flex flex-wrap gap-1.5">
-              {category.items.map((entry) => (
-                <Link
-                  key={entry.id}
-                  to={componentPath(entry.id)}
-                  className={cn(
-                    'bg-secondary text-secondary-foreground hover:bg-accent px-2.5 py-1 text-xs',
-                    radius.control,
-                    focusRing,
-                  )}
-                >
-                  {entry.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
+      <Masonry columns={{ base: 1, sm: 2, lg: 3, xl: 4 }} gap={3}>
+        {CATEGORIES.flatMap((category) =>
+          category.items.map((entry) => (
+            <ShowcaseCard key={entry.id} entry={entry} category={category.label} />
+          )),
+        )}
+      </Masonry>
     </Bleed>
+  )
+}
+
+/** One component, running, in a card that links to its page. */
+function ShowcaseCard({ entry, category }: { entry: ComponentEntry; category: string }) {
+  const preview = entry.composer
+    ? entry.composer.render(composerInitialState(entry.composer.controls))
+    : entry.demos?.[0]?.render()
+
+  return (
+    <Link
+      to={componentPath(entry.id)}
+      className={cn(
+        'group block',
+        surface,
+        radius.surface,
+        'hover:border-foreground/25 overflow-hidden transition-colors duration-150 ease-out',
+        'motion-reduce:transition-none',
+        focusRing,
+      )}
+    >
+      <div className="flex items-baseline justify-between gap-2 px-4 pt-3.5">
+        <span className="text-muted-foreground/50 truncate text-[10px] tracking-[0.14em] uppercase">
+          {category}
+        </span>
+        {entry.isNew && (
+          <span
+            className={cn(
+              'shrink-0 px-1.5 py-px text-[10px] font-medium tracking-wide uppercase',
+              'bg-[var(--green-soft)] text-[var(--green-soft-foreground)]',
+              radius.xs,
+            )}
+          >
+            New
+          </span>
+        )}
+      </div>
+
+      <p className="px-4 pb-3 text-sm font-medium">{entry.label}</p>
+
+      {preview && (
+        <LazyMount className="border-border bg-muted/30 border-t">
+          {/*
+            Inert and clipped. The preview is here to be recognised, not
+            operated — a live Input would otherwise swallow the click that is
+            meant to open the component's page.
+          */}
+          <div
+            // Hidden from assistive technology, not just from the pointer.
+            // These previews are decorative — the card already names the
+            // component and links to its page — and without this the landing
+            // page inherits three hundred components' worth of headings,
+            // labels and controls, which is unusable to navigate and skipped
+            // the page's own heading levels.
+            aria-hidden="true"
+            className="pointer-events-none flex min-h-28 max-h-52 items-start justify-center overflow-hidden p-4"
+            // A soft bottom edge, so a preview taller than the box reads as
+            // continuing rather than as having been chopped. Masked rather
+            // than overlaid with a gradient, which would have to know the
+            // card's background and would be wrong in the other theme.
+            style={{
+              maskImage: 'linear-gradient(to bottom, #000 72%, transparent)',
+              WebkitMaskImage: 'linear-gradient(to bottom, #000 72%, transparent)',
+            }}
+          >
+            {/*
+              Centred horizontally, anchored to the top vertically. Centring
+              both ways clipped tall previews at the top as well as the bottom,
+              so a card opened mid-sentence — and the first line is the part
+              that identifies the component. `mx-auto` centres a preview with
+              its own max-width, while a full-width table still fills the card.
+            */}
+            <div className="w-full origin-top scale-[0.85] [&>*]:mx-auto">{preview}</div>
+          </div>
+        </LazyMount>
+      )}
+    </Link>
+  )
+}
+
+/**
+ * Renders its children once the box has been near the viewport.
+ *
+ * A reserved box until then, so the page's scroll height is stable and nothing
+ * jumps as cards fill in. `rootMargin` is generous: mounting a component the
+ * moment its top edge appears means watching it appear, and the point is for it
+ * to be there already.
+ *
+ * Without an observer — during server rendering, or in a browser that has none
+ * — it renders immediately, because a catalogue that shows nothing without
+ * JavaScript is worse than a slow one.
+ */
+function LazyMount({
+  children,
+  className,
+  placeholderHeight = 140,
+}: {
+  children: ReactNode
+  className?: string
+  placeholderHeight?: number
+}) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [shown, setShown] = useState(() => typeof IntersectionObserver === 'undefined')
+
+  useEffect(() => {
+    if (shown) return
+    const node = ref.current
+    if (!node) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setShown(true)
+          observer.disconnect()
+        }
+      },
+      { rootMargin: '600px' },
+    )
+
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [shown])
+
+  return (
+    <div ref={ref} className={className}>
+      {shown ? children : <div style={{ height: placeholderHeight }} />}
+    </div>
   )
 }
 
