@@ -1,6 +1,6 @@
 {
   "name": "astralyx-ui",
-  "version": "0.5.3",
+  "version": "0.6.0",
   "homepage": "https://ui.astralyx.dev",
   "items": [
     {
@@ -3869,7 +3869,8 @@
         "input",
         "lib-styles",
         "lib-utils",
-        "select"
+        "select",
+        "tag-input"
       ]
     },
     {

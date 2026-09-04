@@ -241,7 +241,8 @@ export const segmentBuilderEntry: ComponentEntry = {
     { name: 'precedence', type: 'one join per group', description: '"A or B and C" means two different audiences depending on how it binds. The join is set once at the head of a group and echoed read-only between its rows, so the box you see is the parse tree — a dropdown on every line is what makes a flat builder ambiguous.' },
     { name: 'nesting', type: 'tinted, not just indented', description: 'The boundary of a group carries the precedence, so it is drawn as a filled box that deepens with depth rather than a margin you have to measure by eye.' },
     { name: 'incomplete rows', type: 'marked, not dropped', description: 'A condition with no value is a half-written thought. Treating it as absent means the segment quietly matches more people than the author believes — expensive for a marketing send.' },
-    { name: 'fields', type: 'FieldSpec[]', description: '{ key, label, type?, options? }. The type picks the operator list and the value control.' },
+    { name: 'fields', type: 'FieldSpec[]', description: '{ key, label, type?, options?, operators? }. The type picks the operator list and the value control; `operators` replaces that list when the caller knows more than a type name conveys — a SQL dialect with ILIKE, a metric with a percentile comparison.' },
+    { name: 'arity', type: "'none' | 'one' | 'many'", description: '"Is one of" was in the operator list from the start, rendered as a single select — which quietly made it a synonym for "is". A `many` operator now takes a list through [[tag-input]], and switching between arities clears the side that no longer applies rather than leaving a stale value to widen the segment later.' },
     { name: 'estimate', type: 'ReactNode', description: 'Supplied by the caller — only your backend knows how many people match.' },
   ],
   demos: [

@@ -11,13 +11,17 @@ import { Select } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import type { SchemaColumn } from '@/components/ui/schema-table'
 import {
+  applyFunction,
   compileSelect,
-  familyOf,
+  DIALECTS,
+  familyOfField,
+  operatorsFor,
   parseSelect,
   qualify,
   splitQualified,
-  type Placeholders,
   type SelectQuery,
+  type SqlDialect,
+  type SqlFunction,
   type SqlGroup,
   type SqlJoin,
 } from '@/lib/sql-select'
@@ -73,8 +77,29 @@ type QueryConstructorProps = Omit<ComponentProps<'div'>, 'onChange'> & {
   onChange?: (query: SelectQuery) => void
   /** The compiled statement and its parameters, on every change. */
   onCompile?: (sql: string, params: unknown[]) => void
-  /** `$1` for Postgres, `?` for MySQL and SQLite. */
-  placeholders?: Placeholders
+  /**
+   * The provider the statement is for.
+   *
+   * It settles quoting, placeholders, how a row limit is written, whether
+   * booleans are literals, and which operators exist — all at once, so a query
+   * built for one provider says plainly what it cannot do on another instead of
+   * emitting SQL that will not run.
+   */
+  dialect?: SqlDialect
+  /** Starting provider when `dialect` is not controlled. */
+  defaultDialect?: SqlDialect
+  /** Providers offered in the switcher. Omit the switcher with a single one. */
+  dialects?: SqlDialect[]
+  onDialectChange?: (dialect: SqlDialect) => void
+  /**
+   * Functions the caller permits, by name.
+   *
+   * This is how a function gets used: declare it and it joins the vocabulary,
+   * offered as `fn(table.column)` wherever a column can go. It is never free
+   * text — an undeclared name cannot reach the statement, for the same reason
+   * an unknown table cannot.
+   */
+  functions?: SqlFunction[]
   /** Hide the generated SQL. */
   preview?: boolean
   /** Hide the paste-a-statement panel. */
@@ -140,7 +165,11 @@ function QueryConstructor({
   defaultValue,
   onChange,
   onCompile,
-  placeholders = 'numbered',
+  dialect: dialectProp,
+  defaultDialect,
+  dialects = ['postgres', 'mysql', 'sqlite', 'mssql'],
+  onDialectChange,
+  functions = [],
   preview = true,
   importable = true,
   defaultLimit,
@@ -157,6 +186,15 @@ function QueryConstructor({
   const [draft, setDraft] = useState('')
   const [importIssues, setImportIssues] = useState<string[] | null>(null)
   const [joinOpen, setJoinOpen] = useState(false)
+  const [internalDialect, setInternalDialect] = useState<SqlDialect>(
+    dialectProp ?? defaultDialect ?? dialects[0] ?? 'postgres',
+  )
+
+  const dialect = dialectProp ?? internalDialect
+  const setDialect = (next: SqlDialect) => {
+    if (dialectProp === undefined) setInternalDialect(next)
+    onDialectChange?.(next)
+  }
 
   const query = value ?? internal
 
@@ -173,35 +211,65 @@ function QueryConstructor({
 
   const inScope = useMemo(() => tables.filter((table) => scope.has(table.name)), [tables, scope])
 
-  /** Qualified columns of the tables in play, with their types alongside. */
-  const columnOptions = useMemo(
-    () =>
-      inScope.flatMap((table) =>
-        table.columns.map((column) => ({
-          value: qualify(table.name, column.name),
-          label: qualify(table.name, column.name),
-          description: column.type,
-        })),
-      ),
-    [inScope],
+  /** The functions available on this provider. */
+  const available = useMemo(
+    () => functions.filter((fn) => !fn.dialects || fn.dialects.includes(dialect)),
+    [functions, dialect],
   )
 
-  /** The same columns as `SegmentBuilder` fields. */
+  /**
+   * Every field that can go where a column can: the columns of the tables in
+   * play, and each declared function applied to the columns it accepts.
+   */
+  const columnOptions = useMemo(() => {
+    const plain = inScope.flatMap((table) =>
+      table.columns.map((column) => ({
+        value: qualify(table.name, column.name),
+        label: qualify(table.name, column.name),
+        description: column.type,
+      })),
+    )
+    const wrapped = available.flatMap((fn) =>
+      plain
+        .filter(
+          (option) =>
+            !fn.families || fn.families.includes(familyOfField(option.value, tables, available)),
+        )
+        .map((option) => ({
+          value: applyFunction(fn.name, option.value),
+          label: applyFunction(fn.name, option.value),
+          description: fn.label ?? `${fn.name}()`,
+        })),
+    )
+    return [...plain, ...wrapped]
+  }, [inScope, available, tables])
+
+  /**
+   * The same fields for `SegmentBuilder`, each carrying the operators this
+   * provider actually has — which is how `ILIKE` appears on PostgreSQL and
+   * `REGEXP` on MySQL without the filter knowing anything about SQL.
+   */
   const whereFields = useMemo(
     () =>
-      inScope.flatMap((table) =>
-        table.columns.map((column) => ({
-          key: qualify(table.name, column.name),
-          label: qualify(table.name, column.name),
-          type: familyOf(column.type),
-        })),
-      ),
-    [inScope],
+      columnOptions.map((option) => {
+        const family = familyOfField(option.value, tables, available)
+        return {
+          key: option.value,
+          label: option.label,
+          type: family,
+          operators: operatorsFor(dialect, family).map((operator) => ({
+            value: operator.id,
+            label: operator.label,
+            arity: operator.arity,
+          })),
+        }
+      }),
+    [columnOptions, tables, available, dialect],
   )
 
   const compiled = useMemo(
-    () => compileSelect(query, tables, placeholders),
-    [query, tables, placeholders],
+    () => compileSelect(query, tables, { dialect, functions: available }),
+    [query, tables, dialect, available],
   )
 
   /**
@@ -297,7 +365,11 @@ function QueryConstructor({
   const importSql = () => {
     // The current parameters are passed so a statement copied straight out of
     // the preview — placeholders and all — round-trips with its values.
-    const { query: parsed, issues } = parseSelect(draft, tables, compiled.params)
+    const { query: parsed, issues } = parseSelect(draft, tables, {
+      params: compiled.params,
+      dialect,
+      functions: available,
+    })
     setImportIssues(issues)
     if (!parsed) return
     commit(parsed)
@@ -555,7 +627,21 @@ function QueryConstructor({
         <section className="flex flex-col gap-2">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-sm font-medium">{label}</p>
-            <div className="flex items-center gap-1">
+            <div className="flex flex-wrap items-center gap-1">
+              {/* The provider sits with the statement, because it is the
+                  statement it changes — the same query renders differently on
+                  each, and the operators on offer change with it. */}
+              {dialects.length > 1 && (
+                <Select
+                  size="sm"
+                  triggerLabel="Provider"
+                  value={dialect}
+                  options={dialects.map((item) => ({ value: item, label: DIALECTS[item].label }))}
+                  onValueChange={(next) => setDialect(next as SqlDialect)}
+                  className="w-36"
+                  triggerClassName="w-full"
+                />
+              )}
               {importable && (
                 <Button
                   size="sm"

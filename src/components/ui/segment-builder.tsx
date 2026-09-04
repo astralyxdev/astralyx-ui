@@ -3,6 +3,7 @@ import { Plus, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
+import { TagInput } from '@/components/ui/tag-input'
 import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -41,6 +42,14 @@ export type FieldSpec = {
   type?: 'string' | 'number' | 'date' | 'boolean' | 'enum'
   /** For `enum`, the allowed values. */
   options?: { value: string; label: string }[]
+  /**
+   * Operators for this field, replacing the ones its `type` implies.
+   *
+   * A caller that knows more about the field than a type name conveys — a SQL
+   * dialect with `ILIKE`, a metric with a percentile comparison — supplies them
+   * rather than being limited to the built-in list.
+   */
+  operators?: Operator[]
 }
 
 export type Condition = {
@@ -48,6 +57,8 @@ export type Condition = {
   field: string
   operator: string
   value: string
+  /** For `many` operators — "is one of", `IN`. */
+  values?: string[]
 }
 
 export type ConditionGroup = {
@@ -58,7 +69,24 @@ export type ConditionGroup = {
 
 const isGroup = (node: Condition | ConditionGroup): node is ConditionGroup => 'conditions' in node
 
-type Operator = { value: string; label: string; unary?: boolean }
+export type Operator = {
+  value: string
+  label: string
+  /**
+   * How many values the operator takes.
+   *
+   * `none` is a complete predicate on its own ("is set"); `one` is the ordinary
+   * case; `many` takes a list and is what "is one of" always meant — it was in
+   * this list from the start, rendered as a single select, which quietly made
+   * it a synonym for "is".
+   */
+  arity?: 'none' | 'one' | 'many'
+  /** @deprecated Use `arity: 'none'`. */
+  unary?: boolean
+}
+
+const arityOf = (operator: Operator | undefined) =>
+  operator?.arity ?? (operator?.unary ? 'none' : 'one')
 
 const OPERATORS: Record<string, Operator[]> = {
   string: [
@@ -66,8 +94,9 @@ const OPERATORS: Record<string, Operator[]> = {
     { value: 'neq', label: 'is not' },
     { value: 'contains', label: 'contains' },
     { value: 'starts', label: 'starts with' },
-    { value: 'set', label: 'is set', unary: true },
-    { value: 'unset', label: 'is not set', unary: true },
+    { value: 'in', label: 'is one of', arity: 'many' },
+    { value: 'set', label: 'is set', arity: 'none' },
+    { value: 'unset', label: 'is not set', arity: 'none' },
   ],
   number: [
     { value: 'eq', label: '=' },
@@ -76,6 +105,7 @@ const OPERATORS: Record<string, Operator[]> = {
     { value: 'gte', label: '≥' },
     { value: 'lt', label: '<' },
     { value: 'lte', label: '≤' },
+    { value: 'in', label: 'is one of', arity: 'many' },
   ],
   date: [
     { value: 'after', label: 'after' },
@@ -83,13 +113,13 @@ const OPERATORS: Record<string, Operator[]> = {
     { value: 'within', label: 'in the last (days)' },
   ],
   boolean: [
-    { value: 'true', label: 'is true', unary: true },
-    { value: 'false', label: 'is false', unary: true },
+    { value: 'true', label: 'is true', arity: 'none' },
+    { value: 'false', label: 'is false', arity: 'none' },
   ],
   enum: [
     { value: 'eq', label: 'is' },
     { value: 'neq', label: 'is not' },
-    { value: 'in', label: 'is one of' },
+    { value: 'in', label: 'is one of', arity: 'many' },
   ],
 }
 
@@ -115,8 +145,10 @@ type Ctx = {
   addGroup: (id: string) => void
 }
 
-const operatorsFor = (fields: FieldSpec[], key: string) =>
-  OPERATORS[fields.find((field) => field.key === key)?.type ?? 'string'] ?? OPERATORS.string
+const operatorsFor = (fields: FieldSpec[], key: string) => {
+  const field = fields.find((item) => item.key === key)
+  return field?.operators ?? OPERATORS[field?.type ?? 'string'] ?? OPERATORS.string
+}
 
 /* --------------------------------------------------------------- summary */
 
@@ -126,7 +158,12 @@ function describe(node: Condition | ConditionGroup, fields: FieldSpec[], top = t
     const spec = fields.find((field) => field.key === node.field)
     const operator = operatorsFor(fields, node.field).find((item) => item.value === node.operator)
     const label = spec?.label ?? node.field
-    if (operator?.unary) return `${label} ${operator.label}`
+    const arity = arityOf(operator)
+    if (arity === 'none') return `${label} ${operator?.label}`
+    if (arity === 'many') {
+      const list = node.values ?? []
+      return `${label} ${operator?.label ?? node.operator} ${list.length ? list.join(', ') : '…'}`
+    }
     const shown =
       spec?.type === 'enum'
         ? (spec.options?.find((option) => option.value === node.value)?.label ?? node.value)
@@ -147,7 +184,11 @@ function ConditionRow({ condition, ctx }: { condition: Condition; ctx: Ctx }) {
   const operators = operatorsFor(ctx.fields, condition.field)
   const operator = operators.find((item) => item.value === condition.operator)
   const spec = ctx.fields.find((field) => field.key === condition.field)
-  const incomplete = !operator?.unary && condition.value.trim() === ''
+  const arity = arityOf(operator)
+  const incomplete =
+    arity === 'many'
+      ? (condition.values ?? []).length === 0
+      : arity === 'one' && condition.value.trim() === ''
 
   return (
     <div
@@ -185,6 +226,7 @@ function ConditionRow({ condition, ctx }: { condition: Condition; ctx: Ctx }) {
             // would be unselectable and the value meaningless.
             operator: operatorsFor(ctx.fields, next)[0]?.value ?? 'eq',
             value: '',
+            values: [],
           })
         }
         triggerClassName="w-full font-medium"
@@ -196,12 +238,32 @@ function ConditionRow({ condition, ctx }: { condition: Condition; ctx: Ctx }) {
         disabled={ctx.disabled}
         value={condition.operator}
         options={operators.map((item) => ({ value: item.value, label: item.label }))}
-        onValueChange={(next) => ctx.patch(condition.id, { operator: next })}
+        onValueChange={(next) => {
+          // Moving between arities leaves the other side stale, and a stale
+          // value silently widens the segment when the operator moves back.
+          const to = arityOf(operators.find((item) => item.value === next))
+          ctx.patch(condition.id, {
+            operator: next,
+            ...(to === 'many' ? { value: '' } : { values: [] }),
+          })
+        }}
         triggerClassName="text-muted-foreground w-full"
       />
 
-      {operator?.unary ? (
+      {arity === 'none' ? (
         <span aria-hidden="true" className="hidden @[20rem]:block" />
+      ) : arity === 'many' ? (
+        /* A list, entered as tags. "Is one of" with a single-value control was
+           only ever a slower way of writing "is". */
+        <TagInput
+          size="sm"
+          value={condition.values ?? []}
+          disabled={ctx.disabled}
+          error={incomplete}
+          placeholder="Add a value"
+          aria-label="Values"
+          onValueChange={(next) => ctx.patch(condition.id, { values: next })}
+        />
       ) : spec?.type === 'enum' && spec.options ? (
         <Select
           size="sm"

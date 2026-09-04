@@ -11626,11 +11626,35 @@
       "description": "The compiled statement and its parameters, on every change."
     },
     {
-      "name": "placeholders",
-      "type": "Placeholders",
+      "name": "dialect",
+      "type": "SqlDialect",
       "optional": true,
-      "default": "'numbered'",
-      "description": "`$1` for Postgres, `?` for MySQL and SQLite."
+      "description": "The provider the statement is for. It settles quoting, placeholders, how a row limit is written, whether booleans are literals, and which operators exist — all at once, so a query built for one provider says plainly what it cannot do on another instead of emitting SQL that will not run."
+    },
+    {
+      "name": "defaultDialect",
+      "type": "SqlDialect",
+      "optional": true,
+      "description": "Starting provider when `dialect` is not controlled."
+    },
+    {
+      "name": "dialects",
+      "type": "SqlDialect[]",
+      "optional": true,
+      "default": "['postgres', 'mysql', 'sqlite', 'mssql']",
+      "description": "Providers offered in the switcher. Omit the switcher with a single one."
+    },
+    {
+      "name": "onDialectChange",
+      "type": "(dialect: SqlDialect) => void",
+      "optional": true
+    },
+    {
+      "name": "functions",
+      "type": "SqlFunction[]",
+      "optional": true,
+      "default": "[]",
+      "description": "Functions the caller permits, by name. This is how a function gets used: declare it and it joins the vocabulary, offered as `fn(table.column)` wherever a column can go. It is never free text — an undeclared name cannot reach the statement, for the same reason an unknown table cannot."
     },
     {
       "name": "preview",
@@ -13968,6 +13992,12 @@
       "name": "value",
       "type": "string",
       "optional": false
+    },
+    {
+      "name": "values",
+      "type": "string[]",
+      "optional": true,
+      "description": "For `many` operators — \"is one of\", `IN`."
     },
     {
       "name": "join",

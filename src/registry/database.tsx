@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { ConnectionString } from '@/components/ui/connection-string'
 import { MigrationList, type Migration } from '@/components/ui/migration-list'
 import { QueryConstructor, type Query, type QueryTable } from '@/components/ui/query-constructor'
+import type { SqlDialect, SqlFunction } from '@/lib/sql-select'
 import { QueryEditor } from '@/components/ui/query-editor'
 import { QueryPlan, type PlanNode } from '@/components/ui/query-plan'
 import { SchemaTable, type SchemaColumn, type SchemaIndex } from '@/components/ui/schema-table'
@@ -18,6 +19,7 @@ export const queryEditorEntry: ComponentEntry = {
   description:
     'A SQL editor that asks before running an UPDATE or DELETE with no WHERE clause. That is the most expensive mistake anyone makes in a query console, and it is trivial to detect.',
   usage: `import { QueryConstructor, type Query, type QueryTable } from '@/components/ui/query-constructor'
+import type { SqlDialect, SqlFunction } from '@/lib/sql-select'
 import { QueryEditor } from '@/components/ui/query-editor'
 
 <QueryEditor value={sql} onValueChange={setSql} onRun={run} />`,
@@ -344,21 +346,31 @@ const STARTER: Query = {
   limit: 100,
 }
 
+/** Declared, so they can be used; anything not here cannot reach the SQL. */
+const FUNCTIONS: SqlFunction[] = [
+  { name: 'lower', families: ['string'], returns: 'string' },
+  { name: 'upper', families: ['string'], returns: 'string' },
+  { name: 'date_trunc', families: ['date'], returns: 'date', dialects: ['postgres'] },
+  { name: 'count', returns: 'number' },
+]
+
 function QueryConstructorDemo({
-  placeholders = 'numbered',
+  dialect = 'postgres',
   preview = true,
 }: {
-  placeholders?: 'numbered' | 'question'
+  dialect?: SqlDialect
   preview?: boolean
 }) {
   const [query, setQuery] = useState<Query>(STARTER)
   return (
     <QueryConstructor
       className="w-full"
+      key={dialect}
       tables={SCHEMA}
       value={query}
       onChange={setQuery}
-      placeholders={placeholders}
+      defaultDialect={dialect}
+      functions={FUNCTIONS}
       preview={preview}
       onRun={() => {}}
     />
@@ -373,27 +385,32 @@ export const queryConstructorEntry: ComponentEntry = {
     'A SELECT assembled a clause at a time — sources with a join button, columns, filter, then order, group and limit — with the finished statement underneath. Reads both ways: paste a SELECT and the blocks fill in. Values compile to bound parameters and identifiers are allow-listed against the schema.',
   usage: `import { QueryConstructor } from '@/components/ui/query-constructor'
 
-<QueryConstructor tables={schema} onCompile={(sql, params) => preview(sql, params)} />`,
+<QueryConstructor
+  tables={schema}
+  dialect="postgres"
+  functions={[{ name: 'lower', families: ['string'] }]}
+  onCompile={(sql, params) => preview(sql, params)}
+/>`,
   composer: {
     tall: true,
     controls: [
       {
         type: 'select',
-        prop: 'placeholders',
-        label: 'placeholders',
-        default: 'numbered',
-        options: ['numbered', 'question'],
+        prop: 'dialect',
+        label: 'dialect',
+        default: 'postgres',
+        options: ['postgres', 'mysql', 'sqlite', 'mssql'],
       },
       { type: 'boolean', prop: 'preview', label: 'preview', default: true },
     ],
     render: (state) => (
       <QueryConstructorDemo
-        placeholders={state.placeholders as 'numbered' | 'question'}
+        dialect={state.dialect as SqlDialect}
         preview={Boolean(state.preview)}
       />
     ),
     code: (state) =>
-      `<QueryConstructor\n  tables={schema}\n  placeholders="${state.placeholders}"\n  preview={${Boolean(state.preview)}}\n  onCompile={(sql, params) => preview(sql, params)}\n/>`,
+      `<QueryConstructor\n  tables={schema}\n  functions={functions}\n  dialect="${state.dialect}"\n  onCompile={(sql, params) => preview(sql, params)}\n/>`,
   },
   api: [
     { name: 'tables', type: 'QueryTable[]', description: '{ name, columns } where columns are `SchemaColumn` — the same type [[schema-table]] takes, so one schema description feeds both.' },
@@ -409,6 +426,11 @@ export const queryConstructorEntry: ComponentEntry = {
     { name: 'pasted SQL is not trusted', type: 'same two rules', description: 'A literal in a pasted WHERE becomes a bound parameter when it compiles back, and a table you did not declare is dropped with a reason rather than carried through.' },
     { name: 'one block per decision', type: 'sources, columns, filter…', description: 'Each clause is a titled card holding only its own controls, and each carries its own action — which is why joining a table is a button on Sources rather than a control floating between clauses. Order, group and limit sit in a row, because three small choices do not each deserve a full-width band.' },
     { name: 'removing a table', type: 'takes its columns', description: 'Dropping a join also clears that table from the columns, the filter, the ordering and the grouping, rather than leaving a statement that names a table it no longer joins.' },
+    { name: 'dialect', type: "'postgres' | 'mysql' | 'sqlite' | 'mssql'", default: "'postgres'", description: 'One switch for everything that differs: quoting (`"x"`, `` `x` ``, `[x]`), placeholders (`$1`, `?`, `@p1`), boolean literals versus 1 and 0, and the operator list. A provider switcher sits with the statement because it is the statement it changes.' },
+    { name: 'IN', type: 'a list, each bound', description: 'Compiles to `IN ($1, $2, $3)` with one placeholder per item — the list is bound, never spliced. `SegmentBuilder` grew a `many` arity for it, so "is one of" is finally a list input rather than a single select.' },
+    { name: 'provider-only operators', type: 'offered where they exist', description: '`ILIKE` and `~` on PostgreSQL, `REGEXP` and `SOUNDS LIKE` on MySQL, `GLOB` on SQLite. Opening a query on a provider that lacks one drops that condition and says which operator and which provider.' },
+    { name: 'SQL Server has no LIMIT', type: 'reported, not faked', description: 'It compiles to `OFFSET 0 ROWS FETCH NEXT @p1 ROWS ONLY`, which is a syntax error without an ORDER BY — so a limit with no ordering is reported rather than emitted.' },
+    { name: 'functions', type: 'SqlFunction[]', description: 'How a function gets used: declare `{ name, families?, returns?, dialects? }` and it is offered as `fn(table.column)` wherever a column can go, in the columns, the filter, the ordering. An undeclared name cannot reach the statement — the same allow-list that protects table names.' },
     { name: 'onCompile', type: '(sql, params) => void', description: 'Fires when the statement changes, keyed on the output rather than the callback identity so an inline arrow does not loop.' },
   ],
   demos: [
