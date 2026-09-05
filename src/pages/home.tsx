@@ -481,7 +481,7 @@ function Examples() {
 /**
  * Every component in the kit, running, one card each.
  *
- * Not a shortlist and not a list of names — 309 live components, because the
+ * Not a shortlist and not a list of names — every live component, because the
  * honest answer to "what is in it" is the thing itself, and a landing page
  * showing twelve highlights invites you to go and count.
  *

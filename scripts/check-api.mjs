@@ -26,7 +26,7 @@ globalThis.window ??= {
 }
 
 const server = await createServer({ server: { middlewareMode: true }, appType: 'custom' })
-const { ENTRIES } = await server.ssrLoadModule('/src/registry/index.ts')
+const { ENTRIES, CATEGORIES } = await server.ssrLoadModule('/src/registry/index.ts')
 const { apiDocs, namesIn } = await server.ssrLoadModule('/src/registry/props.ts')
 await server.close()
 
@@ -111,7 +111,44 @@ if (process.argv.includes('--notes')) {
   for (const note of notes) console.log(`  ${note}`)
 }
 
-const problems = [...stale, ...imports]
+/**
+ * The counts quoted outside the app, where nothing derives them.
+ *
+ * The README and the package description are the first thing anyone reads on
+ * GitHub and on npm, and both said 309 for as long as it took to add thirty-four
+ * more. The site's own copy is computed from the registry and was already
+ * right, which is exactly why these two rotted: nobody rechecks a number that
+ * has been correct for months.
+ */
+const counts = []
+const registryIndex = JSON.parse(fs.readFileSync('registry/index.json', 'utf8'))
+const uiCount = registryIndex.items.filter((item) => item.type === 'registry:ui').length
+const primitiveCount = registryIndex.items.filter(
+  (item) => item.type === 'registry:primitive',
+).length
+
+const claims = [
+  ['README.md', /\*\*(\d+) accessible React components/, uiCount, 'components'],
+  ['README.md', /\*\*(\d+) components\*\* across (\d+) categories/, uiCount, 'components'],
+  ['README.md', /\*\*(\d+) primitives\*\*/, primitiveCount, 'primitives'],
+  ['package.json', /"(\d+) accessible React components/, uiCount, 'components'],
+]
+
+for (const [file, pattern, expected, noun] of claims) {
+  const match = fs.readFileSync(file, 'utf8').match(pattern)
+  if (!match) {
+    counts.push(`${file}: no ${noun} count matched — the claim this guards was reworded`)
+    continue
+  }
+  if (Number(match[1]) !== expected) {
+    counts.push(`${file}: claims ${match[1]} ${noun}, the registry has ${expected}`)
+  }
+  if (match[2] !== undefined && Number(match[2]) !== CATEGORIES.length) {
+    counts.push(`${file}: claims ${match[2]} categories, the registry has ${CATEGORIES.length}`)
+  }
+}
+
+const problems = [...stale, ...imports, ...counts]
 if (problems.length) {
   console.error(`api check found ${problems.length} stale rows:`)
   for (const problem of problems) console.error(`  ${problem}`)
