@@ -92,7 +92,9 @@ function ComponentGroup({ component }: { component: ApiComponent }) {
 
   return (
     <Group
-      id={`api-${component.name.toLowerCase()}`}
+      // Case-preserving, and namespaced by kind. `Fmt` and `FMT` are both
+      // exported from one file, so a lowercased anchor collided.
+      id={`api-${component.name}`}
       title={
         <code className="font-mono">
           {component.name}
@@ -206,7 +208,7 @@ function Types({ types }: { types: ApiType[] }) {
     <Group title="Types">
       <div className="space-y-8">
         {shapes.map((type) => (
-          <div key={type.name} id={`api-${type.name.toLowerCase()}`} className="scroll-mt-8">
+          <div key={type.name} id={`api-type-${type.name}`} className="scroll-mt-8">
             <div className="mb-3">
               <h4 className="text-sm font-medium">
                 <TypeName type={type} />

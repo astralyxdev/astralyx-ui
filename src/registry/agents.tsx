@@ -1,9 +1,7 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { AgentCard } from '@/components/ui/agent-card'
-import { Avatar, AvatarGroup } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Sparkline } from '@/components/ui/sparkline'
 import { Switch } from '@/components/ui/switch'
 import { AgentMemory, type MemoryEntry } from '@/components/ui/agent-memory'
 import { AgentTasks, type AgentTask } from '@/components/ui/agent-tasks'
@@ -31,9 +29,17 @@ import { ToolSchema } from '@/components/ui/tool-schema'
 import {
   NodeCanvas,
   NodePalette,
+  useCanvasNode,
   type CanvasEdge,
   type CanvasNode,
+  type CanvasNodeProps,
+  type NodeTypes,
 } from '@/components/ui/node-canvas'
+import {
+  QueryConstructor,
+  type Query,
+  type QueryTable,
+} from '@/components/ui/query-constructor'
 import type { ComponentEntry } from './types'
 
 /** The kinds of step an agent pipeline is built from. */
@@ -45,11 +51,11 @@ const KINDS: Record<string, { label: string; tone: 'blue' | 'violet' | 'amber' |
 }
 
 const START_NODES: CanvasNode[] = [
-  { id: 'in', x: 0, y: 60, label: 'Incoming message', data: 'trigger', deletable: false },
-  { id: 'plan', x: 260, y: 60, label: 'Plan the reply', data: 'model' },
-  { id: 'search', x: 520, y: 0, label: 'search_docs', data: 'tool' },
-  { id: 'ticket', x: 520, y: 120, label: 'create_ticket', data: 'tool' },
-  { id: 'out', x: 780, y: 60, label: 'Send reply', data: 'output', connectable: false },
+  { id: 'in', x: 0, y: 60, type: 'step', label: 'Incoming message', data: 'trigger', deletable: false },
+  { id: 'plan', x: 260, y: 60, type: 'step', label: 'Plan the reply', data: 'model' },
+  { id: 'search', x: 520, y: 0, type: 'step', label: 'search_docs', data: 'tool' },
+  { id: 'ticket', x: 520, y: 120, type: 'step', label: 'create_ticket', data: 'tool' },
+  { id: 'out', x: 780, y: 60, type: 'step', label: 'Send reply', data: 'output', connectable: false },
 ]
 
 const START_EDGES: CanvasEdge[] = [
@@ -59,6 +65,27 @@ const START_EDGES: CanvasEdge[] = [
   { id: 'e4', from: 'search', to: 'out' },
   { id: 'e5', from: 'ticket', to: 'out', dashed: true },
 ]
+
+/**
+ * A pipeline step, as a registered node type.
+ *
+ * The graph carries `type: 'step'` and nothing else about how a step looks —
+ * which is what lets the same nodes come back from a server, or out of
+ * `JSON.stringify`, and still render.
+ */
+function StepNode({ node }: CanvasNodeProps) {
+  const kind = KINDS[String(node.data)] ?? KINDS.model
+  return (
+    <div className="space-y-1.5">
+      <Badge size="sm" color={kind.tone}>
+        {kind.label}
+      </Badge>
+      <p className="text-sm leading-snug font-medium">{node.label}</p>
+    </div>
+  )
+}
+
+const STEP_TYPES: NodeTypes = { step: StepNode }
 
 const PALETTE = [
   { id: 'model', label: 'Model call', hint: 'Prompt a model' },
@@ -88,7 +115,7 @@ function PipelineEditor({
     const id = `${kind}-${Date.now()}`
     setNodes((current) => [
       ...current,
-      { id, x: position.x, y: position.y, label: KINDS[kind]?.label ?? kind, data: kind },
+      { id, x: position.x, y: position.y, type: 'step', label: KINDS[kind]?.label ?? kind, data: kind },
     ])
     if (from) setEdges((current) => [...current, { id: `e-${id}`, from, to: id }])
     setSelected(id)
@@ -114,6 +141,8 @@ function PipelineEditor({
             current.filter((edge) => edge.from !== id && edge.to !== id),
           )
         },
+        onRemoveEdge: (id: string) =>
+          setEdges((current) => current.filter((edge) => edge.id !== id)),
       }
     : {}
 
@@ -139,18 +168,183 @@ function PipelineEditor({
         selectedId={selected}
         onSelect={setSelected}
         label="Agent pipeline"
-        renderNode={(node) => {
-          const kind = KINDS[String(node.data)] ?? KINDS.model
-          return (
-            <div className="space-y-1.5">
-              <Badge size="sm" color={kind.tone}>
-                {kind.label}
-              </Badge>
-              <p className="text-sm leading-snug font-medium">{node.label}</p>
-            </div>
-          )
-        }}
+        nodeTypes={STEP_TYPES}
         {...editing}
+      />
+    </div>
+  )
+}
+
+/* ------------------------------------------------- nodes that are components */
+
+/**
+ * The node types, declared once at module scope and referred to by name.
+ *
+ * This is the whole point of `nodeTypes`: a node is an ordinary component,
+ * written and tested on its own, and the graph only carries its name. Declaring
+ * the map here rather than inline is not a style preference — a component
+ * created during render is a new component type every render, so React would
+ * remount every node on every pan and take the focus out of the field you were
+ * typing in.
+ */
+const SCHEMA_TABLES: QueryTable[] = [
+  {
+    name: 'orders',
+    columns: [
+      { name: 'id', type: 'number', primaryKey: true },
+      { name: 'user_id', type: 'number', references: 'users.id' },
+      { name: 'total', type: 'number' },
+      { name: 'status', type: 'string' },
+      { name: 'placed_at', type: 'date' },
+    ],
+  },
+  {
+    name: 'users',
+    columns: [
+      { name: 'id', type: 'number', primaryKey: true },
+      { name: 'email', type: 'string' },
+      { name: 'country', type: 'string' },
+    ],
+  },
+]
+
+/** A title bar that is the node's grip, so the body below stays fully usable. */
+function NodeHeader({ title, hint }: { title: string; hint?: string }) {
+  return (
+    <div
+      data-drag-handle
+      className="border-border -mx-3 -mt-3 mb-3 flex items-center justify-between gap-2 border-b px-3 pb-2"
+    >
+      <span className="text-xs font-medium">{title}</span>
+      {hint && <span className="text-muted-foreground/70 text-[10px]">{hint}</span>}
+    </div>
+  )
+}
+
+/**
+ * A webhook step: two real controls, no workaround.
+ *
+ * Nothing here stops propagation, and nothing needs to. The canvas skips a
+ * press that lands on a control, so the field takes its caret and the switch
+ * takes its click; the header drags the node.
+ */
+function WebhookNode() {
+  const [url, setUrl] = useState('')
+  return (
+    <div className="space-y-2.5">
+      <NodeHeader title="On completion" hint="drag me" />
+      <Input
+        size="sm"
+        aria-label="Endpoint"
+        placeholder="https://hooks.example.com/…"
+        value={url}
+        onChange={(event) => setUrl(event.target.value)}
+      />
+      <Switch
+        size="sm"
+        label={<span className="text-xs">Retry on 5xx</span>}
+        labelPosition="start"
+        containerClassName="justify-between w-full"
+        defaultChecked
+      />
+    </div>
+  )
+}
+
+/**
+ * A whole component as a node.
+ *
+ * `QueryConstructor` is 700 lines of selects, popovers, tag inputs and a
+ * generated statement — the case that used to be impossible here twice over.
+ * Its controls fought the drag, and every layer it opens is `position: fixed`,
+ * which a transformed ancestor turns into a containing block of its own, so
+ * menus landed a screen away from their trigger.
+ */
+function QueryNode() {
+  const { node, update } = useCanvasNode()
+  return (
+    <div className="space-y-0">
+      <NodeHeader title="Shape the query" hint="drag me" />
+      <QueryConstructor
+        tables={SCHEMA_TABLES}
+        value={node.data as Query | undefined}
+        onChange={(query) => update({ data: query })}
+        preview
+        className="w-[30rem]"
+      />
+    </div>
+  )
+}
+
+/** A plain note. Draggable anywhere, because nothing in it is interactive. */
+function NoteNode({ node }: CanvasNodeProps) {
+  return (
+    <div className="space-y-1.5">
+      <Badge size="sm" color="violet">
+        Note
+      </Badge>
+      <p className="text-muted-foreground text-xs leading-relaxed">{String(node.data ?? '')}</p>
+    </div>
+  )
+}
+
+const COMPONENT_NODE_TYPES: NodeTypes = {
+  webhook: WebhookNode,
+  query: QueryNode,
+  note: NoteNode,
+}
+
+const COMPONENT_NODES: CanvasNode[] = [
+  { id: 'hook', type: 'webhook', x: 20, y: 30, width: 240 },
+  { id: 'q', type: 'query', x: 350, y: 20, width: 'auto' },
+  {
+    id: 'note',
+    type: 'note',
+    x: 20, y: 230,
+    width: 240,
+    data: 'Every node here is a component referred to by name. The canvas only owns position, selection and the wires.',
+  },
+]
+
+const COMPONENT_EDGES: CanvasEdge[] = [{ id: 'hook-q', from: 'hook', to: 'q' }]
+
+/**
+ * The demo that answers "what can actually go inside a node".
+ *
+ * A screenshot of a finished graph never answers it, and the honest answer used
+ * to be "not much": a field could not take a space, Backspace deleted the node
+ * you were naming, and the documented workaround traded a usable control for a
+ * region that would not drag.
+ */
+function ComponentCanvas() {
+  const [nodes, setNodes] = useState(COMPONENT_NODES)
+  const [edges, setEdges] = useState(COMPONENT_EDGES)
+  const [selected, setSelected] = useState<string | null>(null)
+
+  return (
+    <div className="flex w-full flex-col gap-2">
+      <p className="text-muted-foreground text-xs">
+        Type in the endpoint, open a select in the query builder, flip the switch — then drag any
+        node by its title bar. Hover a wire to detach it.
+      </p>
+      <NodeCanvas
+        height={460}
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={COMPONENT_NODE_TYPES}
+        selectedId={selected}
+        onSelect={setSelected}
+        onNodesChange={setNodes}
+        label="Component nodes"
+        defaultZoom={0.9}
+        onConnect={(from, to) =>
+          setEdges((current) => [...current, { id: `e-${from}-${to}`, from, to }])
+        }
+        onRemoveEdge={(id) => setEdges((current) => current.filter((edge) => edge.id !== id))}
+        onRemoveNode={(id) => {
+          setNodes((current) => current.filter((node) => node.id !== id))
+          setEdges((current) => current.filter((e) => e.from !== id && e.to !== id))
+        }}
       />
     </div>
   )
@@ -159,26 +353,44 @@ function PipelineEditor({
 /**
  * The freeform demo: nodes are DOM, and you can add empty ones.
  *
- * The pipeline demo above shows the canvas doing a specific job. This one shows
- * the mechanism — a blank node you type into, a node holding real form
- * controls, a node holding a chart — because "what can go inside a node" is the
- * first question anyone has and a screenshot of a finished graph never answers
- * it.
+ * The pipeline demo shows the canvas doing a specific job and the one above
+ * shows what a node can hold. This one shows the mechanism — a blank node you
+ * type into, added by double-clicking the canvas or pressing the `+` on a node.
  */
 const BLANK_START: CanvasNode[] = [
-  { id: 'n1', x: 20, y: 30, data: 'form', width: 240 },
-  { id: 'n2', x: 320, y: 140, data: 'people', width: 240 },
+  { id: 'n1', x: 30, y: 40, type: 'blank', width: 240 },
+  { id: 'n2', x: 330, y: 150, type: 'blank', width: 240 },
 ]
+
+/** A node you name. The field is live; the node is still draggable around it. */
+function BlankNode() {
+  const { node, update } = useCanvasNode()
+  return (
+    <div className="space-y-1.5">
+      <p className="text-muted-foreground/70 text-[10px] tracking-[0.14em] uppercase">New node</p>
+      <Input
+        size="sm"
+        aria-label="Step name"
+        placeholder="Name this step…"
+        value={String(node.data ?? '')}
+        onChange={(event) => update({ data: event.target.value })}
+      />
+    </div>
+  )
+}
+
+const BLANK_TYPES: NodeTypes = { blank: BlankNode }
 
 function FreeformCanvas() {
   const [nodes, setNodes] = useState<CanvasNode[]>(BLANK_START)
   const [edges, setEdges] = useState<CanvasEdge[]>([])
-  const [titles, setTitles] = useState<Record<string, string>>({})
   const [selected, setSelected] = useState<string | null>(null)
+  const next = useRef(0)
 
   function add(at: { x: number; y: number }, from?: string) {
-    const id = `n-${Date.now()}`
-    setNodes((current) => [...current, { id, x: at.x, y: at.y, data: 'blank', width: 240 }])
+    next.current += 1
+    const id = `n-${next.current}`
+    setNodes((current) => [...current, { id, x: at.x, y: at.y, type: 'blank', width: 240 }])
     if (from) setEdges((current) => [...current, { id: `e-${id}`, from, to: id }])
     setSelected(id)
   }
@@ -200,102 +412,44 @@ function FreeformCanvas() {
         nodeWidth={240}
         nodes={nodes}
         edges={edges}
+        nodeTypes={BLANK_TYPES}
         selectedId={selected}
         onSelect={setSelected}
         onNodesChange={setNodes}
+        snapToGrid
         onAddNode={(at) => add(at)}
         onAddConnected={(from, at) => add(at, from)}
         onRemoveNode={(id) => {
           setNodes((current) => current.filter((node) => node.id !== id))
           setEdges((current) => current.filter((e) => e.from !== id && e.to !== id))
         }}
+        onRemoveEdge={(id) => setEdges((current) => current.filter((edge) => edge.id !== id))}
         onConnect={(from, to) =>
-          setEdges((current) =>
-            current.some((e) => e.from === from && e.to === to)
-              ? current
-              : [...current, { id: `e-${from}-${to}`, from, to }],
-          )
+          setEdges((current) => [...current, { id: `e-${from}-${to}`, from, to }])
         }
         label="Freeform canvas"
-        renderNode={(node) => {
-          // A blank node you can actually type into — the point being that the
-          // canvas owns position and wiring, and nothing else.
-          if (node.data === 'blank') {
-            return (
-              <div
-                className="space-y-1.5"
-                // The canvas starts a drag on pointerdown; a field inside a
-                // node needs that stopped or it can never take focus.
-                onPointerDown={(event) => event.stopPropagation()}
-              >
-                <p className="text-muted-foreground/70 text-[10px] tracking-[0.14em] uppercase">
-                  New node
-                </p>
-                <Input
-                  size="sm"
-                  placeholder="Name this step…"
-                  value={titles[node.id] ?? ''}
-                  onChange={(event) =>
-                    setTitles((current) => ({ ...current, [node.id]: event.target.value }))
-                  }
-                />
-              </div>
-            )
-          }
-
-          if (node.data === 'form') {
-            return (
-              <div className="space-y-2.5" onPointerDown={(event) => event.stopPropagation()}>
-                <div className="flex items-center gap-2">
-                  <Badge size="sm" color="amber">Webhook</Badge>
-                  <span className="text-xs font-medium">On completion</span>
-                </div>
-                <Input size="sm" placeholder="https://hooks.example.com/…" />
-                <Switch
-                  size="sm"
-                  label={<span className="text-xs">Retry on 5xx</span>}
-                  labelPosition="start"
-                  containerClassName="justify-between w-full"
-                  defaultChecked
-                />
-              </div>
-            )
-          }
-
-          return (
-            <div className="space-y-2.5">
-              <div className="flex items-center gap-2">
-                <Badge size="sm" color="violet">Reviewers</Badge>
-                <span className="text-xs font-medium">Needs two approvals</span>
-              </div>
-              <AvatarGroup max={4}>
-                {['Ada Okafor', 'Marc Laurent', 'Iris Chen', 'Devon Reyes'].map((name) => (
-                  <Avatar key={name} name={name} size="sm" />
-                ))}
-              </AvatarGroup>
-              <Sparkline values={[3, 5, 4, 8, 6, 9, 12]} variant="area" className="h-8" />
-            </div>
-          )
-        }}
       />
     </div>
   )
 }
-
 export const nodeCanvasEntry: ComponentEntry = {
   id: 'node-canvas',
   label: 'Node Canvas',
   description:
     'A pannable, zoomable canvas of draggable nodes and the edges between them — the substrate for an agent pipeline, a retrieval chain or a build DAG. Nodes are real DOM, so you put your own components inside them.',
-  usage: `import { NodeCanvas, NodePalette } from '@/components/ui/node-canvas'
+  usage: `import { NodeCanvas, NodePalette, useCanvasNode } from '@/components/ui/node-canvas'
+
+// Node types are ordinary components, declared once, referred to by name.
+const nodeTypes = { step: StepNode, webhook: WebhookNode }
 
 <NodeCanvas
-  nodes={nodes}
+  nodes={nodes}          // [{ id: 'a', type: 'step', x: 0, y: 60 }, …]
   edges={edges}
+  nodeTypes={nodeTypes}
   onNodesChange={setNodes}
   onConnect={(from, to) => setEdges([...edges, { id: \`\${from}-\${to}\`, from, to }])}
+  onRemoveEdge={(id) => setEdges(edges.filter((edge) => edge.id !== id))}
   onAddConnected={(from, at) => addStep(from, at)}
-  renderNode={(node) => <StepCard step={node.data} />}
 />`,
   composer: {
     tall: true,
@@ -319,15 +473,25 @@ export const nodeCanvasEntry: ComponentEntry = {
       }  renderNode={(node) => <StepCard step={node.data} />}\n/>`,
   },
   api: [
-    { name: 'nodes / edges', type: 'CanvasNode[] / CanvasEdge[]', description: '{ id, x, y, width?, label?, data?, connectable?, draggable?, deletable? } and { id, from, to, dashed? }. Positions are graph units, not pixels.' },
-    { name: 'renderNode', type: '(node, { selected }) => ReactNode', description: 'Draws the inside of a node. It is real DOM, so a Badge, a Switch or a Select all work in there.' },
+    { name: 'nodes / edges', type: 'CanvasNode[] / CanvasEdge[]', description: 'Positions are graph units, not pixels. A node carries a `type` naming its component and a `data` payload; nothing about how it looks lives in the graph, so it survives JSON.' },
+    { name: 'nodeTypes', type: 'Record<string, ComponentType<CanvasNodeProps>>', description: 'Your node components, by `node.type`. Write them as ordinary components — a form, a chart, a whole query builder — and the graph only carries the name. Declare the map at module scope: a component created during render is a new component type each time, which remounts every node and takes focus out of the field being typed in.' },
+    { name: 'useCanvasNode', type: '() => { node, selected, dragging, update, remove, connect }', description: 'Read at any depth inside a node. `update({ data })` writes the node back without a callback threaded down from the top, which is what lets a node own its own state.' },
+    { name: 'interactive content', type: 'automatic', description: 'A press that lands on a control reaches the control, not the drag: inputs, buttons, switches, links, sliders and anything marked `data-nodrag` are skipped. Keys belong to the node only while the node itself has focus, so a space types, Backspace edits and the arrows move the caret. A scrollable region inside a node keeps its own wheel.' },
+    { name: 'data-drag-handle', type: 'attribute', description: 'Mark a title bar with it and the policy inverts — only that strip drags the node. What a node whose whole surface is a form needs, because there is no leftover pixel to grab. Presence, not a selector prop: a selector that matches nothing produces a node that silently cannot be moved.' },
+    { name: 'dragThreshold', type: 'number', description: 'A drag begins on movement, not on contact, and nothing is captured until then. That is what keeps a click a click, so a button inside a node fires and a slider keeps the pointer capture it took for itself.' },
+    { name: 'onRemoveEdge', type: '(id: string) => void', description: 'Detaching a connection. Hovering a wire reveals a × at its midpoint; it is a real button, so a keyboard reaches it too. Omit and edges are inert.' },
+    { name: 'renderNode', type: '(node, { selected }) => ReactNode', description: 'Draws any node without a registered type. Still supported, and still the shortest path for a graph of one shape.' },
     { name: 'onNodesChange', type: '(nodes: CanvasNode[]) => void', description: 'Dragging and arrow-key nudges. Omit it and the canvas is read-only, though nodes stay focusable.' },
-    { name: 'onConnect', type: '(from: string, to: string) => void', description: 'Drag from a node’s trailing port onto another node. Also what makes the ports render at all.' },
+    { name: 'onConnect', type: '(from: string, to: string) => void', description: 'Drag from a node’s trailing port onto another node — dropping anywhere on it counts, not only on the 12px dot. Also what makes the ports render at all. A self-link, a duplicate, and a target marked `connectable: false` are refused before you are asked.' },
+    { name: 'isValidConnection', type: '(from: string, to: string) => boolean', description: 'The domain rule on top of those. Whether a cycle is legal is yours to decide — a state machine wants them, a build DAG does not.' },
+    { name: 'snapToGrid', type: 'boolean', description: 'Rounds to `grid` while dragging and nudging. The dots implied an alignment model the canvas did not have.' },
     { name: 'onAddConnected', type: '(fromId, position) => void', description: 'The + on a node: create a step already wired to it. A real button, so chaining has a keyboard path even though dragging a wire does not.' },
     { name: 'onAddNode / onDropNode', type: '(position) => void / (payload, position) => void', description: 'Double-click empty canvas, and drops from NodePalette. Both receive graph coordinates, already corrected for pan and zoom.' },
     { name: 'onRemoveNode', type: '(id: string) => void', description: 'Backspace or Delete with a node focused, unless the node sets deletable: false.' },
     { name: 'zoom / pan', type: 'wheel, background drag', description: 'Zoom is anchored to the pointer, so the point under the cursor stays put. minZoom, maxZoom, defaultPan and defaultZoom are all props.' },
-    { name: 'keyboard', type: 'Tab / arrows / Shift+arrows', description: 'Every node is a tab stop; arrows nudge by `nudge` units and Shift by ten times that. Precise placement is easier this way than with a pointer.' },
+    { name: 'keyboard', type: 'Tab / arrows / Shift+arrows', description: 'Every node is a tab stop; arrows nudge by `nudge` units and Shift by ten times that. Precise placement is easier this way than with a pointer. Keys are only the canvas’s while the node itself holds focus.' },
+    { name: 'accessibility', type: 'role="group"', description: 'Not `role="button"`. A button’s contents are presentational to a screen reader, so every field inside a node used to vanish from the accessibility tree — and a node whose body is a form is not a button.' },
+    { name: 'touch', type: 'known gap', description: 'The viewport sets `touch-action: none` so a drag is never stolen by a scroll, and that intersects down the tree — so a scrollable region inside a node cannot be flicked with a finger, and there is no pinch-zoom. The wheel and the pointer paths are complete.' },
   ],
   demos: [
     {
@@ -337,27 +501,52 @@ export const nodeCanvasEntry: ComponentEntry = {
       render: () => <PipelineEditor />,
     },
     {
-      title: 'Adding nodes, and putting anything inside them',
+      title: 'Nodes that are whole components',
       stack: true,
-      code: `// A node is real DOM, so renderNode can return whatever you like.
+      code: `// Node types are ordinary components, declared once and referred to by name.
+function WebhookNode() {
+  const [url, setUrl] = useState('')
+  return (
+    <div className="space-y-2.5">
+      {/* Marked as the grip, so the body below stays entirely usable. */}
+      <div data-drag-handle className="…">On completion</div>
+      <Input size="sm" value={url} onChange={(e) => setUrl(e.target.value)} />
+      <Switch size="sm" label="Retry on 5xx" defaultChecked />
+    </div>
+  )
+}
+
+function QueryNode() {
+  // The node reads and writes itself — no callback threaded down from the top.
+  const { node, update } = useCanvasNode()
+  return <QueryConstructor tables={tables} value={node.data} onChange={(q) => update({ data: q })} />
+}
+
+const nodeTypes = { webhook: WebhookNode, query: QueryNode, note: NoteNode }
+
 <NodeCanvas
-  nodes={nodes}
+  nodes={nodes}          // [{ id: 'hook', type: 'webhook', x: 20, y: 30 }, …]
   edges={edges}
+  nodeTypes={nodeTypes}
   onNodesChange={setNodes}
   onConnect={connect}
-  onAddNode={(at) => add('blank', at)}        // double-click empty canvas
-  onAddConnected={(from, at) => add('blank', at, from)}  // the + on a node
-  nodeWidth={240}
-  renderNode={(node) => {
-    if (node.data === 'blank') return <BlankCard id={node.id} />
-    if (node.data === 'form') return (
-      <div className="space-y-2">
-        <Input size="sm" placeholder="Webhook URL" />
-        <Switch size="sm" label="Retry on 5xx" labelPosition="start" />
-      </div>
-    )
-    return <AvatarRow />
-  }}
+  onRemoveEdge={(id) => setEdges(edges.filter((e) => e.id !== id))}
+/>`,
+      render: () => <ComponentCanvas />,
+    },
+    {
+      title: 'Adding nodes, and typing in them',
+      stack: true,
+      code: `<NodeCanvas
+  nodes={nodes}
+  edges={edges}
+  nodeTypes={{ blank: BlankNode }}
+  onNodesChange={setNodes}
+  onConnect={connect}
+  snapToGrid
+  onAddNode={(at) => add(at)}                    // double-click empty canvas
+  onAddConnected={(from, at) => add(at, from)}   // the + on a node
+  onRemoveEdge={(id) => detach(id)}              // the × on a hovered wire
 />`,
       render: () => <FreeformCanvas />,
     },
@@ -417,10 +606,8 @@ export const agentCardEntry: ComponentEntry = {
   description:
     'One agent’s definition as a card: the model behind it, the tools it may reach for, and whether it is allowed to run. Tools are listed by name rather than counted, because a count tells you nothing about blast radius.',
   usage: `import { AgentCard } from '@/components/ui/agent-card'
-import { Avatar, AvatarGroup } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Sparkline } from '@/components/ui/sparkline'
 import { Switch } from '@/components/ui/switch'
 import { AgentMemory, type MemoryEntry } from '@/components/ui/agent-memory'
 import { AgentTasks, type AgentTask } from '@/components/ui/agent-tasks'

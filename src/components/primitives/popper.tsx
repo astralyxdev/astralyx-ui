@@ -94,6 +94,40 @@ function fits(
   )
 }
 
+/**
+ * Where a `position: fixed` element's coordinates are actually measured from.
+ *
+ * Normally the viewport — which is why every number above can be a viewport
+ * number. But a `transform`, `filter` or `perspective` on any ancestor makes
+ * *that element* the containing block instead, and the layer lands at the
+ * ancestor's origin plus our viewport offset, which can be an entire screen
+ * away. `NodeCanvas` is exactly this shape: its node layer is one transformed
+ * div, so a Select or a Popover inside a node was positioned off-canvas.
+ *
+ * Returns the origin to subtract. `null` means the viewport, the common case,
+ * where the numbers are already right and nothing is adjusted at all.
+ */
+function fixedOrigin(element: HTMLElement) {
+  for (let parent = element.parentElement; parent; parent = parent.parentElement) {
+    const style = getComputedStyle(parent)
+    if (
+      style.transform !== 'none' ||
+      style.filter !== 'none' ||
+      style.perspective !== 'none' ||
+      style.contain.includes('paint')
+    ) {
+      // The containing block is the padding box, so a border on that ancestor
+      // shifts the origin by its own width.
+      const box = parent.getBoundingClientRect()
+      return {
+        top: box.top + parseFloat(style.borderTopWidth),
+        left: box.left + parseFloat(style.borderLeftWidth),
+      }
+    }
+  }
+  return null
+}
+
 export function usePopper({
   open,
   anchorRef,
@@ -121,10 +155,18 @@ export function usePopper({
     if (!anchor || !floating) return
 
     const anchorRect = anchor.getBoundingClientRect()
-    const layer = {
-      width: floating.offsetWidth,
-      height: floating.offsetHeight,
-    }
+
+    // Painted size, not layout size. The two are the same everywhere except
+    // under a scaling ancestor, and every comparison below is against the
+    // viewport — which is painted space, the space `anchorRect` is already in.
+    const floatingRect = floating.getBoundingClientRect()
+    const layer = { width: floatingRect.width, height: floatingRect.height }
+
+    // How much that ancestor scales us by, read off the element itself: the
+    // transformed ancestor is often a zero-size positioned div, so its own box
+    // cannot be measured, but this ratio always can.
+    const scaleX = floating.offsetWidth ? floatingRect.width / floating.offsetWidth : 1
+    const scaleY = floating.offsetHeight ? floatingRect.height / floating.offsetHeight : 1
 
     let resolved = side
     let position = place(anchorRect, layer, side, align, offset)
@@ -153,15 +195,23 @@ export function usePopper({
       Math.max(padding, window.innerWidth - layer.width - padding),
     )
 
+    // Everything above is a viewport number. Convert to the space the layer is
+    // actually positioned in — the same numbers when that is the viewport.
+    const origin = fixedOrigin(floating)
+
     setState({
       side: resolved,
       style: {
         position: 'fixed',
-        top,
-        left,
+        top: origin ? (top - origin.top) / scaleY : top,
+        left: origin ? (left - origin.left) / scaleX : left,
         visibility: 'visible',
-        ...(matchAnchorWidth ? { width: anchorRect.width } : null),
-        maxHeight: `calc(100vh - ${padding * 2}px)`,
+        // Divided too: a width the anchor's painted width, once the ancestor
+        // scales it, is that width again.
+        ...(matchAnchorWidth ? { width: anchorRect.width / scaleX } : null),
+        maxHeight: origin
+          ? (window.innerHeight - padding * 2) / scaleY
+          : `calc(100vh - ${padding * 2}px)`,
       },
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps

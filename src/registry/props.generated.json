@@ -16255,9 +16255,14 @@
               "default": "[]"
             },
             {
+              "name": "nodeTypes",
+              "type": "NodeTypes",
+              "description": "The node components, by `node.type`."
+            },
+            {
               "name": "renderNode",
               "type": "(node: CanvasNode, state: { selected: boolean }) => ReactNode",
-              "description": "Draws a node's contents. Defaults to its label."
+              "description": "Draws any node without a registered type. Defaults to its label."
             },
             {
               "name": "onNodesChange",
@@ -16283,6 +16288,12 @@
               "type": "number",
               "default": "24",
               "description": "Background dot spacing in graph units. `0` turns the grid off."
+            },
+            {
+              "name": "snapToGrid",
+              "type": "boolean",
+              "default": "false",
+              "description": "Round positions to the grid while dragging and nudging."
             },
             {
               "name": "minZoom",
@@ -16324,10 +16335,21 @@
               "description": "Accessible name for the graph region."
             },
             {
+              "name": "nodeLabel",
+              "type": "(node: CanvasNode) => string",
+              "description": "Names a node for a screen reader, when its contents are not text."
+            },
+            {
               "name": "nudge",
               "type": "number",
               "default": "8",
               "description": "How far an arrow key moves a node, in graph units."
+            },
+            {
+              "name": "dragThreshold",
+              "type": "number",
+              "default": "4",
+              "description": "Pixels of travel before a press becomes a drag rather than a click."
             },
             {
               "name": "onAddNode",
@@ -16345,9 +16367,19 @@
               "description": "Wire two nodes together, by dragging from a node's trailing port to another node. Omit and the ports are not rendered."
             },
             {
+              "name": "isValidConnection",
+              "type": "(from: string, to: string) => boolean",
+              "description": "Whether a proposed connection is allowed. Self-links and duplicates are already refused before this is asked."
+            },
+            {
               "name": "onRemoveNode",
               "type": "(id: string) => void",
               "description": "Remove a node — fired on Backspace/Delete with a node focused."
+            },
+            {
+              "name": "onRemoveEdge",
+              "type": "(id: string) => void",
+              "description": "Detach a connection — the button on a hovered or focused edge, and Backspace/Delete while that button has focus. Omit and edges are inert."
             },
             {
               "name": "onAddConnected",
@@ -16359,6 +16391,17 @@
               "type": "string",
               "default": "'Add a connected step'",
               "description": "Accessible name for that button. Receives the source node's label."
+            },
+            {
+              "name": "removeEdgeLabel",
+              "type": "string",
+              "default": "'Detach this connection'",
+              "description": "Accessible name for an edge's detach button."
+            },
+            {
+              "name": "onViewportChange",
+              "type": "(viewport: { pan: Point; zoom: number }) => void",
+              "description": "Reports pan and zoom, for a caller that wants to persist the viewport."
             }
           ]
         },
@@ -16380,6 +16423,13 @@
               "description": "Clicked rather than dragged — place it wherever your layout prefers."
             }
           ]
+        }
+      ],
+      "hooks": [
+        {
+          "name": "useCanvasNode",
+          "signature": "() => CanvasContextValue",
+          "description": "The node a component is being rendered inside."
         }
       ],
       "functions": [
@@ -16415,8 +16465,13 @@
             },
             {
               "name": "width",
-              "type": "number",
-              "description": "Falls back to the canvas-level `nodeWidth`."
+              "type": "number | 'auto'",
+              "description": "Falls back to the canvas-level `nodeWidth`. `'auto'` sizes to content."
+            },
+            {
+              "name": "type",
+              "type": "string",
+              "description": "Which registered `nodeTypes` entry draws this node."
             },
             {
               "name": "label",
@@ -16425,7 +16480,7 @@
             {
               "name": "data",
               "type": "unknown",
-              "description": "Anything: a kind, a status, your own payload. Passed back to renderNode."
+              "description": "Anything: a kind, a status, your own payload. Passed back to the renderer."
             },
             {
               "name": "connectable",
@@ -16441,6 +16496,11 @@
               "name": "deletable",
               "type": "boolean",
               "description": "Off for a node the graph cannot exist without — a trigger, an entry point."
+            },
+            {
+              "name": "z",
+              "type": "number",
+              "description": "Stacking order. Selected and dragging nodes rise above it regardless."
             }
           ]
         },
@@ -16469,9 +16529,40 @@
             {
               "name": "dashed",
               "type": "boolean",
-              "description": "Draws dashed and animated — for a path that is speculative or inactive."
+              "description": "Draws dashed — for a path that is speculative or inactive."
+            },
+            {
+              "name": "deletable",
+              "type": "boolean",
+              "description": "Off for a connection that must not be detached from the canvas."
             }
           ]
+        },
+        {
+          "name": "CanvasNodeProps",
+          "description": "What a registered node type is rendered with.",
+          "fields": [
+            {
+              "name": "node",
+              "type": "CanvasNode",
+              "required": true
+            },
+            {
+              "name": "selected",
+              "type": "boolean",
+              "required": true
+            },
+            {
+              "name": "dragging",
+              "type": "boolean",
+              "required": true,
+              "description": "True while this node is being dragged — for a lifted shadow, say."
+            }
+          ]
+        },
+        {
+          "name": "NodeTypes",
+          "definition": "Record<string, ComponentType<CanvasNodeProps>>"
         }
       ]
     },
