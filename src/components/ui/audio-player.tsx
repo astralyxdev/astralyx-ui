@@ -35,7 +35,10 @@ import { cn } from '@/lib/utils'
  * here would mean decoding the whole file in the main thread before the first
  * frame — the caller either has it precomputed or does not want it.
  */
-type AudioPlayerProps = Omit<ComponentProps<'div'>, 'title'> & {
+// Omitted because the DOM declares it too, and in an intersection the DOM
+// signature wins — which left the prop below unusable and the generated docs
+// advertising the browser's handler instead of ours.
+type AudioPlayerProps = Omit<ComponentProps<'div'>, 'title' | 'onEnded'> & {
   src: string
   title?: ReactNode
   artist?: ReactNode

@@ -15,7 +15,10 @@ import { cn } from '@/lib/utils'
  * both the same bubble makes a long answer unreadable, and makes it harder to
  * tell at a glance who said what.
  */
-type MessageProps = ComponentProps<'div'> & {
+// Omitted because the DOM declares it too, and in an intersection the DOM
+// signature wins — which left the prop below unusable and the generated docs
+// advertising the browser's handler instead of ours.
+type MessageProps = Omit<ComponentProps<'div'>, 'onCopy'> & {
   role: 'user' | 'assistant'
   /** Author name, used for the avatar's initials. */
   name?: string

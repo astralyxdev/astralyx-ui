@@ -35,7 +35,10 @@ import { cn } from '@/lib/utils'
  */
 export type CropRect = { x: number; y: number; width: number; height: number }
 
-type ImageCropperProps = Omit<ComponentProps<'div'>, 'onChange'> & {
+// Omitted because the DOM declares it too, and in an intersection the DOM
+// signature wins — which left the prop below unusable and the generated docs
+// advertising the browser's handler instead of ours.
+type ImageCropperProps = Omit<ComponentProps<'div'>, 'onChange' | 'onError'> & {
   src: string
   /** Width divided by height. Omit to crop freely. */
   aspect?: number

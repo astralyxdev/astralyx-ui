@@ -2059,13 +2059,9 @@
           "name": "AudioPlayer",
           "description": "An audio element with a scrubber, built on the real `<audio>` element.",
           "extends": [
-            "Omit<ComponentProps<'div'>, 'title'>"
+            "Omit<ComponentProps<'div'>, 'title' | 'onEnded'>"
           ],
           "props": [
-            {
-              "name": "onEnded",
-              "type": "ReactEventHandler<T>"
-            },
             {
               "name": "src",
               "type": "string",
@@ -2106,6 +2102,10 @@
               "name": "artwork",
               "type": "ReactNode",
               "description": "Cover art."
+            },
+            {
+              "name": "onEnded",
+              "type": "() => void"
             },
             {
               "name": "playLabel",
@@ -11595,16 +11595,12 @@
           "name": "ImageCropper",
           "description": "The step between picking an image and saving it.",
           "extends": [
-            "Omit<ComponentProps<'div'>, 'onChange'>"
+            "Omit<ComponentProps<'div'>, 'onChange' | 'onError'>"
           ],
           "props": [
             {
               "name": "defaultValue",
               "type": "string | number | readonly string[]"
-            },
-            {
-              "name": "onError",
-              "type": "ReactEventHandler<T>"
             },
             {
               "name": "src",
@@ -11629,6 +11625,10 @@
               "name": "onCrop",
               "type": "(blob: Blob, crop: CropRect) => void",
               "description": "The cropped image. Fires on demand, not on every drag."
+            },
+            {
+              "name": "onError",
+              "type": "(error: Error) => void"
             },
             {
               "name": "outputType",
@@ -15175,17 +15175,13 @@
           "name": "Message",
           "description": "One turn in a conversation.",
           "extends": [
-            "ComponentProps<'div'>"
+            "Omit<ComponentProps<'div'>, 'onCopy'>"
           ],
           "props": [
             {
               "name": "role",
               "type": "AriaRole",
               "required": true
-            },
-            {
-              "name": "onCopy",
-              "type": "ClipboardEventHandler<T>"
             },
             {
               "name": "name",
@@ -15201,6 +15197,10 @@
               "type": "boolean",
               "default": "role === 'assistant'",
               "description": "Action row under an assistant message."
+            },
+            {
+              "name": "onCopy",
+              "type": "() => void"
             },
             {
               "name": "onRetry",
@@ -17189,13 +17189,9 @@
           "name": "OrgChart",
           "description": "A reporting hierarchy, drawn top-down with connectors.",
           "extends": [
-            "Omit<ComponentProps<'div'>, 'onSelect'>"
+            "Omit<ComponentProps<'div'>, 'onSelect' | 'onError'>"
           ],
           "props": [
-            {
-              "name": "onError",
-              "type": "ReactEventHandler<T>"
-            },
             {
               "name": "nodes",
               "type": "OrgNode[]",
@@ -17220,6 +17216,10 @@
               "type": "number",
               "default": "4",
               "description": "Lay a node's children out in a column past this many."
+            },
+            {
+              "name": "onError",
+              "type": "(error: Error) => void"
             },
             {
               "name": "emptyLabel",
@@ -21885,17 +21885,17 @@
           "name": "SandboxPolicy",
           "description": "The permissions an agent actually runs under.",
           "extends": [
-            "Omit<ComponentProps<'div'>, 'children'>"
+            "Omit<ComponentProps<'div'>, 'children' | 'onToggle'>"
           ],
           "props": [
-            {
-              "name": "onToggle",
-              "type": "ToggleEventHandler<T>"
-            },
             {
               "name": "scopes",
               "type": "SandboxScope[]",
               "required": true
+            },
+            {
+              "name": "onToggle",
+              "type": "(id: string, enabled: boolean) => void"
             },
             {
               "name": "modeLabels",
@@ -28374,13 +28374,9 @@
           "name": "Treemap",
           "description": "Part-to-whole as nested rectangles, sized by area.",
           "extends": [
-            "Omit<ComponentProps<'figure'>, 'height'>"
+            "Omit<ComponentProps<'figure'>, 'height' | 'onSelect'>"
           ],
           "props": [
-            {
-              "name": "onSelect",
-              "type": "ReactEventHandler<T>"
-            },
             {
               "name": "nodes",
               "type": "TreemapNode[]",
@@ -28401,6 +28397,10 @@
               "name": "valueFormat",
               "type": "(value: number) => string",
               "default": "DEFAULT_FORMAT"
+            },
+            {
+              "name": "onSelect",
+              "type": "(node: TreemapNode) => void"
             },
             {
               "name": "gap",

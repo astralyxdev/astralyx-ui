@@ -53,7 +53,10 @@ const MODE: Record<SandboxMode, { label: string; color: 'green' | 'amber' | 'des
 /** `/`, `*`, `**` and bare `~` are "everything" wearing an allow-list costume. */
 const WIDE_OPEN = new Set(['/', '*', '**', '~', '0.0.0.0/0', '*.*'])
 
-type SandboxPolicyProps = Omit<ComponentProps<'div'>, 'children'> & {
+// `onToggle` is also a DOM event on every element, and in an intersection the
+// DOM signature wins — so the prop below was unusable and the generated docs
+// advertised the browser's handler instead of ours.
+type SandboxPolicyProps = Omit<ComponentProps<'div'>, 'children' | 'onToggle'> & {
   scopes: SandboxScope[]
   onToggle?: (id: string, enabled: boolean) => void
   modeLabels?: Partial<Record<SandboxMode, string>>

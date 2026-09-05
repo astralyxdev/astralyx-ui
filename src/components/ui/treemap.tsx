@@ -44,7 +44,10 @@ type Tile = {
   value: number
 }
 
-type TreemapProps = Omit<ComponentProps<'figure'>, 'height'> & {
+// Omitted because the DOM declares it too, and in an intersection the DOM
+// signature wins — which left the prop below unusable and the generated docs
+// advertising the browser's handler instead of ours.
+type TreemapProps = Omit<ComponentProps<'figure'>, 'height' | 'onSelect'> & {
   nodes: TreemapNode[]
   height?: number
   /** Levels to draw. 1 flattens the hierarchy to its top level. */

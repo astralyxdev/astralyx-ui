@@ -39,7 +39,10 @@ export type OrgNode = {
 
 type Built = OrgNode & { children: Built[] }
 
-type OrgChartProps = Omit<ComponentProps<'div'>, 'onSelect'> & {
+// Omitted because the DOM declares it too, and in an intersection the DOM
+// signature wins — which left the prop below unusable and the generated docs
+// advertising the browser's handler instead of ours.
+type OrgChartProps = Omit<ComponentProps<'div'>, 'onSelect' | 'onError'> & {
   nodes: OrgNode[]
   onSelect?: (node: OrgNode) => void
   selectedId?: string
