@@ -1,5 +1,13 @@
-import { useId, useState, type ComponentProps, type ReactNode } from 'react'
-import { RotateCcw } from 'lucide-react'
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type ComponentProps,
+  type ReactNode,
+} from 'react'
+import { Maximize2, Minimize2, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardBody, CardHeader } from '@/components/ui/card'
 import { CodeBlock } from '@/components/ui/code-block'
@@ -76,6 +84,15 @@ type ComposerProps = Omit<ComponentProps<'div'>, 'onChange'> & {
   state?: ComposerState
   onStateChange?: (state: ComposerState) => void
   resetLabel?: ReactNode
+  /**
+   * Offer a button that gives the playground the whole screen.
+   *
+   * Worth turning off for a composer driving something small, where the room is
+   * not the constraint and the button is just another thing in the header.
+   */
+  fullscreen?: boolean
+  fullscreenLabel?: string
+  exitFullscreenLabel?: string
 }
 
 function Composer({
@@ -88,6 +105,9 @@ function Composer({
   state: stateProp,
   onStateChange,
   resetLabel = 'Reset',
+  fullscreen = true,
+  fullscreenLabel = 'Expand to full screen',
+  exitFullscreenLabel = 'Exit full screen',
   className,
   ...props
 }: ComposerProps) {
@@ -105,21 +125,48 @@ function Composer({
     onStateChange?.(next)
   }
 
+  const shellRef = useRef<HTMLDivElement>(null)
+  const { expanded, toggle } = useExpand(shellRef)
+
   return (
-    <Card data-slot="composer" className={cn('overflow-hidden', className)} {...props}>
+    <Card
+      ref={shellRef}
+      data-slot="composer"
+      data-expanded={expanded || undefined}
+      className={cn(
+        'overflow-hidden',
+        // Filling the screen is the same shape either way: the browser sizes a
+        // fullscreen element itself, and these are what the fallback needs.
+        expanded && 'fixed inset-0 z-50 rounded-none',
+        className,
+      )}
+      {...props}
+    >
       {/* Panel beside the preview on wide screens, beneath it on narrow ones —
           a 280px control column leaves nothing for the preview on a phone. */}
-      <div className="grid lg:grid-cols-[minmax(0,1fr)_280px]">
+      <div
+        className={cn(
+          'grid lg:grid-cols-[minmax(0,1fr)_280px]',
+          // `min-h-0` or the preview refuses to shrink and pushes the code
+          // block off the bottom of the screen instead of scrolling.
+          expanded && 'min-h-0 flex-1',
+        )}
+      >
         <CardBody
           className={cn(
             'flex items-center justify-center',
-            tall ? 'min-h-80' : 'min-h-48',
+            expanded ? 'min-h-0 overflow-auto' : tall ? 'min-h-80' : 'min-h-48',
           )}
         >
           {render(state)}
         </CardBody>
 
-        <div className="border-border flex flex-col border-t lg:border-t-0 lg:border-s">
+        <div
+          className={cn(
+            'border-border flex flex-col border-t lg:border-t-0 lg:border-s',
+            expanded && 'min-h-0',
+          )}
+        >
           {/* A real CardHeader, not a label with a rule under it: the panel
               gets the same header band as every other card in the kit, and the
               band's own border replaces the Separator. */}
@@ -127,20 +174,36 @@ function Composer({
             <span className="text-muted-foreground text-[11px] font-medium tracking-wide uppercase">
               {panelLabel}
             </span>
-            {dirty && (
-              <Button
-                variant="ghost"
-                size="xs"
-                className="-me-2"
-                onClick={() => set(initialState(controls))}
-              >
-                <RotateCcw />
-                {resetLabel}
-              </Button>
-            )}
+            <span className="-me-2 flex items-center gap-1">
+              {dirty && (
+                <Button
+                  variant="ghost"
+                  size="xs"
+                  onClick={() => set(initialState(controls))}
+                >
+                  <RotateCcw />
+                  {resetLabel}
+                </Button>
+              )}
+              {fullscreen && (
+                <Button
+                  variant="ghost"
+                  size="icon-xs"
+                  aria-label={expanded ? exitFullscreenLabel : fullscreenLabel}
+                  onClick={toggle}
+                >
+                  {expanded ? <Minimize2 /> : <Maximize2 />}
+                </Button>
+              )}
+            </span>
           </CardHeader>
 
-          <div className="bg-secondary/40 flex flex-1 flex-col gap-3.5 p-4.5">
+          <div
+            className={cn(
+              'bg-secondary/40 flex flex-1 flex-col gap-3.5 p-4.5',
+              expanded && 'overflow-y-auto',
+            )}
+          >
             {controls.map((control) => (
               <ComposerField
                 key={control.prop}
@@ -161,12 +224,86 @@ function Composer({
       </div>
 
       {code && (
-        <div className="border-border border-t p-3">
+        <div
+          className={cn(
+            'border-border border-t p-3',
+            // Capped rather than free, so the source never crowds out the
+            // preview the screen was given over to.
+            expanded && 'max-h-[40vh] shrink-0 overflow-auto',
+          )}
+        >
           <CodeBlock code={code(state)} language={language} />
         </div>
       )}
     </Card>
   )
+}
+
+/**
+ * Fill the screen, by whichever route the browser allows.
+ *
+ * The Fullscreen API is the one that means it — the page chrome goes too, and
+ * Escape is handled for us. It is not everywhere: iPhone Safari exposes no
+ * element fullscreen at all, and a request can be refused outright. So a
+ * refusal falls back to covering the viewport instead, which is the same thing
+ * minus the browser's own furniture, and never leaves a button that does
+ * nothing.
+ *
+ * Fullscreen can also be left without asking us — Escape, or the browser's own
+ * control — so the state is read back from `fullscreenchange` rather than
+ * assumed from the click that started it.
+ */
+function useExpand(ref: React.RefObject<HTMLElement | null>) {
+  const [native, setNative] = useState(false)
+  const [overlay, setOverlay] = useState(false)
+  const expanded = native || overlay
+
+  useEffect(() => {
+    const onChange = () => setNative(document.fullscreenElement === ref.current)
+    document.addEventListener('fullscreenchange', onChange)
+    return () => document.removeEventListener('fullscreenchange', onChange)
+  }, [ref])
+
+  // Only the fallback needs these: in real fullscreen the browser already owns
+  // Escape, and the page behind is not being scrolled past.
+  useEffect(() => {
+    if (!overlay) return
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOverlay(false)
+    }
+    window.addEventListener('keydown', onKeyDown)
+
+    const previous = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      window.removeEventListener('keydown', onKeyDown)
+      document.body.style.overflow = previous
+    }
+  }, [overlay])
+
+  const toggle = useCallback(() => {
+    if (document.fullscreenElement) {
+      void document.exitFullscreen()
+      return
+    }
+    if (overlay) {
+      setOverlay(false)
+      return
+    }
+
+    const element = ref.current
+    if (element?.requestFullscreen && document.fullscreenEnabled) {
+      // A rejected request resolves nothing and throws asynchronously, which is
+      // why the fallback is chained rather than decided up front.
+      element.requestFullscreen().catch(() => setOverlay(true))
+      return
+    }
+    setOverlay(true)
+  }, [overlay, ref])
+
+  return { expanded, toggle }
 }
 
 /** One row of the control panel. */

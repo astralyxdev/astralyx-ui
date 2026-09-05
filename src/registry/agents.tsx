@@ -466,11 +466,11 @@ const nodeTypes = { step: StepNode, webhook: WebhookNode }
       </div>
     ),
     code: (state) =>
-      `<NodeCanvas\n  nodes={nodes}\n  edges={edges}\n  height={${Number(state.height)}}\n${
+      `<NodeCanvas\n  nodes={nodes}\n  edges={edges}\n  nodeTypes={{ step: StepNode }}\n  height={${Number(state.height)}}\n${
         state.editable
-          ? '  onNodesChange={setNodes}\n  onConnect={connect}\n  onAddConnected={addStep}\n  onDropNode={dropStep}\n'
+          ? '  onNodesChange={setNodes}\n  onConnect={connect}\n  onAddConnected={addStep}\n  onDropNode={dropStep}\n  onRemoveEdge={detach}\n'
           : ''
-      }  renderNode={(node) => <StepCard step={node.data} />}\n/>`,
+      }/>`,
   },
   api: [
     { name: 'nodes / edges', type: 'CanvasNode[] / CanvasEdge[]', description: 'Positions are graph units, not pixels. A node carries a `type` naming its component and a `data` payload; nothing about how it looks lives in the graph, so it survives JSON.' },

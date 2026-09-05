@@ -6035,6 +6035,22 @@
               "name": "resetLabel",
               "type": "ReactNode",
               "default": "'Reset'"
+            },
+            {
+              "name": "fullscreen",
+              "type": "boolean",
+              "default": "true",
+              "description": "Offer a button that gives the playground the whole screen."
+            },
+            {
+              "name": "fullscreenLabel",
+              "type": "string",
+              "default": "'Expand to full screen'"
+            },
+            {
+              "name": "exitFullscreenLabel",
+              "type": "string",
+              "default": "'Exit full screen'"
             }
           ]
         }

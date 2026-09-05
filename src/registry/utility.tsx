@@ -416,6 +416,8 @@ import { readableInk } from '@/components/ui/label-picker'
     { name: 'code', type: '(state) => string', description: 'The snippet shown beneath the preview. Omit it for a preview with no source.' },
     { name: 'state / onStateChange', type: 'ComposerState', description: 'Controlled mode, for keeping two composers in sync — a light and a dark preview of one configuration.' },
     { name: 'tall', type: 'boolean', default: 'false', description: 'A taller preview box, for anything with real height.' },
+    { name: 'fullscreen', type: 'boolean', default: 'true', description: 'The expand button in the panel header. A composer driving something small does not need it — the room was never the constraint there.' },
+    { name: 'filling the screen', type: 'Fullscreen API, then a fallback', description: 'The real thing where the browser allows it, so the page chrome goes too and Escape is handled for us. iPhone Safari exposes no element fullscreen and a request can simply be refused, so a refusal covers the viewport instead rather than leaving a button that does nothing. Leaving it is read back from `fullscreenchange`, not assumed from the click that started it.' },
     { name: 'independence', type: 'no registry coupling', description: 'The component knows nothing about the documentation registry; the registry describes its specs in terms of these types, not the reverse.' },
   ],
   demos: [
