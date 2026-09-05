@@ -410,12 +410,13 @@ function Settings() {
 
         <TabsContent value="billing">
           <Card>
-            <CardHeader className="flex-row items-center justify-between gap-4">
-              <div className="space-y-1">
-                <CardTitle as="h2">Plan</CardTitle>
-                <CardDescription>Billed monthly, cancel any time.</CardDescription>
-              </div>
-              <Badge color="blue">Team</Badge>
+            <CardHeader
+              action={
+                <Badge color="blue">Team</Badge>
+              }
+            >
+              <CardTitle as="h2">Plan</CardTitle>
+              <CardDescription>Billed monthly, cancel any time.</CardDescription>
             </CardHeader>
             <CardBody className="space-y-4">
               <div className="flex items-center gap-3">

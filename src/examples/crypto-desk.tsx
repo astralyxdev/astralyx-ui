@@ -356,17 +356,18 @@ function CryptoDesk() {
 
             <div className="grid gap-4 xl:grid-cols-[1fr_20rem]">
               <Card>
-                <CardHeader className="flex-row items-center justify-between gap-4">
-                  <div className="space-y-1">
-                    <CardTitle as="h2">
-                      {market.symbol}/USD
-                    </CardTitle>
-                    <CardDescription>Eight one-hour candles with volume.</CardDescription>
-                  </div>
-                  <Badge color={(market.change24h ?? 0) >= 0 ? 'green' : 'rose'}>
-                    {(market.change24h ?? 0) >= 0 ? '+' : ''}
-                    {market.change24h}%
-                  </Badge>
+                <CardHeader
+                  action={
+                    <Badge color={(market.change24h ?? 0) >= 0 ? 'green' : 'rose'}>
+                      {(market.change24h ?? 0) >= 0 ? '+' : ''}
+                      {market.change24h}%
+                    </Badge>
+                  }
+                >
+                  <CardTitle as="h2">
+                    {market.symbol}/USD
+                  </CardTitle>
+                  <CardDescription>Eight one-hour candles with volume.</CardDescription>
                 </CardHeader>
                 <CardBody>
                   <CandlestickChart candles={candlesFor(market.price)} height={260} />

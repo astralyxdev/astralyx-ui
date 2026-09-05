@@ -602,22 +602,23 @@ function Growth() {
         </div>
 
         <Card>
-          <CardHeader className="flex-row flex-wrap items-center justify-between gap-3">
-            <div className="space-y-1">
-              <CardTitle as="h2">Acquisition to revenue</CardTitle>
-              <CardDescription>{active.label} — signups, activations and conversions.</CardDescription>
-            </div>
-            <SegmentedControl
-              size="sm"
-              label="Chart shape"
-              value={chartVariant}
-              onValueChange={(value) => setChartVariant(value as 'line' | 'area' | 'bar')}
-              options={[
-                { value: 'line', label: 'Line' },
-                { value: 'area', label: 'Area' },
-                { value: 'bar', label: 'Bars' },
-              ]}
-            />
+          <CardHeader
+            action={
+              <SegmentedControl
+                            size="sm"
+                            label="Chart shape"
+                            value={chartVariant}
+                            onValueChange={(value) => setChartVariant(value as 'line' | 'area' | 'bar')}
+                            options={[
+                              { value: 'line', label: 'Line' },
+                              { value: 'area', label: 'Area' },
+                              { value: 'bar', label: 'Bars' },
+                            ]}
+                          />
+            }
+          >
+<CardTitle as="h2">Acquisition to revenue</CardTitle>
+                        <CardDescription>{active.label} — signups, activations and conversions.</CardDescription>
           </CardHeader>
           <CardBody>
             <Chart
@@ -732,21 +733,22 @@ function Growth() {
         </Card>
 
         <Card>
-          <CardHeader className="flex-row flex-wrap items-center justify-between gap-3">
-            <div className="space-y-1">
-              <CardTitle as="h2">Running experiments</CardTitle>
-              <CardDescription>Significance is computed from the counts, not asserted.</CardDescription>
-            </div>
-            <SegmentedControl
-              size="sm"
-              label="Experiment"
-              value={experiment}
-              onValueChange={(value) => setExperiment(value as ExperimentKey)}
-              options={[
-                { value: 'onboarding', label: 'Onboarding' },
-                { value: 'pricing', label: 'Pricing' },
-              ]}
-            />
+          <CardHeader
+            action={
+              <SegmentedControl
+                            size="sm"
+                            label="Experiment"
+                            value={experiment}
+                            onValueChange={(value) => setExperiment(value as ExperimentKey)}
+                            options={[
+                              { value: 'onboarding', label: 'Onboarding' },
+                              { value: 'pricing', label: 'Pricing' },
+                            ]}
+                          />
+            }
+          >
+<CardTitle as="h2">Running experiments</CardTitle>
+                        <CardDescription>Significance is computed from the counts, not asserted.</CardDescription>
           </CardHeader>
           <CardBody>
             <AbTestResults
@@ -809,18 +811,19 @@ function Growth() {
         </Card>
 
         <Card>
-          <CardHeader className="flex-row flex-wrap items-center justify-between gap-3">
-            <div className="space-y-1">
-              <CardTitle as="h2">Live events</CardTitle>
-              <CardDescription>
-                {paused ? 'Paused — the feed is holding.' : 'Streaming from the ingest edge.'}
-              </CardDescription>
-            </div>
-            {selected && (
-              <Button size="sm" variant="ghost" onClick={() => setSelected(null)}>
-                Clear selection
-              </Button>
-            )}
+          <CardHeader
+            action={
+              selected && (
+                            <Button size="sm" variant="ghost" onClick={() => setSelected(null)}>
+                              Clear selection
+                            </Button>
+                          )
+            }
+          >
+<CardTitle as="h2">Live events</CardTitle>
+                        <CardDescription>
+                          {paused ? 'Paused — the feed is holding.' : 'Streaming from the ingest edge.'}
+                        </CardDescription>
           </CardHeader>
           <CardBody>
             <EventStream

@@ -1,4 +1,4 @@
-import { createContext, use, type ComponentProps } from 'react'
+import { createContext, use, type ComponentProps, type ReactNode } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cardPadding, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
@@ -56,23 +56,45 @@ function useCardPadding(override?: CardSize) {
   return cardPadding[override ?? inherited]
 }
 
+/**
+ * A header takes a title and a description. Anything else — a menu, a filter,
+ * a badge — goes in `action`.
+ *
+ * The slot exists because the alternative was a habit: a caller who needs a
+ * control beside the title reaches for `className="flex-row justify-between"`,
+ * which turns the header's own column into a row and lands the description
+ * beside the title rather than under it. Every one of them then re-stacks the
+ * pair in a wrapper div by hand. This owns that layout instead, so the title
+ * column keeps its stacking and the control keeps its size.
+ *
+ * The control never shrinks and the text column always can, so a long title
+ * truncates rather than squeezing a select into illegibility.
+ */
 function CardHeader({
   className,
   size,
+  action,
+  children,
   ...props
-}: ComponentProps<'div'> & { size?: CardSize }) {
+}: ComponentProps<'div'> & { size?: CardSize; action?: ReactNode }) {
   return (
     <div
       data-slot="card-header"
       className={cn(
         // A shade darker than the body, so the header reads as a distinct band
         // without needing a heavier rule under it.
-        'border-border bg-[var(--card-header)] flex flex-col gap-1 border-b',
+        'border-border bg-[var(--card-header)] flex gap-1 border-b',
+        action ? 'flex-row items-center justify-between gap-3' : 'flex-col',
         useCardPadding(size),
         className,
       )}
       {...props}
-    />
+    >
+      {action ? <div className="flex min-w-0 flex-col gap-1">{children}</div> : children}
+      {action && (
+        <div className="flex shrink-0 items-center gap-1.5">{action}</div>
+      )}
+    </div>
   )
 }
 

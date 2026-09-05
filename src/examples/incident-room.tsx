@@ -569,18 +569,19 @@ function IncidentRoom() {
         />
 
         <Card>
-          <CardHeader className="flex-row items-start justify-between gap-4">
-            <div className="space-y-1">
-              <CardTitle as="h2">Alert queue</CardTitle>
-              <CardDescription>
-                Grouped by fingerprint — the 5xx alert alone has fired 214 times.
-              </CardDescription>
-            </div>
-            {silenced.length > 0 && (
-              <Button size="sm" variant="secondary" onClick={restore}>
-                <Undo2 /> Restore {silenced.length} silenced
-              </Button>
-            )}
+          <CardHeader
+            action={
+              silenced.length > 0 && (
+                            <Button size="sm" variant="secondary" onClick={restore}>
+                              <Undo2 /> Restore {silenced.length} silenced
+                            </Button>
+                          )
+            }
+          >
+<CardTitle as="h2">Alert queue</CardTitle>
+                        <CardDescription>
+                          Grouped by fingerprint — the 5xx alert alone has fired 214 times.
+                        </CardDescription>
           </CardHeader>
           <CardBody>
             <AlertTriage
@@ -599,14 +600,15 @@ function IncidentRoom() {
         </Card>
 
         <Card>
-          <CardHeader className="flex-row items-start justify-between gap-4">
-            <div className="space-y-1">
-              <CardTitle as="h2">Impact by service</CardTitle>
-              <CardDescription>Probes, budget and backlog for the service you pick.</CardDescription>
-            </div>
-            <Badge size="sm" color="neutral" icon={<Activity />}>
-              eu-west-1
-            </Badge>
+          <CardHeader
+            action={
+              <Badge size="sm" color="neutral" icon={<Activity />}>
+                eu-west-1
+              </Badge>
+            }
+          >
+            <CardTitle as="h2">Impact by service</CardTitle>
+            <CardDescription>Probes, budget and backlog for the service you pick.</CardDescription>
           </CardHeader>
 
           {/* One controlled Tabs rather than three independent panels: the aside
@@ -683,18 +685,19 @@ function IncidentRoom() {
         </div>
 
         <Card>
-          <CardHeader className="flex-row items-start justify-between gap-4">
-            <div className="space-y-1">
-              <CardTitle as="h2">Remediation</CardTitle>
-              <CardDescription>
-                Steps run in order — the runbook exists to stop step four happening first.
-              </CardDescription>
-            </div>
-            {remediated && (
-              <Badge size="sm" color="green" icon={<Waves />}>
-                ready to monitor
-              </Badge>
-            )}
+          <CardHeader
+            action={
+              remediated && (
+                            <Badge size="sm" color="green" icon={<Waves />}>
+                              ready to monitor
+                            </Badge>
+                          )
+            }
+          >
+<CardTitle as="h2">Remediation</CardTitle>
+                        <CardDescription>
+                          Steps run in order — the runbook exists to stop step four happening first.
+                        </CardDescription>
           </CardHeader>
           <CardBody className="space-y-4">
             <RunbookSteps

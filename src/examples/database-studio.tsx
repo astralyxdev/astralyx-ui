@@ -841,16 +841,17 @@ function DatabaseStudio() {
             )}
 
             <Card>
-              <CardHeader className="flex-row items-center justify-between gap-4">
-                <div className="space-y-1">
-                  <CardTitle as="h2">{result.label}</CardTitle>
-                  <CardDescription>
-                    {count(result.rows.length)} rows in {result.durationMs} ms
-                  </CardDescription>
-                </div>
-                <Button size="sm" variant="secondary" disabled={running} onClick={run}>
-                  <Play /> Run again
-                </Button>
+              <CardHeader
+                action={
+                  <Button size="sm" variant="secondary" disabled={running} onClick={run}>
+                    <Play /> Run again
+                  </Button>
+                }
+              >
+                <CardTitle as="h2">{result.label}</CardTitle>
+                <CardDescription>
+                  {count(result.rows.length)} rows in {result.durationMs} ms
+                </CardDescription>
               </CardHeader>
 
               <Tabs value={resultTab} onValueChange={setResultTab} className="gap-0">
@@ -1002,23 +1003,24 @@ function DatabaseStudio() {
             <MigrationList migrations={MIGRATIONS} now={NOW} />
 
             <Card>
-              <CardHeader className="flex-row items-end justify-between gap-4">
-                <div className="space-y-1">
-                  <CardTitle as="h2">Migration source</CardTitle>
-                  <CardDescription>Both directions, as checked in.</CardDescription>
-                </div>
-                <Select
-                  variant="secondary"
-                  size="sm"
-                  value={migrationVersion}
-                  onValueChange={setMigrationVersion}
-                  className="w-64"
-                  triggerLabel="Migration"
-                  options={MIGRATIONS.map((m) => ({
-                    value: m.version,
-                    label: `${m.version} · ${String(m.name)}`,
-                  }))}
-                />
+              <CardHeader
+                action={
+                  <Select
+                                    variant="secondary"
+                                    size="sm"
+                                    value={migrationVersion}
+                                    onValueChange={setMigrationVersion}
+                                    className="w-64"
+                                    triggerLabel="Migration"
+                                    options={MIGRATIONS.map((m) => ({
+                                      value: m.version,
+                                      label: `${m.version} · ${String(m.name)}`,
+                                    }))}
+                                  />
+                }
+              >
+<CardTitle as="h2">Migration source</CardTitle>
+                                <CardDescription>Both directions, as checked in.</CardDescription>
               </CardHeader>
               <CardBody>
                 <CodeBlock

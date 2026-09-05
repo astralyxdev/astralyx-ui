@@ -4326,6 +4326,7 @@
         },
         {
           "name": "CardHeader",
+          "description": "A header takes a title and a description. Anything else — a menu, a filter, a badge — goes in `action`.",
           "extends": [
             "ComponentProps<'div'>"
           ],
@@ -4333,6 +4334,10 @@
             {
               "name": "size",
               "type": "CardSize"
+            },
+            {
+              "name": "action",
+              "type": "ReactNode"
             }
           ]
         },

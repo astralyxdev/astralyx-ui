@@ -14,7 +14,6 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
   DropdownMenuSeparator, DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Group } from '@/components/ui/group'
 import { Input } from '@/components/ui/input'
 import { Pagination } from '@/components/ui/pagination'
 import { Progress } from '@/components/ui/progress'
@@ -168,7 +167,10 @@ function Dashboard() {
         {/* Stat owns the label, the number and the direction of the delta —
             including which direction is the good one, which is why the open
             incidents card reads a rise as bad without a special case here. */}
-        <Group orientation="horizontal" even size="sm">
+        {/* A grid, not a Group: `even` means one row of equal shares, so four
+            cards stay on one row down to 68px each with every label cut to
+            three characters. auto-fit keeps them equal and wraps instead. */}
+        <div className="bg-secondary/40 grid grid-cols-[repeat(auto-fit,minmax(11rem,1fr))] gap-3 rounded-[var(--radius-group-sm)] p-3">
           {STATS.map((stat) => (
             <Stat
               key={stat.label}
@@ -179,7 +181,7 @@ function Dashboard() {
               chart={<Sparkline values={stat.trend} variant="area" className="h-8" />}
             />
           ))}
-        </Group>
+        </div>
 
         <Card>
           <CardHeader>
@@ -201,27 +203,28 @@ function Dashboard() {
         </Card>
 
         <Card>
-          <CardHeader className="flex-row items-center justify-between gap-4">
-            <div className="space-y-1">
-              <CardTitle as="h2">Recent builds</CardTitle>
-              <CardDescription>Across every branch.</CardDescription>
-            </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon-sm" aria-label="Build actions">
-                  <MoreHorizontal />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Builds</DropdownMenuLabel>
-                <DropdownMenuItem>Re-run failed</DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Download /> Download logs
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Cancel all running</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+          <CardHeader
+            action={
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon-sm" aria-label="Build actions">
+                    <MoreHorizontal />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>Builds</DropdownMenuLabel>
+                  <DropdownMenuItem>Re-run failed</DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Download /> Download logs
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>Cancel all running</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            }
+          >
+            <CardTitle as="h2">Recent builds</CardTitle>
+            <CardDescription>Across every branch.</CardDescription>
           </CardHeader>
 
           <Tabs defaultValue="all" className="gap-0">

@@ -32,9 +32,12 @@ function Examples() {
             className={cn('group block', focusRing, 'rounded-3xl')}
           >
             <Card className="hover:border-foreground/25 h-full transition-colors duration-150 ease-out motion-reduce:transition-none">
-              <CardHeader className="flex-row items-center justify-between gap-2">
-                <CardTitle as="h2" className="text-base">{example.label}</CardTitle>
-                <ArrowRight className="text-muted-foreground group-hover:text-foreground size-4 transition-colors" />
+              <CardHeader
+                action={
+                  <ArrowRight className="text-muted-foreground group-hover:text-foreground size-4 transition-colors" />
+                }
+              >
+                <CardTitle as="h2">{example.label}</CardTitle>
               </CardHeader>
               <CardBody className="space-y-3">
                 <p className="text-muted-foreground text-sm">

@@ -12,7 +12,6 @@ import { ConfidenceMeter } from '@/components/ui/confidence-meter'
 import { CostBreakdown } from '@/components/ui/cost-breakdown'
 import { EvalBoard, type EvalCase, type EvalOutcome } from '@/components/ui/eval-board'
 import { EvalResults, type EvalBenchmark } from '@/components/ui/eval-results'
-import { Group } from '@/components/ui/group'
 import { ModelComparison, type ModelOutput } from '@/components/ui/model-comparison'
 import { PromptDiff } from '@/components/ui/prompt-diff'
 import { PromptVersions, type PromptVersion } from '@/components/ui/prompt-versions'
@@ -390,30 +389,34 @@ function AiOps() {
           twice before falling back to the cached account record.
         </Alert>
 
-        <Group orientation="horizontal" even size="sm">
+        {/* A grid, not a Group: `even` means one row of equal shares, so four
+            cards stay on one row down to 68px each with every label cut to
+            three characters. auto-fit keeps them equal and wraps instead. */}
+        <div className="bg-secondary/40 grid grid-cols-[repeat(auto-fit,minmax(11rem,1fr))] gap-3 rounded-[var(--radius-group-sm)] p-3">
           <Stat label="Tickets triaged" value="41,620" delta={6.2} size="sm" />
           <Stat label="Auto-resolved" value="63.4%" delta={1.8} size="sm" />
           <Stat label="p95 latency" value="1.18 s" delta={22.4} goodDirection="down" size="sm" />
           <Stat label="Spend today" value="$61.40" delta={9.1} goodDirection="down" size="sm" />
-        </Group>
+        </div>
 
         <Card>
-          <CardHeader className="flex-row items-start justify-between gap-4">
-            <div className="space-y-1">
-              <CardTitle as="h2">{series.label}</CardTitle>
-              <CardDescription>{series.caption}</CardDescription>
-            </div>
-            <SegmentedControl
-              size="sm"
-              label="Metric"
-              value={metric}
-              onValueChange={setMetric}
-              options={[
-                { value: 'latency', label: 'Latency' },
-                { value: 'errors', label: 'Errors' },
-                { value: 'cost', label: 'Cost' },
-              ]}
-            />
+          <CardHeader
+            action={
+              <SegmentedControl
+                size="sm"
+                label="Metric"
+                value={metric}
+                onValueChange={setMetric}
+                options={[
+                  { value: 'latency', label: 'Latency' },
+                  { value: 'errors', label: 'Errors' },
+                  { value: 'cost', label: 'Cost' },
+                ]}
+              />
+            }
+          >
+            <CardTitle as="h2">{series.label}</CardTitle>
+            <CardDescription>{series.caption}</CardDescription>
           </CardHeader>
           <CardBody className="space-y-3">
             <AnomalyChart

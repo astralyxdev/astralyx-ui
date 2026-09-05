@@ -702,16 +702,17 @@ function CiPipeline() {
         </Card>
 
         <Card>
-          <CardHeader className="flex-row items-start justify-between gap-4">
-            <div className="space-y-1">
-              <CardTitle as="h2">{job ? `${job.name} — log` : 'Job log'}</CardTitle>
-              <CardDescription>
-                Failed steps open by default; nobody reads the steps that worked.
-              </CardDescription>
-            </div>
-            <Badge size="sm" color="neutral">
-              #{run.id}
-            </Badge>
+          <CardHeader
+            action={
+              <Badge size="sm" color="neutral">
+                #{run.id}
+              </Badge>
+            }
+          >
+            <CardTitle as="h2">{job ? `${job.name} — log` : 'Job log'}</CardTitle>
+            <CardDescription>
+              Failed steps open by default; nobody reads the steps that worked.
+            </CardDescription>
           </CardHeader>
           <CardBody>
             {log ? (
@@ -752,19 +753,20 @@ function CiPipeline() {
             </Card>
 
             <Card>
-              <CardHeader className="flex-row items-start justify-between gap-4">
-                <div className="space-y-1">
-                  <CardTitle as="h2">Coverage</CardTitle>
-                  <CardDescription>Ranked by untested lines, not by percentage.</CardDescription>
-                </div>
-                <Select
-                  variant="secondary"
-                  size="sm"
-                  value={metric}
-                  onValueChange={(value) => setMetric(value as CoverageMetric)}
-                  className="w-36"
-                  options={COVERAGE_METRICS}
-                />
+              <CardHeader
+                action={
+                  <Select
+                                    variant="secondary"
+                                    size="sm"
+                                    value={metric}
+                                    onValueChange={(value) => setMetric(value as CoverageMetric)}
+                                    className="w-36"
+                                    options={COVERAGE_METRICS}
+                                  />
+                }
+              >
+<CardTitle as="h2">Coverage</CardTitle>
+                                <CardDescription>Ranked by untested lines, not by percentage.</CardDescription>
               </CardHeader>
               <CardBody>
                 <CoverageReport files={COVERAGE} metric={metric} threshold={0.8} />
@@ -795,20 +797,21 @@ function CiPipeline() {
               </Card>
 
               <Card>
-                <CardHeader className="flex-row items-start justify-between gap-4">
-                  <div className="space-y-1">
-                    <CardTitle as="h2">Bundle</CardTitle>
-                    <CardDescription>412.8 kB raw, 118.4 kB on the wire.</CardDescription>
-                  </div>
-                  {/* Laying out by raw bytes makes the locale file look like the
-                      problem; by gzip it all but disappears. Both views are
-                      useful, so the toggle stays. */}
-                  <Switch
-                    size="sm"
-                    label="gzip"
-                    checked={gzip}
-                    onChange={(event) => setGzip(event.currentTarget.checked)}
-                  />
+                {/* Laying out by raw bytes makes the locale file look like the
+                    problem; by gzip it all but disappears. Both views are
+                    useful, so the toggle stays. */}
+                <CardHeader
+                  action={
+                    <Switch
+                      size="sm"
+                      label="gzip"
+                      checked={gzip}
+                      onChange={(event) => setGzip(event.currentTarget.checked)}
+                    />
+                  }
+                >
+                  <CardTitle as="h2">Bundle</CardTitle>
+                  <CardDescription>412.8 kB raw, 118.4 kB on the wire.</CardDescription>
                 </CardHeader>
                 <CardBody>
                   <BundleTreemap modules={MODULES} useGzip={gzip} height={240} />

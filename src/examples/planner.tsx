@@ -436,30 +436,31 @@ function Planner() {
     >
       <div className="space-y-6 p-4 sm:p-6">
         <Card>
-          <CardHeader className="flex-row flex-wrap items-center justify-between gap-3">
-            <div className="space-y-1">
-              <CardTitle as="h2">Release train</CardTitle>
-              <CardDescription>
-                Currently at <strong className="font-medium">{steps[stage]?.label ?? 'shipped'}</strong>.
-              </CardDescription>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                size="sm"
-                variant="secondary"
-                disabled={stage === 0}
-                onClick={() => setStage((value) => Math.max(0, value - 1))}
-              >
-                <ChevronLeft /> Roll back
-              </Button>
-              <Button
-                size="sm"
-                disabled={stage >= RELEASE_STEPS.length - 1}
-                onClick={() => setStage((value) => Math.min(RELEASE_STEPS.length - 1, value + 1))}
-              >
-                Advance <ChevronRight />
-              </Button>
-            </div>
+          <CardHeader
+            action={
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  disabled={stage === 0}
+                  onClick={() => setStage((value) => Math.max(0, value - 1))}
+                >
+                  <ChevronLeft /> Roll back
+                </Button>
+                <Button
+                  size="sm"
+                  disabled={stage >= RELEASE_STEPS.length - 1}
+                  onClick={() => setStage((value) => Math.min(RELEASE_STEPS.length - 1, value + 1))}
+                >
+                  Advance <ChevronRight />
+                </Button>
+              </div>
+            }
+          >
+            <CardTitle as="h2">Release train</CardTitle>
+            <CardDescription>
+              Currently at <strong className="font-medium">{steps[stage]?.label ?? 'shipped'}</strong>.
+            </CardDescription>
           </CardHeader>
           <CardBody>
             <Stepper steps={steps} current={stage} />
@@ -488,21 +489,22 @@ function Planner() {
         </Card>
 
         <Card>
-          <CardHeader className="flex-row flex-wrap items-center justify-between gap-3">
-            <div className="space-y-1">
-              <CardTitle as="h2">Week of 2 March</CardTitle>
-              <CardDescription>
-                Drag a block to move it, or its bottom edge to make it longer.
-              </CardDescription>
-            </div>
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => setEvents(INITIAL_EVENTS)}
-              disabled={events === INITIAL_EVENTS}
-            >
-              Reset week
-            </Button>
+          <CardHeader
+            action={
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => setEvents(INITIAL_EVENTS)}
+                disabled={events === INITIAL_EVENTS}
+              >
+                Reset week
+              </Button>
+            }
+          >
+            <CardTitle as="h2">Week of 2 March</CardTitle>
+            <CardDescription>
+              Drag a block to move it, or its bottom edge to make it longer.
+            </CardDescription>
           </CardHeader>
           <CardBody>
             <Scheduler
@@ -520,18 +522,19 @@ function Planner() {
         </Card>
 
         <Card>
-          <CardHeader className="flex-row flex-wrap items-center justify-between gap-3">
-            <div className="space-y-1">
-              <CardTitle as="h2">Sprint 24</CardTitle>
-              <CardDescription>
-                Cards stay where you drop them — the board reports the move and this page owns the state.
-              </CardDescription>
-            </div>
-            <Badge
-              color={inFlight && inFlight.limit !== undefined && inFlight.cards.length >= inFlight.limit ? 'rose' : 'neutral'}
-            >
-              {inFlight?.cards.length ?? 0} / {inFlight?.limit ?? 0} in flight
-            </Badge>
+          <CardHeader
+            action={
+              <Badge
+                color={inFlight && inFlight.limit !== undefined && inFlight.cards.length >= inFlight.limit ? 'rose' : 'neutral'}
+              >
+                {inFlight?.cards.length ?? 0} / {inFlight?.limit ?? 0} in flight
+              </Badge>
+            }
+          >
+            <CardTitle as="h2">Sprint 24</CardTitle>
+            <CardDescription>
+              Cards stay where you drop them — the board reports the move and this page owns the state.
+            </CardDescription>
           </CardHeader>
           <CardBody>
             <Kanban columns={columns} onMove={moveCard} emptyLabel="Drop a card here" />

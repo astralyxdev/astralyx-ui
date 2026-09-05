@@ -199,18 +199,19 @@ function Storefront() {
       <div className="space-y-6 p-4 sm:p-6">
         {section === 'basket' && (
           <Card>
-            <CardHeader className="flex-row items-center justify-between gap-4">
-              <div className="space-y-1">
-                <CardTitle as="h2">Your basket</CardTitle>
-                <CardDescription>
-                  Quantities are capped at what is in stock, at the stepper rather than on submit.
-                </CardDescription>
-              </div>
-              {lines.length < CATALOGUE.length && (
-                <Button size="sm" variant="secondary" onClick={() => setLines(CATALOGUE)}>
-                  Restore basket
-                </Button>
-              )}
+            <CardHeader
+              action={
+                lines.length < CATALOGUE.length && (
+                                <Button size="sm" variant="secondary" onClick={() => setLines(CATALOGUE)}>
+                                  Restore basket
+                                </Button>
+                              )
+              }
+            >
+<CardTitle as="h2">Your basket</CardTitle>
+                            <CardDescription>
+                              Quantities are capped at what is in stock, at the stepper rather than on submit.
+                            </CardDescription>
             </CardHeader>
             <CardBody>
               <Cart
@@ -433,12 +434,13 @@ function Storefront() {
           <div className="max-w-2xl space-y-4">
             {REVIEWS.map((review) => (
               <Card key={review.id}>
-                <CardHeader className="flex-row items-start justify-between gap-4">
-                  <div className="space-y-1">
-                    <CardTitle as="h2">{review.product}</CardTitle>
-                    <CardDescription>{review.reviewer}</CardDescription>
-                  </div>
-                  <Rating value={stars[review.id]} readOnly showValue size="sm" />
+                <CardHeader
+                  action={
+                    <Rating value={stars[review.id]} readOnly showValue size="sm" />
+                  }
+                >
+                  <CardTitle as="h2">{review.product}</CardTitle>
+                  <CardDescription>{review.reviewer}</CardDescription>
                 </CardHeader>
                 <CardBody className="space-y-3">
                   <p className="text-sm">{review.body}</p>
