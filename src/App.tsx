@@ -4,6 +4,7 @@ import {
   Link,
   Router,
   useLocation,
+  useNavigate,
   useRoute,
 } from '@/components/primitives/router'
 import { Button } from '@/components/ui/button'
@@ -159,6 +160,17 @@ function Shell() {
   )
 }
 
+/** Swaps one URL for another without leaving a history entry to go back to. */
+function Redirect({ to }: { to: string }) {
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    navigate(to, { replace: true })
+  }, [navigate, to])
+
+  return null
+}
+
 function Routes() {
   const path = useLocation()
   const component = useRoute('/components/:id')
@@ -167,6 +179,11 @@ function Routes() {
   if (path === '/') return <Home />
   if (path === '/examples') return <Examples />
   if (path === '/components') return <ComponentsIndex />
+
+  // Nothing is published at /docs itself and nothing links to it, but it is
+  // the obvious thing to type after reading /docs/theming. Landing on Not
+  // found there is a dead end where the first page would do.
+  if (path === '/docs') return <Redirect to={docPath(DOCS[0].id)} />
 
   if (doc) {
     const entry = findDoc(doc.id)
