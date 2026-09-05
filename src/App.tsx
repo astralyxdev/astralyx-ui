@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { ArrowLeft, ArrowUpRight } from 'lucide-react'
+import { ArrowLeft, ArrowUpRight, Component } from 'lucide-react'
 import {
   Link,
   Router,
@@ -335,7 +335,17 @@ function Sidebar({ path }: { path: string }) {
             const to = componentPath(entry.id)
             return (
               <NavLink key={entry.id} to={to} current={path === to}>
-                {entry.label}
+                <span className="flex min-w-0 items-center gap-2">
+                  {/* One glyph for every component, the same everywhere. It
+                      marks the row as a component rather than identifying which
+                      one — the label already does that, and 343 distinct icons
+                      would be 343 things to learn. */}
+                  <Component
+                    className="text-muted-foreground/60 size-3.5 shrink-0"
+                    aria-hidden="true"
+                  />
+                  <span className="truncate">{entry.label}</span>
+                </span>
                 {entry.isNew && <NewTag />}
               </NavLink>
             )

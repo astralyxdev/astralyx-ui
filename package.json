@@ -1,6 +1,6 @@
 {
   "name": "astralyx-ui",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "type": "module",
   "description": "309 accessible React components you copy into your repo, with a CLI and registry that resolve what each one needs.",
   "license": "MIT",

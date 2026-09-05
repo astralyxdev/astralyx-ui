@@ -1,4 +1,4 @@
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Component } from 'lucide-react'
 import { Link } from '@/components/primitives/router'
 import { Badge } from '@/components/ui/badge'
 import { PageHeader } from '@/components/ui/page-header'
@@ -62,8 +62,14 @@ function ComponentsIndex() {
                     )}
                   >
                     <span className="flex items-center justify-between gap-2">
-                      <span className="truncate text-sm font-medium">
-                        {entry.label}
+                      <span className="flex min-w-0 items-center gap-2">
+                        <Component
+                          className="text-muted-foreground group-hover:text-foreground size-4 shrink-0 transition-colors duration-150 ease-out motion-reduce:transition-none"
+                          aria-hidden="true"
+                        />
+                        <span className="truncate text-sm font-medium">
+                          {entry.label}
+                        </span>
                       </span>
                       {isReady(entry) ? (
                         <ArrowRight className="text-muted-foreground group-hover:text-foreground size-4 shrink-0 transition-colors duration-150 ease-out motion-reduce:transition-none" />
