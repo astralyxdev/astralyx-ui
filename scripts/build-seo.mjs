@@ -38,6 +38,17 @@ globalThis.window ??= {
 
 const server = await createServer({ server: { middlewareMode: true }, appType: 'custom' })
 const { ENTRIES, componentPath, findCategory } = await server.ssrLoadModule('/src/registry/index.ts')
+
+/**
+ * The counts every description quotes, taken from the registry rather than
+ * typed into the HTML.
+ *
+ * They were typed in once and said 253 for as long as it took to add ninety
+ * more — in the meta description, the OG and Twitter descriptions, and the
+ * structured data, which is the copy a search result and a link unfurl
+ * actually show. A number nobody owns is a number that rots.
+ */
+const COMPONENT_COUNT = ENTRIES.length
 const { DOCS } = await server.ssrLoadModule('/src/docs/pages.tsx')
 const { EXAMPLES, examplePath } = await server.ssrLoadModule('/src/examples/index.ts')
 const { canonicalUrl, clampDescription, pageTitle } = await server.ssrLoadModule('/src/lib/seo.ts')
@@ -54,8 +65,10 @@ const routes = [
   {
     path: '/',
     title: undefined,
-    description:
-      'Accessible React components and primitives for React 19 and Tailwind v4. A CLI copies the source into your repo — nothing is imported from a package at runtime.',
+    // Written to fit inside the 155-character clamp rather than be cut by it:
+    // the previous one ran to 163 and every search result ended mid-phrase,
+    // on the word "at".
+    description: `${COMPONENT_COUNT} accessible React components for React 19 and Tailwind v4. A CLI copies the source into your repo — nothing is imported at runtime.`,
     priority: '1.0',
   },
   {
@@ -128,6 +141,14 @@ function pageHtml(route) {
   html = setMeta(html, 'property', 'og:url', url)
   html = setMeta(html, 'name', 'twitter:title', title)
   html = setMeta(html, 'name', 'twitter:description', description)
+
+  // The structured data carries its own copy of the description, and nothing
+  // was rewriting it — so the JSON-LD a search engine reads still claimed 253
+  // components long after the meta tags had been corrected.
+  html = html.replace(
+    /("description":\s*")[^"]*(")/,
+    `$1${escapeHtml(description)}$2`,
+  )
   return html
 }
 
