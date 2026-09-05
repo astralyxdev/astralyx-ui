@@ -1,6 +1,6 @@
 {
   "name": "astralyx-ui",
-  "version": "0.7.5",
+  "version": "0.8.0",
   "homepage": "https://ui.astralyx.dev",
   "items": [
     {
@@ -3977,7 +3977,7 @@
       "name": "sidebar",
       "type": "registry:ui",
       "title": "Sidebar",
-      "description": "An inset application frame: a transparent rail that collapses to a 52px icon strip, beside a rounded content panel. Inset is the only layout and icon is the only collapsed state, which is what keeps the geometry exact.",
+      "description": "Two sidebars from one set of parts: the app frame — a transparent rail that collapses to a 52px icon strip beside a rounded content panel — and a static nav that lives inside a page. Inset is the only frame layout and icon the only collapsed state, which is what keeps the geometry exact.",
       "category": "Navigation",
       "dependencies": [
         "lucide-react@^1.39.0"

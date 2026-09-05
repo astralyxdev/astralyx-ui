@@ -50,12 +50,29 @@ import { cn } from '@/lib/utils'
 const RAIL = 'w-13' // 52px — a 36px control unit plus an 8px gutter either side
 const EXPANDED = 'w-64' // 256px
 
+/**
+ * Which of the two sidebars this is.
+ *
+ * `app` is the product's own frame — the one that owns the window, collapses
+ * to a rail, and paints its own fixed ground so the content panel reads as
+ * inset. `page` is navigation *within* a page: a settings nav, a docs
+ * section, a wizard's steps. It never collapses, has no trigger and no
+ * shortcut, takes its height from whatever it sits in, and is painted in the
+ * page's own theme rather than on the rail's fixed black.
+ *
+ * One prop rather than three booleans, because those are not independent: a
+ * sidebar that does not own the window has nothing to collapse into and no
+ * ground of its own to paint.
+ */
+type SidebarVariant = 'app' | 'page'
+
 type SidebarContext = {
   open: boolean
   setOpen: (open: boolean) => void
   toggle: () => void
   /** Below `md` the rail is forced closed and the trigger is inert. */
   locked: boolean
+  variant: SidebarVariant
   id: string
 }
 
@@ -80,11 +97,13 @@ function useSidebar() {
 function SidebarProvider({
   children,
   className,
+  variant = 'app',
   open: openProp,
   defaultOpen = true,
   onOpenChange,
   ...props
 }: ComponentProps<'div'> & {
+  variant?: SidebarVariant
   open?: boolean
   defaultOpen?: boolean
   onOpenChange?: (open: boolean) => void
@@ -93,8 +112,12 @@ function SidebarProvider({
   const [uncontrolled, setUncontrolled] = useState(defaultOpen)
   const wide = useBreakpoint('md')
   const id = useId()
+  const page = variant === 'page'
 
-  const open = (controlled ? openProp : uncontrolled) && wide
+  // A page sidebar is always open: it has no rail to collapse to, and the
+  // breakpoint lock exists so the app frame can shed its width on a phone,
+  // which a nav inside a page does by stacking instead.
+  const open = page || ((controlled ? openProp : uncontrolled) && wide)
 
   const setOpen = useCallback(
     (next: boolean) => {
@@ -109,7 +132,10 @@ function SidebarProvider({
   // Ctrl/Cmd-B, the conventional shortcut. Bound on the frame rather than the
   // document body would miss it when focus is inside the content panel.
   useEffect(() => {
-    if (!wide) return
+    // Cmd-B belongs to the window's own sidebar. Binding it for a nav inside a
+    // page would mean two of them fighting over the same chord on any page
+    // that has both.
+    if (!wide || page) return
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'b' && (event.metaKey || event.ctrlKey)) {
         event.preventDefault()
@@ -118,16 +144,22 @@ function SidebarProvider({
     }
     document.addEventListener('keydown', onKeyDown)
     return () => document.removeEventListener('keydown', onKeyDown)
-  }, [toggle, wide])
+  }, [page, toggle, wide])
 
   return (
-    <SidebarCtx value={{ open, setOpen, toggle, locked: !wide, id }}>
+    <SidebarCtx value={{ open, setOpen, toggle, locked: page || !wide, variant, id }}>
       <div
         data-slot="sidebar-provider"
+        data-variant={variant}
         data-state={open ? 'expanded' : 'collapsed'}
         className={cn(
-          sidebarSurface,
-          'flex min-h-svh w-full gap-2 p-2',
+          'flex w-full',
+          // The app frame owns the window and paints the ground under both
+          // columns. A page nav owns nothing: it takes the height it is given
+          // and leaves the page's own background alone.
+          page
+            ? 'min-h-0 flex-col gap-6 md:flex-row md:gap-8'
+            : cn(sidebarSurface, 'min-h-svh gap-2 p-2'),
           className,
         )}
         {...props}
@@ -148,17 +180,26 @@ function SidebarProvider({
  * included.
  */
 function Sidebar({ className, children, ...props }: ComponentProps<'aside'>) {
-  const { open, id } = useSidebar()
+  const { open, variant, id } = useSidebar()
+  const page = variant === 'page'
 
   return (
     <aside
       id={id}
       data-slot="sidebar"
+      data-variant={variant}
       data-state={open ? 'expanded' : 'collapsed'}
       className={cn(
         'group/sidebar flex shrink-0 flex-col gap-2 bg-transparent',
-        'transition-[width] duration-200 ease-out motion-reduce:transition-none',
-        open ? EXPANDED : RAIL,
+        page
+          ? // No width transition, because nothing changes it. Full width on a
+            // phone so the nav stacks above the content rather than becoming a
+            // 224px column beside a squeezed one.
+            'w-full md:w-56'
+          : cn(
+              'transition-[width] duration-200 ease-out motion-reduce:transition-none',
+              open ? EXPANDED : RAIL,
+            ),
         className,
       )}
       {...props}
@@ -231,6 +272,8 @@ function SidebarGroup({ className, ...props }: ComponentProps<'div'>) {
  * either side of it do not close up as the rail narrows.
  */
 function SidebarGroupLabel({ className, ...props }: ComponentProps<'div'>) {
+  const { variant } = useSidebar()
+
   return (
     <div
       data-slot="sidebar-group-label"
@@ -238,7 +281,9 @@ function SidebarGroupLabel({ className, ...props }: ComponentProps<'div'>) {
         // Same type as DropdownMenuLabel, so a section heading reads the
         // same wherever it appears. Height is on the control grid.
         'flex h-7 shrink-0 items-center px-2.5 text-xs font-medium',
-        sidebarInk.label,
+        // Theme ink on a page, rail ink on the frame — the rail's steps are
+        // measured against its own fixed black ground.
+        variant === 'page' ? 'text-muted-foreground' : sidebarInk.label,
         'truncate whitespace-nowrap',
         'group-data-[state=collapsed]/sidebar:invisible',
         className,
@@ -289,7 +334,24 @@ function SidebarMenuButton({
   /** Shown on hover while collapsed. Defaults to the row's own label. */
   tooltip?: ReactNode
 }) {
-  const { open } = useSidebar()
+  const { open, variant } = useSidebar()
+  const page = variant === 'page'
+  // `sidebarInk` is measured against the rail's fixed black ground. A page nav
+  // sits on the theme's own surface, where those steps are the wrong ones —
+  // white-on-white in the light theme.
+  const ink = page
+    ? {
+        row: 'text-muted-foreground',
+        hover: 'hover:bg-accent hover:text-foreground',
+        active: 'bg-accent text-accent-foreground',
+        ring: focusRing,
+      }
+    : {
+        row: sidebarInk.row,
+        hover: sidebarInk.hover,
+        active: sidebarInk.active,
+        ring: sidebarInk.ring,
+      }
   const Comp = asChild ? Slot : 'button'
 
   const row = (
@@ -306,11 +368,9 @@ function SidebarMenuButton({
         radius.control,
         iconChild,
         interactive,
-        sidebarInk.ring,
+        ink.ring,
         disabledState,
-        // Ink comes from the fixed sidebar token, not the theme, so the row
-        // stays legible on the black ground in both themes.
-        isActive ? sidebarInk.active : cn(sidebarInk.row, sidebarInk.hover),
+        isActive ? ink.active : cn(ink.row, ink.hover),
         className,
       )}
       {...props}
@@ -329,6 +389,8 @@ function SidebarMenuButton({
 
   if (open) return row
 
+  // Only the collapsed rail needs one: the label is `sr-only` there, and this
+  // is what puts it back for a pointer.
   return (
     <Tooltip content={tooltip ?? children} side="right">
       {row}
@@ -384,12 +446,23 @@ function SidebarTrigger({
  * the panel's edge has to be clipped by the curve, not drawn over it.
  */
 function SidebarInset({ className, ...props }: ComponentProps<'main'>) {
+  const { variant } = useSidebar()
+
   return (
     <main
       data-slot="sidebar-inset"
+      data-variant={variant}
       className={cn(
-        'bg-card text-card-foreground border-border flex min-w-0 flex-1 flex-col overflow-hidden border',
-        radius.surface,
+        'flex min-w-0 flex-1 flex-col',
+        // A page nav is not a frame, so its content is not a panel: giving it
+        // a card surface would put a second raised box inside whatever card or
+        // page section already contains it.
+        variant === 'page'
+          ? 'min-h-0'
+          : cn(
+              'bg-card text-card-foreground border-border overflow-hidden border',
+              radius.surface,
+            ),
         className,
       )}
       {...props}
@@ -397,6 +470,7 @@ function SidebarInset({ className, ...props }: ComponentProps<'main'>) {
   )
 }
 
+export type { SidebarVariant }
 export {
   Sidebar,
   SidebarContent,

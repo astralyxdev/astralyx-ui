@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Bell, FileText, Home, LifeBuoy, Search, Settings, Users } from 'lucide-react'
 import {
   Sidebar,
@@ -29,6 +30,80 @@ const SUPPORT = [
 
 /** The frame is `min-h-svh` in real use; demos pin it to a fixed height. */
 const DEMO_FRAME = 'h-96 min-h-0'
+
+const SETTINGS_NAV = [
+  { id: 'profile', label: 'Profile', icon: <Users /> },
+  { id: 'notifications', label: 'Notifications', icon: <Bell /> },
+  { id: 'security', label: 'Security', icon: <Settings /> },
+]
+
+const SETTINGS_WORKSPACE = [
+  { id: 'members', label: 'Members', icon: <Users /> },
+  { id: 'billing', label: 'Billing', icon: <FileText /> },
+]
+
+/**
+ * The page variant: navigation inside a page rather than around the app.
+ *
+ * Nothing collapses, so there is no trigger and no shortcut, and the rows are
+ * painted in the page's own theme instead of on the rail's fixed black.
+ */
+function PageSidebarPreview() {
+  const [section, setSection] = useState('notifications')
+  const all = [...SETTINGS_NAV, ...SETTINGS_WORKSPACE]
+  const active = all.find((item) => item.id === section) ?? all[0]
+
+  return (
+    <SidebarProvider variant="page" className="w-full">
+      <Sidebar>
+        <SidebarContent className="px-0">
+          <SidebarGroup>
+            <SidebarGroupLabel>Account</SidebarGroupLabel>
+            <SidebarMenu>
+              {SETTINGS_NAV.map((item) => (
+                <SidebarMenuItem key={item.id}>
+                  <SidebarMenuButton
+                    icon={item.icon}
+                    isActive={section === item.id}
+                    onClick={() => setSection(item.id)}
+                  >
+                    {item.label}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroup>
+
+          <SidebarGroup>
+            <SidebarGroupLabel>Workspace</SidebarGroupLabel>
+            <SidebarMenu>
+              {SETTINGS_WORKSPACE.map((item) => (
+                <SidebarMenuItem key={item.id}>
+                  <SidebarMenuButton
+                    icon={item.icon}
+                    isActive={section === item.id}
+                    onClick={() => setSection(item.id)}
+                  >
+                    {item.label}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+
+      <SidebarInset>
+        <h3 className="text-sm font-semibold">{active.label}</h3>
+        <p className="text-muted-foreground mt-1 text-sm">
+          The nav keeps its width and its labels at every size, and the panel
+          beside it is ordinary page content — no second card inside the one
+          this already sits in.
+        </p>
+      </SidebarInset>
+    </SidebarProvider>
+  )
+}
 
 function SidebarPreview({ defaultOpen = true }: { defaultOpen?: boolean }) {
   return (
@@ -148,7 +223,7 @@ export const sidebarEntry: ComponentEntry = {
   id: 'sidebar',
   label: 'Sidebar',
   description:
-    'An inset application frame: a transparent rail that collapses to a 52px icon strip, beside a rounded content panel. Inset is the only layout and icon is the only collapsed state, which is what keeps the geometry exact.',
+    'Two sidebars from one set of parts: the app frame — a transparent rail that collapses to a 52px icon strip beside a rounded content panel — and a static nav that lives inside a page. Inset is the only frame layout and icon the only collapsed state, which is what keeps the geometry exact.',
   usage: USAGE,
   composer: {
     tall: true,
@@ -157,6 +232,13 @@ export const sidebarEntry: ComponentEntry = {
     code: composeSidebar,
   },
   api: [
+    {
+      name: 'SidebarProvider variant',
+      type: "'app' | 'page'",
+      default: "'app'",
+      description:
+        '`app` is the product frame that owns the window, collapses to a rail and paints its own fixed ground. `page` is navigation inside a page — a settings nav, a docs section — which never collapses, has no trigger and no shortcut, takes its height from whatever contains it, and is painted in the page theme. One prop rather than three booleans, because they are not independent: a sidebar that does not own the window has nothing to collapse into and no ground of its own to paint.',
+    },
     {
       name: 'SidebarProvider open / defaultOpen / onOpenChange',
       type: 'boolean / boolean / (open: boolean) => void',
@@ -215,6 +297,29 @@ export const sidebarEntry: ComponentEntry = {
   <SidebarInset>…</SidebarInset>
 </SidebarProvider>`,
       render: () => <SidebarPreview />,
+    },
+    {
+      title: 'Inside a page, static',
+      stack: true,
+      code: `// Navigation within a page — a settings nav, a docs section, a wizard.
+// Never collapses, so there is no trigger and no Cmd-B, and the rows are
+// painted in the page theme rather than on the rail's fixed black.
+<SidebarProvider variant="page">
+  <Sidebar>
+    <SidebarContent className="px-0">
+      <SidebarGroup>
+        <SidebarGroupLabel>Account</SidebarGroupLabel>
+        <SidebarMenu>…</SidebarMenu>
+      </SidebarGroup>
+    </SidebarContent>
+  </Sidebar>
+  <SidebarInset>…</SidebarInset>
+</SidebarProvider>`,
+      render: () => (
+        <div className="w-full">
+          <PageSidebarPreview />
+        </div>
+      ),
     },
     {
       title: 'Collapsed to icons',

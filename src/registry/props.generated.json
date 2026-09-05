@@ -23527,6 +23527,11 @@
           ],
           "props": [
             {
+              "name": "variant",
+              "type": "SidebarVariant",
+              "default": "'app'"
+            },
+            {
               "name": "open",
               "type": "boolean"
             },
@@ -23657,6 +23662,13 @@
         {
           "name": "useSidebar",
           "signature": "() => SidebarContext"
+        }
+      ],
+      "types": [
+        {
+          "name": "SidebarVariant",
+          "description": "Which of the two sidebars this is.",
+          "definition": "'app' | 'page'"
         }
       ]
     },
