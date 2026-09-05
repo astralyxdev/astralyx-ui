@@ -13,7 +13,7 @@ function Examples() {
   useSeo({
     title: 'Examples',
     description:
-      'Whole screens built from the kit — a dashboard, a mail client, a repository browser, an assistant and a settings form.',
+      'Whole screens built from the kit — a console, an incident room, a SQL client, an agent studio, a trading desk, a storefront and more. Each is a working page, not a screenshot.',
     path: '/examples',
   })
 
@@ -21,7 +21,7 @@ function Examples() {
     <div className="mx-auto max-w-4xl pb-8">
       <PageHeader
         title="Examples"
-        description="Whole screens assembled from the kit, with nothing hand-rolled. Each one is a real page — resize it, open the menus, drag the dividers."
+        description="Whole screens assembled from the kit, with nothing hand-rolled. Each one is a real page — resize it, open the menus, drag the dividers, and watch a selection change what sits beside it."
       />
 
       <div className="grid gap-4 sm:grid-cols-2">

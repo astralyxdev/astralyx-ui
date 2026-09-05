@@ -7,7 +7,10 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ContextPicker, type ContextSource } from '@/components/ui/context-picker'
 import { Empty } from '@/components/ui/empty'
+import { Citations, type Citation } from '@/components/ui/citations'
+import { Feedback, type Rating } from '@/components/ui/feedback'
 import { Message, MessagePending } from '@/components/ui/message'
+import { ReasoningBlock } from '@/components/ui/reasoning-block'
 import { ModelSelect } from '@/components/ui/model-select'
 import { PromptAttachButton, PromptInput } from '@/components/ui/prompt-input'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -39,9 +42,22 @@ const MODELS = [
   { id: 'haiku', name: 'Haiku', note: 'fastest' },
 ]
 
+const CITATIONS: Citation[] = [
+  { id: 'c1', title: 'switch.tsx', source: 'src/components/ui', snippet: 'thumb: bg-background size-[var(--thumb)]' },
+  { id: 'c2', title: 'index.css', source: 'src', snippet: '--background: oklch(0.99 0 0)' },
+  { id: 'c3', title: 'Contrast and non-text UI', source: 'WCAG 2.2 · 1.4.11', url: 'https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast' },
+]
+
 type Turn =
   | { kind: 'user'; text: string }
-  | { kind: 'assistant'; text: string }
+  | {
+      kind: 'assistant'
+      text: string
+      /** Shown above the answer, folded away — the working, not the result. */
+      reasoning?: string
+      /** What the answer was drawn from. */
+      cites?: Citation[]
+    }
   | { kind: 'tool'; name: string; summary: string; input: string; output?: string; status: 'running' | 'done' | 'error' }
 
 const SEED: Turn[] = [
@@ -57,12 +73,16 @@ const SEED: Turn[] = [
   {
     kind: 'assistant',
     text: 'The thumb is painted with `--background`, which is near-white in light mode — the same value as the off track it sits on, so it vanishes. In dark mode the same token is near-black, which is why it reads as a black dot there. It needs to pair with whatever the track is painted in: `--muted-foreground` on the subtle off track, `--primary-foreground` on the solid on track.',
+    reasoning:
+      'The thumb and the off track both resolve to --background. Checking index.css: in light mode that is oklch(0.99 0 0), and --secondary is oklch(0.97 0 0). Two per cent apart, so the shape is technically painted but has no edge to see. Dark mode inverts --background to near-black, which is why the same code reads as a visible dot there and the bug looked theme-specific. The fix is to pair the thumb with the track it sits on rather than with the page.',
+    cites: CITATIONS,
   },
 ]
 
 function Chat() {
   const [thread, setThread] = useState('kit')
   const [turns, setTurns] = useState<Turn[]>(SEED)
+  const [rating, setRating] = useState<Rating | null>(null)
   const [attached, setAttached] = useState(['styles', 'button'])
   const [model, setModel] = useState('opus')
   const [busy, setBusy] = useState(false)
@@ -196,7 +216,25 @@ function Chat() {
                     onRetry={turn.kind === 'assistant' ? () => {} : undefined}
                     onVote={turn.kind === 'assistant' ? () => {} : undefined}
                   >
+                    {/* Reasoning goes above the answer and starts folded: it is
+                        the working, and most readers want the result first. */}
+                    {turn.kind === 'assistant' && turn.reasoning && (
+                      <ReasoningBlock duration={9} className="mb-3">
+                        {turn.reasoning}
+                      </ReasoningBlock>
+                    )}
                     {turn.text}
+                    {turn.kind === 'assistant' && turn.cites && (
+                      <Citations citations={turn.cites} className="mt-3" />
+                    )}
+                    {turn.kind === 'assistant' && index === turns.length - 1 && (
+                      <Feedback
+                        className="mt-3"
+                        rating={rating}
+                        onRate={setRating}
+                        reasons={['Wrong', 'Incomplete', 'Too long', 'Missed the question']}
+                      />
+                    )}
                   </Message>
                 ),
               )
@@ -258,7 +296,8 @@ export const chatExample: ExampleEntry = {
   description:
     'A working chat: send a message and watch the pending state, attach and detach context, inspect a tool call, and see the context window fill as the thread grows.',
   uses: [
-    'Prompt Input', 'Message', 'Context Picker', 'Tool Call', 'Model Select',
+    'Prompt Input', 'Message', 'Reasoning Block', 'Citations', 'Feedback',
+    'Context Picker', 'Tool Call', 'Model Select',
     'Token Usage', 'Suggestions', 'Scroll Area', 'Empty', 'Badge',
   ],
   render: () => <Chat />,

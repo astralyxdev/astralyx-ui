@@ -196,9 +196,9 @@ export const userMenuEntry: ComponentEntry = {
 }
 
 const KEYS: ApiKey[] = [
-  { id: '1', name: 'Production', prefix: 'sk_live_', last4: 'a91f', created: ago(60 * 24 * 90), lastUsed: ago(14), scopes: ['read', 'write'] },
-  { id: '2', name: 'CI runner', prefix: 'sk_live_', last4: '4c2e', created: ago(60 * 24 * 30), lastUsed: ago(60 * 6), scopes: ['read'] },
-  { id: '3', name: 'Local development', prefix: 'sk_test_', last4: '7b10', created: ago(20), secret: 'sk_test_4f2a1c9d8e7b6a5c4d3e2f17b10' },
+  { id: '1', name: 'Production', prefix: 'ax_live_', last4: 'a91f', created: ago(60 * 24 * 90), lastUsed: ago(14), scopes: ['read', 'write'] },
+  { id: '2', name: 'CI runner', prefix: 'ax_live_', last4: '4c2e', created: ago(60 * 24 * 30), lastUsed: ago(60 * 6), scopes: ['read'] },
+  { id: '3', name: 'Local development', prefix: 'ax_test_', last4: '7b10', created: ago(20), secret: 'ax_test_4f2a1c9d8e7b6a5c4d3e2f17b10' },
 ]
 
 export const apiKeysEntry: ComponentEntry = {

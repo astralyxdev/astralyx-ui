@@ -88,7 +88,7 @@ export const curlCommandEntry: ComponentEntry = {
           insecure={Boolean(state.insecure)}
           headers={[
             { name: 'Content-Type', value: 'application/json' },
-            { name: 'Authorization', value: 'Bearer sk_live_9f21c4a8e77b' },
+            { name: 'Authorization', value: 'Bearer ax_live_9f21c4a8e77b' },
             { name: 'X-Request-Id', value: 'req_8812' },
           ]}
           body={state.body ? { name: "O'Brien", role: 'admin' } : undefined}
@@ -106,7 +106,7 @@ export const curlCommandEntry: ComponentEntry = {
   ],
   demos: [
     { title: 'A POST with headers and a body', stack: true, code: `<CurlCommand method="POST" url="https://api.example.com/v1/refunds" headers={headers} body={body} />`,
-      render: () => (<div className="w-full max-w-2xl"><CurlCommand method="POST" url="https://api.example.com/v1/refunds" headers={[{ name: 'Authorization', value: 'Bearer sk_live_9f2a11c4' }, { name: 'Content-Type', value: 'application/json' }]} body={{ customer_id: 'cus_8812', amount: 34_000 }} /></div>) },
+      render: () => (<div className="w-full max-w-2xl"><CurlCommand method="POST" url="https://api.example.com/v1/refunds" headers={[{ name: 'Authorization', value: 'Bearer ax_live_9f2a11c4' }, { name: 'Content-Type', value: 'application/json' }]} body={{ customer_id: 'cus_8812', amount: 34_000 }} /></div>) },
     { title: 'A bare GET', stack: true, code: `<CurlCommand url="https://api.example.com/v1/customers/cus_8812" />`,
       render: () => (<div className="w-full max-w-2xl"><CurlCommand url="https://api.example.com/v1/customers/cus_8812" /></div>) },
   ],

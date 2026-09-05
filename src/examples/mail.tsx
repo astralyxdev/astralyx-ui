@@ -3,7 +3,9 @@ import {
   Archive, Command as CommandIcon, File, Forward, Inbox, Pencil, Reply,
   Search, Send, Star, Tag, Trash2,
 } from 'lucide-react'
+import { AttachmentPreview, type Attachment } from '@/components/ui/attachment-preview'
 import { Avatar } from '@/components/ui/avatar'
+import { BulkActionBar } from '@/components/ui/bulk-action-bar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { CommandDialog } from '@/components/ui/command'
@@ -43,7 +45,16 @@ const MESSAGES = [
 
 const TAG_COLOR = { design: 'violet', review: 'blue', bug: 'destructive', notes: 'amber' } as const
 
+const ATTACHMENTS: Attachment[] = [
+  { id: 'a1', name: 'switch-contrast-before-after.png', type: 'image/png', size: 284_112 },
+  { id: 'a2', name: 'token-audit.csv', type: 'text/csv', size: 18_940 },
+  { id: 'a3', name: 'Design review notes.pdf', type: 'application/pdf', size: 1_284_400 },
+]
+
 function Mail() {
+  // A second selection, separate from the one that opens a message: ticking
+  // rows is about acting on many, and opening one is about reading it.
+  const [checked, setChecked] = useState<string[]>([])
   const [folder, setFolder] = useState('inbox')
   const [selectedId, setSelectedId] = useState('1')
   const [filter, setFilter] = useState(['all'])
@@ -151,9 +162,26 @@ function Mail() {
                   >
                     <button
                       type="button"
-                      onClick={() => setSelectedId(message.id)}
+                      onClick={(event) => {
+                        // Meta or shift ticks the row for a bulk action rather
+                        // than opening it, which is the convention every mail
+                        // client shares and costs no extra chrome in the row.
+                        if (event.metaKey || event.ctrlKey || event.shiftKey) {
+                          setChecked((current) =>
+                            current.includes(message.id)
+                              ? current.filter((id) => id !== message.id)
+                              : [...current, message.id],
+                          )
+                          return
+                        }
+                        setSelectedId(message.id)
+                      }}
                       className={`hover:bg-accent/60 flex w-full flex-col gap-1.5 p-4 text-start transition-colors duration-150 ease-out outline-none motion-reduce:transition-none ${
-                        selected?.id === message.id ? 'bg-accent' : ''
+                        checked.includes(message.id)
+                          ? 'bg-primary/10 ring-ring/40 ring-1 ring-inset'
+                          : selected?.id === message.id
+                            ? 'bg-accent'
+                            : ''
                       }`}
                     >
                       <div className="flex items-center gap-2">
@@ -239,6 +267,19 @@ function Mail() {
                         identical to one that was never written.
                       </p>
                     </div>
+
+                    <div className="mt-6 space-y-2">
+                      <p className="text-muted-foreground/70 text-[11px] font-medium tracking-wide uppercase">
+                        {ATTACHMENTS.length} attachments
+                      </p>
+                      {ATTACHMENTS.map((attachment) => (
+                        <AttachmentPreview
+                          key={attachment.id}
+                          attachment={attachment}
+                          onDownload={() => {}}
+                        />
+                      ))}
+                    </div>
                   </>
                 )}
               </ScrollArea>
@@ -293,6 +334,25 @@ function Mail() {
           })),
         ]}
       />
+      {/* Floats over the layout rather than taking a row in it: the bar
+          exists only while something is ticked, and reserving space for
+          it would leave a gap the rest of the time. */}
+      <BulkActionBar
+        count={checked.length}
+        onClear={() => setChecked([])}
+        label={(count) => `${count} conversation${count === 1 ? '' : 's'}`}
+      >
+        <Button size="sm" variant="secondary" onClick={() => setChecked([])}>
+          <Archive /> Archive
+        </Button>
+        <Button size="sm" variant="secondary" onClick={() => setChecked([])}>
+          Mark read
+        </Button>
+        <Button size="sm" color="destructive" onClick={() => setChecked([])}>
+          <Trash2 /> Delete
+        </Button>
+      </BulkActionBar>
+
     </AppFrame>
   )
 }

@@ -20,10 +20,14 @@ import { FileTree } from '@/components/ui/file-tree'
 import { Input } from '@/components/ui/input'
 import { Logo } from '@/components/ui/logo'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { PullRequestCard } from '@/components/ui/pull-request-card'
+import { ReviewThread, type ReviewComment } from '@/components/ui/review-thread'
 import { Separator } from '@/components/ui/separator'
+import { StatusChecks, type StatusCheck } from '@/components/ui/status-checks'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Tooltip } from '@/components/ui/tooltip'
 import { REPO_FILES, REPO_TREE } from './repo-data'
+import { cn } from '@/lib/utils'
 import type { ExampleEntry } from './types'
 
 const BRANCHES = [
@@ -60,7 +64,36 @@ const LANGUAGES = [
   { name: 'HTML', share: 3.4, token: 'amber' },
 ] as const
 
+const PULLS = [
+  { number: 1482, title: 'Pair the switch thumb with its track, not the page', state: 'open' as const, author: 'Ada Lovelace', branch: 'fix/switch-contrast', updated: new Date('2026-03-04T10:12:00Z'), comments: 4, additions: 18, deletions: 6, reviewers: ['Grace Hopper', 'Alan Turing'] },
+  { number: 1479, title: 'Derive field padding from control height', state: 'draft' as const, author: 'Katherine Johnson', branch: 'feat/field-padding', updated: new Date('2026-03-03T16:40:00Z'), comments: 1, additions: 212, deletions: 148, reviewers: ['Ada Lovelace'] },
+  { number: 1471, title: 'Drop Radix, add our own Slot', state: 'merged' as const, author: 'Margaret Hamilton', branch: 'chore/drop-radix', updated: new Date('2026-02-28T09:05:00Z'), comments: 12, additions: 604, deletions: 1180, reviewers: ['Grace Hopper'] },
+]
+
+const CHECKS_PASSING: StatusCheck[] = [
+  { id: 'lint', name: 'oxlint', status: 'success', duration: '4s', required: true },
+  { id: 'types', name: 'tsc --build', status: 'success', duration: '11s', required: true },
+  { id: 'unit', name: 'vitest', status: 'success', duration: '38s', required: true, description: '412 passed' },
+  { id: 'a11y', name: 'axe audit', status: 'success', duration: '22s' },
+  { id: 'size', name: 'bundle budget', status: 'skipped', description: 'No change to dist/' },
+]
+
+const CHECKS_PENDING: StatusCheck[] = [
+  { id: 'lint', name: 'oxlint', status: 'success', duration: '4s', required: true },
+  { id: 'types', name: 'tsc --build', status: 'running', required: true },
+  { id: 'unit', name: 'vitest', status: 'failure', duration: '31s', required: true, description: '2 failed', detail: 'field.test.tsx › padding follows size — expected 14, received 12' },
+  { id: 'a11y', name: 'axe audit', status: 'pending' },
+]
+
+const REVIEW: ReviewComment[] = [
+  { id: 'r1', author: 'Grace Hopper', time: '2h ago', body: 'This is the line — the thumb and the off track both resolve to --background in light mode.' },
+  { id: 'r2', author: 'Ada Lovelace', time: '1h ago', body: 'Right. Pairing it with --muted-foreground on the subtle track and --primary-foreground on the solid one gets both themes above 3:1.' },
+  { id: 'r3', author: 'Alan Turing', time: '20m ago', body: 'Measured it at 4.1:1 light and 5.2:1 dark. Happy.', pending: true },
+]
+
 function Repo() {
+  const [openPull, setPull] = useState(1482)
+  const [resolved, setResolved] = useState(false)
   const [path, setPath] = useState('README.md')
   const [branch, setBranch] = useState('main')
   const [query, setQuery] = useState('')
@@ -338,7 +371,45 @@ function Repo() {
           </div>
         </TabsContent>
 
-        {(['issues', 'pulls', 'settings'] as const).map((tab) => (
+        {/* ------------------------------------------------------ pulls */}
+        <TabsContent value="pulls" className="min-h-0 flex-1 overflow-y-auto p-4 sm:p-6">
+          <div className="mx-auto max-w-3xl space-y-4">
+            {PULLS.map((pull) => (
+              <PullRequestCard
+                key={pull.number}
+                {...pull}
+                // Selecting a card is what swaps the checks and the review
+                // below it, so the list stays the index and never the detail.
+                onClick={() => setPull(pull.number)}
+                className={cn(
+                  'cursor-pointer',
+                  pull.number === openPull && 'border-primary ring-ring/40 ring-2',
+                )}
+                checks={
+                  <Badge size="sm" color={pull.number === 1482 ? 'green' : 'amber'}>
+                    {pull.number === 1482 ? 'All checks passed' : '1 pending'}
+                  </Badge>
+                }
+              />
+            ))}
+
+            <Separator label={`#${openPull} detail`} />
+
+            <StatusChecks checks={openPull === 1482 ? CHECKS_PASSING : CHECKS_PENDING} />
+
+            <ReviewThread
+              path="src/components/ui/switch.tsx"
+              line={57}
+              snippet={'className={cn(\'bg-background size-[var(--thumb)]\', className)}'}
+              comments={REVIEW}
+              resolved={resolved}
+              onResolve={() => setResolved(true)}
+              onReply={() => {}}
+            />
+          </div>
+        </TabsContent>
+
+        {(['issues', 'settings'] as const).map((tab) => (
           <TabsContent
             key={tab}
             value={tab}

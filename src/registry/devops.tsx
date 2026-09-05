@@ -355,7 +355,7 @@ export const serviceStatusEntry: ComponentEntry = {
 const ENV: EnvVar[] = [
   { key: 'NODE_ENV', value: 'production', scopes: ['prod'] },
   { key: 'DATABASE_URL', value: 'postgres://user:hunter2@db.internal:5432/app', secret: true, scopes: ['prod', 'preview'] },
-  { key: 'STRIPE_SECRET_KEY', value: 'sk_live_4f2a1c9d8e7b6a5', secret: true, scopes: ['prod'] },
+  { key: 'STRIPE_SECRET_KEY', value: 'ax_live_4f2a1c9d8e7b6a5', secret: true, scopes: ['prod'] },
   { key: 'NEXT_PUBLIC_API_URL', value: 'https://api.astralyx.dev', scopes: ['prod', 'preview', 'dev'] },
 ]
 

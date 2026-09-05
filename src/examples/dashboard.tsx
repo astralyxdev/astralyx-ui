@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import {
-  Activity, ArrowDownRight, ArrowUpRight, BarChart3, Bell, Download,
+  Activity, BarChart3, Bell, Download,
   LayoutDashboard, MoreHorizontal, Package, Plus, Search, Settings,
   TriangleAlert, Users,
 } from 'lucide-react'
@@ -9,6 +9,7 @@ import { Avatar, AvatarGroup } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardBody, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Chart } from '@/components/ui/chart'
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
   DropdownMenuSeparator, DropdownMenuTrigger,
@@ -18,6 +19,8 @@ import { Input } from '@/components/ui/input'
 import { Pagination } from '@/components/ui/pagination'
 import { Progress } from '@/components/ui/progress'
 import { Select } from '@/components/ui/select'
+import { Sparkline } from '@/components/ui/sparkline'
+import { Stat } from '@/components/ui/stat'
 import { Separator } from '@/components/ui/separator'
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -37,10 +40,10 @@ const NAV: NavItem[] = [
 ]
 
 const STATS = [
-  { label: 'Deployments', value: '1,482', delta: 12.4, up: true },
-  { label: 'Success rate', value: '98.2%', delta: 0.6, up: true },
-  { label: 'Avg. duration', value: '3m 12s', delta: 8.1, up: false },
-  { label: 'Open incidents', value: '3', delta: 2, up: false },
+  { label: 'Deployments', value: '1,482', delta: 12.4, goodDirection: 'up' as const, trend: [31, 38, 34, 46, 52, 49, 61] },
+  { label: 'Success rate', value: '98.2%', delta: 0.6, goodDirection: 'up' as const, trend: [96, 97, 95, 98, 97, 98, 98] },
+  { label: 'Avg. duration', value: '3m 12s', delta: 8.1, goodDirection: 'down' as const, trend: [188, 194, 201, 210, 205, 198, 192] },
+  { label: 'Open incidents', value: '3', delta: 2, goodDirection: 'down' as const, trend: [1, 0, 2, 1, 3, 4, 3] },
 ]
 
 const BUILDS = [
@@ -60,27 +63,12 @@ const USAGE = [
   { label: 'Storage', used: 47, cap: 50, color: 'amber' as const },
 ]
 
-/** A bar chart drawn from divs — no chart library for six values. */
-function Sparkbars({ values }: { values: number[] }) {
-  const peak = Math.max(...values)
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
-  return (
-    <div className="flex h-40 items-end gap-2">
-      {values.map((value, index) => (
-        <Tooltip key={index} content={`${days[index]}: ${value} builds`}>
-          <div className="flex flex-1 flex-col items-center gap-2">
-            <div
-              className="bg-primary hover:bg-[var(--primary-hover)] w-full rounded-t-md transition-colors duration-150 ease-out motion-reduce:transition-none"
-              style={{ height: `${(value / peak) * 100}%` }}
-            />
-            <span className="text-muted-foreground text-[10px]">{days[index]}</span>
-          </div>
-        </Tooltip>
-      ))}
-    </div>
-  )
-}
+const BUILD_SERIES = [
+  { name: 'Passed', values: [38, 52, 27, 68, 61, 11, 7] },
+  { name: 'Failed', values: [4, 6, 4, 6, 5, 1, 1] },
+]
 
 function Dashboard() {
   const [section, setSection] = useState('overview')
@@ -177,21 +165,19 @@ function Dashboard() {
           You are using 47 GB of 50 GB. Older build artifacts are removed after 30 days.
         </Alert>
 
+        {/* Stat owns the label, the number and the direction of the delta —
+            including which direction is the good one, which is why the open
+            incidents card reads a rise as bad without a special case here. */}
         <Group orientation="horizontal" even size="sm">
           {STATS.map((stat) => (
-            <Card key={stat.label} size="sm">
-              <CardBody className="space-y-2">
-                <p className="text-muted-foreground text-xs">{stat.label}</p>
-                <p className="text-2xl font-semibold tabular-nums">{stat.value}</p>
-                <Badge
-                  size="sm"
-                  color={stat.up ? 'green' : 'rose'}
-                  icon={stat.up ? <ArrowUpRight /> : <ArrowDownRight />}
-                >
-                  {stat.delta}%
-                </Badge>
-              </CardBody>
-            </Card>
+            <Stat
+              key={stat.label}
+              label={stat.label}
+              value={stat.value}
+              delta={stat.delta}
+              goodDirection={stat.goodDirection}
+              chart={<Sparkline values={stat.trend} variant="area" className="h-8" />}
+            />
           ))}
         </Group>
 
@@ -201,7 +187,16 @@ function Dashboard() {
             <CardDescription>Hover a bar for the exact count.</CardDescription>
           </CardHeader>
           <CardBody>
-            <Sparkbars values={[42, 58, 31, 74, 66, 12, 8]} />
+            {/* Stacked, because the interesting number is passed against
+                failed on the same day rather than either on its own. */}
+            <Chart
+              variant="stacked-bar"
+              series={BUILD_SERIES}
+              labels={DAYS}
+              height={180}
+              legend
+              valueFormat={(value) => `${value} builds`}
+            />
           </CardBody>
         </Card>
 

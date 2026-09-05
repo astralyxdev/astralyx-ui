@@ -25,7 +25,11 @@ import { Select } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
+import { ApiKeys, type ApiKey } from '@/components/ui/api-keys'
+import { DeviceList, type TrustedDevice } from '@/components/ui/device-list'
+import { SessionList, type Session } from '@/components/ui/session-list'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { TwoFactorSetup, type TwoFactorStep } from '@/components/ui/two-factor-setup'
 import { Textarea } from '@/components/ui/textarea'
 import { ToastProvider, useToast } from '@/components/ui/toast'
 import { AppFrame, AppFrameUser, type NavItem } from './app-frame'
@@ -72,7 +76,40 @@ function SaveBar() {
   )
 }
 
+/**
+ * Fixed, not `new Date()`. Every example page is server-prerendered, and a
+ * clock that moves between the render and the hydrate is a mismatch.
+ */
+const NOW = new Date('2026-03-04T11:20:00Z')
+
+const RECOVERY_CODES = [
+  '4f2a-9c31', '8bd0-1e77', 'a35c-64f2', '0e91-77ab',
+  'c2d8-3b15', '6a44-de09', 'f018-52c7', '9b6e-a140',
+]
+
+const SESSIONS: Session[] = [
+  { id: 's1', device: 'desktop', browser: 'Chrome 141', os: 'macOS 27', ip: '82.14.7.201', location: 'London, UK', lastActive: new Date('2026-03-04T11:18:00Z'), createdAt: new Date('2026-02-27T09:02:00Z'), current: true },
+  { id: 's2', device: 'mobile', browser: 'Safari', os: 'iOS 27', ip: '82.14.7.201', location: 'London, UK', lastActive: new Date('2026-03-04T08:40:00Z'), createdAt: new Date('2026-01-19T18:22:00Z') },
+  { id: 's3', device: 'desktop', browser: 'Firefox 139', os: 'Ubuntu 26.04', ip: '203.0.113.42', location: 'Frankfurt, DE', lastActive: new Date('2026-03-03T02:11:00Z'), createdAt: new Date('2026-03-03T02:09:00Z'), suspicious: true },
+]
+
+const DEVICES: TrustedDevice[] = [
+  { id: 'd1', name: 'Ada’s MacBook Pro', kind: 'desktop', os: 'macOS 27', lastSeen: new Date('2026-03-04T11:18:00Z'), trustedUntil: new Date('2026-05-01T00:00:00Z'), current: true },
+  { id: 'd2', name: 'iPhone 17 Pro', kind: 'mobile', os: 'iOS 27', lastSeen: new Date('2026-03-04T08:40:00Z'), trustedUntil: new Date('2026-04-12T00:00:00Z') },
+  { id: 'd3', name: 'Studio iMac', kind: 'desktop', os: 'macOS 26', lastSeen: new Date('2026-02-02T14:05:00Z'), trustedUntil: new Date('2026-02-20T00:00:00Z') },
+]
+
+const KEYS: ApiKey[] = [
+  { id: 'k1', name: 'Production deploy', prefix: 'ax_live', last4: '9f21', created: new Date('2025-11-04T10:00:00Z'), lastUsed: new Date('2026-03-04T09:55:00Z'), scopes: ['deploy:write', 'builds:read'] },
+  { id: 'k2', name: 'CI test runner', prefix: 'ax_test', last4: '4c08', created: new Date('2026-01-22T16:30:00Z'), lastUsed: new Date('2026-03-02T21:14:00Z'), scopes: ['builds:read'] },
+  { id: 'k3', name: 'Local scratch', prefix: 'ax_test', last4: 'b7e3', created: new Date('2026-03-04T11:19:00Z'), scopes: ['builds:read'] },
+]
+
 function Settings() {
+  const [factorStep, setFactorStep] = useState<TwoFactorStep>('scan')
+  const [sessions, setSessions] = useState(SESSIONS)
+  const [devices, setDevices] = useState(DEVICES)
+  const [keys, setKeys] = useState(KEYS)
   const [email, setEmail] = useState('ada@astralyx.dev')
   const [density, setDensity] = useState('comfortable')
   const [section, setSection] = useState('profile')
@@ -107,6 +144,7 @@ function Settings() {
         <TabsList variant="underline" className="w-full overflow-x-auto">
           <TabsTrigger value="profile" variant="underline">Profile</TabsTrigger>
           <TabsTrigger value="workspace" variant="underline">Workspace</TabsTrigger>
+          <TabsTrigger value="security" variant="underline">Security</TabsTrigger>
           <TabsTrigger value="billing" variant="underline">Billing</TabsTrigger>
         </TabsList>
 
@@ -312,6 +350,64 @@ function Settings() {
           </Card>
         </TabsContent>
 
+        <TabsContent value="security" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle as="h2">Two-factor authentication</CardTitle>
+              <CardDescription>
+                The whole enrolment, recovery codes included.
+              </CardDescription>
+            </CardHeader>
+            <CardBody>
+              <TwoFactorSetup
+                step={factorStep}
+                onStepChange={setFactorStep}
+                account="ada@astralyx.dev"
+                secret="JBSW Y3DP EHPK 3PXP"
+                recoveryCodes={RECOVERY_CODES}
+                // Any six digits pass. The point here is the flow, not the maths.
+                onVerify={() => setFactorStep('recovery')}
+                onFinish={() => setFactorStep('done')}
+              />
+            </CardBody>
+          </Card>
+
+          <SessionList
+            sessions={sessions}
+            now={NOW}
+            onRevoke={(id) =>
+              setSessions((current) => current.filter((session) => session.id !== id))
+            }
+            onRevokeOthers={() =>
+              setSessions((current) => current.filter((session) => session.current))
+            }
+          />
+
+          <DeviceList
+            devices={devices}
+            now={NOW}
+            onRevoke={(id) =>
+              setDevices((current) => current.filter((device) => device.id !== id))
+            }
+          />
+
+          <Card>
+            <CardHeader>
+              <CardTitle as="h2">API keys</CardTitle>
+              <CardDescription>
+                A key is shown once, on creation, and never again.
+              </CardDescription>
+            </CardHeader>
+            <CardBody>
+              <ApiKeys
+                keys={keys}
+                now={NOW}
+                onRevoke={(id) => setKeys((current) => current.filter((key) => key.id !== id))}
+              />
+            </CardBody>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="billing">
           <Card>
             <CardHeader className="flex-row items-center justify-between gap-4">
@@ -345,11 +441,12 @@ export const settingsExample: ExampleEntry = {
   id: 'settings',
   label: 'Settings',
   description:
-    'A settings screen exercising the whole form stack: validated fields, grouped cards, radios, switches, sliders, a combobox and a destructive confirmation.',
+    'A settings screen exercising the whole form stack — validated fields, radios, switches, sliders, a combobox and a destructive confirmation — plus the security surface behind it: two-factor enrolment, live sessions, trusted devices and API keys.',
   uses: [
     'Field', 'Input', 'Textarea', 'Select', 'Combobox', 'Date Picker',
     'Radio Group', 'Switch', 'Checkbox', 'Slider', 'Group', 'Card',
-    'Alert Dialog', 'Toast', 'Tabs',
+    'Alert Dialog', 'Toast', 'Tabs', 'Two Factor Setup', 'Session List',
+    'Device List', 'API Keys',
   ],
   render: () => (
     <ToastProvider position="bottom-end">
