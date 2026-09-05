@@ -96,7 +96,7 @@ export const buttonGroupEntry: ComponentEntry = {
   label: 'Button Group',
   description:
     'Joins controls into one segmented unit — buttons, inputs, selects, or a mix. Inner corners are squared and adjacent borders overlap, so the row reads as a single control rather than a queue of separate ones.',
-  usage: `import { ButtonGroup, ButtonGroupText } from '@/components/ui/button-group'
+  usage: `import { ButtonGroup } from '@/components/ui/button-group'
 
 <ButtonGroup>
   <Button variant="secondary">Copy</Button>

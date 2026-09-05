@@ -118,7 +118,7 @@ export const fewShotEditorEntry: ComponentEntry = {
   label: 'Few-Shot Editor',
   description:
     'The worked examples in a prompt, as editable pairs rather than one long string. Structured pairs can be counted, reordered, costed and switched off one at a time — a textarea holding six examples supports none of that.',
-  usage: `import { FewShotEditor, type FewShotExample } from '@/components/ui/few-shot-editor'
+  usage: `import { FewShotEditor } from '@/components/ui/few-shot-editor'
 
 <FewShotEditor examples={examples} onChange={setExamples} estimateTokens={estimate} />`,
   composer: { tall: true, controls: [], render: () => <FewShotDemo />, code: () => `<FewShotEditor\n  examples={examples}\n  onChange={setExamples}\n  estimateTokens={(e) => Math.ceil((e.input.length + e.output.length) / 4)}\n/>` },

@@ -431,7 +431,7 @@ export const inputFileEntry: ComponentEntry = {
   label: 'Input File',
   description:
     'A file picker shaped like an Input that also runs the upload. Hand it onUpload and it moves each file through queued, uploading, done or error, reports progress, and keeps failures on screen with a retry.',
-  usage: `import { InputFile, type FileUpload } from '@/components/ui/input-file'
+  usage: `import { InputFile } from '@/components/ui/input-file'
 
 <InputFile
   multiple

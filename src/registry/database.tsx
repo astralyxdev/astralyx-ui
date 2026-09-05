@@ -18,9 +18,7 @@ export const queryEditorEntry: ComponentEntry = {
   label: 'Query Editor',
   description:
     'A SQL editor that asks before running an UPDATE or DELETE with no WHERE clause. That is the most expensive mistake anyone makes in a query console, and it is trivial to detect.',
-  usage: `import { QueryConstructor, type Query, type QueryTable } from '@/components/ui/query-constructor'
-import type { SqlDialect, SqlFunction } from '@/lib/sql-select'
-import { QueryEditor } from '@/components/ui/query-editor'
+  usage: `import { QueryEditor } from '@/components/ui/query-editor'
 
 <QueryEditor value={sql} onValueChange={setSql} onRun={run} />`,
   composer: {

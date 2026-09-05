@@ -214,7 +214,7 @@ export const rpcConsoleEntry: ComponentEntry = {
   label: 'RPC Console',
   description:
     'The JSON-RPC wire between a client and an MCP server. Requests and responses are paired by id, which is what produces the latency figure and what makes an unanswered request visible — the single most useful thing this view can show.',
-  usage: `import { RpcConsole, type RpcMessage } from '@/components/ui/rpc-console'
+  usage: `import { RpcConsole } from '@/components/ui/rpc-console'
 
 <RpcConsole messages={traffic} />`,
   composer: {
@@ -320,7 +320,7 @@ export const toolResultEntry: ComponentEntry = {
   label: 'Tool Result',
   description:
     'What a tool actually returned, rendered by content type. An MCP result is a list of blocks that can mix text, images and embedded resources — JSON.stringify turns a returned screenshot into four thousand characters of base64.',
-  usage: `import { ToolResult, type ToolContent } from '@/components/ui/tool-result'
+  usage: `import { ToolResult } from '@/components/ui/tool-result'
 
 <ToolResult tool="search_docs" content={result.content} isError={result.isError} durationMs={120} />`,
   composer: {
@@ -420,7 +420,7 @@ export const mcpConfigEditorEntry: ComponentEntry = {
   label: 'MCP Config Editor',
   description:
     'The mcpServers config with the mistakes people actually make called out. The usual failure parses cleanly and the server silently never appears — the error is in the shape, not the syntax, so a JSON editor catches none of it.',
-  usage: `import { McpConfigEditor, inspectMcpConfig } from '@/components/ui/mcp-config-editor'
+  usage: `import { McpConfigEditor } from '@/components/ui/mcp-config-editor'
 
 <McpConfigEditor servers={servers} onChange={setText} />`,
   composer: {
@@ -621,7 +621,7 @@ export const toolDiffEntry: ComponentEntry = {
   label: 'Tool Diff',
   description:
     'What changed in a tool’s contract between two server versions, with breaking changes classified rather than just listed. Adding an optional parameter and making one required are both edits to `properties`; only one breaks every existing call.',
-  usage: `import { ToolDiff, diffToolSchemas } from '@/components/ui/tool-diff'
+  usage: `import { ToolDiff } from '@/components/ui/tool-diff'
 
 <ToolDiff tool="read_file" before={old.inputSchema} after={next.inputSchema} />`,
   composer: {

@@ -183,7 +183,6 @@ export const markdownEntry: ComponentEntry = {
   description:
     'Rendered markdown with a switch to the source. It builds React nodes and never sets innerHTML, so a document you did not write cannot execute — and the RAW toggle is there because rendered output hides exactly what you look at when it renders wrongly.',
   usage: `import { Markdown } from '@/components/ui/markdown'
-import { MarkdownEditor } from '@/components/ui/markdown-editor'
 
 <Markdown>{notes}</Markdown>`,
   composer: {

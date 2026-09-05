@@ -63,7 +63,7 @@ export const indexListEntry: ComponentEntry = {
   label: 'Index List',
   description:
     'The indexes on a table and which are dead weight. An unused index is written on every insert and makes the planner’s job harder — but a primary key with no scans is not flagged, because suggesting you drop one is advice that loses data.',
-  usage: `import { IndexList, duplicateIndexes } from '@/components/ui/index-list'
+  usage: `import { IndexList } from '@/components/ui/index-list'
 
 <IndexList indexes={indexes} />`,
   composer: {

@@ -78,14 +78,29 @@ for (const entry of ENTRIES) {
     }
   }
 
-  for (const match of (entry.usage ?? '').matchAll(/import\s*\{([^}]*)\}\s*from\s*'([^']+)'/g)) {
+  // The import block is the first thing anyone copies after installing, so it
+  // has to be exactly what the snippet below it needs. Several entries once
+  // carried their whole registry file's import list instead — agent-card
+  // imported sixteen modules to render one card.
+  const usage = entry.usage ?? ''
+  const body = usage
+    .split('\n')
+    .filter((line) => !/^\s*import\b/.test(line) && !/^\s*\}?\s*from\s*'[^']*'/.test(line))
+    .join('\n')
+
+  for (const match of usage.matchAll(/import\s*(?:type\s+)?\{([^}]*)\}\s*from\s*'([^']+)'/g)) {
     const module = match[2].match(/^@\/components\/ui\/([\w-]+)$/)?.[1]
-    if (!module) continue
-    const exported = exportsOf(module)
+    const exported = module ? exportsOf(module) : null
     for (const raw of match[1].split(',')) {
-      const name = raw.trim().replace(/^type\s+/, '').split(/\s+as\s+/)[0]
-      if (name && !exported.has(name)) {
+      const spec = raw.trim()
+      if (!spec) continue
+      const name = spec.replace(/^type\s+/, '').split(/\s+as\s+/).pop().trim()
+      if (exported && !exported.has(name)) {
         imports.push(`${entry.id}: usage imports "${name}" from ${module}, which does not export it`)
+      }
+      const mention = new RegExp(`(^|[^\\w$.])${name.replace(/\$/g, '\\$')}([^\\w$]|$)`)
+      if (!mention.test(body)) {
+        imports.push(`${entry.id}: usage imports "${name}" and never uses it`)
       }
     }
   }

@@ -29,7 +29,7 @@ export const fieldEntry: ComponentEntry = {
   label: 'Field',
   description:
     'Wires a label, a control, help text and an error message together — id, aria-describedby and aria-invalid, all of which are easy to get one short of by hand.',
-  usage: `import { Field, FieldLabel, useFieldControl } from '@/components/ui/field'
+  usage: `import { Field, FieldLabel } from '@/components/ui/field'
 
 function EmailField({ error }) {
   return (
@@ -432,7 +432,7 @@ export const commandEntry: ComponentEntry = {
   label: 'Command',
   description:
     'A command palette: type to filter, arrows to move, Enter to run. Items are data rather than children, because filtering has to reorder and hide them.',
-  usage: `import { CommandDialog, CommandList } from '@/components/ui/command'
+  usage: `import { CommandDialog } from '@/components/ui/command'
 
 <CommandDialog open={open} onOpenChange={setOpen} items={commands} />`,
   composer: {
@@ -540,7 +540,6 @@ export const resizableEntry: ComponentEntry = {
   description:
     'Two panels with a draggable divider. Sizes are percentages, so the split survives a container resize — and the handle is a real slider, so arrow keys resize it too.',
   usage: `import { Resizable } from '@/components/ui/resizable'
-import { defaultPresets } from '@/lib/date'
 
 <Resizable defaultSize={40} minSize={20} maxSize={80}>
   <aside>…</aside>

@@ -20,8 +20,6 @@ export const copyButtonEntry: ComponentEntry = {
   description:
     'Copies a string and says so. Extracted after the same clipboard-plus-timer was written four times in this kit — CodeBlock, Terminal, EnvVars and Message all route through it now.',
   usage: `import { CopyButton } from '@/components/ui/copy-button'
-import { Countdown } from '@/components/ui/countdown'
-import { useClipboard } from '@/lib/use-clipboard'
 
 <CopyButton value={snippet} />
 <CopyButton value={() => buildExpensiveText()} showLabel />`,
@@ -377,7 +375,6 @@ export const composerEntry: ComponentEntry = {
   description:
     'A live playground: drive a set of props and watch the generated source follow. Assembled from the kit’s own controls, so anything awkward about Select, Switch or NumberInput surfaces here first.',
   usage: `import { Composer } from '@/components/ui/composer'
-import { readableInk } from '@/components/ui/label-picker'
 
 <Composer
   controls={[

@@ -23,7 +23,7 @@ export const avatarEntry: ComponentEntry = {
   label: 'Avatar',
   description:
     'An image standing in for a person, with a fallback that always renders. Initials are derived from the name, and a broken image falls through to them.',
-  usage: `import { Avatar, AvatarBadge, AvatarGroup, AvatarWithBadge } from '@/components/ui/avatar'
+  usage: `import { Avatar } from '@/components/ui/avatar'
 
 <Avatar src={user.photo} name="Ada Lovelace" />`,
   composer: {

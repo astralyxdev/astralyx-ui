@@ -125,7 +125,7 @@ export const messageEntry: ComponentEntry = {
   label: 'Message',
   description:
     'One turn in a conversation. The two roles are shaped differently on purpose — a user message is a bubble, an assistant message is full-width prose, because a long answer in a bubble is unreadable.',
-  usage: `import { Message, MessagePending } from '@/components/ui/message'
+  usage: `import { Message } from '@/components/ui/message'
 
 <Message role="user" name="Ada">How do the colour sets work?</Message>
 <Message role="assistant" onRetry={retry} onVote={vote} copyText={text}>

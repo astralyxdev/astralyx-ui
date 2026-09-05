@@ -157,9 +157,7 @@ export const imageEntry: ComponentEntry = {
   label: 'Image',
   description:
     'An img that reserves its space, covers its own load with a skeleton, shimmer or blurred thumbnail, builds a srcset from a list of widths, and renders a fallback in the same box when the URL is dead.',
-  usage: `import { CompareSlider } from '@/components/ui/compare-slider'
-import { Image } from '@/components/ui/image'
-import { Masonry } from '@/components/ui/masonry'
+  usage: `import { Image } from '@/components/ui/image'
 
 <Image
   src="/hero.jpg"

@@ -88,9 +88,12 @@ export const dialogEntry: ComponentEntry = {
   description:
     'A modal window, built on the native <dialog> element — so the focus trap, background inerting, Escape handling and top-layer stacking come from the platform rather than from JavaScript.',
   usage: `import {
-  Dialog, DialogTrigger, DialogContent,
-  DialogHeader, DialogTitle, DialogDescription,
-  DialogBody, DialogFooter,
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogBody,
 } from '@/components/ui/dialog'
 
 <Dialog>

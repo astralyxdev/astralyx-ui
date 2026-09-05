@@ -151,7 +151,7 @@ export const timelineEntry: ComponentEntry = {
   label: 'Timeline',
   description:
     'A vertical run of events sharing one rail — deploys, incidents, review activity, an agent run. The connector stops at the last item instead of dangling past it.',
-  usage: `import { Timeline, TimelineItem, TimelineContent } from '@/components/ui/timeline'
+  usage: `import { Timeline, TimelineItem } from '@/components/ui/timeline'
 
 <Timeline>
   <TimelineItem title="Deployed to production" time="2m ago" tone="success" />
@@ -459,7 +459,6 @@ export const dropzoneEntry: ComponentEntry = {
   description:
     'The upload card: click it or drag onto it, and it runs the upload. Hand it onUpload and it moves each file through queued, uploading, done or error, reports progress, and keeps failures on screen with a retry.',
   usage: `import { Dropzone } from '@/components/ui/dropzone'
-import type { FileUpload, UploadControl } from '@/lib/use-uploads'
 
 <Dropzone
   multiple

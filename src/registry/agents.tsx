@@ -437,7 +437,7 @@ export const nodeCanvasEntry: ComponentEntry = {
   label: 'Node Canvas',
   description:
     'A pannable, zoomable canvas of draggable nodes and the edges between them — the substrate for an agent pipeline, a retrieval chain or a build DAG. Nodes are real DOM, so you put your own components inside them.',
-  usage: `import { NodeCanvas, NodePalette, useCanvasNode } from '@/components/ui/node-canvas'
+  usage: `import { NodeCanvas } from '@/components/ui/node-canvas'
 
 // Node types are ordinary components, declared once, referred to by name.
 const nodeTypes = { step: StepNode, webhook: WebhookNode }
@@ -606,21 +606,6 @@ export const agentCardEntry: ComponentEntry = {
   description:
     'One agent’s definition as a card: the model behind it, the tools it may reach for, and whether it is allowed to run. Tools are listed by name rather than counted, because a count tells you nothing about blast radius.',
   usage: `import { AgentCard } from '@/components/ui/agent-card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Switch } from '@/components/ui/switch'
-import { AgentMemory, type MemoryEntry } from '@/components/ui/agent-memory'
-import { AgentTasks, type AgentTask } from '@/components/ui/agent-tasks'
-import { BudgetGuard } from '@/components/ui/budget-guard'
-import { RetryPolicy } from '@/components/ui/retry-policy'
-import { StreamInspector, type StreamEvent } from '@/components/ui/stream-inspector'
-import { SubagentTree, type Subagent } from '@/components/ui/subagent-tree'
-import { ContextWindow } from '@/components/ui/context-window'
-import { EvalBoard, type EvalCase } from '@/components/ui/eval-board'
-import { PromptDiff } from '@/components/ui/prompt-diff'
-import { ToolLatency, type ToolLatencyRow } from '@/components/ui/tool-latency'
-import { RunControls, type RunStatus } from '@/components/ui/run-controls'
-import { SandboxPolicy, type SandboxScope } from '@/components/ui/sandbox-policy'
 
 <AgentCard
   name="Billing operator"
@@ -679,15 +664,7 @@ export const toolPickerEntry: ComponentEntry = {
   label: 'Tool Picker',
   description:
     'The catalogue of tools an agent may call, with a switch on each. Destructive capabilities are marked rather than hidden — the whole risk of an agent is a capability nobody noticed it had.',
-  usage: `import { GuardrailList, type Guardrail } from '@/components/ui/guardrail-list'
-import {
-  Inspector,
-  type InspectorSection,
-  type InspectorValue,
-} from '@/components/ui/inspector'
-import { HandoffTrail, type Handoff } from '@/components/ui/handoff-trail'
-import { ToolPicker, type Tool } from '@/components/ui/tool-picker'
-import { TraceWaterfall, type TraceSpan } from '@/components/ui/trace-waterfall'
+  usage: `import { ToolPicker } from '@/components/ui/tool-picker'
 
 <ToolPicker tools={tools} value={enabled} onValueChange={setEnabled} />`,
   composer: {
@@ -795,7 +772,7 @@ export const traceWaterfallEntry: ComponentEntry = {
   label: 'Trace Waterfall',
   description:
     'An agent run as a waterfall of spans. Bars are positioned against the whole run rather than each row’s own width, which is what makes concurrency visible — two tools that ran in parallel look identical to two that ran in sequence until you share the axis.',
-  usage: `import { TraceWaterfall, type TraceSpan } from '@/components/ui/trace-waterfall'
+  usage: `import { TraceWaterfall } from '@/components/ui/trace-waterfall'
 
 <TraceWaterfall spans={spans} />`,
   composer: {
@@ -840,12 +817,7 @@ export const guardrailListEntry: ComponentEntry = {
   label: 'Guardrail List',
   description:
     'The safety checks around a run and how each one landed, ordered by consequence rather than by execution. A skipped check is its own state — “we did not scan” and “the scan found nothing” are opposite facts.',
-  usage: `import { GuardrailList, type Guardrail } from '@/components/ui/guardrail-list'
-import {
-  Inspector,
-  type InspectorSection,
-  type InspectorValue,
-} from '@/components/ui/inspector'
+  usage: `import { GuardrailList } from '@/components/ui/guardrail-list'
 
 <GuardrailList guardrails={rails} summary={(c) => \`\${c.block} blocked, \${c.warn} warnings\`} />`,
   composer: {
@@ -888,7 +860,7 @@ export const handoffTrailEntry: ComponentEntry = {
   label: 'Handoff Trail',
   description:
     'Who handled a request, in order, and why each handover happened. The hardest question in a multi-agent system is “why did this agent answer”, and the answer is never in one agent’s transcript — it is in the chain.',
-  usage: `import { HandoffTrail, type Handoff } from '@/components/ui/handoff-trail'
+  usage: `import { HandoffTrail } from '@/components/ui/handoff-trail'
 
 <HandoffTrail handoffs={hops} live />`,
   composer: {
@@ -975,7 +947,7 @@ export const inspectorEntry: ComponentEntry = {
   label: 'Inspector',
   description:
     'The properties panel for whatever is selected — the other half of a canvas. Driven by a field schema rather than by children, because the fields change with the selection and writing that as JSX means a switch statement per kind at the call site.',
-  usage: `import { Inspector, type InspectorSection } from '@/components/ui/inspector'
+  usage: `import { Inspector } from '@/components/ui/inspector'
 
 <Inspector sections={sections} value={node.data} onChange={updateNode} title={node.name} />`,
   composer: {
@@ -1007,16 +979,7 @@ export const contextWindowEntry: ComponentEntry = {
   label: 'Context Window',
   description:
     'What is in the context right now and how much room is left. Segments are drawn to scale against the window, not against what is used — a bar normalised to the used total always looks full, which is exactly backwards.',
-  usage: `import { AgentMemory, type MemoryEntry } from '@/components/ui/agent-memory'
-import { AgentTasks, type AgentTask } from '@/components/ui/agent-tasks'
-import { BudgetGuard } from '@/components/ui/budget-guard'
-import { RetryPolicy } from '@/components/ui/retry-policy'
-import { StreamInspector, type StreamEvent } from '@/components/ui/stream-inspector'
-import { SubagentTree, type Subagent } from '@/components/ui/subagent-tree'
-import { ContextWindow } from '@/components/ui/context-window'
-import { EvalBoard, type EvalCase } from '@/components/ui/eval-board'
-import { PromptDiff } from '@/components/ui/prompt-diff'
-import { ToolLatency, type ToolLatencyRow } from '@/components/ui/tool-latency'
+  usage: `import { ContextWindow } from '@/components/ui/context-window'
 
 <ContextWindow limit={200_000} reserved={8_000} segments={segments} />`,
   composer: {
@@ -1071,7 +1034,7 @@ export const sandboxPolicyEntry: ComponentEntry = {
   label: 'Sandbox Policy',
   description:
     'The permissions an agent actually runs under — filesystem, network and process execution. Built to make the dangerous configuration look dangerous: an allow-list of `/` is functionally no sandbox, and it says so.',
-  usage: `import { SandboxPolicy, type SandboxScope } from '@/components/ui/sandbox-policy'
+  usage: `import { SandboxPolicy } from '@/components/ui/sandbox-policy'
 
 <SandboxPolicy scopes={scopes} onToggle={setScopeEnabled} />`,
   composer: {
@@ -1213,12 +1176,7 @@ export const agentMemoryEntry: ComponentEntry = {
   label: 'Agent Memory',
   description:
     'What an agent has remembered and where each piece came from. Distinct from retrieval: these are injected into every future run whether relevant or not, which is why a person has to be able to inspect and delete them.',
-  usage: `import { AgentMemory, type MemoryEntry } from '@/components/ui/agent-memory'
-import { AgentTasks, type AgentTask } from '@/components/ui/agent-tasks'
-import { BudgetGuard } from '@/components/ui/budget-guard'
-import { RetryPolicy } from '@/components/ui/retry-policy'
-import { StreamInspector, type StreamEvent } from '@/components/ui/stream-inspector'
-import { SubagentTree, type Subagent } from '@/components/ui/subagent-tree'
+  usage: `import { AgentMemory } from '@/components/ui/agent-memory'
 
 <AgentMemory entries={entries} onPin={pin} onForget={forget} />`,
   composer: { tall: true, controls: [], render: () => <MemoryDemo />, code: () => `<AgentMemory entries={entries} onPin={pin} onForget={forget} />` },
@@ -1252,7 +1210,7 @@ export const evalBoardEntry: ComponentEntry = {
   label: 'Eval Board',
   description:
     'Which model to ship, and what is still broken — as a ranking plus a case list rather than a grid. Chips carry their own model name, so there is no column header to align to and nothing that scrolls sideways at four models.',
-  usage: `import { EvalBoard, type EvalCase } from '@/components/ui/eval-board'
+  usage: `import { EvalBoard } from '@/components/ui/eval-board'
 
 <EvalBoard models={models} cases={cases} onSelectCase={openCase} />`,
   composer: {
@@ -1353,7 +1311,7 @@ export const agentTasksEntry: ComponentEntry = {
   label: 'Agent Tasks',
   description:
     'The plan an agent is working from, as it works through it. Not a trace of what happened — a list of what it intends to do, which is what lets you see it heading somewhere wrong while there is still time to stop it.',
-  usage: `import { AgentTasks, type AgentTask } from '@/components/ui/agent-tasks'
+  usage: `import { AgentTasks } from '@/components/ui/agent-tasks'
 
 <AgentTasks tasks={plan} />`,
   composer: { tall: true, controls: [], render: () => (<div className="w-full max-w-xl"><AgentTasks tasks={TASKS} /></div>), code: () => `<AgentTasks tasks={plan} />` },
@@ -1385,7 +1343,7 @@ export const subagentTreeEntry: ComponentEntry = {
   label: 'Subagent Tree',
   description:
     'The tree of subagents a run spawned and what each is costing. Cost aggregates up the tree — a parent that spent 400 tokens itself and fanned out to children that spent 90,000 is cheap by its own line and ruinous in total.',
-  usage: `import { SubagentTree, subtreeTokens } from '@/components/ui/subagent-tree'
+  usage: `import { SubagentTree } from '@/components/ui/subagent-tree'
 
 <SubagentTree agents={agents} onSelect={openAgent} />`,
   composer: {
@@ -1504,7 +1462,7 @@ export const streamInspectorEntry: ComponentEntry = {
   label: 'Stream Inspector',
   description:
     'A model’s token stream event by event, with the timing between them. An average tokens-per-second hides both numbers that matter — time to first token, and the stalls after it.',
-  usage: `import { StreamInspector, type StreamEvent } from '@/components/ui/stream-inspector'
+  usage: `import { StreamInspector } from '@/components/ui/stream-inspector'
 
 <StreamInspector events={events} stallMs={400} />`,
   composer: {

@@ -72,8 +72,10 @@ export const dropdownMenuEntry: ComponentEntry = {
   description:
     'A menu of actions hung off a trigger. Unlike Select this is a list of commands, not a value — items are buttons, the menu closes on activation, and focus returns to the trigger.',
   usage: `import {
-  DropdownMenu, DropdownMenuTrigger, DropdownMenuContent,
-  DropdownMenuItem, DropdownMenuSeparator,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
 } from '@/components/ui/dropdown-menu'
 
 <DropdownMenu>

@@ -44,9 +44,7 @@ export const codeBlockEntry: ComponentEntry = {
   label: 'Code Block',
   description:
     'Syntax-highlighted source with an optional title or file path, copy, inline editing, line numbers and collapsing.',
-  usage: `import { Play } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { CodeBlock } from '@/components/ui/code-block'
+  usage: `import { CodeBlock } from '@/components/ui/code-block'
 
 <CodeBlock
   filePath="src/components/ui/button.tsx"

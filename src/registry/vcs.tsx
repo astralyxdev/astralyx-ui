@@ -151,7 +151,7 @@ export const labelPickerEntry: ComponentEntry = {
   label: 'Label Picker',
   description:
     'Coloured repository labels, picked from a searchable list. Chip text is derived from the fill by luminance, since a label set imported from a forge only gives you a background colour.',
-  usage: `import { LabelPicker, LabelChip } from '@/components/ui/label-picker'
+  usage: `import { LabelPicker } from '@/components/ui/label-picker'
 
 <LabelPicker labels={labels} selected={selected} onSelectedChange={setSelected} />`,
   composer: {

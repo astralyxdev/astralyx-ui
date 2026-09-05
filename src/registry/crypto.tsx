@@ -37,16 +37,7 @@ export const tokenAmountEntry: ComponentEntry = {
   label: 'Token Amount',
   description:
     'A balance formatted from base units without ever touching a float. 1 ETH is 10¹⁸ wei, which exceeds Number.MAX_SAFE_INTEGER by two orders of magnitude — a balance that passes through a JavaScript number is silently wrong.',
-  usage: `import { BridgeStatus } from '@/components/ui/bridge-status'
-import { GovernanceProposal } from '@/components/ui/governance-proposal'
-import { LiquidityPosition } from '@/components/ui/liquidity-position'
-import { MintPanel } from '@/components/ui/mint-panel'
-import { NetworkStatus } from '@/components/ui/network-status'
-import { PortfolioBalance } from '@/components/ui/portfolio-balance'
-import { TokenAmount } from '@/components/ui/token-amount'
-import { TokenSelect } from '@/components/ui/token-select'
-import { TransactionList } from '@/components/ui/transaction-list'
-import { ValidatorList } from '@/components/ui/validator-list'
+  usage: `import { TokenAmount } from '@/components/ui/token-amount'
 
 <TokenAmount value="1234567890123456789" decimals={18} symbol="ETH" />
 <TokenAmount value={usdcBalance} decimals={6} symbol="USDC" fiat={2500} />`,
