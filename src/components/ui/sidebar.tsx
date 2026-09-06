@@ -4,11 +4,12 @@ import {
   useCallback,
   useEffect,
   useId,
+  useMemo,
   useState,
   type ComponentProps,
   type ReactNode,
 } from 'react'
-import { PanelLeft } from 'lucide-react'
+import { PanelLeft, PanelRight } from 'lucide-react'
 import { Slot } from '@/components/primitives/slot'
 import { useBreakpoint } from '@/components/primitives/media-query'
 import { Tooltip } from '@/components/ui/tooltip'
@@ -27,11 +28,14 @@ import { cn } from '@/lib/utils'
  * An inset application frame: a transparent rail beside a rounded content
  * panel, both floating on the page background.
  *
- * Inset is the only layout, and icon is the only collapsed state. Those are
- * decisions, not omissions — an off-canvas sidebar needs an overlay, a scrim
- * and focus containment, and a flush sidebar needs a border that the inset
- * panel already provides by being a separate surface. Supporting one shape
- * well is what keeps the geometry exact.
+ * Inset is the only layout. That is a decision, not an omission: a flush
+ * sidebar needs a border that the inset panel already provides by being a
+ * separate surface, and supporting one shape well is what keeps the geometry
+ * exact.
+ *
+ * A rail collapses to icons by default, or to nothing at all — see
+ * `collapsedTo`. Neither slides over the content: an overlay needs a scrim and
+ * focus containment, and a panel that takes no width needs neither.
  *
  * The grid, in one place:
  *
@@ -66,14 +70,27 @@ const EXPANDED = 'w-64' // 256px
  */
 type SidebarVariant = 'app' | 'page'
 
+/**
+ * Which edge a sidebar is pinned to.
+ *
+ * A frame can carry one of each — navigation on the left, an inspector or a
+ * details panel on the right — so the two open independently and each trigger
+ * says which it drives.
+ */
+type SidebarSide = 'left' | 'right'
+
+/** Open state per side, or one value for both. */
+type SidebarOpen = boolean | Partial<Record<SidebarSide, boolean>>
+
 type SidebarContext = {
-  open: boolean
-  setOpen: (open: boolean) => void
-  toggle: () => void
+  isOpen: (side: SidebarSide) => boolean
+  setOpen: (side: SidebarSide, open: boolean) => void
+  toggle: (side: SidebarSide) => void
   /** Below `md` the rail is forced closed and the trigger is inert. */
   locked: boolean
   variant: SidebarVariant
-  id: string
+  /** The panel's DOM id, for a trigger's `aria-controls`. */
+  panelId: (side: SidebarSide) => string
 }
 
 const SidebarCtx = createContext<SidebarContext | null>(null)
@@ -84,6 +101,34 @@ function useSidebar() {
     throw new Error('useSidebar must be used inside a <SidebarProvider>')
   }
   return context
+}
+
+/**
+ * Which sidebar a row is inside.
+ *
+ * With two panels in one frame, a menu row cannot ask the provider whether
+ * "the" sidebar is open — it has to ask about its own. `Sidebar` publishes
+ * that here, and the rows read it rather than the frame.
+ */
+type SidebarPanel = { side: SidebarSide; open: boolean }
+
+const SidebarPanelCtx = createContext<SidebarPanel | null>(null)
+
+/** Falls back to an open left panel, so a row rendered loose still reads. */
+function useSidebarPanel(): SidebarPanel {
+  return use(SidebarPanelCtx) ?? { side: 'left', open: true }
+}
+
+/** One value for both sides, or a partial object naming them. */
+function bySide(
+  value: SidebarOpen | undefined,
+  fallback: Record<SidebarSide, boolean>,
+): Record<SidebarSide, boolean> {
+  if (typeof value === 'boolean') return { left: value, right: value }
+  return {
+    left: value?.left ?? fallback.left,
+    right: value?.right ?? fallback.right,
+  }
 }
 
 /**
@@ -104,30 +149,57 @@ function SidebarProvider({
   ...props
 }: ComponentProps<'div'> & {
   variant?: SidebarVariant
-  open?: boolean
-  defaultOpen?: boolean
-  onOpenChange?: (open: boolean) => void
+  /** A boolean sets both sides; an object sets the ones it names. */
+  open?: SidebarOpen
+  defaultOpen?: SidebarOpen
+  onOpenChange?: (open: boolean, side: SidebarSide) => void
 }) {
-  const controlled = openProp !== undefined
-  const [uncontrolled, setUncontrolled] = useState(defaultOpen)
+  const [uncontrolled, setUncontrolled] = useState(() =>
+    bySide(defaultOpen, { left: true, right: true }),
+  )
   const wide = useBreakpoint('md')
   const id = useId()
   const page = variant === 'page'
 
+  // Controlled per side, so a frame can drive its inspector from state and
+  // leave the navigation to look after itself.
+  const wanted = bySide(openProp, uncontrolled)
+
   // A page sidebar is always open: it has no rail to collapse to, and the
   // breakpoint lock exists so the app frame can shed its width on a phone,
   // which a nav inside a page does by stacking instead.
-  const open = page || ((controlled ? openProp : uncontrolled) && wide)
-
-  const setOpen = useCallback(
-    (next: boolean) => {
-      if (!controlled) setUncontrolled(next)
-      onOpenChange?.(next)
-    },
-    [controlled, onOpenChange],
+  // Memoised so the context value, and every callback closing over it, only
+  // changes when a side actually opens or closes. A fresh object each render
+  // would re-render both panels on every keystroke in the content beside them.
+  const open = useMemo<Record<SidebarSide, boolean>>(
+    () => ({
+      left: page || (wanted.left && wide),
+      right: page || (wanted.right && wide),
+    }),
+    [page, wanted.left, wanted.right, wide],
   )
 
-  const toggle = useCallback(() => setOpen(!open), [open, setOpen])
+  const isOpen = useCallback((side: SidebarSide) => open[side], [open])
+
+  const setOpen = useCallback(
+    (side: SidebarSide, next: boolean) => {
+      // Only the sides the caller actually named are theirs to own; the rest
+      // keep looking after themselves.
+      const owned =
+        openProp !== undefined &&
+        (typeof openProp === 'boolean' || openProp[side] !== undefined)
+      if (!owned) setUncontrolled((current) => ({ ...current, [side]: next }))
+      onOpenChange?.(next, side)
+    },
+    [onOpenChange, openProp],
+  )
+
+  const toggle = useCallback(
+    (side: SidebarSide) => setOpen(side, !open[side]),
+    [open, setOpen],
+  )
+
+  const panelId = useCallback((side: SidebarSide) => `${id}-${side}`, [id])
 
   // Ctrl/Cmd-B, the conventional shortcut. Bound on the frame rather than the
   // document body would miss it when focus is inside the content panel.
@@ -139,7 +211,9 @@ function SidebarProvider({
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'b' && (event.metaKey || event.ctrlKey)) {
         event.preventDefault()
-        toggle()
+        // The chord belongs to the navigation. A second panel is a detail
+        // view, opened from the thing it details rather than from a shortcut.
+        toggle('left')
       }
     }
     document.addEventListener('keydown', onKeyDown)
@@ -147,11 +221,14 @@ function SidebarProvider({
   }, [page, toggle, wide])
 
   return (
-    <SidebarCtx value={{ open, setOpen, toggle, locked: page || !wide, variant, id }}>
+    <SidebarCtx
+      value={{ isOpen, setOpen, toggle, locked: page || !wide, variant, panelId }}
+    >
       <div
         data-slot="sidebar-provider"
         data-variant={variant}
-        data-state={open ? 'expanded' : 'collapsed'}
+        data-state-left={open.left ? 'expanded' : 'collapsed'}
+        data-state-right={open.right ? 'expanded' : 'collapsed'}
         className={cn(
           'flex w-full',
           // The app frame owns the window and paints the ground under both
@@ -179,33 +256,83 @@ function SidebarProvider({
  * something. Hover and press stay colour-only everywhere, this component
  * included.
  */
-function Sidebar({ className, children, ...props }: ComponentProps<'aside'>) {
-  const { open, variant, id } = useSidebar()
+function Sidebar({
+  className,
+  children,
+  position = 'left',
+  collapsedTo = 'icon',
+  ...props
+}: ComponentProps<'aside'> & {
+  /**
+   * Which edge to pin to. Two sidebars can share one provider — navigation on
+   * the left, an inspector on the right — and they open independently.
+   */
+  position?: SidebarSide
+  /**
+   * What is left when it collapses.
+   *
+   * `icon` keeps the 52px rail, which is the right answer for navigation: the
+   * destinations stay reachable in one click and the layout never reflows.
+   * `nothing` gives the width back, which is the right answer for a panel that
+   * is a detail view rather than a place to go — an inspector nobody is using
+   * should not cost a strip of the window.
+   */
+  collapsedTo?: 'icon' | 'nothing'
+}) {
+  const { isOpen, variant, panelId } = useSidebar()
   const page = variant === 'page'
+  const open = isOpen(position)
+  const vanishes = !page && collapsedTo === 'nothing'
+  // `inert` rather than `hidden`: `display: none` cannot be transitioned, so a
+  // panel that hid itself popped out of existence instead of closing. This
+  // keeps it in flow at zero width, out of the tab order and out of the
+  // accessibility tree, and still addressable by the trigger's
+  // `aria-controls`.
+  const gone = vanishes && !open
 
   return (
-    <aside
-      id={id}
-      data-slot="sidebar"
-      data-variant={variant}
-      data-state={open ? 'expanded' : 'collapsed'}
-      className={cn(
-        'group/sidebar flex shrink-0 flex-col gap-2 bg-transparent',
-        page
-          ? // No width transition, because nothing changes it. Full width on a
-            // phone so the nav stacks above the content rather than becoming a
-            // 224px column beside a squeezed one.
-            'w-full md:w-56'
-          : cn(
-              'transition-[width] duration-200 ease-out motion-reduce:transition-none',
-              open ? EXPANDED : RAIL,
-            ),
-        className,
-      )}
-      {...props}
-    >
-      {children}
-    </aside>
+    <SidebarPanelCtx value={{ side: position, open }}>
+      <aside
+        id={panelId(position)}
+        inert={gone}
+        data-slot="sidebar"
+        data-variant={variant}
+        data-side={position}
+        data-collapsed-to={collapsedTo}
+        data-state={open ? 'expanded' : 'collapsed'}
+        className={cn(
+          'group/sidebar flex shrink-0 flex-col gap-2 bg-transparent',
+          // Ordered rather than left to the DOM, so `position` is the whole
+          // answer: a right sidebar written before the content still lands
+          // after it, and the content keeps the middle either way.
+          position === 'right' ? 'order-last' : 'order-first',
+          page
+            ? // No width transition, because nothing changes it. Full width on a
+              // phone so the nav stacks above the content rather than becoming a
+              // 224px column beside a squeezed one.
+              'w-full md:w-56'
+            : cn(
+                'transition-[width,margin] duration-200 ease-out motion-reduce:transition-none',
+                open ? EXPANDED : vanishes ? 'w-0' : RAIL,
+                // Contents are still 256px wide while the box shrinks around
+                // them, so they have to be clipped or they spill across the
+                // content panel for the length of the animation. The rail's own
+                // `px-2` leaves more slack than a focus ring needs, so nothing
+                // legible is lost.
+                vanishes && 'overflow-hidden',
+                // The frame's `gap-2` outlives a zero-width child, which would
+                // leave an 8px gutter where the panel used to be. Cancelling it
+                // on the side the gap falls, and transitioning it with the
+                // width, is what closes the seam.
+                gone && (position === 'right' ? '-ms-2' : '-me-2'),
+              ),
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </aside>
+    </SidebarPanelCtx>
   )
 }
 
@@ -334,7 +461,8 @@ function SidebarMenuButton({
   /** Shown on hover while collapsed. Defaults to the row's own label. */
   tooltip?: ReactNode
 }) {
-  const { open, variant } = useSidebar()
+  const { variant } = useSidebar()
+  const { side, open } = useSidebarPanel()
   const page = variant === 'page'
   // `sidebarInk` is measured against the rail's fixed black ground. A page nav
   // sits on the theme's own surface, where those steps are the wrong ones —
@@ -390,9 +518,10 @@ function SidebarMenuButton({
   if (open) return row
 
   // Only the collapsed rail needs one: the label is `sr-only` there, and this
-  // is what puts it back for a pointer.
+  // is what puts it back for a pointer. It opens away from the rail, so a
+  // right-hand one points inward rather than off the edge of the window.
   return (
-    <Tooltip content={tooltip ?? children} side="right">
+    <Tooltip content={tooltip ?? children} side={side === 'right' ? 'left' : 'right'}>
       {row}
     </Tooltip>
   )
@@ -402,21 +531,34 @@ function SidebarMenuButton({
 function SidebarTrigger({
   className,
   onClick,
+  position = 'left',
+  label,
   ...props
-}: ComponentProps<'button'>) {
-  const { open, toggle, locked, id } = useSidebar()
+}: ComponentProps<'button'> & {
+  /** Which sidebar this toggles. */
+  position?: SidebarSide
+  /** Names the panel in the button's accessible label. */
+  label?: string
+}) {
+  const { isOpen, toggle, locked, panelId } = useSidebar()
+  const open = isOpen(position)
   if (locked) return null
+
+  const name = label ?? `${position} sidebar`
 
   return (
     <button
       type="button"
       data-slot="sidebar-trigger"
-      aria-label={open ? 'Collapse sidebar' : 'Expand sidebar'}
+      data-side={position}
+      // Named, because two triggers in one header both reading "Expand
+      // sidebar" is a coin toss for anyone who cannot see which is which.
+      aria-label={open ? `Collapse ${name}` : `Expand ${name}`}
       aria-expanded={open}
-      aria-controls={id}
+      aria-controls={panelId(position)}
       onClick={(event) => {
         onClick?.(event)
-        toggle()
+        toggle(position)
       }}
       className={cn(
         'text-muted-foreground hover:bg-secondary hover:text-foreground inline-flex size-9 shrink-0 items-center justify-center',
@@ -428,7 +570,7 @@ function SidebarTrigger({
       )}
       {...props}
     >
-      <PanelLeft />
+      {position === 'right' ? <PanelRight /> : <PanelLeft />}
     </button>
   )
 }
@@ -470,7 +612,7 @@ function SidebarInset({ className, ...props }: ComponentProps<'main'>) {
   )
 }
 
-export type { SidebarVariant }
+export type { SidebarOpen, SidebarSide, SidebarVariant }
 export {
   Sidebar,
   SidebarContent,

@@ -219,11 +219,79 @@ function composeSidebar(state: ComposerState) {
 </SidebarProvider>`
 }
 
+/**
+ * Two panels in one frame: navigation on the left, an inspector on the right.
+ *
+ * Each opens on its own, and each trigger names the side it drives — two
+ * buttons both saying "Expand sidebar" is a coin toss for anyone who cannot
+ * see which is which.
+ */
+function TwoSidedPreview() {
+  const [open, setOpen] = useState({ left: true, right: true })
+
+  return (
+    <SidebarProvider
+      open={open}
+      onOpenChange={(next, side) => setOpen((current) => ({ ...current, [side]: next }))}
+      className={DEMO_FRAME}
+    >
+      <Sidebar>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>Workspace</SidebarGroupLabel>
+            <SidebarMenu>
+              {NAV.map((item) => (
+                <SidebarMenuItem key={item.id}>
+                  <SidebarMenuButton icon={item.icon} isActive={item.id === 'home'}>
+                    {item.label}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+
+      <SidebarInset>
+        <header className="border-border flex h-12 shrink-0 items-center gap-2 border-b px-3">
+          <SidebarTrigger label="navigation" />
+          <span className="text-sm font-medium">Overview</span>
+          {/* The right trigger sits at the far end, beside the panel it opens. */}
+          <SidebarTrigger position="right" label="inspector" className="ms-auto" />
+        </header>
+        <p className="text-muted-foreground p-4 text-sm">
+          The navigation collapses to icons, so its destinations stay one click
+          away. The inspector collapses to nothing and gives the width back,
+          because a detail panel nobody is reading should not cost a strip of
+          the window. Cmd-B drives the navigation.
+        </p>
+      </SidebarInset>
+
+      {/* Written last, but `position` is what places it — a right sidebar put
+          first in the markup still lands after the content. */}
+      <Sidebar position="right" collapsedTo="nothing">
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>Inspector</SidebarGroupLabel>
+            <SidebarMenu>
+              {SUPPORT.map((item) => (
+                <SidebarMenuItem key={item.id}>
+                  <SidebarMenuButton icon={item.icon}>{item.label}</SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+    </SidebarProvider>
+  )
+}
+
 export const sidebarEntry: ComponentEntry = {
   id: 'sidebar',
   label: 'Sidebar',
   description:
-    'Two sidebars from one set of parts: the app frame — a transparent rail that collapses to a 52px icon strip beside a rounded content panel — and a static nav that lives inside a page. Inset is the only frame layout and icon the only collapsed state, which is what keeps the geometry exact.',
+    'Two sidebars from one set of parts: the app frame, a transparent rail beside a rounded content panel, and a static nav that lives inside a page. Either can be pinned to the left or the right, two can share one frame, and a rail collapses to icons or to nothing at all.',
   usage: USAGE,
   composer: {
     tall: true,
@@ -240,11 +308,32 @@ export const sidebarEntry: ComponentEntry = {
         '`app` is the product frame that owns the window, collapses to a rail and paints its own fixed ground. `page` is navigation inside a page — a settings nav, a docs section — which never collapses, has no trigger and no shortcut, takes its height from whatever contains it, and is painted in the page theme. One prop rather than three booleans, because they are not independent: a sidebar that does not own the window has nothing to collapse into and no ground of its own to paint.',
     },
     {
+      name: 'Sidebar position',
+      type: "'left' | 'right'",
+      default: "'left'",
+      description:
+        'Which edge to pin to. Two sidebars can share one provider — navigation on the left, an inspector on the right — and they open independently. The order is set from the prop, not from the markup, so a right sidebar written before the content still lands after it.',
+    },
+    {
+      name: 'Sidebar collapsedTo',
+      type: "'icon' | 'nothing'",
+      default: "'icon'",
+      description:
+        'What is left when it collapses. `icon` keeps the 52px rail, which is right for navigation: every destination stays one click away and the layout never reflows. `nothing` gives the width back, which is right for a detail panel — an inspector nobody is reading should not cost a strip of the window. Hidden rather than unmounted, so the trigger’s `aria-controls` keeps resolving.',
+    },
+    {
+      name: 'SidebarTrigger position / label',
+      type: "'left' | 'right' / string",
+      default: "'left' / '<side> sidebar'",
+      description:
+        'Which panel the button toggles, and what to call it. Two triggers in one header both announcing “Expand sidebar” is a coin toss for anyone who cannot see which is which, so `label` names the panel instead.',
+    },
+    {
       name: 'SidebarProvider open / defaultOpen / onOpenChange',
       type: 'boolean / boolean / (open: boolean) => void',
       default: 'defaultOpen: true',
       description:
-        'Controlled or uncontrolled rail state. Below the md breakpoint the rail is pinned collapsed and these are ignored — at 36px it is already the mobile layout, so there is nothing to overlay.',
+        'Controlled or uncontrolled rail state. A boolean sets both sides; an object like `{ left: true, right: false }` sets the ones it names, and a side the caller does not name keeps looking after itself. `onOpenChange` is told which side moved. Below the md breakpoint both rails are pinned collapsed and these are ignored — at 36px it is already the mobile layout, so there is nothing to overlay.',
     },
     {
       name: 'SidebarMenuButton icon',
@@ -297,6 +386,27 @@ export const sidebarEntry: ComponentEntry = {
   <SidebarInset>…</SidebarInset>
 </SidebarProvider>`,
       render: () => <SidebarPreview />,
+    },
+    {
+      title: 'One on each side',
+      stack: true,
+      code: `// Two panels in one frame. Each opens on its own, and \`position\` places
+// them — a right sidebar written first still lands after the content.
+<SidebarProvider
+  open={open}
+  onOpenChange={(next, side) => setOpen({ ...open, [side]: next })}
+>
+  <Sidebar>…</Sidebar>
+
+  <SidebarInset>
+    <SidebarTrigger label="navigation" />
+    <SidebarTrigger position="right" label="inspector" />
+  </SidebarInset>
+
+  {/* Gives the width back rather than leaving a rail behind. */}
+  <Sidebar position="right" collapsedTo="nothing">…</Sidebar>
+</SidebarProvider>`,
+      render: () => <TwoSidedPreview />,
     },
     {
       title: 'Inside a page, static',

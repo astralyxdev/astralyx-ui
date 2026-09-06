@@ -23533,16 +23533,17 @@
             },
             {
               "name": "open",
-              "type": "boolean"
+              "type": "SidebarOpen",
+              "description": "A boolean sets both sides; an object sets the ones it names."
             },
             {
               "name": "defaultOpen",
-              "type": "boolean",
+              "type": "SidebarOpen",
               "default": "true"
             },
             {
               "name": "onOpenChange",
-              "type": "(open: boolean) => void"
+              "type": "(open: boolean, side: SidebarSide) => void"
             }
           ]
         },
@@ -23552,7 +23553,20 @@
           "extends": [
             "ComponentProps<'aside'>"
           ],
-          "props": []
+          "props": [
+            {
+              "name": "position",
+              "type": "SidebarSide",
+              "default": "'left'",
+              "description": "Which edge to pin to. Two sidebars can share one provider — navigation on the left, an inspector on the right — and they open independently."
+            },
+            {
+              "name": "collapsedTo",
+              "type": "'icon' | 'nothing'",
+              "default": "'icon'",
+              "description": "What is left when it collapses."
+            }
+          ]
         },
         {
           "name": "SidebarHeader",
@@ -23647,7 +23661,19 @@
           "extends": [
             "ComponentProps<'button'>"
           ],
-          "props": []
+          "props": [
+            {
+              "name": "position",
+              "type": "SidebarSide",
+              "default": "'left'",
+              "description": "Which sidebar this toggles."
+            },
+            {
+              "name": "label",
+              "type": "string",
+              "description": "Names the panel in the button's accessible label."
+            }
+          ]
         },
         {
           "name": "SidebarInset",
@@ -23669,6 +23695,16 @@
           "name": "SidebarVariant",
           "description": "Which of the two sidebars this is.",
           "definition": "'app' | 'page'"
+        },
+        {
+          "name": "SidebarSide",
+          "description": "Which edge a sidebar is pinned to.",
+          "definition": "'left' | 'right'"
+        },
+        {
+          "name": "SidebarOpen",
+          "description": "Open state per side, or one value for both.",
+          "definition": "boolean | Partial<Record<SidebarSide, boolean>>"
         }
       ]
     },
