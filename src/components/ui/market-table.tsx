@@ -2,6 +2,13 @@ import { useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { ArrowDown, ArrowUp, Search, Star } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Sparkline } from '@/components/ui/sparkline'
+import {
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { enterFade } from '@/lib/motion'
 import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
@@ -117,7 +124,7 @@ function MarketTable({
   }, [markets, query, sort])
 
   const Header = ({ label, sortKey, className: cls }: { label: string; sortKey: SortKey; className?: string }) => (
-    <th className={cn('px-3 py-2 text-end', cls)}>
+    <TableHead className={cn('text-end', cls)}>
       <button
         type="button"
         onClick={() =>
@@ -134,7 +141,7 @@ function MarketTable({
         {sort.key === sortKey &&
           (sort.desc ? <ArrowDown className="size-3" /> : <ArrowUp className="size-3" />)}
       </button>
-    </th>
+    </TableHead>
   )
 
   return (
@@ -160,40 +167,36 @@ function MarketTable({
       )}
 
       <div className="w-full overflow-x-auto">
+        {/* The kit's table parts. Heading ink, row rules and the hover come
+            from the shared table; a market list only has to say it runs denser
+            than the default. */}
         <table className="w-full text-sm">
-          <thead>
-            <tr className="border-border border-b">
-              {onStar && <th className="w-8" />}
-              <th className="text-muted-foreground px-3 py-2 text-start text-xs font-medium">
-                {rankHeader}
-              </th>
-              <th className="text-muted-foreground px-3 py-2 text-start text-xs font-medium">
-                {marketHeader}
-              </th>
+          <TableHeader>
+            <TableRow>
+              {onStar && <TableHead className="w-8" />}
+              <TableHead>{rankHeader}</TableHead>
+              <TableHead>{marketHeader}</TableHead>
               <Header label={priceHeader} sortKey="price" />
               <Header label={changeHeader} sortKey="change24h" />
               <Header label={volumeHeader} sortKey="volume24h" className="hidden sm:table-cell" />
               <Header label={capHeader} sortKey="marketCap" className="hidden md:table-cell" />
-              <th className="hidden w-24 px-3 lg:table-cell" />
-            </tr>
-          </thead>
+              <TableHead className="hidden w-24 lg:table-cell" />
+            </TableRow>
+          </TableHeader>
 
-          <tbody>
+          <TableBody>
             {rows.map((market) => {
               const up = (market.change24h ?? 0) > 0
               const down = (market.change24h ?? 0) < 0
 
               return (
-                <tr
+                <TableRow
                   key={market.id}
                   onClick={onSelect ? () => onSelect(market.id) : undefined}
-                  className={cn(
-                    'border-border/60 border-b last:border-b-0',
-                    onSelect && 'hover:bg-accent/40 cursor-pointer',
-                  )}
+                  className={cn(onSelect && 'hover:bg-accent/40 cursor-pointer')}
                 >
                   {onStar && (
-                    <td className="ps-2">
+                    <TableCell className="ps-2 pe-0">
                       <button
                         type="button"
                         aria-label={starLabel(market.symbol, Boolean(market.starred))}
@@ -213,15 +216,15 @@ function MarketTable({
                       >
                         <Star className={cn('size-3.5', market.starred && 'fill-current')} />
                       </button>
-                    </td>
+                    </TableCell>
                   )}
 
                   {/* The caller's rank, never the row index. */}
-                  <td className="text-muted-foreground px-3 py-2 text-xs tabular-nums">
+                  <TableCell className="text-muted-foreground text-xs tabular-nums">
                     {market.rank ?? '—'}
-                  </td>
+                  </TableCell>
 
-                  <td className="px-3 py-2">
+                  <TableCell>
                     <span className="flex items-center gap-2">
                       {market.icon}
                       <span className="min-w-0">
@@ -231,15 +234,15 @@ function MarketTable({
                         </span>
                       </span>
                     </span>
-                  </td>
+                  </TableCell>
 
-                  <td className="px-3 py-2 text-end tabular-nums">
+                  <TableCell className="text-end tabular-nums">
                     {money(market.price, market.price < 1 ? 4 : 2)}
-                  </td>
+                  </TableCell>
 
-                  <td
+                  <TableCell
                     className={cn(
-                      'px-3 py-2 text-end tabular-nums',
+                      'text-end tabular-nums',
                       up && 'text-[var(--green-soft-foreground)]',
                       down && 'text-[var(--destructive-soft-foreground)]',
                     )}
@@ -247,17 +250,17 @@ function MarketTable({
                     {market.change24h === undefined
                       ? '—'
                       : `${up ? '+' : ''}${market.change24h.toFixed(2)}%`}
-                  </td>
+                  </TableCell>
 
-                  <td className="text-muted-foreground hidden px-3 py-2 text-end tabular-nums sm:table-cell">
+                  <TableCell className="text-muted-foreground hidden text-end tabular-nums sm:table-cell">
                     {market.volume24h === undefined ? '—' : money(market.volume24h, 0)}
-                  </td>
+                  </TableCell>
 
-                  <td className="text-muted-foreground hidden px-3 py-2 text-end tabular-nums md:table-cell">
+                  <TableCell className="text-muted-foreground hidden text-end tabular-nums md:table-cell">
                     {market.marketCap === undefined ? '—' : money(market.marketCap, 0)}
-                  </td>
+                  </TableCell>
 
-                  <td className="hidden px-3 py-2 lg:table-cell">
+                  <TableCell className="hidden lg:table-cell">
                     {market.history && (
                       <Sparkline
                         values={market.history}
@@ -265,19 +268,19 @@ function MarketTable({
                         className="h-7 w-20"
                       />
                     )}
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               )
             })}
 
             {rows.length === 0 && (
-              <tr>
-                <td colSpan={8} className="text-muted-foreground p-8 text-center text-sm">
+              <TableRow className="hover:bg-transparent">
+                <TableCell colSpan={8} className="text-muted-foreground p-8 text-center text-sm">
                   {emptyMessage}
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             )}
-          </tbody>
+          </TableBody>
         </table>
       </div>
     </div>

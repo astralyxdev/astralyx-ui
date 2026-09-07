@@ -1,4 +1,12 @@
 import { useMemo, type ComponentProps, type ReactNode } from 'react'
+import {
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
@@ -88,80 +96,85 @@ function CohortTable({
       className={cn(enterFade, surface, radius.surface, 'w-full overflow-x-auto', className)}
       {...props}
     >
+      {/* The kit's table parts. The heat map keeps its own per-cell fill;
+          everything around it — heading ink, row rules, the totals band — is
+          the shared table, and the density is stated once. */}
       <table className="w-full text-sm">
-        <thead>
-          <tr className="border-border border-b">
-            <th className="text-muted-foreground sticky start-0 bg-[var(--card)] px-3 py-2 text-start text-xs font-medium">
-              {cohortHeader}
-            </th>
-            <th className="text-muted-foreground px-3 py-2 text-end text-xs font-medium">{sizeHeader}</th>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="sticky start-0 bg-[var(--card)]">{cohortHeader}</TableHead>
+            <TableHead className="text-end">{sizeHeader}</TableHead>
             {Array.from({ length: columns }, (_, index) => (
-              <th
-                key={index}
-                className="text-muted-foreground px-3 py-2 text-center text-xs font-medium whitespace-nowrap"
-              >
+              <TableHead key={index} className="text-center">
                 {periodLabel(index)}
-              </th>
+              </TableHead>
             ))}
-          </tr>
-        </thead>
+          </TableRow>
+        </TableHeader>
 
-        <tbody>
+        <TableBody>
           {cohorts.map((cohort, rowIndex) => (
-            <tr key={rowIndex} className="border-border/60 border-b">
-              <th className="sticky start-0 bg-[var(--card)] px-3 py-2 text-start text-sm font-medium whitespace-nowrap">
+            <TableRow key={rowIndex}>
+              {/* A row header, not a column one: body type, body ink. */}
+              <th
+                scope="row"
+                className="sticky start-0 bg-[var(--card)] text-start text-sm font-medium whitespace-nowrap"
+              >
                 {cohort.label}
               </th>
-              <td className="text-muted-foreground px-3 py-2 text-end tabular-nums">
+              <TableCell className="text-muted-foreground text-end tabular-nums">
                 {num.format(cohort.size)}
-              </td>
+              </TableCell>
 
               {Array.from({ length: columns }, (_, index) => {
                 const raw = cohort.values[index]
                 // Not yet reached — never rendered as zero.
                 if (raw === null || raw === undefined) {
                   return (
-                    <td key={index} className="px-3 py-2 text-center">
+                    <TableCell key={index} className="text-center">
                       <span className="text-muted-foreground/25" aria-label={notReachedLabel}>
                         ·
                       </span>
-                    </td>
+                    </TableCell>
                   )
                 }
 
                 const share = cohort.size > 0 ? raw / cohort.size : 0
                 return (
-                  <td
+                  <TableCell
                     key={index}
                     style={{
                       backgroundColor: `color-mix(in oklab, var(--blue), transparent ${
                         100 - Math.round(share * 55)
                       }%)`,
                     }}
-                    className="px-3 py-2 text-center tabular-nums"
+                    className="text-center tabular-nums"
                     title={`${num.format(raw)} of ${num.format(cohort.size)}`}
                   >
                     {Math.round(share * 100)}%
-                  </td>
+                  </TableCell>
                 )
               })}
-            </tr>
+            </TableRow>
           ))}
-        </tbody>
+        </TableBody>
 
-        <tfoot>
-          <tr className="border-border border-t-2">
-            <th className="sticky start-0 bg-[var(--card)] px-3 py-2 text-start text-xs font-medium">
+        <TableFooter>
+          <TableRow>
+            <th
+              scope="row"
+              className="text-muted-foreground sticky start-0 bg-[var(--card)] text-start text-xs font-medium"
+            >
               {averageLabel}
             </th>
-            <td />
+            <TableCell />
             {averages.map((average, index) => (
-              <td key={index} className="px-3 py-2 text-center text-xs font-medium tabular-nums">
+              <TableCell key={index} className="text-center text-xs tabular-nums">
                 {average === null ? '—' : `${Math.round(average * 100)}%`}
-              </td>
+              </TableCell>
             ))}
-          </tr>
-        </tfoot>
+          </TableRow>
+        </TableFooter>
       </table>
 
       <p className="border-border text-muted-foreground border-t p-3 text-xs">

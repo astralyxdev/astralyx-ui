@@ -1,4 +1,5 @@
 import { useId, useMemo, useState, type ComponentProps, type ReactNode } from 'react'
+import { SegmentedControl } from '@/components/ui/segmented-control'
 import { enterFade, growIn } from '@/lib/motion'
 import { dataPalette } from '@/lib/styles'
 import { cn } from '@/lib/utils'
@@ -168,26 +169,22 @@ function Attribution({
         </p>
 
         {/* The model belongs on the chart, not in a settings panel: the number
-            means nothing without it. */}
-        <div role="radiogroup" aria-label="Attribution model" className="flex flex-wrap gap-1">
-          {models.map((option) => (
-            <button
-              key={option}
-              type="button"
-              role="radio"
-              aria-checked={model === option}
-              onClick={() => setModel(option)}
-              className={cn(
-                'rounded-full px-2.5 py-1 text-xs',
-                model === option
-                  ? 'bg-foreground text-background'
-                  : 'text-muted-foreground hover:bg-muted',
-              )}
-            >
-              {MODEL_LABELS[option]}
-            </button>
-          ))}
-        </div>
+            means nothing without it.
+
+            The kit's SegmentedControl rather than a row of pills: this picks a
+            value from a handful of visible options, which is exactly what that
+            component is, and a hand-rolled radiogroup here had none of its
+            roving focus or its sliding indicator. */}
+        <SegmentedControl
+          size="sm"
+          label="Attribution model"
+          value={model}
+          onValueChange={(next) => setModel(next as AttributionModel)}
+          options={models.map((option) => ({
+            value: option,
+            label: MODEL_LABELS[option],
+          }))}
+        />
       </div>
 
       <ul className="flex list-none flex-col gap-2">

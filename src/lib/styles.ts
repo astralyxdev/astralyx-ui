@@ -401,6 +401,18 @@ export const indicatorBase = [
 export type Responsive = 'sm' | 'md' | 'lg' | false
 
 /**
+ * Table cell inset — square, for the same reason `cardPadding` is.
+ *
+ * 12px, not the 16px a table usually gets: it is the number at which a heading
+ * row keeps the 40px height it had when its vertical space came from a fixed
+ * `h-10` instead of padding, so squaring the inset costs a data table nothing
+ * in density. It is also exactly what every dense table in the kit had already
+ * reached for by hand, which is the tell that it was the right default and not
+ * the exception.
+ */
+export const tablePadding = 'p-3'
+
+/**
  * Card section padding: square at every size, so the inset is the same on all
  * four edges. Shared by header, body and footer, so a card's sections line up
  * on one left edge and the dividers sit at consistent distances.

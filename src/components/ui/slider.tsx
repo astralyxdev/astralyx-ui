@@ -22,6 +22,19 @@ import { cn } from '@/lib/utils'
  * the thumb's travel by half its own width at each end, and the maths below has
  * to match. `index.css` keeps their size and strips their borders so the two
  * agree exactly.
+ *
+ * **Three colours are variables, not classes**, alongside the sizes that
+ * already were:
+ *
+ *   `--slider-rail`  the unfilled track   (default `--secondary`)
+ *   `--slider-fill`  the filled part      (default `--foreground`)
+ *   `--slider-knob`  the thumb's ring     (default `--foreground`)
+ *
+ * They exist so this component can be reused where the page tokens are wrong
+ * rather than reimplemented there. A player's chrome is black in both themes,
+ * so `--foreground` is invisible on it; a waveform scrubber wants no rail or
+ * fill at all because the peaks behind are the track. Both were hand-rolled
+ * range inputs until these existed, and both looked like a different product.
  */
 const sliderVariants = cva(
   ['slider-shell relative block w-full touch-none select-none'].join(' '),
@@ -47,7 +60,7 @@ const sliderVariants = cva(
 const THUMB_OFFSET =
   'calc(var(--slider-thumb) / 2 + (100% - var(--slider-thumb)) * var(--slider-progress))'
 
-/** Shared by the track, the fill and the thumb, so all three line up. */
+/** Shared by the track and the fill, so the two line up. */
 const BAR = 'pointer-events-none absolute top-1/2 h-[var(--slider-track)] -translate-y-1/2 rounded-full [corner-shape:round]'
 
 type SliderProps = Omit<ComponentProps<'input'>, 'size' | 'type'> &
@@ -118,11 +131,14 @@ function Slider({
         {...props}
       />
 
-      <span aria-hidden="true" className={cn(BAR, 'bg-secondary inset-x-0')} />
+      <span
+        aria-hidden="true"
+        className={cn(BAR, 'inset-x-0 bg-[var(--slider-rail,var(--secondary))]')}
+      />
       <span
         aria-hidden="true"
         data-slot="slider-fill"
-        className={cn(BAR, 'bg-foreground start-0')}
+        className={cn(BAR, 'start-0 bg-[var(--slider-fill,var(--foreground))]')}
         // Ends at the thumb's centre, not at a plain percentage of the track,
         // or the fill runs ahead of the thumb at both ends.
         style={{ width: THUMB_OFFSET }}
@@ -132,7 +148,8 @@ function Slider({
         data-slot="slider-thumb"
         className={cn(
           'pointer-events-none absolute top-1/2 size-[var(--slider-thumb)]',
-          'border-foreground bg-background rounded-full border-2 [corner-shape:round]',
+          'rounded-full border-2 [corner-shape:round]',
+          'border-[var(--slider-knob,var(--foreground))] bg-background',
           '-translate-x-1/2 -translate-y-1/2',
           'transition-[border-color] duration-150 ease-out motion-reduce:transition-none',
           'peer-hover:border-[var(--border-active)] peer-focus-visible:border-[var(--border-active)]',

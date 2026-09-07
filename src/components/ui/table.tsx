@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react'
 import { enterFade } from '@/lib/motion'
-import { radius, surface } from '@/lib/styles'
+import { radius, surface, tablePadding } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
 /**
@@ -87,7 +87,12 @@ function TableHead({ className, ...props }: ComponentProps<'th'>) {
     <th
       data-slot="table-head"
       className={cn(
-        'text-muted-foreground h-10 px-4 text-start align-middle text-xs font-medium whitespace-nowrap',
+        // Padding on all four sides rather than a fixed height and horizontal
+        // padding only: a `h-10 px-4` heading is 12px above and below its text
+        // and 16px either side of it, which is a different inset depending on
+        // which edge you measure. `tablePadding` is the same on all four.
+        'text-muted-foreground text-start align-middle text-xs font-medium whitespace-nowrap',
+        tablePadding,
         className,
       )}
       {...props}
@@ -99,7 +104,7 @@ function TableCell({ className, ...props }: ComponentProps<'td'>) {
   return (
     <td
       data-slot="table-cell"
-      className={cn('px-4 py-2.5 align-middle', className)}
+      className={cn('align-middle', tablePadding, className)}
       {...props}
     />
   )

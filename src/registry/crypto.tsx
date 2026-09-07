@@ -327,6 +327,26 @@ const MARKETS: Market[] = [
   { id: 'pepe', rank: 5, symbol: 'PEPE', name: 'Pepe', price: 0.0000124, change24h: -8.44, volume24h: 890_000_000, marketCap: 5_200_000_000, history: [0.0000138, 0.0000132, 0.0000129, 0.0000126, 0.0000124] },
 ]
 
+/**
+ * The star used to report to an empty function, so clicking it did nothing and
+ * the control read as broken rather than as a watchlist you do not own.
+ * MarketTable reports watchlist state and never holds it; here, this holds it.
+ */
+function MarketTableDemo({ searchable }: { searchable?: boolean }) {
+  const [starred, setStarred] = useState<Record<string, boolean>>({})
+
+  return (
+    <MarketTable
+      searchable={searchable}
+      markets={MARKETS.map((market) => ({
+        ...market,
+        starred: starred[market.id] ?? market.starred,
+      }))}
+      onStar={(id, on) => setStarred((current) => ({ ...current, [id]: on }))}
+    />
+  )
+}
+
 export const marketTableEntry: ComponentEntry = {
   id: 'market-table',
   label: 'Market Table',
@@ -340,7 +360,7 @@ export const marketTableEntry: ComponentEntry = {
     controls: [{ type: 'boolean', prop: 'searchable', label: 'searchable', default: true }],
     render: (state) => (
       <div className="w-full">
-        <MarketTable markets={MARKETS} searchable={Boolean(state.searchable)} onStar={() => {}} />
+        <MarketTableDemo searchable={Boolean(state.searchable)} />
       </div>
     ),
     code: () => `<MarketTable markets={markets} onStar={star} onSelect={open} />`,
@@ -352,7 +372,7 @@ export const marketTableEntry: ComponentEntry = {
     { name: 'price precision', type: 'by magnitude', description: 'Sub-dollar assets get four digits; large caps use compact notation.' },
   ],
   demos: [
-    { title: 'Markets', stack: true, code: `<MarketTable markets={markets} onStar={star} />`, render: () => <div className="w-full"><MarketTable markets={MARKETS} onStar={() => {}} /></div> },
+    { title: 'Markets', stack: true, code: `<MarketTable markets={markets} onStar={star} />`, render: () => <div className="w-full"><MarketTableDemo /></div> },
   ],
 }
 

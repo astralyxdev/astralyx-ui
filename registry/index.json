@@ -1,6 +1,6 @@
 {
   "name": "astralyx-ui",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "homepage": "https://ui.astralyx.dev",
   "items": [
     {
@@ -15,7 +15,8 @@
       "registryDependencies": [
         "lib-motion",
         "lib-styles",
-        "lib-utils"
+        "lib-utils",
+        "table"
       ]
     },
     {
@@ -252,7 +253,8 @@
       "registryDependencies": [
         "lib-motion",
         "lib-styles",
-        "lib-utils"
+        "lib-utils",
+        "segmented-control"
       ]
     },
     {
@@ -268,7 +270,8 @@
         "button",
         "lib-motion",
         "lib-styles",
-        "lib-utils"
+        "lib-utils",
+        "slider"
       ]
     },
     {
@@ -669,6 +672,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "input",
         "lib-motion",
         "lib-styles",
         "lib-utils",
@@ -874,7 +878,8 @@
       "registryDependencies": [
         "lib-motion",
         "lib-styles",
-        "lib-utils"
+        "lib-utils",
+        "table"
       ]
     },
     {
@@ -1652,7 +1657,8 @@
       "registryDependencies": [
         "lib-motion",
         "lib-styles",
-        "lib-utils"
+        "lib-utils",
+        "table"
       ]
     },
     {
@@ -1686,6 +1692,7 @@
         "lib-motion",
         "lib-styles",
         "lib-utils",
+        "slider",
         "switch"
       ]
     },
@@ -2313,7 +2320,8 @@
         "fmt",
         "lib-motion",
         "lib-styles",
-        "lib-utils"
+        "lib-utils",
+        "table"
       ]
     },
     {
@@ -2476,7 +2484,8 @@
         "lib-motion",
         "lib-styles",
         "lib-utils",
-        "sparkline"
+        "sparkline",
+        "table"
       ]
     },
     {
@@ -3164,7 +3173,8 @@
         "checkbox",
         "lib-motion",
         "lib-styles",
-        "lib-utils"
+        "lib-utils",
+        "table"
       ]
     },
     {
@@ -3175,8 +3185,10 @@
       "category": "Forms",
       "dependencies": [],
       "registryDependencies": [
-        "lib-styles",
-        "lib-utils"
+        "button-group",
+        "input",
+        "lib-utils",
+        "select"
       ]
     },
     {
@@ -3722,7 +3734,8 @@
       "registryDependencies": [
         "fmt",
         "lib-motion",
-        "lib-utils"
+        "lib-utils",
+        "progress"
       ]
     },
     {
@@ -4269,7 +4282,8 @@
       "registryDependencies": [
         "fmt",
         "lib-motion",
-        "lib-utils"
+        "lib-utils",
+        "progress"
       ]
     },
     {
@@ -5161,6 +5175,7 @@
       ],
       "registryDependencies": [
         "button",
+        "checkbox",
         "copy-button",
         "input-otp",
         "lib-motion",
@@ -5272,7 +5287,8 @@
         "badge",
         "lib-motion",
         "lib-styles",
-        "lib-utils"
+        "lib-utils",
+        "table"
       ]
     },
     {
@@ -5289,7 +5305,8 @@
         "dropdown-menu",
         "lib-motion",
         "lib-styles",
-        "lib-utils"
+        "lib-utils",
+        "slider"
       ]
     },
     {

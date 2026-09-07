@@ -1,6 +1,7 @@
 import { useState, type ComponentProps, type ReactNode } from 'react'
 import { Check, ShieldCheck, TriangleAlert } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { CopyButton } from '@/components/ui/copy-button'
 import { InputOTP } from '@/components/ui/input-otp'
 import { Stepper } from '@/components/ui/stepper'
@@ -183,15 +184,13 @@ function TwoFactorSetup({
             {recoveryCodes && (
               <CopyButton value={recoveryCodes.join('\n')} label={copyCodesLabel} showLabel />
             )}
-            <label className="flex items-center gap-2 text-xs">
-              <input
-                type="checkbox"
-                checked={saved}
-                onChange={(event) => setSaved(event.target.checked)}
-                className="accent-[var(--primary)]"
-              />
-              {savedLabel}
-            </label>
+            <Checkbox
+              size="sm"
+              checked={saved}
+              onChange={(event) => setSaved(event.target.checked)}
+              label={savedLabel}
+              containerClassName="text-xs"
+            />
           </div>
 
           {/* The flow does not finish until they have been seen. */}

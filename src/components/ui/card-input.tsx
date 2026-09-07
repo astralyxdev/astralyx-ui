@@ -1,8 +1,9 @@
 import { useState, type ComponentProps, type ReactNode } from 'react'
 import { CreditCard, Lock } from 'lucide-react'
+import { Input } from '@/components/ui/input'
 import { MaskInput } from '@/components/ui/mask-input'
 import { enterFade } from '@/lib/motion'
-import { fieldBase, fieldSize, radius } from '@/lib/styles'
+import { fieldSize, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
 /**
@@ -149,32 +150,29 @@ function CardInput({
           className="flex-1"
         />
 
-        <div
-          className={cn(
-            fieldBase,
-            fieldSize[size],
-            'border-border bg-background flex-1 border',
-            'focus-within:border-ring focus-within:ring-ring/50 focus-within:ring-[3px]',
-            disabled && 'pointer-events-none opacity-50',
-          )}
-        >
-          <Lock className="text-muted-foreground shrink-0" aria-hidden="true" />
-          <input
-            inputMode="numeric"
-            maxLength={cvcLength}
-            disabled={disabled}
-            value={cvc}
-            aria-label={cvcLabel}
-            autoComplete="cc-csc"
-            placeholder={amex ? '4 digits' : 'CVC'}
-            onChange={(event) => {
-              const next = event.target.value.replace(/\D/g, '').slice(0, cvcLength)
-              setCvc(next)
-              emit({ cvc: next })
-            }}
-            className="w-full min-w-0 bg-transparent tabular-nums outline-none"
-          />
-        </div>
+        {/* The kit's Input with a leading icon, not a hand-built field: this
+            was `fieldBase` plus a bare input plus a re-spelled focus ring, all
+            three of which Input already is. */}
+        <Input
+          // `fieldSize` calls the middle step 'md'; the control scale calls it
+          // 'default'. Same height, different word.
+          size={size === 'md' ? 'default' : size}
+          icon={<Lock />}
+          inputMode="numeric"
+          maxLength={cvcLength}
+          disabled={disabled}
+          value={cvc}
+          aria-label={cvcLabel}
+          autoComplete="cc-csc"
+          placeholder={amex ? '4 digits' : 'CVC'}
+          onChange={(event) => {
+            const next = event.target.value.replace(/\D/g, '').slice(0, cvcLength)
+            setCvc(next)
+            emit({ cvc: next })
+          }}
+          containerClassName="flex-1"
+          className="tabular-nums"
+        />
       </div>
 
       {number.length >= 12 && !numberValid && (

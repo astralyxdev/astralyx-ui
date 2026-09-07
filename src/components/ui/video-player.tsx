@@ -8,6 +8,7 @@ import {
   VolumeX,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Slider } from '@/components/ui/slider'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,16 +17,19 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { enterFade } from '@/lib/motion'
-import { focusRing, radius } from '@/lib/styles'
+import { radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
 /**
  * A video player with a real scrubber, quality and subtitle menus.
  *
- * The scrubber is an `input[type=range]`, not a div with a drag handler. That
- * one decision buys arrow-key seeking, Home and End, screen-reader
- * announcement of the position and a working focus ring — all of which a
- * hand-rolled track has to reimplement and usually does not.
+ * The scrubber is the kit's `Slider` — a range input underneath, not a div with
+ * a drag handler. That one decision buys arrow-key seeking, Home and End,
+ * screen-reader announcement of the position and a working focus ring, all of
+ * which a hand-rolled track has to reimplement and usually does not. It was a
+ * bare range input until recently, which meant the OS accent colour showed
+ * through on the one black bar in the product; the colour variables below point
+ * the shared component at the chrome's own ink instead.
  *
  * Time is formatted from the media's own duration, so an hour-long video shows
  * `1:02:15` and a clip shows `0:42` rather than `00:00:42`. Padding every clip
@@ -149,21 +153,27 @@ function VideoPlayer({
       />
 
       <div className="flex flex-col gap-2 p-3">
-        {/* A real range input: arrow keys, Home/End and announcement for free. */}
-        <input
-          type="range"
+        {/* The kit's Slider, not a bare range input: it was a browser-default
+            control on a black bar, which is the one place in the product where
+            the OS accent colour was allowed to show through.
+
+            The chrome is black in both themes, so the page's own `--foreground`
+            would be invisible on it — hence the colour variables rather than a
+            second implementation. */}
+        <Slider
+          size="sm"
           min={0}
           max={duration || 0}
           step={0.1}
           value={time}
-          aria-label={seekLabel}
+          label={seekLabel}
           aria-valuetext={progressLabel(formatTime(time, showHours), formatTime(duration, showHours))}
           onChange={(event) => {
             const next = Number(event.target.value)
             setTime(next)
             if (videoRef.current) videoRef.current.currentTime = next
           }}
-          className={cn('w-full accent-[var(--primary)]', focusRing, radius.xs)}
+          className="[--slider-fill:var(--sidebar-foreground)] [--slider-knob:var(--sidebar-foreground)] [--slider-rail:color-mix(in_oklab,var(--sidebar-foreground),transparent_75%)]"
         />
 
         <div className="flex items-center gap-1">

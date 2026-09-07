@@ -295,6 +295,39 @@ const ROLES: PermissionRole[] = [
   { id: 'viewer', label: 'Viewer', granted: ['read'] },
 ]
 
+/**
+ * The composer used to hand `onToggle` an empty function, which made an
+ * editable matrix whose checkboxes did nothing — the control looked broken
+ * rather than read-only. It holds the grants now.
+ */
+function PermissionMatrixDemo({ editable }: { editable: boolean }) {
+  const [roles, setRoles] = useState(ROLES)
+
+  return (
+    <PermissionMatrix
+      permissions={PERMISSIONS}
+      roles={roles}
+      onToggle={
+        editable
+          ? (roleId, permissionId, granted) =>
+              setRoles((current) =>
+                current.map((role) =>
+                  role.id === roleId
+                    ? {
+                        ...role,
+                        granted: granted
+                          ? [...role.granted, permissionId]
+                          : role.granted.filter((id) => id !== permissionId),
+                      }
+                    : role,
+                ),
+              )
+          : undefined
+      }
+    />
+  )
+}
+
 export const permissionMatrixEntry: ComponentEntry = {
   id: 'permission-matrix',
   label: 'Permission Matrix',
@@ -308,11 +341,7 @@ export const permissionMatrixEntry: ComponentEntry = {
     controls: [{ type: 'boolean', prop: 'editable', label: 'editable', default: true }],
     render: (state: ComposerState) => (
       <div className="w-full">
-        <PermissionMatrix
-          permissions={PERMISSIONS}
-          roles={ROLES}
-          onToggle={state.editable ? () => {} : undefined}
-        />
+        <PermissionMatrixDemo editable={Boolean(state.editable)} />
       </div>
     ),
     code: () => `<PermissionMatrix permissions={permissions} roles={roles} onToggle={toggle} />`,

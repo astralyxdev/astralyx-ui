@@ -208,7 +208,7 @@ function render(source: string): ReactNode[] {
             <thead>
               <tr className="border-border border-b">
                 {head.map((cell, i) => (
-                  <th key={i} className="px-3 py-1.5 font-medium">
+                  <th key={i} className="p-3 font-medium">
                     {inline(cell, `th${i}`)}
                   </th>
                 ))}
@@ -218,7 +218,7 @@ function render(source: string): ReactNode[] {
               {rows.map((row, r) => (
                 <tr key={r} className="border-border/60 border-b last:border-b-0">
                   {row.map((cell, c) => (
-                    <td key={c} className="text-muted-foreground px-3 py-1.5">
+                    <td key={c} className="text-muted-foreground p-3">
                       {inline(cell, `td${r}-${c}`)}
                     </td>
                   ))}

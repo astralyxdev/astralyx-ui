@@ -1,6 +1,13 @@
 import { Fragment, useMemo, type ComponentProps, type ReactNode } from 'react'
 import { Check, Minus } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
+import {
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
@@ -75,57 +82,57 @@ function PermissionMatrix({
       className={cn(enterFade, surface, radius.surface, 'w-full overflow-x-auto', className)}
       {...props}
     >
+      {/* The kit's table parts. The column headings were four copies of the
+          same muted, extra-small recipe; density is the only thing a matrix
+          this wide has to state for itself. */}
       <table className="w-full text-sm">
-        <thead>
-          <tr className="border-border border-b">
-            <th className="text-muted-foreground sticky start-0 bg-[var(--card)] px-3 py-2 text-start text-xs font-medium">
+        <TableHeader>
+          <TableRow>
+            <TableHead className="sticky start-0 bg-[var(--card)]">
               {permissionHeader}
-            </th>
+            </TableHead>
             {roles.map((role) => (
-              <th
-                key={role.id}
-                className="text-muted-foreground px-3 py-2 text-center text-xs font-medium whitespace-nowrap"
-              >
+              <TableHead key={role.id} className="text-center">
                 {role.label}
                 {role.locked && (
                   <span className="text-muted-foreground/60 block font-normal">{lockedLabel}</span>
                 )}
-              </th>
+              </TableHead>
             ))}
-          </tr>
-        </thead>
+          </TableRow>
+        </TableHeader>
 
-        <tbody>
+        <TableBody>
           {groups.map(([group, items]) => (
             <Fragment key={group || 'ungrouped'}>
               {group && (
-                <tr className="bg-muted/40">
-                  <td
+                <TableRow className="bg-muted/40 hover:bg-muted/40">
+                  <TableCell
                     colSpan={roles.length + 1}
-                    className="text-muted-foreground px-3 py-1.5 text-xs font-medium tracking-wide uppercase"
+                    className="text-muted-foreground py-1.5 text-xs font-medium tracking-wide uppercase"
                   >
                     {group}
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               )}
 
               {items.map((permission) => (
-                <tr key={permission.id} className="border-border/60 border-b last:border-b-0">
-                  <td className="sticky start-0 bg-[var(--card)] px-3 py-2">
+                <TableRow key={permission.id}>
+                  <TableCell className="sticky start-0 bg-[var(--card)]">
                     <span className="block">{permission.label}</span>
                     {permission.description && (
                       <span className="text-muted-foreground block text-xs">
                         {permission.description}
                       </span>
                     )}
-                  </td>
+                  </TableCell>
 
                   {roles.map((role) => {
                     const direct = role.granted.includes(permission.id)
                     const inherited = role.inherited?.includes(permission.id) ?? false
 
                     return (
-                      <td key={role.id} className="px-3 py-2 text-center">
+                      <TableCell key={role.id} className="text-center">
                         {inherited && !direct ? (
                           // Inherited: visible, but not revocable from here.
                           <span
@@ -148,17 +155,20 @@ function PermissionMatrix({
                             checked={direct}
                             aria-label={`${role.label} — ${permission.label}`}
                             onChange={() => onToggle(role.id, permission.id, !direct)}
-                            containerClassName="justify-center"
+                            // `w-full`, not just `justify-center`: the label is
+                            // `w-fit`, so justifying inside it centres nothing
+                            // and the box sat left of its own column heading.
+                            containerClassName="w-full justify-center"
                           />
                         )}
-                      </td>
+                      </TableCell>
                     )
                   })}
-                </tr>
+                </TableRow>
               ))}
             </Fragment>
           ))}
-        </tbody>
+        </TableBody>
       </table>
     </div>
   )

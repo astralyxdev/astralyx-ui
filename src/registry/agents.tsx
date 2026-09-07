@@ -1029,6 +1029,23 @@ const OPEN_SCOPES: SandboxScope[] = [
   { id: 'exec', kind: 'exec', mode: 'full', enabled: true },
 ]
 
+/**
+ * `onToggle` used to be an empty function here, so every switch in the policy
+ * moved back the moment you let go. SandboxPolicy reports the change and never
+ * holds it, which is right — this holds it instead.
+ */
+function SandboxPolicyDemo({ wideOpen }: { wideOpen: boolean }) {
+  const [overrides, setOverrides] = useState<Record<string, boolean>>({})
+  const base = wideOpen ? OPEN_SCOPES : SCOPES
+
+  return (
+    <SandboxPolicy
+      scopes={base.map((scope) => ({ ...scope, enabled: overrides[scope.id] ?? scope.enabled }))}
+      onToggle={(id, enabled) => setOverrides((current) => ({ ...current, [id]: enabled }))}
+    />
+  )
+}
+
 export const sandboxPolicyEntry: ComponentEntry = {
   id: 'sandbox-policy',
   label: 'Sandbox Policy',
@@ -1042,7 +1059,7 @@ export const sandboxPolicyEntry: ComponentEntry = {
     controls: [{ type: 'boolean', prop: 'wideOpen', label: 'wide open', default: false }],
     render: (state) => (
       <div className="w-full max-w-xl">
-        <SandboxPolicy scopes={state.wideOpen ? OPEN_SCOPES : SCOPES} onToggle={() => {}} />
+        <SandboxPolicyDemo wideOpen={Boolean(state.wideOpen)} />
       </div>
     ),
     code: () => `<SandboxPolicy scopes={scopes} onToggle={setScopeEnabled} />`,

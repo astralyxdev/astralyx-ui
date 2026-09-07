@@ -2,6 +2,13 @@ import { useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { ArrowDown, ArrowUp, ShieldAlert } from 'lucide-react'
 import { Avatar } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
+import {
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { enterFade } from '@/lib/motion'
 import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
@@ -54,7 +61,7 @@ function Header({
   onSort: (key: SortKey) => void
 }) {
   return (
-    <th className="px-3 py-2 text-end">
+    <TableHead className="text-end">
       <button
         type="button"
         onClick={() => onSort(sortKey)}
@@ -68,7 +75,7 @@ function Header({
         {label}
         {sort.key === sortKey && (sort.desc ? <ArrowDown className="size-3" /> : <ArrowUp className="size-3" />)}
       </button>
-    </th>
+    </TableHead>
   )
 }
 
@@ -130,32 +137,32 @@ function ValidatorList({
       className={cn(enterFade, surface, radius.surface, 'w-full overflow-x-auto', className)}
       {...props}
     >
+      {/* The kit's table parts. Heading ink, row rules and the hover come from
+          the shared table; the only thing said here is that this list runs
+          denser than the default. */}
       <table className="w-full text-sm">
-        <thead>
-          <tr className="border-border border-b">
-            <th className="text-muted-foreground px-3 py-2 text-start text-xs font-medium">
-              {validatorHeader}
-            </th>
+        <TableHeader>
+          <TableRow>
+            <TableHead>{validatorHeader}</TableHead>
             <Header label={commissionHeader} sortKey="commission" sort={sort} onSort={handleSort} />
             <Header label={uptimeHeader} sortKey="uptime" sort={sort} onSort={handleSort} />
             <Header label={votingPowerHeader} sortKey="votingPower" sort={sort} onSort={handleSort} />
-          </tr>
-        </thead>
+          </TableRow>
+        </TableHeader>
 
-        <tbody>
+        <TableBody>
           {rows.map((validator) => {
             const concentrating = cartelIds.has(validator.id)
             return (
-              <tr
+              <TableRow
                 key={validator.id}
                 onClick={onSelect ? () => onSelect(validator.id) : undefined}
                 className={cn(
-                  'border-border/60 border-b last:border-b-0',
                   onSelect && 'hover:bg-accent/40 cursor-pointer',
                   validator.jailed && 'opacity-60',
                 )}
               >
-                <td className="px-3 py-2">
+                <TableCell>
                   <span className="flex items-center gap-2">
                     {validator.avatar ?? <Avatar size="xs" name={String(validator.name)} />}
                     <span className="min-w-0 truncate font-medium">{validator.name}</span>
@@ -171,30 +178,30 @@ function ValidatorList({
                       </Badge>
                     )}
                   </span>
-                </td>
+                </TableCell>
 
-                <td className="px-3 py-2 text-end tabular-nums">
+                <TableCell className="text-end tabular-nums">
                   {validator.commission.toFixed(1)}%
-                </td>
+                </TableCell>
 
-                <td
+                <TableCell
                   className={cn(
-                    'px-3 py-2 text-end tabular-nums',
+                    'text-end tabular-nums',
                     validator.uptime !== undefined && validator.uptime < 98
                       ? 'text-[var(--amber-soft-foreground)]'
                       : 'text-muted-foreground',
                   )}
                 >
                   {validator.uptime === undefined ? '—' : `${validator.uptime.toFixed(2)}%`}
-                </td>
+                </TableCell>
 
-                <td className="px-3 py-2 text-end tabular-nums">
+                <TableCell className="text-end tabular-nums">
                   {(validator.votingPower * 100).toFixed(2)}%
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             )
           })}
-        </tbody>
+        </TableBody>
       </table>
     </div>
   )

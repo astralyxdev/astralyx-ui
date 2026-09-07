@@ -1,6 +1,14 @@
 import { useMemo, type ComponentProps, type ReactNode } from 'react'
 import { TriangleAlert } from 'lucide-react'
 import { Fmt } from '@/components/ui/fmt'
+import {
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
@@ -102,70 +110,72 @@ function LedgerTable({
       className={cn(enterFade, surface, radius.surface, 'w-full overflow-x-auto', className)}
       {...props}
     >
+      {/* The kit's table parts, not a hand-rolled one: `TableHead` and
+          `TableCell` already carry the muted heading ink, the row rule and the
+          hover, and the whole ledger only needs to say it runs denser than the
+          default. Every cell used to repeat that recipe by hand. */}
       <table className="w-full text-sm">
-        <thead>
-          <tr className="border-border border-b">
-            <th className="text-muted-foreground px-3 py-2 text-start text-xs font-medium">{columnLabels.date}</th>
-            <th className="text-muted-foreground px-3 py-2 text-start text-xs font-medium">{columnLabels.description}</th>
-            <th className="text-muted-foreground hidden px-3 py-2 text-start text-xs font-medium sm:table-cell">{columnLabels.account}</th>
-            <th className="text-muted-foreground px-3 py-2 text-end text-xs font-medium">{columnLabels.debit}</th>
-            <th className="text-muted-foreground px-3 py-2 text-end text-xs font-medium">{columnLabels.credit}</th>
-            {showBalance && (
-              <th className="text-muted-foreground px-3 py-2 text-end text-xs font-medium">{columnLabels.balance}</th>
-            )}
-          </tr>
-        </thead>
+        <TableHeader>
+          <TableRow>
+            <TableHead>{columnLabels.date}</TableHead>
+            <TableHead>{columnLabels.description}</TableHead>
+            <TableHead className="hidden sm:table-cell">{columnLabels.account}</TableHead>
+            <TableHead className="text-end">{columnLabels.debit}</TableHead>
+            <TableHead className="text-end">{columnLabels.credit}</TableHead>
+            {showBalance && <TableHead className="text-end">{columnLabels.balance}</TableHead>}
+          </TableRow>
+        </TableHeader>
 
-        <tbody>
+        <TableBody>
           {rows.map((row) => (
-            <tr key={row.id} className="border-border/60 border-b">
-              <td className="text-muted-foreground px-3 py-2 whitespace-nowrap tabular-nums">
+            <TableRow key={row.id}>
+              <TableCell className="text-muted-foreground tabular-nums whitespace-nowrap">
                 <Fmt type="date" value={row.date} format="DD/MM/YY" locale={locale} />
-              </td>
-              <td className="px-3 py-2">
+              </TableCell>
+              <TableCell>
                 <span className="block">{row.description}</span>
                 {row.reference && (
                   <span className="text-muted-foreground/70 block font-mono text-xs">
                     {row.reference}
                   </span>
                 )}
-              </td>
-              <td className="text-muted-foreground hidden px-3 py-2 sm:table-cell">
+              </TableCell>
+              <TableCell className="text-muted-foreground hidden sm:table-cell">
                 {row.account ?? '—'}
-              </td>
-              <td className="px-3 py-2 text-end tabular-nums whitespace-nowrap">
+              </TableCell>
+              <TableCell className="text-end tabular-nums whitespace-nowrap">
                 {row.debit ? money(row.debit) : <span className="text-muted-foreground/40">—</span>}
-              </td>
-              <td className="px-3 py-2 text-end tabular-nums whitespace-nowrap">
+              </TableCell>
+              <TableCell className="text-end tabular-nums whitespace-nowrap">
                 {row.credit ? money(row.credit) : <span className="text-muted-foreground/40">—</span>}
-              </td>
+              </TableCell>
               {showBalance && (
-                <td className="px-3 py-2 text-end font-medium tabular-nums whitespace-nowrap">
+                <TableCell className="text-end font-medium tabular-nums whitespace-nowrap">
                   {money(row.balance)}
-                </td>
+                </TableCell>
               )}
-            </tr>
+            </TableRow>
           ))}
-        </tbody>
+        </TableBody>
 
-        <tfoot>
-          <tr className="border-border border-t-2">
-            <td colSpan={3} className="px-3 py-2 text-xs font-medium">
+        <TableFooter>
+          <TableRow>
+            <TableCell colSpan={3} className="text-xs font-medium">
               {totalsLabel}
-            </td>
-            <td className="px-3 py-2 text-end font-medium tabular-nums whitespace-nowrap">
+            </TableCell>
+            <TableCell className="text-end font-medium tabular-nums whitespace-nowrap">
               {money(debits)}
-            </td>
-            <td className="px-3 py-2 text-end font-medium tabular-nums whitespace-nowrap">
+            </TableCell>
+            <TableCell className="text-end font-medium tabular-nums whitespace-nowrap">
               {money(credits)}
-            </td>
+            </TableCell>
             {showBalance && (
-              <td className="px-3 py-2 text-end font-semibold tabular-nums whitespace-nowrap">
+              <TableCell className="text-end font-semibold tabular-nums whitespace-nowrap">
                 {money(closing)}
-              </td>
+              </TableCell>
             )}
-          </tr>
-        </tfoot>
+          </TableRow>
+        </TableFooter>
       </table>
 
       {/* An unbalanced ledger is a bug; rendering it silently is worse. */}

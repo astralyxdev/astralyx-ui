@@ -1,6 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { Fmt } from '@/components/ui/fmt'
-import { enterFade, growIn } from '@/lib/motion'
+import { Progress } from '@/components/ui/progress'
+import { enterFade } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -95,19 +96,9 @@ function SloBudget({
         )}
       </div>
 
-      <div
-        role="progressbar"
-        aria-valuenow={Math.round(remaining * 100)}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-label={meterLabel}
-        className="bg-secondary h-2 w-full overflow-hidden rounded-full [corner-shape:round]"
-      >
-        <div
-          className={cn(growIn, 'h-full rounded-full transition-[width,background-color] duration-300 ease-out [corner-shape:round] motion-reduce:transition-none')}
-          style={{ width: `${remaining * 100}%`, backgroundColor: tone }}
-        />
-      </div>
+      {/* The kit's Progress: the track, the fill, the grow-in and the
+          progressbar role are all already there. */}
+      <Progress value={remaining * 100} tint={tone} aria-label={meterLabel} className="h-2" />
 
       <p className="text-muted-foreground/80 text-xs">
         {hint ?? (

@@ -839,6 +839,44 @@ dialog[open][data-side='bottom'] {
 }
 
 /*
+ * Interactive things get the hand.
+ *
+ * Tailwind v4 stopped forcing `cursor: pointer` on buttons and let the UA
+ * default (`default`) stand, which is defensible for a native `<button>` in a
+ * document and wrong for an application: every Button in the kit, and every
+ * hand-written `<button>` inside a component, pointed at nothing. Restored
+ * here rather than in `controlBase`, because most of the offenders are the
+ * bare buttons inside components — a row's star, a menu's chevron, a chip's
+ * dismiss — that never went near the control tokens.
+ *
+ * Inside `@layer base` on purpose. An unlayered rule beats every layered one
+ * whatever its specificity, so this would quietly outrank `cursor-grab` on a
+ * drag handle and `cursor-not-allowed` on a disabled control. From `base`, any
+ * utility still wins.
+ *
+ * The roles are here too: plenty of these controls are a `div` with a role,
+ * and a listbox option that does not point is the same bug wearing a different
+ * element.
+ */
+@layer base {
+  :where(
+      button,
+      summary,
+      [role='button'],
+      [role='menuitem'],
+      [role='menuitemcheckbox'],
+      [role='menuitemradio'],
+      [role='option'],
+      [role='tab'],
+      [role='switch'],
+      [role='checkbox'],
+      [role='radio']
+    ):not(:disabled, [aria-disabled='true'], [data-disabled='true']) {
+    cursor: pointer;
+  }
+}
+
+/*
  * Contain visually hidden elements.
  *
  * Tailwind's `sr-only` is `position: absolute`. An absolutely positioned box

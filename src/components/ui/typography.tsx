@@ -51,8 +51,8 @@ const PROSE = [
   '[&_img]:rounded-lg',
 
   '[&_table]:w-full [&_table]:text-sm',
-  '[&_th]:border-border [&_th]:border-b [&_th]:px-3 [&_th]:py-2 [&_th]:text-start [&_th]:font-medium',
-  '[&_td]:border-border/60 [&_td]:border-b [&_td]:px-3 [&_td]:py-2',
+  '[&_th]:border-border [&_th]:border-b [&_th]:p-3 [&_th]:text-start [&_th]:font-medium',
+  '[&_td]:border-border/60 [&_td]:border-b [&_td]:p-3',
 ].join(' ')
 
 function Typography({

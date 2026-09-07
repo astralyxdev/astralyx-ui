@@ -1,5 +1,12 @@
 import { useId, useMemo, type ComponentProps, type ReactNode } from 'react'
 import { AlertTriangle } from 'lucide-react'
+import {
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
@@ -193,54 +200,57 @@ function AbTestResults({
       )}
 
       <div className="overflow-x-auto">
+        {/* The kit's table parts: the six column headings were six copies of
+            the same recipe, and the rows now pick up the shared rule and hover
+            for free. */}
         <table className="w-full text-start text-sm">
-          <thead>
-            <tr className="border-border text-muted-foreground border-b text-xs">
-              <th className="px-4 py-2 text-start font-medium">Variant</th>
-              <th className="px-4 py-2 text-end font-medium">Visitors</th>
-              <th className="px-4 py-2 text-end font-medium">{metricLabel}</th>
-              <th className="px-4 py-2 text-end font-medium">Lift</th>
-              <th className="px-4 py-2 text-end font-medium">
+          <TableHeader>
+            <TableRow>
+              <TableHead>Variant</TableHead>
+              <TableHead className="text-end">Visitors</TableHead>
+              <TableHead className="text-end">{metricLabel}</TableHead>
+              <TableHead className="text-end">Lift</TableHead>
+              <TableHead className="text-end">
                 {Math.round((1 - alpha) * 100)}% CI on lift
-              </th>
-              <th className="px-4 py-2 text-end font-medium">p</th>
-            </tr>
-          </thead>
-          <tbody>
+              </TableHead>
+              <TableHead className="text-end">p</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {rows.map((row) => {
               const significant = row.p !== null && !row.thin && row.p < alpha
               return (
-                <tr key={row.variant.id} className="border-border/60 border-b last:border-b-0">
-                  <td className="px-4 py-2">
+                <TableRow key={row.variant.id}>
+                  <TableCell>
                     <span className="flex items-center gap-2">
                       {row.variant.name}
                       {row.isControl && (
                         <span className="text-muted-foreground text-[11px]">control</span>
                       )}
                     </span>
-                  </td>
-                  <td className="px-4 py-2 text-end tabular-nums">
+                  </TableCell>
+                  <TableCell className="text-end tabular-nums">
                     {row.variant.visitors.toLocaleString()}
-                  </td>
-                  <td className="px-4 py-2 text-end tabular-nums">
+                  </TableCell>
+                  <TableCell className="text-end tabular-nums">
                     {percent(row.rate)}
                     <span className="text-muted-foreground ms-1 text-[11px]">
                       ({row.variant.conversions})
                     </span>
-                  </td>
-                  <td
+                  </TableCell>
+                  <TableCell
                     className={cn(
-                      'px-4 py-2 text-end tabular-nums',
+                      'text-end tabular-nums',
                       significant && (row.lift ?? 0) > 0 && 'text-[var(--green-soft-foreground)]',
                       significant && (row.lift ?? 0) < 0 && 'text-[var(--destructive)]',
                     )}
                   >
                     {row.lift === null ? '—' : signed(row.lift)}
-                  </td>
-                  <td className="text-muted-foreground px-4 py-2 text-end text-xs tabular-nums">
+                  </TableCell>
+                  <TableCell className="text-muted-foreground text-end text-xs tabular-nums">
                     {row.ci ? `[${signed(row.ci[0])}, ${signed(row.ci[1])}]` : '—'}
-                  </td>
-                  <td className="px-4 py-2 text-end tabular-nums">
+                  </TableCell>
+                  <TableCell className="text-end tabular-nums">
                     {row.p === null ? (
                       '—'
                     ) : row.thin ? (
@@ -250,11 +260,11 @@ function AbTestResults({
                         {row.p < 0.001 ? '<0.001' : row.p.toFixed(3)}
                       </span>
                     )}
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               )
             })}
-          </tbody>
+          </TableBody>
         </table>
       </div>
 

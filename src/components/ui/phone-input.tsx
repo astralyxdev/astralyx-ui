@@ -1,5 +1,7 @@
 import { useId, useMemo, useState, type ComponentProps } from 'react'
-import { fieldBase, fieldOutline, fieldSize, radius } from '@/lib/styles'
+import { ButtonGroup } from '@/components/ui/button-group'
+import { Input } from '@/components/ui/input'
+import { Select } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 
 /**
@@ -128,44 +130,47 @@ function PhoneInput({
     onValidChange?.(digits.length >= 6 && digits.length <= 15)
   }
 
+  const showError = Boolean(invalid || (current && !valid))
+  // 'md' is this component's word for the shared scale's 'default'.
+  const controlSize = size === 'md' ? 'default' : size
+
   return (
-    <div
+    // A ButtonGroup, not a hand-rolled field wrapper. This is a Select welded
+    // to an Input, which is exactly what ButtonGroup is for: it squares the
+    // inner corners, overlaps the two borders so they read as one line, and
+    // lifts whichever half has focus above its neighbour. Doing it by hand
+    // meant reimplementing `fieldBase`, drawing a divider by hand, and getting
+    // a field whose focus ring was clipped by the control next to it.
+    <ButtonGroup
       data-slot="phone-input"
-      className={cn(
-        fieldBase, fieldOutline,
-        fieldSize[size],
-        'flex items-center gap-0 ps-0 pe-0',
-        invalid || (current && !valid) ? 'border-[var(--destructive)]' : '',
-        disabled && 'pointer-events-none opacity-50',
-        className,
-      )}
+      className={cn('w-full', disabled && 'pointer-events-none opacity-50', className)}
     >
-      <select
-        aria-label={countryLabel}
+      {/* The kit's Select, not a native one. A native `<select>` draws its
+          popup in the OS, so the one part of this field a user actually opens
+          looked like a different product. */}
+      <Select
+        size={controlSize}
+        error={showError}
+        triggerLabel={countryLabel}
         value={country?.code}
         disabled={disabled}
-        onChange={(event) => {
-          const next = countries.find((c) => c.code === event.target.value)
+        options={countries.map((option) => ({
+          value: option.code,
+          label: `${option.flag ? `${option.flag} ` : ''}+${option.dial}`,
+        }))}
+        onValueChange={(code) => {
+          const next = countries.find((c) => c.code === code)
           if (next) emit(next.dial, national)
         }}
-        className={cn(
-          'text-muted-foreground h-full cursor-pointer appearance-none bg-transparent ps-3 pe-1 text-sm outline-none',
-          radius.control,
-        )}
-      >
-        {countries.map((option) => (
-          <option key={option.code} value={option.code}>
-            {option.flag ? `${option.flag} ` : ''}
-            +{option.dial}
-          </option>
-        ))}
-      </select>
+        className="w-auto shrink-0"
+        triggerClassName="text-muted-foreground w-auto gap-1"
+      />
 
-      <span aria-hidden="true" className="bg-border mx-1 h-4 w-px shrink-0" />
-
-      <input
+      <Input
         id={id}
         type="tel"
+        size={controlSize}
+        error={showError}
         aria-label={numberLabel}
         // `tel` gets the phone keypad on mobile; `autoComplete` lets a password
         // manager fill it, which people expect for a phone field.
@@ -173,12 +178,11 @@ function PhoneInput({
         inputMode="tel"
         value={group(national)}
         disabled={disabled}
-        aria-invalid={invalid || (Boolean(current) && !valid) || undefined}
         onChange={(event) => emit(country?.dial ?? '1', event.target.value.replace(/\D/g, ''))}
-        className="min-w-0 flex-1 bg-transparent pe-3 text-sm outline-none"
+        containerClassName="flex-1"
         {...props}
       />
-    </div>
+    </ButtonGroup>
   )
 }
 

@@ -92,11 +92,11 @@ function CsvPreview({
           <table className="w-full min-w-max border-collapse text-left">
             <thead>
               <tr className="border-border border-b">
-                <th className="text-muted-foreground/40 w-10 px-3 py-2 text-[11px] font-normal tabular-nums">
+                <th className="text-muted-foreground/40 w-10 p-3 text-[11px] font-normal tabular-nums">
                   #
                 </th>
                 {columns.map((column) => (
-                  <th key={column.name} className="px-3 py-2 align-bottom">
+                  <th key={column.name} className="p-3 align-bottom">
                     <span className="block font-mono text-xs font-medium">{column.name}</span>
                     <span className="text-muted-foreground/60 mt-0.5 flex flex-wrap items-baseline gap-1.5 text-[10px]">
                       <span className={cn('font-mono', TYPE_TONE[column.type ?? 'string'])}>
@@ -126,14 +126,14 @@ function CsvPreview({
                     bad.has(index) && 'bg-[var(--destructive-soft)]',
                   )}
                 >
-                  <td className="text-muted-foreground/40 px-3 py-1.5 font-mono text-[11px] tabular-nums">
+                  <td className="text-muted-foreground/40 p-3 font-mono text-[11px] tabular-nums">
                     {index + 1}
                   </td>
                   {columns.map((column, cell) => (
                     <td
                       key={column.name}
                       className={cn(
-                        'px-3 py-1.5 font-mono text-[11px]',
+                        'p-3 font-mono text-[11px]',
                         row[cell] === undefined || row[cell] === ''
                           ? 'text-muted-foreground/30'
                           : 'text-foreground/85',
@@ -143,7 +143,7 @@ function CsvPreview({
                     </td>
                   ))}
                   {bad.has(index) && (
-                    <td className="px-3 py-1.5">
+                    <td className="p-3">
                       <Badge size="sm" color="destructive">
                         {row.length} cols
                       </Badge>

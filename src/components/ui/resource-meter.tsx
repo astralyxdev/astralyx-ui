@@ -1,6 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { Fmt } from '@/components/ui/fmt'
-import { enterFade, growIn } from '@/lib/motion'
+import { Progress } from '@/components/ui/progress'
+import { enterFade } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -62,26 +63,19 @@ function ResourceMeter({
         </span>
       </div>
 
-      <div
-        role="progressbar"
+      {/* The kit's Progress, not a second bar: it already owns the track, the
+          fill, the grow-in and the progressbar role. The aria range is widened
+          back out to the real units, because "6.4 GB of 8 GB" says more than
+          "80 per cent". */}
+      <Progress
+        // Clamped for the bar only — the number above still says 130%.
+        value={Math.min(ratio, 1) * 100}
+        tint={colour}
         aria-valuenow={used}
-        aria-valuemin={0}
         aria-valuemax={cap}
         aria-label={typeof label === 'string' ? label : undefined}
-        className={cn(
-          'bg-secondary w-full overflow-hidden rounded-full [corner-shape:round]',
-          size === 'sm' ? 'h-1.5' : 'h-2',
-        )}
-      >
-        <div
-          className={cn(growIn, 'h-full rounded-full transition-[width,background-color] duration-300 ease-out [corner-shape:round] motion-reduce:transition-none')}
-          style={{
-            // Clamped for the bar only — the number above still says 130%.
-            width: `${Math.min(ratio, 1) * 100}%`,
-            backgroundColor: colour,
-          }}
-        />
-      </div>
+        className={size === 'sm' ? 'h-1.5' : 'h-2'}
+      />
 
       {hint && <p className="text-muted-foreground/70 text-xs">{hint}</p>}
       {over && !hint && (

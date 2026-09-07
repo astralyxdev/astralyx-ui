@@ -9,8 +9,9 @@ import {
 } from 'react'
 import { Pause, Play, SkipBack, SkipForward, Volume2, VolumeX } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Slider } from '@/components/ui/slider'
 import { enterFade } from '@/lib/motion'
-import { focusRing, radius, surface } from '@/lib/styles'
+import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
 /**
@@ -26,13 +27,17 @@ import { cn } from '@/lib/utils'
  * key, or the OS — so mirroring into React state means the two disagree the
  * moment anything else touches playback.
  *
- * **The scrubber is an `<input type="range">`.** Keyboard seeking, page-up
- * jumps, screen-reader announcement and touch drag are all native. It is
+ * **The scrubber is the kit's `Slider`.** It is a range input underneath, so
+ * keyboard seeking, page-up jumps, screen-reader announcement and touch drag
+ * are all native — and it looks like every other slider in the product, which
+ * a hand-styled one with its own vendor pseudo-element rules did not. It is
  * scrubbing *while dragging* that needs care: `dragging` suspends the
  * `timeupdate` handler, or every frame of playback yanks the thumb back out of
  * your hand.
  *
- * `peaks` draws a waveform behind the track when you have one. Computing it
+ * `peaks` draws a waveform behind the track when you have one, and the slider's
+ * rail and fill go transparent so the peaks *are* the track rather than being
+ * covered by a second progress bar. Computing it
  * here would mean decoding the whole file in the main thread before the first
  * frame — the caller either has it precomputed or does not want it.
  */
@@ -216,9 +221,9 @@ function AudioPlayer({
             {formatTime(time)}
           </span>
 
-          <div className="relative min-w-0 flex-1">
-            {/* Behind the track, never in front: the range input has to stay
-                the thing you actually grab. */}
+          <div className="relative h-6 min-w-0 flex-1">
+            {/* Behind the track, never in front: the slider has to stay the
+                thing you actually grab. */}
             {peaks && peaks.length > 0 && (
               <div aria-hidden="true" className="absolute inset-0 flex items-center gap-px">
                 {peaks.map((peak, index) => (
@@ -234,14 +239,14 @@ function AudioPlayer({
               </div>
             )}
 
-            <input
+            <Slider
               id={id}
-              type="range"
+              size="sm"
               min={0}
               max={duration || 0}
               step={0.01}
               value={time}
-              aria-label={seekLabel}
+              label={seekLabel}
               aria-valuetext={`${formatTime(time)} of ${formatTime(duration)}`}
               onPointerDown={() => setDragging(true)}
               onPointerUp={() => setDragging(false)}
@@ -253,19 +258,11 @@ function AudioPlayer({
                 seek(next)
               }}
               className={cn(
-                'relative h-6 w-full cursor-pointer appearance-none bg-transparent',
-                focusRing,
-                radius.control,
-                // Track and thumb have to be styled per engine; there is no
-                // cross-browser shorthand for either.
-                '[&::-webkit-slider-runnable-track]:h-1 [&::-webkit-slider-runnable-track]:rounded-full',
-                peaks?.length
-                  ? '[&::-webkit-slider-runnable-track]:bg-transparent'
-                  : '[&::-webkit-slider-runnable-track]:bg-muted',
-                '[&::-webkit-slider-thumb]:mt-[-4px] [&::-webkit-slider-thumb]:size-3 [&::-webkit-slider-thumb]:appearance-none',
-                '[&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-foreground',
-                '[&::-moz-range-track]:h-1 [&::-moz-range-track]:rounded-full [&::-moz-range-track]:bg-muted',
-                '[&::-moz-range-thumb]:size-3 [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-foreground',
+                'absolute inset-0 h-full',
+                // With a waveform, the peaks *are* the track: they already
+                // carry the played/unplayed split, so painting a rail and a
+                // fill over them would draw a second, disagreeing progress bar.
+                peaks && peaks.length > 0 && '[--slider-fill:transparent] [--slider-rail:transparent]',
               )}
             />
           </div>

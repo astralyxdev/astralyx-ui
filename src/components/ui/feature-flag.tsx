@@ -1,6 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { Flag } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
 import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
@@ -105,16 +106,15 @@ function FeatureFlag({
             </span>
           </div>
 
-          <input
-            type="range"
+          <Slider
+            size="sm"
             min={0}
             max={100}
             step={5}
             value={rollout}
             disabled={!enabled || !onRolloutChange}
-            aria-label={`${name} rollout percentage`}
+            label={`${name} rollout percentage`}
             onChange={(event) => onRolloutChange?.(Number(event.target.value))}
-            className="w-full accent-[var(--primary)] disabled:opacity-40"
           />
         </div>
       )}

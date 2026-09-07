@@ -82,7 +82,7 @@ function McpCapabilityMatrix({
           <div role="row" className="contents">
             <span
               role="columnheader"
-              className="bg-muted/40 border-border text-muted-foreground/70 sticky start-0 z-10 border-b px-4 py-2 text-[11px] tracking-wide uppercase"
+              className="bg-muted/40 border-border text-muted-foreground/70 sticky start-0 z-10 border-b p-3 text-[11px] tracking-wide uppercase"
             >
               Capability
             </span>
@@ -90,7 +90,7 @@ function McpCapabilityMatrix({
               <span
                 key={server.id}
                 role="columnheader"
-                className="bg-muted/40 border-border text-muted-foreground/70 truncate border-b px-3 py-2 text-center text-[11px] tracking-wide uppercase"
+                className="bg-muted/40 border-border text-muted-foreground/70 truncate border-b p-3 text-center text-[11px] tracking-wide uppercase"
                 title={server.name}
               >
                 {server.name}
@@ -106,7 +106,7 @@ function McpCapabilityMatrix({
               <div role="row" key={`${row.kind}-${row.name}`} className="contents">
                 <span
                   role="rowheader"
-                  className="bg-card border-border/60 sticky start-0 z-10 flex min-w-0 items-center gap-2 border-b px-4 py-2"
+                  className="bg-card border-border/60 sticky start-0 z-10 flex min-w-0 items-center gap-2 border-b p-3"
                 >
                   <code className="truncate font-mono text-xs">{row.name}</code>
                   {row.kind && (
@@ -124,7 +124,7 @@ function McpCapabilityMatrix({
                     <span
                       key={server.id}
                       role="cell"
-                      className="border-border/60 flex items-center justify-center border-b px-3 py-2"
+                      className="border-border/60 flex items-center justify-center border-b p-3"
                     >
                       {provides ? (
                         shadowed ? (

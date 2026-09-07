@@ -1,5 +1,12 @@
 import { useMemo, type ComponentProps, type ReactNode } from 'react'
 import { Minus, TrendingDown, TrendingUp } from 'lucide-react'
+import {
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
@@ -88,27 +95,27 @@ function EvalResults({
       className={cn(enterFade, surface, radius.surface, 'w-full overflow-x-auto', className)}
       {...props}
     >
+      {/* The kit's table parts. Every column heading here used to spell out
+          the same muted, extra-small, medium recipe by hand; the density this
+          board runs at is the only thing it actually needs to say. */}
       <table className="w-full text-sm">
-        <thead>
-          <tr className="border-border border-b">
-            <th className="text-muted-foreground px-3 py-2 text-start text-xs font-medium">
-              {benchmarkHeader}
-            </th>
+        <TableHeader>
+          <TableRow>
+            <TableHead>{benchmarkHeader}</TableHead>
             {models.map((model) => (
-              <th
-                key={model}
-                className="text-muted-foreground px-3 py-2 text-end text-xs font-medium whitespace-nowrap"
-              >
+              <TableHead key={model} className="text-end">
                 {model}
-              </th>
+              </TableHead>
             ))}
-          </tr>
-        </thead>
+          </TableRow>
+        </TableHeader>
 
-        <tbody>
+        <TableBody>
           {benchmarks.map((benchmark) => (
-            <tr key={benchmark.id} className="border-border/60 border-b last:border-b-0">
-              <th className="px-3 py-2 text-start text-sm font-medium whitespace-nowrap">
+            <TableRow key={benchmark.id}>
+              {/* A row header, not a column one: it keeps body type and body
+                  ink, so it stays a `th` rather than a `TableHead`. */}
+              <th scope="row" className="text-start text-sm font-medium whitespace-nowrap">
                 {benchmark.label}
                 {benchmark.lowerIsBetter && (
                   <span className="text-muted-foreground/70 ms-1.5 text-xs font-normal">
@@ -123,13 +130,13 @@ function EvalResults({
 
                 if (score?.value === undefined) {
                   return (
-                    <td
+                    <TableCell
                       key={model}
-                      className="text-muted-foreground/40 px-3 py-2 text-end tabular-nums"
+                      className="text-muted-foreground/40 text-end tabular-nums"
                     >
                       {/* Not run — deliberately not blank, which reads as zero. */}
                       <Minus className="ms-auto size-3.5" aria-label={notRunLabel} />
-                    </td>
+                    </TableCell>
                   )
                 }
 
@@ -147,14 +154,14 @@ function EvalResults({
                       : score.delta > 0
 
                 return (
-                  <td
+                  <TableCell
                     key={model}
                     style={{
                       backgroundColor: `color-mix(in oklab, var(--green), transparent ${
                         100 - Math.round(score.value * 22)
                       }%)`,
                     }}
-                    className="px-3 py-2 text-end tabular-nums"
+                    className="text-end tabular-nums"
                   >
                     <span className="inline-flex items-center justify-end gap-1.5">
                       <span className={cn(isBest && 'font-semibold')}>
@@ -175,12 +182,12 @@ function EvalResults({
                         </span>
                       )}
                     </span>
-                  </td>
+                  </TableCell>
                 )
               })}
-            </tr>
+            </TableRow>
           ))}
-        </tbody>
+        </TableBody>
       </table>
     </div>
   )
