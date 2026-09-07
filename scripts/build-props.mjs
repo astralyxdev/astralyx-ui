@@ -80,6 +80,55 @@ const tidy = (text) =>
     .replace(/ \| null \| undefined\b/g, '')
     .replace(/ \| undefined\b/g, '')
 
+/**
+ * The whole file-level JSDoc, paragraph by paragraph.
+ *
+ * Every component file opens with one, and it is the best prose about that
+ * component anywhere in the repo — why it exists, what it refuses to do, the
+ * bug that shaped it. Until now it was visible only to whoever opened the file.
+ * The docs page renders it, which is what makes 343 pages read as 343 pages
+ * rather than one template with the nouns swapped.
+ *
+ * Tag lines are dropped: `@param` and friends belong to the API table, which is
+ * generated separately and says the same thing in a format you can scan.
+ */
+function fileProse(source) {
+  const text = source.text
+  // Past the imports *and* past the `'use client'` prologue — the directive is
+  // an expression statement, so it otherwise becomes the first one and carries
+  // no comment above it.
+  const first = source.statements.find(
+    (statement) =>
+      !ts.isImportDeclaration(statement) &&
+      !(
+        ts.isExpressionStatement(statement) &&
+        ts.isStringLiteralLike(statement.expression)
+      ),
+  )
+  if (!first) return undefined
+
+  const ranges = ts.getLeadingCommentRanges(text, first.getFullStart()) ?? []
+  const block = ranges.filter((range) => text.slice(range.pos, range.pos + 3) === '/**').pop()
+  if (!block) return undefined
+
+  const body = text
+    .slice(block.pos, block.end)
+    .replace(/^\/\*\*/, '')
+    .replace(/\*\/$/, '')
+    .split('\n')
+    .map((line) => line.replace(/^\s*\* ?/, '').trimEnd())
+    .filter((line) => !/^\s*@\w+/.test(line))
+    .join('\n')
+    .trim()
+
+  const paragraphs = body
+    .split(/\n\s*\n/)
+    .map((paragraph) => collapse(paragraph))
+    .filter(Boolean)
+
+  return paragraphs.length ? paragraphs : undefined
+}
+
 /** The first paragraph of a JSDoc block: the summary, without the essay. */
 function summary(text) {
   if (!text) return undefined
@@ -454,6 +503,8 @@ function apiOf(file) {
     .map(({ declaration: _declaration, ...type }) => type)
 
   const api = {}
+  const prose = fileProse(source)
+  if (prose) api.prose = prose
   if (components.length) api.components = components
   if (hooks.length) api.hooks = hooks
   if (functions.length) api.functions = functions
@@ -485,5 +536,7 @@ const helpers = all.reduce(
 )
 const types = all.reduce((sum, api) => sum + (api.types?.length ?? 0), 0)
 console.log(
-  `props ok — ${components.length} components across ${Object.keys(out).length} files, ${props.length} props (${documented} with JSDoc), ${helpers} helpers, ${types} types`,
+  `props ok — ${components.length} components across ${Object.keys(out).length} files, ` +
+    `${props.length} props (${documented} with JSDoc), ${helpers} helpers, ${types} types, ` +
+    `${all.filter((api) => api.prose).length} with prose`,
 )

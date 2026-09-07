@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, type ComponentProps, type ReactNode } from 'react'
 import { TriangleAlert } from 'lucide-react'
 import { Fmt } from '@/components/ui/fmt'

@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { KnowledgeGraph, type Entity, type Relation } from '@/components/ui/knowledge-graph'
 import { Markdown } from '@/components/ui/markdown'

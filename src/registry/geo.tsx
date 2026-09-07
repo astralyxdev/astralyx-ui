@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { AddressInput, emptyAddress, type AddressValue } from '@/components/ui/address-input'
 import { CoordinateInput, type Coordinate } from '@/components/ui/coordinate-input'

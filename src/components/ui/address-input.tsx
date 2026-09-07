@@ -1,3 +1,5 @@
+'use client'
+
 import { useId, type ComponentProps, type ReactNode } from 'react'
 import { Combobox } from '@/components/ui/combobox'
 import { Input } from '@/components/ui/input'

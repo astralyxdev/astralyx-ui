@@ -1,21 +1,19 @@
 /**
- * Everything a crawler, an unfurler or a model reads, generated from the same
- * registry the app renders from.
+ * The markdown twin of every page, and the index that points at it.
  *
- * Emits, into `dist/`:
+ * Emits, into `out/`:
  *
- * - `<route>/index.html` for every route — the built shell with that page's
- *   title, description, canonical and OG tags baked in. This is the half that
- *   matters: Slack, X, iMessage and most crawlers never execute the bundle, so
- *   the `useSeo` hook is invisible to them. GitHub Pages serves the directory
- *   index for a clean URL, so `/components/button` finds its own file.
- * - `<route>.md` beside each page, and `llms.txt` indexing them, per the
- *   llms.txt convention — markdown a model can read without running JS or
- *   digging the content out of a 1.9 MB bundle.
- * - `sitemap.xml` and `robots.txt`.
+ * - `<route>.md` beside each page — the same content as prose a model can read
+ *   without running JavaScript or digging it out of a bundle.
+ * - `llms.txt`, indexing them, per the llms.txt convention.
  *
- * Nothing here is hand-listed. A hand-written sitemap or index is stale the
- * first time someone adds a component, and nothing visibly breaks when it is.
+ * This used to do three more jobs: prerender each route's HTML, write the
+ * sitemap and write robots.txt. The static export writes real HTML for every
+ * route now, and `app/sitemap.ts` and `app/robots.ts` cover the other two, so
+ * what is left is the half Next has no opinion about.
+ *
+ * Nothing here is hand-listed. A hand-written index is stale the first time
+ * someone adds a component, and nothing visibly breaks when it is.
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -25,10 +23,11 @@ import { renderToStaticMarkup } from 'react-dom/server'
 
 const SITE = process.env.SITE_URL ?? 'https://ui.astralyx.dev'
 const SITE_NAME = 'Astralyx UI'
-const OUT = path.join(process.cwd(), 'dist')
+const OUT = path.join(process.cwd(), 'out')
 
-// The router reads window.location in a useState initialiser, and several
-// components touch matchMedia at module scope.
+// Doc bodies are rendered to markdown through `renderToStaticMarkup`, and
+// several components reach for a browser global at module scope. Nothing reads
+// these; they only have to exist.
 globalThis.window ??= {
   location: { pathname: '/' },
   addEventListener() {},
@@ -51,7 +50,7 @@ const { ENTRIES, componentPath, findCategory } = await server.ssrLoadModule('/sr
 const COMPONENT_COUNT = ENTRIES.length
 const { DOCS } = await server.ssrLoadModule('/src/docs/pages.tsx')
 const { EXAMPLES, examplePath } = await server.ssrLoadModule('/src/examples/index.ts')
-const { canonicalUrl, clampDescription, pageTitle } = await server.ssrLoadModule('/src/lib/seo.ts')
+const { clampDescription } = await server.ssrLoadModule('/src/lib/seo.ts')
 // The same merge the component page renders, so the markdown twin cannot show
 // a smaller API than the HTML one.
 const { apiDocs, hasApi } = await server.ssrLoadModule('/src/registry/props.ts')
@@ -59,111 +58,10 @@ const { apiDocs, hasApi } = await server.ssrLoadModule('/src/registry/props.ts')
 // provider. Same wrapper the SSR audit uses.
 const { Router } = await server.ssrLoadModule('/src/components/primitives/router.tsx')
 
-/* ------------------------------------------------------------------ routes */
-
-const routes = [
-  {
-    path: '/',
-    title: undefined,
-    // Written to fit inside the 155-character clamp rather than be cut by it:
-    // the previous one ran to 163 and every search result ended mid-phrase,
-    // on the word "at".
-    description: `${COMPONENT_COUNT} accessible React components for React 19 and Tailwind v4. A CLI copies the source into your repo — nothing is imported at runtime.`,
-    priority: '1.0',
-  },
-  {
-    path: '/components',
-    title: 'Components',
-    description:
-      'Every component in the kit, grouped by category. Each has a live composer, worked examples and a full props table.',
-    priority: '0.9',
-  },
-  {
-    path: '/examples',
-    title: 'Examples',
-    description:
-      'Whole screens built from the kit — a dashboard, a mail client, a repository browser, an assistant and a settings form.',
-    priority: '0.8',
-  },
-  ...DOCS.map((doc) => ({
-    path: `/docs/${doc.id}`,
-    title: doc.label,
-    description: doc.description,
-    priority: '0.7',
-  })),
-  ...EXAMPLES.map((example) => ({
-    path: examplePath(example.id),
-    title: `${example.label} example`,
-    description: example.description,
-    priority: '0.6',
-  })),
-  ...ENTRIES.map((entry) => ({
-    path: componentPath(entry.id),
-    title: entry.label,
-    description: `${entry.description} Copy it into your project with npx astralyx-ui add ${entry.id}.`,
-    priority: '0.5',
-  })),
-]
-
-/* -------------------------------------------------------------- prerender */
-
-const shell = fs.readFileSync(path.join(OUT, 'index.html'), 'utf8')
-
-const escapeHtml = (value) =>
-  value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-
-/** Swap the content of one meta tag, matched on its own name/property. */
-function setMeta(html, attribute, key, content) {
-  const pattern = new RegExp(
-    `(<meta\\s+${attribute}="${key}"\\s+content=")[^"]*(")`,
-    'i',
-  )
-  return pattern.test(html) ? html.replace(pattern, `$1${escapeHtml(content)}$2`) : html
-}
-
-function pageHtml(route) {
-  const title = pageTitle(route.title)
-  const description = clampDescription(route.description)
-  const url = canonicalUrl(route.path)
-
-  let html = shell.replace(/<title>[^<]*<\/title>/, `<title>${escapeHtml(title)}</title>`)
-  html = html.replace(
-    /(<link rel="canonical" href=")[^"]*(")/,
-    `$1${escapeHtml(url)}$2`,
-  )
-  html = setMeta(html, 'name', 'description', description)
-  html = setMeta(html, 'property', 'og:title', title)
-  html = setMeta(html, 'property', 'og:description', description)
-  html = setMeta(html, 'property', 'og:url', url)
-  html = setMeta(html, 'name', 'twitter:title', title)
-  html = setMeta(html, 'name', 'twitter:description', description)
-
-  // The structured data carries its own copy of the description, and nothing
-  // was rewriting it — so the JSON-LD a search engine reads still claimed 253
-  // components long after the meta tags had been corrected.
-  html = html.replace(
-    /("description":\s*")[^"]*(")/,
-    `$1${escapeHtml(description)}$2`,
-  )
-  return html
-}
-
 function write(relative, contents) {
   const file = path.join(OUT, relative)
   fs.mkdirSync(path.dirname(file), { recursive: true })
   fs.writeFileSync(file, contents)
-}
-
-let prerendered = 0
-for (const route of routes) {
-  // '/' already exists as dist/index.html and is rewritten in place.
-  const target = route.path === '/' ? 'index.html' : `${route.path.slice(1)}/index.html`
-  write(target, pageHtml(route))
-  prerendered++
 }
 
 /* -------------------------------------------------------------- markdown */
@@ -229,7 +127,7 @@ function componentMarkdown(entry) {
     entry.description,
     '',
     `- Category: ${category ? category.label : 'Uncategorised'}`,
-    `- Page: ${SITE}${componentPath(entry.id)}`,
+    `- Page: ${SITE}${componentPath(entry.id)}/`,
     '',
     '## Install',
     '',
@@ -325,7 +223,7 @@ for (const doc of DOCS) {
 
   write(
     `docs/${doc.id}.md`,
-    `# ${doc.label}\n\n${doc.description}\n\n- Page: ${SITE}/docs/${doc.id}\n\n${body}\n`,
+    `# ${doc.label}\n\n${doc.description}\n\n- Page: ${SITE}/docs/${doc.id}/\n\n${body}\n`,
   )
   markdown++
 }
@@ -338,7 +236,7 @@ for (const example of EXAMPLES) {
       '',
       example.description,
       '',
-      `- Page: ${SITE}${examplePath(example.id)}`,
+      `- Page: ${SITE}${examplePath(example.id)}/`,
       '',
       '## Components used',
       '',
@@ -391,30 +289,9 @@ for (const [label, entries] of byCategory) {
 
 write('llms.txt', `${llms.join('\n')}\n`)
 
-/* ------------------------------------------------- sitemap.xml, robots.txt */
-
-const today = new Date().toISOString().slice(0, 10)
-
-write(
-  'sitemap.xml',
-  [
-    '<?xml version="1.0" encoding="UTF-8"?>',
-    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-    ...routes.map(
-      (route) =>
-        `  <url><loc>${canonicalUrl(route.path)}</loc><lastmod>${today}</lastmod>` +
-        `<priority>${route.priority}</priority></url>`,
-    ),
-    '</urlset>',
-    '',
-  ].join('\n'),
-)
-
-write('robots.txt', ['User-agent: *', 'Allow: /', '', `Sitemap: ${SITE}/sitemap.xml`, ''].join('\n'))
-
 await server.close()
 
 console.log(
-  `seo ok — ${prerendered} prerendered pages, ${markdown} markdown files, ` +
-    `${routes.length} sitemap urls, llms.txt written`,
+  `llms ok — ${ENTRIES.length} component pages, ${DOCS.length} docs, ` +
+    `${EXAMPLES.length} examples, llms.txt written`,
 )

@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { Circle, Heart, Hexagon, Star } from 'lucide-react'
 import { ColorPicker } from '@/components/ui/color-picker'

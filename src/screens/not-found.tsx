@@ -1,4 +1,6 @@
-import { Link } from '@/components/primitives/router'
+'use client'
+
+import { Link } from '@/lib/site-link'
 import { Button } from '@/components/ui/button'
 
 function NotFound({ path }: { path: string }) {

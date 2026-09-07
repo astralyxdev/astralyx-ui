@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, type ComponentProps, type ReactNode } from 'react'
 import { ArrowRight, TriangleAlert } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'

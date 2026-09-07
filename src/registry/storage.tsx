@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { AssetGrid, type Asset } from '@/components/ui/asset-grid'
 import { AudioPlayer } from '@/components/ui/audio-player'

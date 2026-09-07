@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useState, type ComponentProps, type ReactNode } from 'react'
 import { ChevronLeft, ChevronRight, ImageOff, X } from 'lucide-react'
 import { AspectRatio } from '@/components/ui/aspect-ratio'

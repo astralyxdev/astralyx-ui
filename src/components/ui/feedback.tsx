@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, type ComponentProps, type ReactNode } from 'react'
 import { ThumbsDown, ThumbsUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'

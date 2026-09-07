@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, type ComponentProps } from 'react'
 import { Avatar } from '@/components/ui/avatar'
 import { Fmt } from '@/components/ui/fmt'

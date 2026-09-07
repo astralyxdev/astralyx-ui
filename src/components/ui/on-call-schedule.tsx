@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, type ComponentProps, type ReactNode } from 'react'
 import { Phone } from 'lucide-react'
 import { Avatar } from '@/components/ui/avatar'

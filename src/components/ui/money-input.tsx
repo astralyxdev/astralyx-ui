@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, useState, type ComponentProps } from 'react'
 import { enterFade } from '@/lib/motion'
 import { fieldBase, fieldInput, fieldSize } from '@/lib/styles'

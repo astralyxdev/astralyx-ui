@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, type ComponentProps, type ReactNode } from 'react'
 import { Brain, ChevronDown, ChevronRight } from 'lucide-react'
 import { Fmt } from '@/components/ui/fmt'

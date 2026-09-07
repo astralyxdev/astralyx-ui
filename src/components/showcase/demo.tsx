@@ -1,3 +1,6 @@
+'use client'
+
+import { ClientOnly } from '@/components/showcase/client-only'
 import { Card, CardBody, CardHeader, CardTitle } from '@/components/ui/card'
 import { CodeBlock } from '@/components/ui/code-block'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -44,11 +47,14 @@ function Demo({ demo }: { demo: DemoSpec }) {
               demo.stack ? 'flex flex-col' : 'flex flex-wrap items-center',
             )}
           >
-            {demo.render()}
+            <ClientOnly minHeight={40}>{() => demo.render()}</ClientOnly>
           </CardBody>
         </TabsContent>
 
-        <TabsContent value="code">
+        {/* Kept mounted so the source is in the exported HTML. It is the half
+            of an example a search engine can actually read, and unmounting it
+            meant 343 pages shipped with their code missing. */}
+        <TabsContent value="code" keepMounted>
           <CardBody className="p-3">
             <CodeBlock code={demo.code} language={demo.language ?? 'tsx'} />
           </CardBody>

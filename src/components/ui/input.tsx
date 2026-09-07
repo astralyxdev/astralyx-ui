@@ -1,3 +1,5 @@
+'use client'
+
 import { useRef, useState, type ComponentProps, type ReactNode } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { X } from 'lucide-react'

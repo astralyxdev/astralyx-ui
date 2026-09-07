@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, type ComponentProps, type ReactNode } from 'react'
 import { Check, ChevronDown, ChevronRight, CircleSlash, X } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'

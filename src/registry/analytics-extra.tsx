@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { AbTestResults } from '@/components/ui/ab-test-results'
 import { Attribution, type Journey } from '@/components/ui/attribution'

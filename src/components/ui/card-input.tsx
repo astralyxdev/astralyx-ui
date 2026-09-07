@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, type ComponentProps, type ReactNode } from 'react'
 import { CreditCard, Lock } from 'lucide-react'
 import { Input } from '@/components/ui/input'

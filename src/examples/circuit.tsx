@@ -1,3 +1,5 @@
+'use client'
+
 import { createContext, use, useMemo, useState } from 'react'
 import type { Dispatch, ReactNode, SetStateAction } from 'react'
 import {

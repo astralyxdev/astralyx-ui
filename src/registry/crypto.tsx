@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { CandlestickChart, type Candle } from '@/components/ui/candlestick-chart'
 import { ChainSelect, type Chain } from '@/components/ui/chain-select'

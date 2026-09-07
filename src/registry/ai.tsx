@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { FileCode, Globe, Image as ImageIcon, Terminal } from 'lucide-react'
 import { ContextPicker, type ContextSource } from '@/components/ui/context-picker'

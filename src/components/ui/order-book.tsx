@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, type ComponentProps, type ReactNode } from 'react'
 import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'

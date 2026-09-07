@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import {
   Bold, Copy, Italic, Link2, Minus, Plus, Search, Underline,

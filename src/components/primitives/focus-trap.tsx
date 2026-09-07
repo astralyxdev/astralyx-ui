@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useRef, type ReactNode, type RefObject } from 'react'
 
 /**

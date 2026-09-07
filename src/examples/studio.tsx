@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, useState } from 'react'
 import {
   ArrowLeft, Bot, FlaskConical, GitCompare, MessagesSquare, Play, ShieldCheck, Sparkles, 

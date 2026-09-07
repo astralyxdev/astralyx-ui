@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { AttachmentPreview, type Attachment } from '@/components/ui/attachment-preview'
 import { ThreadList, type Thread } from '@/components/ui/thread-list'

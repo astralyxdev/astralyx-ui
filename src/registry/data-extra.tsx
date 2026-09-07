@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { Donut } from '@/components/ui/donut'
 import { Funnel } from '@/components/ui/funnel'

@@ -1,3 +1,5 @@
+'use client'
+
 import { Radio, RadioGroup } from '@/components/ui/radio-group'
 import type { ComponentEntry, ComposerState } from './types'
 

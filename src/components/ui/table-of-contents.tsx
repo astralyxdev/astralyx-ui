@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useState, type ComponentProps } from 'react'
 import { enterFade } from '@/lib/motion'
 import { focusRing, radius } from '@/lib/styles'

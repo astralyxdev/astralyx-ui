@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { Box, Braces, FunctionSquare, Hash, Search, Type, Variable } from 'lucide-react'
 import { Input } from '@/components/ui/input'

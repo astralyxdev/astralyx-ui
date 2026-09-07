@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { FewShotEditor, type FewShotExample } from '@/components/ui/few-shot-editor'
 import { PromptVariables } from '@/components/ui/prompt-variables'

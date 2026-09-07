@@ -1,3 +1,5 @@
+'use client'
+
 import { useRef, useState, type ComponentProps } from 'react'
 import {
   fieldBase,

@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, type ComponentProps, type ReactNode } from 'react'
 import { Tooltip } from '@/components/ui/tooltip'
 import { enterFade } from '@/lib/motion'

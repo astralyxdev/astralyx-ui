@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useRef, type ComponentProps, type ReactNode } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { Check, Minus } from 'lucide-react'

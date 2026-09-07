@@ -1,3 +1,5 @@
+'use client'
+
 import { useId, useMemo, useState, type ComponentProps } from 'react'
 import { ButtonGroup } from '@/components/ui/button-group'
 import { Input } from '@/components/ui/input'

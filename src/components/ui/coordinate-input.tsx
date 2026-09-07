@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useId, useState, type ClipboardEvent, type ComponentProps, type ReactNode } from 'react'
 import { CopyButton } from '@/components/ui/copy-button'
 import { Input } from '@/components/ui/input'

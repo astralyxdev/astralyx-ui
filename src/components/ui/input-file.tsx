@@ -1,3 +1,5 @@
+'use client'
+
 import { useId, useRef, type ComponentProps, type ReactNode } from 'react'
 import { Check, Paperclip, Upload } from 'lucide-react'
 import { Button } from '@/components/ui/button'

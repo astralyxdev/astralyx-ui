@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { Grid2x2, LayoutList, Rows3 } from 'lucide-react'
 import { Cascader, type CascaderOption } from '@/components/ui/cascader'

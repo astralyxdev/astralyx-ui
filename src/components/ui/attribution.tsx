@@ -1,3 +1,5 @@
+'use client'
+
 import { useId, useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { SegmentedControl } from '@/components/ui/segmented-control'
 import { enterFade, growIn } from '@/lib/motion'

@@ -1,3 +1,5 @@
+'use client'
+
 import { useId, useMemo, type ComponentProps, type ReactNode } from 'react'
 import { enterFade } from '@/lib/motion'
 import { cn } from '@/lib/utils'

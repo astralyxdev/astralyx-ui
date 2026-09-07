@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, type ComponentProps, type ReactNode } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Field, FieldLabel, useFieldControl } from '@/components/ui/field'

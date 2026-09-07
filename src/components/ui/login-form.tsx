@@ -1,3 +1,5 @@
+'use client'
+
 import { useId, useState, type ComponentProps, type FormEvent, type ReactNode } from 'react'
 import { TriangleAlert } from 'lucide-react'
 import { Button } from '@/components/ui/button'

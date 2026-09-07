@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, useState } from 'react'
 import {
   ArrowLeft, ChartLine, Package, Plus, Receipt, ShoppingBag, TicketPercent, TriangleAlert, Users,

@@ -28,22 +28,33 @@ jobs:
           cache: npm
       - run: npm ci
 
+      # `output: 'export'` — a directory of files, no server. Pages hosts the
+      # artefact and nothing runs at request time.
       - run: npm run build
 
-      - name: SPA fallback
-        # Pages has no rewrite rules: a deep link like /docs/theming is a 404 as
-        # far as the server is concerned. Serving index.html as the 404 body
-        # boots the app, and the router reads the real pathname from there. The
-        # response keeps its 404 status, which is expected and harmless.
-        #
-        # No CNAME file: on an artefact deploy the custom domain comes from the
-        # repository's own Pages setting, not from a file in the artefact —
-        # verified against the API after a deploy that did include one.
-        run: cp dist/index.html dist/404.html
+      # The SPA fallback is gone with the SPA. Every route is now its own HTML
+      # file, so a deep link like /docs/theming/ is a real 200 rather than
+      # index.html served with a 404 status, and the export writes its own
+      # 404.html for everything else.
+      #
+      # No CNAME file: on an artefact deploy the custom domain comes from the
+      # repository's own Pages setting, not from a file in the artefact —
+      # verified against the API after a deploy that did include one.
+      - name: The export is static, and Pages can serve it
+        run: |
+          test -f out/index.html
+          test -f out/404.html
+          test -f out/sitemap.xml
+          test -f out/robots.txt
+          test -f out/llms.txt
+          test -f out/components/button/index.html
+          # Every asset is under /_next/. Without this, a branch deploy would
+          # have Jekyll drop the lot and the site would come back unstyled.
+          test -f out/.nojekyll
 
       - uses: actions/upload-pages-artifact@v4
         with:
-          path: dist
+          path: out
 
   deploy:
     needs: build

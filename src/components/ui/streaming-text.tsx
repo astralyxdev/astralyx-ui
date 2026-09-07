@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useRef, useState, type ComponentProps } from 'react'
 import { useMediaQuery } from '@/components/primitives/media-query'
 import { cn } from '@/lib/utils'

@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, type ComponentProps } from 'react'
 import { Combobox } from '@/components/ui/combobox'
 

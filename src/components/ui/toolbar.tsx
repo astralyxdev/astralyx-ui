@@ -1,3 +1,5 @@
+'use client'
+
 import { useRef, type ComponentProps, type KeyboardEvent } from 'react'
 import { tabbableWithin } from '@/components/primitives/focus-trap'
 import { enterFade } from '@/lib/motion'

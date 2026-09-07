@@ -1,3 +1,5 @@
+'use client'
+
 import { useId, useState, type ComponentProps } from 'react'
 import { fieldBase, fieldOutline, fieldSize } from '@/lib/styles'
 import { cn } from '@/lib/utils'

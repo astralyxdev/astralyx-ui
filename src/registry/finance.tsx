@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { CardInput } from '@/components/ui/card-input'
 import { LedgerTable, type LedgerEntry } from '@/components/ui/ledger-table'

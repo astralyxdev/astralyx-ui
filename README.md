@@ -1,7 +1,13 @@
 # astralyx-ui
 
+[![npm](https://img.shields.io/npm/v/astralyx-ui?color=%230a7cff&label=npm)](https://www.npmjs.com/package/astralyx-ui)
+[![Docs](https://img.shields.io/badge/docs-ui.astralyx.dev-0a7cff)](https://ui.astralyx.dev)
+[![License](https://img.shields.io/npm/l/astralyx-ui)](./LICENSE)
+
 **343 accessible React components you copy into your repo** — with a CLI and a
 registry that work out what each one needs and bring that too.
+
+**[Browse every component, running, at ui.astralyx.dev →](https://ui.astralyx.dev)**
 
 Not a dependency. There is no package to upgrade and nothing to fight when a
 design changes: the code lands in your tree and it is yours.

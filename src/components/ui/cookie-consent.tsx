@@ -1,3 +1,5 @@
+'use client'
+
 import { useId, useState, type ComponentProps, type ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'

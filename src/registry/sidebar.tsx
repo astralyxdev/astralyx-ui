@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { Bell, FileText, Home, LifeBuoy, Search, Settings, Users } from 'lucide-react'
 import {

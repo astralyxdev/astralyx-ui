@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, type ComponentProps, type ReactNode } from 'react'
 import { Minus, TrendingDown, TrendingUp } from 'lucide-react'
 import {

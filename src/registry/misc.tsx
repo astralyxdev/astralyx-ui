@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { Bold, Italic, Underline } from 'lucide-react'
 import { AspectRatio } from '@/components/ui/aspect-ratio'

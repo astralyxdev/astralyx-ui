@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { ChevronDown, ChevronRight, Search } from 'lucide-react'
 import { Avatar } from '@/components/ui/avatar'
