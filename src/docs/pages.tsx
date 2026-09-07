@@ -632,11 +632,22 @@ const conventions: DocEntry = {
           the scanner and silently produce nothing — which is why the colour sets
           are written out in full.
         </p>
+        {/* The sample is concatenated rather than interpolated, and that is
+            not a stylistic choice. Written as a template literal the file
+            would contain the complete text of an arbitrary-property class,
+            and Tailwind's scanner reads source as text: it found the sample,
+            emitted `--ui: var(--${name})`, and shipped a stylesheet no CSS
+            parser will accept. A section explaining that the scanner cannot
+            see through interpolation was broken by the scanner seeing it.
+
+            Split, neither half is a complete candidate, and the point the
+            sample is making survives — concatenation fails for exactly the
+            same reason. */}
         <CodeBlock
           language="tsx"
           title="This generates no CSS"
           code={`// Tailwind scans source text, so it never sees the result.
-const set = (name: string) => \`[--ui:var(--\${name})]\`
+const set = (name: string) => '[--ui:var(--' + name + ')]'
 
 // Written out, it does:
 const colorSet = {

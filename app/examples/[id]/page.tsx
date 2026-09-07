@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import docs from '@/registry/docs.generated.json'
-import { clampDescription } from '@/lib/seo'
+import { clampDescription, openGraphFor } from '@/lib/seo'
 import { ExampleBody } from './body'
 
 export function generateStaticParams() {
@@ -17,10 +17,13 @@ export async function generateMetadata({
   const example = docs.examples.find((entry) => entry.id === id)
   if (!example) return {}
 
+  const description = clampDescription(example.description)
+
   return {
     title: example.label,
-    description: clampDescription(example.description),
+    description,
     alternates: { canonical: example.href },
+    openGraph: openGraphFor({ title: example.label, description, path: example.href }),
   }
 }
 

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import docs from '@/registry/docs.generated.json'
-import { clampDescription } from '@/lib/seo'
+import { clampDescription, openGraphFor } from '@/lib/seo'
 import { ComponentBody } from './body'
 
 type Components = typeof docs.components
@@ -33,7 +33,7 @@ export async function generateMetadata({
     title: entry.label,
     description,
     alternates: { canonical: entry.href },
-    openGraph: { title: `${entry.label} — Astralyx UI`, description, url: entry.href },
+    openGraph: openGraphFor({ title: entry.label, description, path: entry.href }),
   }
 }
 

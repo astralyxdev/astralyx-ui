@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import docs from '@/registry/docs.generated.json'
-import { clampDescription } from '@/lib/seo'
+import { clampDescription, openGraphFor } from '@/lib/seo'
 import { DocBody } from './body'
 
 export function generateStaticParams() {
@@ -21,7 +21,11 @@ export async function generateMetadata({
     title: doc.label,
     description: clampDescription(doc.description),
     alternates: { canonical: doc.href },
-    openGraph: { title: `${doc.label} — Astralyx UI`, description: clampDescription(doc.description), url: doc.href },
+    openGraph: openGraphFor({
+      title: doc.label,
+      description: clampDescription(doc.description),
+      path: doc.href,
+    }),
   }
 }
 

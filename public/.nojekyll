@@ -1,0 +1,5 @@
+Everything the site loads lives under /_next/, and Jekyll skips paths that begin
+with an underscore. The artefact deploy this repo uses does not run Jekyll, so
+this file changes nothing today — it is here for the day someone switches Pages
+to deploy from a branch, where its absence takes out every stylesheet and every
+script at once and the site comes back unstyled rather than broken.

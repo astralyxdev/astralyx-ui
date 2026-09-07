@@ -40,12 +40,17 @@ jobs:
       # No CNAME file: on an artefact deploy the custom domain comes from the
       # repository's own Pages setting, not from a file in the artefact —
       # verified against the API after a deploy that did include one.
-      - name: The export is static
+      - name: The export is static, and Pages can serve it
         run: |
           test -f out/index.html
           test -f out/404.html
           test -f out/sitemap.xml
+          test -f out/robots.txt
+          test -f out/llms.txt
           test -f out/components/button/index.html
+          # Every asset is under /_next/. Without this, a branch deploy would
+          # have Jekyll drop the lot and the site would come back unstyled.
+          test -f out/.nojekyll
 
       - uses: actions/upload-pages-artifact@v4
         with:
