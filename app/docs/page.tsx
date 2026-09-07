@@ -23,12 +23,15 @@ export const metadata: Metadata = {
   description: first.description,
   robots: { index: false, follow: true },
   alternates: { canonical: first.href },
-  other: { refresh: `0; url=${first.href}` },
 }
 
 export default function Page() {
   return (
     <div className="mx-auto max-w-2xl py-16 text-center">
+      {/* Rendered here rather than through `metadata`, which only ever emits
+          `name=` — and `<meta name="refresh">` does nothing at all. React
+          hoists this into the head. */}
+      <meta httpEquiv="refresh" content={`0; url=${first.href}`} />
       <h1 className="text-2xl font-semibold tracking-tight">Documentation</h1>
       <p className="text-muted-foreground mt-3 text-sm">
         The docs start at{' '}
