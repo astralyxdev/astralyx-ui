@@ -3,6 +3,7 @@ import { Paperclip, Users } from 'lucide-react'
 import { Avatar } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade } from '@/lib/motion'
 import { focusRing, interactive, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -53,7 +54,7 @@ function ThreadList({
   return (
     <div
       data-slot="thread-list"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       {threads.length === 0 ? (

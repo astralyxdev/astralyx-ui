@@ -3,6 +3,7 @@ import { Eye, EyeOff, TriangleAlert } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { CopyButton } from '@/components/ui/copy-button'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -239,7 +240,7 @@ function ConnectionString({
     <div
       data-slot="connection-string"
       data-driver={parsed.scheme}
-      className={cn(surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
       {...props}
     >
       <div className="flex items-start gap-2">

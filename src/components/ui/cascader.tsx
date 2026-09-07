@@ -2,6 +2,7 @@ import { useMemo, useRef, useState, type ComponentProps, type ReactNode } from '
 import { Check, ChevronDown, ChevronRight } from 'lucide-react'
 import { useDismissable } from '@/components/primitives/dismissable'
 import { usePopper } from '@/components/primitives/popper'
+import { overlayIn } from '@/lib/motion'
 import { fieldBase, fieldOutline, fieldSize, menuSurface, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -89,7 +90,7 @@ function Cascader({
   const chain = useMemo(() => resolve(options, selected), [options, selected])
 
   const floatingRef = useRef<HTMLDivElement>(null)
-  const { style } = usePopper({ open, anchorRef, floatingRef, side: 'bottom', align: 'start' })
+  const { style, side: resolvedSide } = usePopper({ open, anchorRef, floatingRef, side: 'bottom', align: 'start' })
   useDismissable({ open, onDismiss: () => setOpen(false), refs: [anchorRef, floatingRef] })
 
   /** One column per level of the browsing path, plus the root. */
@@ -155,8 +156,9 @@ function Cascader({
       {open && (
         <div
           ref={floatingRef}
+          data-side={resolvedSide}
           style={style}
-          className={cn(menuSurface, radius.surface, 'flex max-h-72 overflow-hidden p-0')}
+          className={cn(overlayIn, menuSurface, radius.surface, 'flex max-h-72 overflow-hidden p-0')}
         >
           {columns.map((column, depth) => (
             <ul

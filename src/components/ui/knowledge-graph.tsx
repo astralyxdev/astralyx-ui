@@ -7,6 +7,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from 'react'
 import { useForceGraph } from '@/lib/use-force-graph'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -146,7 +147,7 @@ function KnowledgeGraph({
           }
         }
       }}
-      className={cn('relative overflow-hidden', surface, radius.surface, className)}
+      className={cn(enterFade, 'relative overflow-hidden', surface, radius.surface, className)}
       style={{ height }}
       onPointerMove={(event) => {
         if (!dragging.current) return

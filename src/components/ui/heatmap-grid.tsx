@@ -1,5 +1,6 @@
 import { useMemo, type ComponentProps, type ReactNode } from 'react'
 import { Tooltip } from '@/components/ui/tooltip'
+import { enterFade } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -119,7 +120,7 @@ function HeatmapGrid({
   const total = cells.reduce((sum, cell) => sum + cell.value, 0)
 
   return (
-    <div data-slot="heatmap-grid" className={cn('flex flex-col gap-2', className)} {...props}>
+    <div data-slot="heatmap-grid" className={cn(enterFade, 'flex flex-col gap-2', className)} {...props}>
       <div className="flex gap-1.5 overflow-x-auto">
         {showWeekdays && (
           <div className="flex shrink-0 flex-col gap-[3px] pt-[18px]">

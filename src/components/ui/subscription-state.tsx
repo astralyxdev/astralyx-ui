@@ -2,6 +2,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -81,6 +82,7 @@ function SubscriptionState({
       data-slot="subscription-state"
       data-status={status}
       className={cn(
+        enterFade,
         surface,
         radius.surface,
         'flex flex-col gap-3 p-4',

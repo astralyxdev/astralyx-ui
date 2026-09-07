@@ -2,6 +2,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { Download, File, FileText, Film, ImageIcon, Music, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -72,6 +73,7 @@ function AttachmentPreview({
     <div
       data-slot="attachment-preview"
       className={cn(
+        enterFade,
         surface,
         radius.control,
         'flex items-center gap-3 p-2',

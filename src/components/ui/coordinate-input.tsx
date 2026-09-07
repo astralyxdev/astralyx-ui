@@ -2,6 +2,7 @@ import { useEffect, useId, useState, type ClipboardEvent, type ComponentProps, t
 import { CopyButton } from '@/components/ui/copy-button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { enterFade } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -135,7 +136,7 @@ function CoordinateInput({
   return (
     <div
       data-slot="coordinate-input"
-      className={cn('flex flex-wrap items-start gap-2', className)}
+      className={cn(enterFade, 'flex flex-wrap items-start gap-2', className)}
       {...props}
     >
       <div className="flex min-w-32 flex-1 flex-col gap-1.5">

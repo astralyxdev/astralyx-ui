@@ -3,6 +3,7 @@ import { TriangleAlert } from 'lucide-react'
 import { CopyButton } from '@/components/ui/copy-button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -79,7 +80,7 @@ function UtmBuilder({
   return (
     <div
       data-slot="utm-builder"
-      className={cn(surface, radius.surface, 'flex flex-col gap-4 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-4 p-4', className)}
       {...props}
     >
       <div className="flex flex-col gap-1.5">

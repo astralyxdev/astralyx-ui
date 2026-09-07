@@ -1,4 +1,5 @@
 import type { ComponentProps, ReactNode } from 'react'
+import { enterFade, growIn } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -47,7 +48,7 @@ function Funnel({
   return (
     <ol
       data-slot="funnel"
-      className={cn('flex list-none flex-col gap-2', className)}
+      className={cn(enterFade, 'flex list-none flex-col gap-2', className)}
       {...props}
     >
       {stages.map((stage, index) => {
@@ -68,7 +69,7 @@ function Funnel({
 
             <div className="bg-secondary h-7 w-full overflow-hidden rounded-md">
               <div
-                className="h-full rounded-md transition-[width] duration-300 ease-out motion-reduce:transition-none"
+                className={cn(growIn, 'h-full rounded-md transition-[width] duration-300 ease-out motion-reduce:transition-none')}
                 style={{
                   // Width tracks volume, not the step rate.
                   width: `${Math.max(overall * 100, 1)}%`,

@@ -3,6 +3,7 @@ import { Download, FileText } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -52,7 +53,7 @@ function InvoiceList({
   return (
     <div
       data-slot="invoice-list"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       {invoices.length === 0 ? (

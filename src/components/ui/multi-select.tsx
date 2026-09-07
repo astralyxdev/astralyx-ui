@@ -9,6 +9,7 @@ import {
 import { Check, ChevronDown, Search, X } from 'lucide-react'
 import { useDismissable } from '@/components/primitives/dismissable'
 import { usePopper } from '@/components/primitives/popper'
+import { overlayIn } from '@/lib/motion'
 import {
   fieldBase,
   fieldSize,
@@ -105,7 +106,7 @@ function MultiSelect({
   const panelRef = useRef<HTMLDivElement>(null)
   const searchRef = useRef<HTMLInputElement>(null)
 
-  const { style } = usePopper({
+  const { style, side: resolvedSide } = usePopper({
     open,
     anchorRef: triggerRef,
     floatingRef: panelRef,
@@ -250,9 +251,10 @@ function MultiSelect({
       {open && (
         <div
           ref={panelRef}
+          data-side={resolvedSide}
           style={style}
           onKeyDown={onPanelKeyDown}
-          className={cn(menuSurface, radius.surface, 'max-h-72 min-w-44 p-0 outline-none')}
+          className={cn(overlayIn, menuSurface, radius.surface, 'max-h-72 min-w-44 p-0 outline-none')}
         >
           {searchable && (
             <div className="border-border flex items-center gap-2 border-b p-2.5">

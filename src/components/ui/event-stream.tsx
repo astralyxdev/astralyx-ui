@@ -2,6 +2,7 @@ import { useEffect, useId, useMemo, useRef, useState, type ComponentProps, type 
 import { Pause, Play } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -126,7 +127,7 @@ function EventStream({
   return (
     <div
       data-slot="event-stream"
-      className={cn(surface, radius.surface, 'flex flex-col overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col overflow-hidden', className)}
       aria-labelledby={titleId}
       {...props}
     >

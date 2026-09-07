@@ -1,4 +1,5 @@
 import { useId, useMemo, useState, type ComponentProps } from 'react'
+import { enterFade } from '@/lib/motion'
 import { dataPalette } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -213,7 +214,7 @@ function Sankey({
   return (
     <figure
       data-slot="sankey"
-      className={cn('flex flex-col gap-2', className)}
+      className={cn(enterFade, 'flex flex-col gap-2', className)}
       aria-labelledby={titleId}
       {...props}
     >

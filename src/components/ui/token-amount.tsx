@@ -1,4 +1,5 @@
 import type { ComponentProps } from 'react'
+import { enterFade } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -99,6 +100,7 @@ function TokenAmount({
     <span
       data-slot="token-amount"
       className={cn(
+        enterFade,
         'inline-flex items-baseline gap-1 tabular-nums',
         size === 'sm' && 'text-xs',
         size === 'lg' && 'text-lg font-semibold',

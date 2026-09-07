@@ -2,6 +2,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Fmt } from '@/components/ui/fmt'
 import { Sparkline } from '@/components/ui/sparkline'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -106,7 +107,7 @@ function QueueMonitor({
     <div
       data-slot="queue-monitor"
       data-state={state}
-      className={cn(surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
       {...props}
     >
       <div className="flex flex-wrap items-baseline gap-2">
@@ -120,7 +121,7 @@ function QueueMonitor({
 
       <p className="flex items-baseline gap-2">
         <span className="text-3xl font-semibold tabular-nums" style={{ color: tone }}>
-          <Fmt type="number" value={depth} locale={locale} />
+          <Fmt type="number" value={depth} locale={locale} animate />
         </span>
         <span className="text-muted-foreground text-xs">{depthLabel}</span>
       </p>

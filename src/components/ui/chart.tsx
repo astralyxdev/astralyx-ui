@@ -1,4 +1,5 @@
 import { useId, useMemo, type ComponentProps } from 'react'
+import { enterFade, useGrowIn } from '@/lib/motion'
 import { dataFills } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -62,6 +63,13 @@ function Chart({
   valueFormat?: (value: number) => string
 }) {
   const titleId = useId()
+  // One wipe for every variant, rather than a per-shape entrance. Bars appear
+  // column by column, a line draws itself, a scatter fills in left to right —
+  // all from a single clip rectangle that widens once, on mount. Doing it in
+  // the clip rather than on the shapes keeps the geometry untouched, so nothing
+  // here has to know which variant it is drawing.
+  const revealId = `${titleId}-reveal`
+  const revealed = useGrowIn(1)
 
   const { min, max, ticks } = useMemo(() => {
     const all = series.flatMap((entry) => entry.values)
@@ -95,7 +103,7 @@ function Chart({
   return (
     <figure
       data-slot="chart"
-      className={cn('flex min-w-0 flex-col gap-2', className)}
+      className={cn(enterFade, 'flex min-w-0 flex-col gap-2', className)}
       {...props}
     >
       <div className="flex min-w-0 gap-2">
@@ -123,6 +131,27 @@ function Chart({
             {series.map((entry) => entry.name).join(', ')}
           </title>
 
+          <defs>
+            <clipPath id={revealId} clipPathUnits="userSpaceOnUse">
+              {/* Overhanging the plot on every side: strokes are drawn with
+                  `non-scaling-stroke`, so a point sitting exactly on x=0 is
+                  half a stroke wider than the plot and a tight clip would
+                  shave it. */}
+              <rect
+                x={-4}
+                y={-8}
+                width={PLOT.width + 8}
+                height={PLOT.height + 16}
+                className="transition-transform duration-700 ease-out motion-reduce:transition-none"
+                style={{
+                  transformBox: 'fill-box',
+                  transformOrigin: 'left',
+                  transform: `scaleX(${revealed})`,
+                }}
+              />
+            </clipPath>
+          </defs>
+
           {grid &&
             ticks.map((tick, index) => (
               <line
@@ -137,98 +166,100 @@ function Chart({
               />
             ))}
 
-          {series.map((entry, seriesIndex) => {
-            const colour = entry.color ?? dataFills[seriesIndex % dataFills.length]
-            const points = entry.values.map((value, index) => `${x(index)},${y(value)}`)
+          <g clipPath={`url(#${revealId})`}>
+            {series.map((entry, seriesIndex) => {
+              const colour = entry.color ?? dataFills[seriesIndex % dataFills.length]
+              const points = entry.values.map((value, index) => `${x(index)},${y(value)}`)
 
-            if (variant === 'scatter') {
-              return (
-                <g key={entry.name}>
-                  {entry.values.map((value, index) => (
-                    <circle
-                      key={index}
-                      cx={x(index)}
-                      cy={y(value)}
-                      // Radius in viewBox units would stretch with the plot;
-                      // non-scaling-stroke on a hairline ring keeps it round.
-                      r={1.6}
-                      fill={colour}
-                      vectorEffect="non-scaling-stroke"
-                    />
-                  ))}
-                </g>
-              )
-            }
+              if (variant === 'scatter') {
+                return (
+                  <g key={entry.name}>
+                    {entry.values.map((value, index) => (
+                      <circle
+                        key={index}
+                        cx={x(index)}
+                        cy={y(value)}
+                        // Radius in viewBox units would stretch with the plot;
+                        // non-scaling-stroke on a hairline ring keeps it round.
+                        r={1.6}
+                        fill={colour}
+                        vectorEffect="non-scaling-stroke"
+                      />
+                    ))}
+                  </g>
+                )
+              }
 
-            if (variant === 'stacked-bar') {
-              const groupWidth = PLOT.width / entry.values.length
-              return (
-                <g key={entry.name}>
-                  {entry.values.map((value, index) => {
-                    const below = series
-                      .slice(0, seriesIndex)
-                      .reduce((sum, other) => sum + (other.values[index] ?? 0), 0)
-                    const top = y(below + value)
-                    const bottom = y(below)
-                    return (
+              if (variant === 'stacked-bar') {
+                const groupWidth = PLOT.width / entry.values.length
+                return (
+                  <g key={entry.name}>
+                    {entry.values.map((value, index) => {
+                      const below = series
+                        .slice(0, seriesIndex)
+                        .reduce((sum, other) => sum + (other.values[index] ?? 0), 0)
+                      const top = y(below + value)
+                      const bottom = y(below)
+                      return (
+                        <rect
+                          key={index}
+                          x={index * groupWidth + groupWidth * 0.15}
+                          y={top}
+                          width={groupWidth * 0.7}
+                          height={Math.max(bottom - top, 0.5)}
+                          fill={colour}
+                        />
+                      )
+                    })}
+                  </g>
+                )
+              }
+
+              if (variant === 'bar') {
+                const groupWidth = PLOT.width / entry.values.length
+                const barWidth = (groupWidth * 0.7) / series.length
+                return (
+                  <g key={entry.name}>
+                    {entry.values.map((value, index) => (
                       <rect
                         key={index}
-                        x={index * groupWidth + groupWidth * 0.15}
-                        y={top}
-                        width={groupWidth * 0.7}
-                        height={Math.max(bottom - top, 0.5)}
+                        x={index * groupWidth + groupWidth * 0.15 + seriesIndex * barWidth}
+                        y={y(value)}
+                        width={barWidth}
+                        height={Math.max(PLOT.height - y(value), 0.5)}
                         fill={colour}
                       />
-                    )
-                  })}
-                </g>
-              )
-            }
+                    ))}
+                  </g>
+                )
+              }
 
-            if (variant === 'bar') {
-              const groupWidth = PLOT.width / entry.values.length
-              const barWidth = (groupWidth * 0.7) / series.length
               return (
                 <g key={entry.name}>
-                  {entry.values.map((value, index) => (
-                    <rect
-                      key={index}
-                      x={index * groupWidth + groupWidth * 0.15 + seriesIndex * barWidth}
-                      y={y(value)}
-                      width={barWidth}
-                      height={Math.max(PLOT.height - y(value), 0.5)}
+                  {variant === 'area' && (
+                    <polygon
+                      points={[
+                        `0,${PLOT.height}`,
+                        ...points,
+                        `${PLOT.width},${PLOT.height}`,
+                      ].join(' ')}
                       fill={colour}
+                      opacity={0.14}
                     />
-                  ))}
+                  )}
+                  <polyline
+                    points={points.join(' ')}
+                    fill="none"
+                    stroke={colour}
+                    strokeWidth={1.75}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    vectorEffect="non-scaling-stroke"
+                  />
                 </g>
               )
-            }
-
-            return (
-              <g key={entry.name}>
-                {variant === 'area' && (
-                  <polygon
-                    points={[
-                      `0,${PLOT.height}`,
-                      ...points,
-                      `${PLOT.width},${PLOT.height}`,
-                    ].join(' ')}
-                    fill={colour}
-                    opacity={0.14}
-                  />
-                )}
-                <polyline
-                  points={points.join(' ')}
-                  fill="none"
-                  stroke={colour}
-                  strokeWidth={1.75}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  vectorEffect="non-scaling-stroke"
-                />
-              </g>
-            )
-          })}
+            })}
+          </g>
         </svg>
       </div>
 

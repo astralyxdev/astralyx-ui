@@ -1,6 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { ArrowDown, Bot, TriangleAlert, User } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -62,7 +63,7 @@ function HandoffTrail({
     return (
       <div
         data-slot="handoff-trail"
-        className={cn(surface, radius.surface, 'p-4', className)}
+        className={cn(enterFade, surface, radius.surface, 'p-4', className)}
         {...props}
       >
         <p className="text-muted-foreground text-xs">{emptyLabel}</p>
@@ -73,7 +74,7 @@ function HandoffTrail({
   return (
     <div
       data-slot="handoff-trail"
-      className={cn(surface, radius.surface, 'p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'p-4', className)}
       {...props}
     >
       <ol aria-label={label} className="flex list-none flex-col">

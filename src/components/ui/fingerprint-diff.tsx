@@ -2,6 +2,7 @@ import { useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { ArrowRight } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -75,7 +76,7 @@ function FingerprintDiff({
   return (
     <div
       data-slot="fingerprint-diff"
-      className={cn(surface, radius.surface, 'flex flex-col overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col overflow-hidden', className)}
       {...props}
     >
       <div className="border-border flex flex-wrap items-center gap-2 border-b p-3">

@@ -1,4 +1,5 @@
 import { useMemo, useState, type ComponentProps, type ReactNode } from 'react'
+import { enterFade } from '@/lib/motion'
 import { dataFills, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -75,7 +76,7 @@ function FlameGraph({
   const depth = rows.reduce((max, row) => Math.max(max, row.depth), 0) + 1
 
   return (
-    <div data-slot="flame-graph" className={cn('flex flex-col gap-2', className)} {...props}>
+    <div data-slot="flame-graph" className={cn(enterFade, 'flex flex-col gap-2', className)} {...props}>
       {/* Ancestors stay visible: losing your place is what makes most flame
           graph implementations frustrating. */}
       {zoom.length > 0 && (

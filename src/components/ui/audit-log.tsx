@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Fmt } from '@/components/ui/fmt'
 import { Input } from '@/components/ui/input'
 import { JsonViewer } from '@/components/ui/json-viewer'
+import { enterFade } from '@/lib/motion'
 import { focusRing, interactive, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -91,7 +92,7 @@ function AuditLog({
   return (
     <div
       data-slot="audit-log"
-      className={cn(surface, radius.surface, 'flex flex-col overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col overflow-hidden', className)}
       {...props}
     >
       {searchable && (

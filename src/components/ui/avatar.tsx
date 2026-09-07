@@ -69,6 +69,12 @@ function Avatar({
   const [failed, setFailed] = useState(false)
   const showImage = Boolean(src) && !failed
 
+  // Which src has actually decoded, rather than a plain boolean: a boolean
+  // stays true when `src` changes and the next portrait would appear at full
+  // opacity, in place, with no fade at all.
+  const [decoded, setDecoded] = useState<string | undefined>(undefined)
+  const loaded = decoded === src
+
   return (
     <span
       data-slot="avatar"
@@ -81,7 +87,18 @@ function Avatar({
           alt={name ?? ''}
           // A broken URL falls through to the initials instead of an icon.
           onError={() => setFailed(true)}
-          className="size-full object-cover"
+          onLoad={() => setDecoded(src)}
+          // A cached image can finish before React has attached `onLoad`, and
+          // then the fade never resolves and the avatar stays invisible. The
+          // element knows; ask it once, on mount.
+          ref={(node) => {
+            if (node?.complete && node.naturalWidth > 0) setDecoded(src)
+          }}
+          className={cn(
+            'size-full object-cover',
+            'transition-opacity duration-300 ease-out motion-reduce:transition-none',
+            loaded ? 'opacity-100' : 'opacity-0',
+          )}
         />
       ) : (
         <span aria-hidden={Boolean(name)}>

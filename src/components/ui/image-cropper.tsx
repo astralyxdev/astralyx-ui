@@ -6,6 +6,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from 'react'
 import { Button } from '@/components/ui/button'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -248,7 +249,7 @@ function ImageCropper({
   return (
     <div
       data-slot="image-cropper"
-      className={cn('flex flex-col gap-3', className)}
+      className={cn(enterFade, 'flex flex-col gap-3', className)}
       {...props}
     >
       <div

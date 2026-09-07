@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { PasswordInput } from '@/components/ui/password-input'
 import { Separator } from '@/components/ui/separator'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -83,7 +84,7 @@ function LoginForm({
     <form
       data-slot="login-form"
       onSubmit={submit}
-      className={cn(surface, radius.surface, 'flex w-full flex-col gap-4 p-6', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex w-full flex-col gap-4 p-6', className)}
       {...props}
     >
       <div className="flex flex-col gap-1">

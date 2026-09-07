@@ -2,6 +2,7 @@ import { useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { ArrowDown, ArrowUp, Search, Star } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Sparkline } from '@/components/ui/sparkline'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -139,7 +140,7 @@ function MarketTable({
   return (
     <div
       data-slot="market-table"
-      className={cn(surface, radius.surface, 'flex flex-col overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col overflow-hidden', className)}
       {...props}
     >
       {searchable && (

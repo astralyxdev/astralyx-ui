@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { TagInput } from '@/components/ui/tag-input'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -538,7 +539,7 @@ function SegmentBuilder({
   return (
     <div
       data-slot="segment-builder"
-      className={cn('flex flex-col gap-2', className)}
+      className={cn(enterFade, 'flex flex-col gap-2', className)}
       aria-labelledby={titleId}
       {...props}
     >

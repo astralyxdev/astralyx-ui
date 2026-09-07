@@ -6,6 +6,7 @@ import { JsonViewer, type Json } from '@/components/ui/json-viewer'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { Badge } from '@/components/ui/badge'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -86,7 +87,7 @@ function ResponseViewer({
   return (
     <div
       data-slot="response-viewer"
-      className={cn(surface, radius.surface, 'flex flex-col overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col overflow-hidden', className)}
       {...props}
     >
       {/* Status, time and size on one line: they are only meaningful together. */}

@@ -2,6 +2,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { BadgeCheck, ImageOff } from 'lucide-react'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Badge } from '@/components/ui/badge'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -129,7 +130,7 @@ function NftCard({
   return (
     <article
       data-slot="nft-card"
-      className={cn(surface, radius.surface, 'flex flex-col p-3', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col p-3', className)}
       {...props}
     >
       {href ? (

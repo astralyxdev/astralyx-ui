@@ -1,4 +1,5 @@
 import type { ComponentProps, ReactNode } from 'react'
+import { enterFade } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -44,7 +45,7 @@ function ConfidenceMeter({
   return (
     <div
       data-slot="confidence-meter"
-      className={cn('flex min-w-0 flex-col gap-1', className)}
+      className={cn(enterFade, 'flex min-w-0 flex-col gap-1', className)}
       {...props}
     >
       {showLabel && (

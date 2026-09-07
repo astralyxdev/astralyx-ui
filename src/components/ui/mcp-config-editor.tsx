@@ -2,6 +2,7 @@ import { useMemo, type ComponentProps, type ReactNode } from 'react'
 import { CircleCheck, TriangleAlert } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { CodeBlock } from '@/components/ui/code-block'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -115,7 +116,7 @@ function McpConfigEditor({
   const errors = findings.filter((finding) => finding.level === 'error').length
 
   return (
-    <div data-slot="mcp-config-editor" className={cn('flex flex-col gap-3', className)} {...props}>
+    <div data-slot="mcp-config-editor" className={cn(enterFade, 'flex flex-col gap-3', className)} {...props}>
       <CodeBlock
         code={text}
         language="json"

@@ -1,6 +1,7 @@
 import { useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { ArrowDown, ArrowUp, Eye, EyeOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { enterFade, growIn, useCountUp } from '@/lib/motion'
 import { dataFills, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -73,20 +74,25 @@ function PortfolioBalance({
     return { rows: list, total: sum }
   }, [holdings, groupBelow])
 
+  // Hidden balances never count: the point of the toggle is that nothing about
+  // the number is on screen, and a total that animates behind dots still leaks
+  // how long it is.
+  const countedTotal = useCountUp(total, { disabled: hidden, decimals: 2 })
+
   const up = (change24h ?? 0) > 0
   const down = (change24h ?? 0) < 0
 
   return (
     <div
       data-slot="portfolio-balance"
-      className={cn(surface, radius.surface, 'flex flex-col gap-4 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-4 p-4', className)}
       {...props}
     >
       <div className="flex items-start gap-2">
         <div className="min-w-0 flex-1">
           <p className="text-muted-foreground text-xs">{totalLabel}</p>
           <p className="mt-0.5 text-3xl font-semibold tabular-nums">
-            {hidden ? '••••••' : money.format(total)}
+            {hidden ? '••••••' : money.format(countedTotal)}
           </p>
 
           {change24h !== undefined && !hidden && (
@@ -123,7 +129,7 @@ function PortfolioBalance({
 
       {/* One bar, derived from the values — never a percentage prop. */}
       <div
-        className="flex h-2 w-full overflow-hidden rounded-full [corner-shape:round]"
+        className={cn(growIn, 'flex h-2 w-full overflow-hidden rounded-full [corner-shape:round]')}
         role="img"
         aria-label={rows
           .map((h) => `${h.symbol}: ${Math.round((h.value / total) * 100)}%`)

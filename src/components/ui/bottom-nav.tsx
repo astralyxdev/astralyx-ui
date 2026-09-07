@@ -1,4 +1,5 @@
 import type { ComponentProps, ReactNode } from 'react'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -60,6 +61,7 @@ function BottomNav({
       data-slot="bottom-nav"
       aria-label={label}
       className={cn(
+        enterFade,
         'border-border bg-background/95 z-40 border-t backdrop-blur',
         fixed && 'fixed inset-x-0 bottom-0',
         className,

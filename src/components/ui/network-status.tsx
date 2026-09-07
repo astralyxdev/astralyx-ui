@@ -2,6 +2,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { Activity, TriangleAlert } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -61,7 +62,7 @@ function NetworkStatus({
     <div
       data-slot="network-status"
       data-state={state}
-      className={cn(surface, radius.surface, 'flex flex-wrap items-center gap-x-4 gap-y-2 p-3', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-wrap items-center gap-x-4 gap-y-2 p-3', className)}
       {...props}
     >
       <span className="flex items-center gap-2">

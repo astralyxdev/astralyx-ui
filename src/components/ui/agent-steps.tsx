@@ -2,6 +2,7 @@ import { useState, type ComponentProps, type ReactNode } from 'react'
 import { Check, ChevronDown, ChevronRight, Circle, CircleSlash, X } from 'lucide-react'
 import { Fmt } from '@/components/ui/fmt'
 import { Spinner } from '@/components/ui/spinner'
+import { enterFade } from '@/lib/motion'
 import { focusRing, interactive, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -54,7 +55,7 @@ function AgentSteps({
   return (
     <div
       data-slot="agent-steps"
-      className={cn('border-border overflow-hidden border', radius.surface, className)}
+      className={cn(enterFade, 'border-border overflow-hidden border', radius.surface, className)}
       {...props}
     >
       <div className="border-border bg-muted/40 flex items-center gap-2 border-b p-3">

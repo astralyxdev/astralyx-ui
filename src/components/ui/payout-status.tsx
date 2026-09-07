@@ -3,6 +3,7 @@ import { Check, Clock, RotateCcw, TriangleAlert, X } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Fmt } from '@/components/ui/fmt'
 import { Stepper, type Step } from '@/components/ui/stepper'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -94,12 +95,19 @@ function PayoutStatus({
     <div
       data-slot="payout-status"
       data-state={state}
-      className={cn(surface, radius.surface, 'flex flex-col gap-4 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-4 p-4', className)}
       {...props}
     >
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
         <span className="text-2xl font-semibold tabular-nums">
-          <Fmt type="currency" value={amount / 100} currency={currency} locale={locale} decimals={2} />
+          <Fmt
+            type="currency"
+            value={amount / 100}
+            currency={currency}
+            locale={locale}
+            decimals={2}
+            animate
+          />
         </span>
         <Badge size="sm" color={meta.color}>
           <meta.Icon />

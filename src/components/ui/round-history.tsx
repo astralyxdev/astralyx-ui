@@ -1,6 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { Tooltip } from '@/components/ui/tooltip'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -62,7 +63,7 @@ function RoundHistory({
   return (
     <div
       data-slot="round-history"
-      className={cn(surface, radius.surface, 'flex flex-col gap-2 p-3', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-2 p-3', className)}
       {...props}
     >
       {/* Newest first: the last result is the one being reacted to. */}

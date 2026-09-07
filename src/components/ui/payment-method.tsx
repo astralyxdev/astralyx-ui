@@ -2,6 +2,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { Building2, Check, CreditCard, TriangleAlert, Wallet } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { enterFade } from '@/lib/motion'
 import { focusRing, interactive, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -84,7 +85,7 @@ function PaymentMethodList({
 
   if (methods.length === 0) {
     return (
-      <div className={cn(surface, radius.surface, className)} {...props}>
+      <div className={cn(enterFade, surface, radius.surface, className)} {...props}>
         <p className="text-muted-foreground p-8 text-center text-sm">{emptyLabel}</p>
       </div>
     )
@@ -94,7 +95,7 @@ function PaymentMethodList({
     <div
       data-slot="payment-method-list"
       role={onSelect ? 'radiogroup' : undefined}
-      className={cn('flex flex-col gap-2', className)}
+      className={cn(enterFade, 'flex flex-col gap-2', className)}
       {...props}
     >
       {methods.map((method) => {

@@ -2,6 +2,7 @@ import { useState, type ComponentProps, type ReactNode } from 'react'
 import { Check, FileText, Film, Music } from 'lucide-react'
 import { Image } from '@/components/ui/image'
 import { formatBytes } from '@/components/ui/storage-usage'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -92,7 +93,7 @@ function AssetGrid({
   return (
     <ul
       data-slot="asset-grid"
-      className={cn('grid list-none gap-3', className)}
+      className={cn(enterFade, 'grid list-none gap-3', className)}
       style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${minTile}px, 1fr))` }}
       {...(props as ComponentProps<'ul'>)}
     >

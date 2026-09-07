@@ -2,6 +2,7 @@ import { useId, type ComponentProps, type ReactNode } from 'react'
 import { Combobox } from '@/components/ui/combobox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { enterFade } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -153,7 +154,7 @@ function AddressInput({
   return (
     <div
       data-slot="address-input"
-      className={cn('grid gap-3 sm:grid-cols-2', className)}
+      className={cn(enterFade, 'grid gap-3 sm:grid-cols-2', className)}
       {...props}
     >
       {/* First, because everything below it re-labels. */}

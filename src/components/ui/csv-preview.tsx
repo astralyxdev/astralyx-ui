@@ -1,6 +1,7 @@
 import { useMemo, type ComponentProps, type ReactNode } from 'react'
 import { TriangleAlert } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -73,7 +74,7 @@ function CsvPreview({
   return (
     <div
       data-slot="csv-preview"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       {/* Before the table: the reason to open a preview at all. */}

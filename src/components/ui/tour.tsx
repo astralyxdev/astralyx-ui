@@ -10,6 +10,7 @@ import { Portal } from '@/components/primitives/portal'
 import { useFocusTrap } from '@/components/primitives/focus-trap'
 import { usePopper, type Side } from '@/components/primitives/popper'
 import { Button } from '@/components/ui/button'
+import { overlayIn } from '@/lib/motion'
 import { menuSurface, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -75,7 +76,7 @@ function Tour({
 
   const step = steps[index]
 
-  const { style } = usePopper({
+  const { style, side: resolvedSide } = usePopper({
     open: open && Boolean(target),
     anchorRef,
     floatingRef: panelRef,
@@ -149,8 +150,9 @@ function Tour({
         role="dialog"
         aria-modal="false"
         aria-label={stepLabel(index + 1, steps.length)}
+        data-side={resolvedSide}
         style={{ ...style, zIndex: 61 }}
-        className={cn(menuSurface, radius.surface, 'w-72 p-4 outline-none', className)}
+        className={cn(overlayIn, menuSurface, radius.surface, 'w-72 p-4 outline-none', className)}
         onKeyDown={(event) => {
           if (event.key === 'Escape') finish()
         }}

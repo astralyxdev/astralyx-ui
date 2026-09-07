@@ -1,4 +1,5 @@
 import { useId, type ComponentProps, type ReactNode } from 'react'
+import { enterFade, strokeTransition, useGrowIn } from '@/lib/motion'
 import { dataFills } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -47,6 +48,10 @@ function Donut({
   legend?: boolean
 }) {
   const titleId = useId()
+  // Every slice's arc length and start angle scale by the same factor, so the
+  // ring sweeps open from twelve o'clock as one piece rather than each slice
+  // growing in place and the whole thing rearranging itself as it goes.
+  const drawn = useGrowIn(1)
   const total = slices.reduce((sum, slice) => sum + slice.value, 0) || 1
 
   const big = slices.filter((slice) => slice.value / total >= minSlice)
@@ -65,7 +70,7 @@ function Donut({
   return (
     <figure
       data-slot="donut"
-      className={cn('flex min-w-0 flex-wrap items-center gap-4', className)}
+      className={cn(enterFade, 'flex min-w-0 flex-wrap items-center gap-4', className)}
       {...props}
     >
       <div className="relative shrink-0" style={{ width: size, height: size }}>
@@ -78,7 +83,7 @@ function Donut({
 
           {data.map((slice, index) => {
             const share = slice.value / total
-            const length = Math.max(share * circumference - gapLength, 0)
+            const length = Math.max(share * circumference - gapLength, 0) * drawn
             const dash = `${length} ${circumference - length}`
             const element = (
               <circle
@@ -90,7 +95,8 @@ function Donut({
                 stroke={slice.color ?? dataFills[index % dataFills.length]}
                 strokeWidth={thickness || 100}
                 strokeDasharray={dash}
-                strokeDashoffset={-offset}
+                strokeDashoffset={-offset * drawn}
+                className={strokeTransition}
               />
             )
             offset += share * circumference

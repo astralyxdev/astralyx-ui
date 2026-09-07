@@ -3,6 +3,7 @@ import { AlertTriangle, Check, ChevronDown } from 'lucide-react'
 import { useDismissable } from '@/components/primitives/dismissable'
 import { usePopper } from '@/components/primitives/popper'
 import { Badge } from '@/components/ui/badge'
+import { enterFade, overlayIn } from '@/lib/motion'
 import {
   fieldBase,
   fieldSize,
@@ -69,7 +70,7 @@ function ChainSelect({
   const triggerRef = useRef<HTMLButtonElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
 
-  const { style } = usePopper({
+  const { style, side: resolvedSide } = usePopper({
     open,
     anchorRef: triggerRef,
     floatingRef: panelRef,
@@ -94,7 +95,7 @@ function ChainSelect({
   )
 
   return (
-    <div data-slot="chain-select" className={cn('relative', className)} {...props}>
+    <div data-slot="chain-select" className={cn(enterFade, 'relative', className)} {...props}>
       <button
         ref={triggerRef}
         type="button"
@@ -147,8 +148,9 @@ function ChainSelect({
       {open && (
         <div
           ref={panelRef}
+          data-side={resolvedSide}
           style={style}
-          className={cn(menuSurface, radius.surface, 'max-h-72 min-w-52')}
+          className={cn(overlayIn, menuSurface, radius.surface, 'max-h-72 min-w-52')}
         >
           <ul role="listbox" aria-label={listLabel} className="list-none">
             {ordered.map((chain, index) => {

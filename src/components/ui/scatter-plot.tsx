@@ -1,4 +1,5 @@
 import { useId, useMemo, useState, type ComponentProps } from 'react'
+import { enterFade } from '@/lib/motion'
 import { dataFills } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -160,7 +161,7 @@ function ScatterPlot({
   return (
     <figure
       data-slot="scatter-plot"
-      className={cn('flex flex-col gap-2', className)}
+      className={cn(enterFade, 'flex flex-col gap-2', className)}
       aria-labelledby={titleId}
       {...props}
     >

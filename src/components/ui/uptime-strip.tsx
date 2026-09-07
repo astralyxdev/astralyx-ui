@@ -1,5 +1,6 @@
 import type { ComponentProps } from 'react'
 import { Tooltip } from '@/components/ui/tooltip'
+import { enterFade } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -56,7 +57,7 @@ function UptimeStrip({
   summary?: string
 }) {
   return (
-    <div data-slot="uptime-strip" className={cn('flex flex-col gap-1.5', className)} {...props}>
+    <div data-slot="uptime-strip" className={cn(enterFade, 'flex flex-col gap-1.5', className)} {...props}>
       {(label || summary) && (
         <div className="flex items-baseline justify-between gap-3">
           {label && <span className="text-sm font-medium">{label}</span>}

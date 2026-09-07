@@ -1,6 +1,7 @@
 import { useState, type ComponentProps, type ReactNode } from 'react'
 import { CreditCard, Lock } from 'lucide-react'
 import { MaskInput } from '@/components/ui/mask-input'
+import { enterFade } from '@/lib/motion'
 import { fieldBase, fieldSize, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -111,7 +112,7 @@ function CardInput({
   }
 
   return (
-    <div data-slot="card-input" className={cn('flex flex-col gap-2', className)} {...props}>
+    <div data-slot="card-input" className={cn(enterFade, 'flex flex-col gap-2', className)} {...props}>
       <div className="relative">
         <MaskInput
           // Remount when the mask changes, or the formatted value is stale.

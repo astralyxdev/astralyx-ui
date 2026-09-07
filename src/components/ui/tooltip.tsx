@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from 'react'
 import { usePopper, type Align, type Side } from '@/components/primitives/popper'
+import { overlayIn } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -103,6 +104,7 @@ function Tooltip({
           data-side={resolved}
           style={style}
           className={cn(
+            overlayIn,
             'bg-foreground text-background pointer-events-none z-50 max-w-64 rounded-lg px-2.5 py-1.5 text-xs font-medium',
             className,
           )}

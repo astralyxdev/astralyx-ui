@@ -4,6 +4,7 @@ import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Button } from '@/components/ui/button'
 import { Portal } from '@/components/primitives/portal'
 import { useFocusTrap } from '@/components/primitives/focus-trap'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 import { useRef } from 'react'
@@ -78,7 +79,7 @@ function MediaGallery({
   const current = open === null ? undefined : items[open]
 
   return (
-    <div data-slot="media-gallery" className={className} {...props}>
+    <div data-slot="media-gallery" className={cn(enterFade, className)} {...props}>
       <ul className={cn('grid list-none gap-2', grid)}>
         {items.map((item, index) => (
           <li key={item.id}>

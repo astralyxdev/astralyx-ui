@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Fmt } from '@/components/ui/fmt'
 import { HttpStatus } from '@/components/ui/http-status'
 import { JsonViewer, type Json } from '@/components/ui/json-viewer'
+import { enterFade } from '@/lib/motion'
 import { focusRing, interactive, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -95,7 +96,7 @@ function WebhookInspector({
   return (
     <div
       data-slot="webhook-inspector"
-      className={cn(surface, radius.surface, 'flex flex-col overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col overflow-hidden', className)}
       {...props}
     >
       <ul className="divide-border list-none divide-y">

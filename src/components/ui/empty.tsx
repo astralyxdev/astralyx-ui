@@ -1,4 +1,5 @@
 import type { ComponentProps, ReactNode } from 'react'
+import { enterFade } from '@/lib/motion'
 import { radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -28,6 +29,7 @@ function Empty({
     <div
       data-slot="empty"
       className={cn(
+        enterFade,
         'flex flex-col items-center justify-center gap-3 px-6 py-12 text-center',
         bordered && `border-border border border-dashed ${radius.panel}`,
         className,

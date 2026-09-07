@@ -6,6 +6,7 @@ import {
   type ReactNode,
 } from 'react'
 import { ImageOff } from 'lucide-react'
+import { enterFade } from '@/lib/motion'
 import { radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -144,7 +145,7 @@ function Image({
     <span
       data-slot="image"
       data-status={status}
-      className={cn('relative block overflow-hidden', radius.surface, className)}
+      className={cn(enterFade, 'relative block overflow-hidden', radius.surface, className)}
       style={{ aspectRatio: ratio, ...style }}
     >
       {!failed && (

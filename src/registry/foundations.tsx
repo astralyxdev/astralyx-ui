@@ -81,6 +81,16 @@ export const sparklineEntry: ComponentEntry = {
 
 /* --------------------------------------------------------------------- stat */
 
+/**
+ * Composer text fields hand back strings. Stat counts to a `number` and prints
+ * anything else verbatim, so the control has to decide which one it typed.
+ */
+function numberOr(value: unknown) {
+  const text = String(value).trim()
+  return text !== '' && Number.isFinite(Number(text)) ? Number(text) : text
+}
+
+
 const GOOD = ['up', 'down', 'none'] as const
 const STAT_SIZES = ['sm', 'default', 'lg'] as const
 
@@ -91,12 +101,12 @@ export const statEntry: ComponentEntry = {
     'One measurement: label, value and how it moved. Which direction counts as healthy is a prop, because a rise in incidents is not a rise in deployments.',
   usage: `import { Stat } from '@/components/ui/stat'
 
-<Stat label="Deployments" value="1,482" delta={12.4} />
-<Stat label="Open incidents" value="3" delta={2} goodDirection="down" />`,
+<Stat label="Deployments" value={1482} delta={12.4} />
+<Stat label="Open incidents" value={3} delta={2} goodDirection="down" />`,
   composer: {
     controls: [
       { type: 'text', prop: 'label', label: 'label', default: 'Deployments' },
-      { type: 'text', prop: 'value', label: 'value', default: '1,482' },
+      { type: 'text', prop: 'value', label: 'value', default: '1482' },
       { type: 'text', prop: 'delta', label: 'delta', default: '12.4' },
       { type: 'select', prop: 'goodDirection', label: 'goodDirection', options: GOOD, default: 'up' },
       { type: 'select', prop: 'size', label: 'size', options: STAT_SIZES, default: 'default' },
@@ -106,7 +116,8 @@ export const statEntry: ComponentEntry = {
       <div className="w-full max-w-xs">
         <Stat
           label={String(state.label)}
-          value={String(state.value)}
+          // A number counts to itself; anything else is printed as written.
+          value={numberOr(state.value)}
           delta={Number(state.delta)}
           goodDirection={String(state.goodDirection) as (typeof GOOD)[number]}
           size={String(state.size) as (typeof STAT_SIZES)[number]}
@@ -115,7 +126,7 @@ export const statEntry: ComponentEntry = {
       </div>
     ),
     code: (state: ComposerState) =>
-      `<Stat\n  label="${state.label}"\n  value="${state.value}"\n  delta={${state.delta}}\n  goodDirection="${state.goodDirection}"\n  size="${state.size}"${state.chart ? '\n  chart={<Sparkline values={series} variant="area" />}' : ''}\n/>`,
+      `<Stat\n  label="${state.label}"\n  value={${state.value}}\n  delta={${state.delta}}\n  goodDirection="${state.goodDirection}"\n  size="${state.size}"${state.chart ? '\n  chart={<Sparkline values={series} variant="area" />}' : ''}\n/>`,
   },
   api: [
     { name: 'label / value', type: 'ReactNode', description: 'What is measured, and the measurement.' },
@@ -125,19 +136,20 @@ export const statEntry: ComponentEntry = {
     { name: 'chart', type: 'ReactNode', description: 'Usually a Sparkline, rendered under the value.' },
     { name: 'size', type: "'sm' | 'default' | 'lg'", default: "'default'", description: 'Scales the value type and the card padding together.' },
     { name: 'bordered', type: 'boolean', default: 'true', description: 'Draw the card. Turn off inside a container that already provides one.' },
+    { name: 'animate', type: 'boolean', default: 'true', description: 'Count to the value on mount and on every change. Only applies when `value` is a number — a preformatted string has nothing to count through.' },
   ],
   demos: [
     {
       title: 'A row of measures',
       stack: true,
-      code: `<Stat label="Deployments" value="1,482" delta={12.4} chart={<Sparkline values={series} variant="area" />} />
-<Stat label="Success rate" value="98.2%" delta={0.6} />
-<Stat label="Open incidents" value="3" delta={2} goodDirection="down" />`,
+      code: `<Stat label="Deployments" value={1482} delta={12.4} chart={<Sparkline values={series} variant="area" />} />
+<Stat label="Success rate" value={98.2} deltaSuffix="pp" delta={0.6} />
+<Stat label="Open incidents" value={3} delta={2} goodDirection="down" />`,
       render: () => (
         <div className="grid w-full gap-3 sm:grid-cols-3">
-          <Stat label="Deployments" value="1,482" delta={12.4} chart={<Sparkline values={SERIES} variant="area" />} />
-          <Stat label="Success rate" value="98.2%" delta={0.6} deltaSuffix="pp" />
-          <Stat label="Open incidents" value="3" delta={2} deltaSuffix="" goodDirection="down" />
+          <Stat label="Deployments" value={1482} delta={12.4} chart={<Sparkline values={SERIES} variant="area" />} />
+          <Stat label="Success rate" value={98.2} delta={0.6} deltaSuffix="pp" />
+          <Stat label="Open incidents" value={3} delta={2} deltaSuffix="" goodDirection="down" />
         </div>
       ),
     },

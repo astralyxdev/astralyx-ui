@@ -1,5 +1,6 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { CheckCircle2, Construction, FileQuestion, Lock, ServerCrash, XCircle } from 'lucide-react'
+import { enterFade } from '@/lib/motion'
 import { radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -69,6 +70,7 @@ function Result({
       role={preset.alert ? 'alert' : 'status'}
       aria-live={preset.alert ? 'assertive' : 'polite'}
       className={cn(
+        enterFade,
         'flex flex-col items-center text-center',
         compact ? 'gap-2 py-8' : 'gap-3 py-16',
         className,

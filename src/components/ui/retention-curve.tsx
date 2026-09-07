@@ -1,4 +1,5 @@
 import { useId, useMemo, useState, type ComponentProps, type ReactNode } from 'react'
+import { enterFade } from '@/lib/motion'
 import { dataPalette } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -111,7 +112,7 @@ function RetentionCurve({
   return (
     <figure
       data-slot="retention-curve"
-      className={cn('flex flex-col gap-2', className)}
+      className={cn(enterFade, 'flex flex-col gap-2', className)}
       aria-labelledby={titleId}
       {...props}
     >

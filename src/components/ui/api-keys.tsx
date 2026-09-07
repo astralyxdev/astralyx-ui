@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { CopyButton } from '@/components/ui/copy-button'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -85,7 +86,7 @@ function ApiKeys({
   return (
     <div
       data-slot="api-keys"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       {keys.length === 0 ? (

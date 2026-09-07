@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { DiffStat } from '@/components/ui/diff-stat'
 import { Tooltip } from '@/components/ui/tooltip'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -71,7 +72,7 @@ function CommitList({
   })
 
   return (
-    <div data-slot="commit-list" className={cn('space-y-5', className)} {...props}>
+    <div data-slot="commit-list" className={cn(enterFade, 'space-y-5', className)} {...props}>
       {groups.map(([key, group]) => (
         <section key={key} className="space-y-2">
           <h3 className="text-muted-foreground flex items-center gap-2 text-xs font-medium">

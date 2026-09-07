@@ -1,6 +1,7 @@
 import { useId, useState, type ComponentProps, type ReactNode } from 'react'
 import { Download, ExternalLink, Minus, Plus, RotateCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -101,7 +102,7 @@ function PdfViewer({
   return (
     <div
       data-slot="pdf-viewer"
-      className={cn(surface, radius.surface, 'flex flex-col overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col overflow-hidden', className)}
       {...props}
     >
       {toolbar && (

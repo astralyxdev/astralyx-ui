@@ -7,6 +7,7 @@ import {
 } from 'react'
 import { Avatar } from '@/components/ui/avatar'
 import { Textarea } from '@/components/ui/textarea'
+import { overlayIn } from '@/lib/motion'
 import { menuItem, menuSurface, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -141,7 +142,9 @@ function MentionInput({
 
       {open && (
         <div
+          data-side="bottom"
           className={cn(
+            overlayIn,
             menuSurface,
             radius.surface,
             'absolute inset-x-0 top-full z-50 mt-1 max-h-56',

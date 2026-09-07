@@ -2,6 +2,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { KeyRound, TriangleAlert } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { formatBytes } from '@/components/ui/storage-usage'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -73,7 +74,7 @@ function IndexList({
   return (
     <div
       data-slot="index-list"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       <p className="border-border bg-muted/40 text-muted-foreground/70 border-b px-4 py-2 text-[11px] font-medium tracking-[0.14em] uppercase">

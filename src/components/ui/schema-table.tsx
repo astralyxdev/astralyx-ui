@@ -1,6 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { KeyRound, Link2 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -72,7 +73,7 @@ function SchemaTable({
   return (
     <div
       data-slot="schema-table"
-      className={cn(surface, radius.surface, 'flex flex-col overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col overflow-hidden', className)}
       {...props}
     >
       <div className="border-border flex flex-wrap items-baseline gap-2 border-b p-3">

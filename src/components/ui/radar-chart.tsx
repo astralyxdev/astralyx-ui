@@ -1,4 +1,5 @@
 import { useId, useMemo, type ComponentProps } from 'react'
+import { enterFade } from '@/lib/motion'
 import { dataPalette } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -111,7 +112,7 @@ function RadarChart({
   return (
     <figure
       data-slot="radar-chart"
-      className={cn('flex flex-col items-center gap-2', className)}
+      className={cn(enterFade, 'flex flex-col items-center gap-2', className)}
       aria-labelledby={titleId}
       {...props}
     >

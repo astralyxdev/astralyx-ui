@@ -3,6 +3,7 @@ import { Lock, Search } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { HttpStatus } from '@/components/ui/http-status'
 import { Input } from '@/components/ui/input'
+import { enterFade } from '@/lib/motion'
 import { focusRing, interactive, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -93,7 +94,7 @@ function EndpointList({
   return (
     <div
       data-slot="endpoint-list"
-      className={cn(surface, radius.surface, 'flex flex-col overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col overflow-hidden', className)}
       {...props}
     >
       {searchable && (

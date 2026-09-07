@@ -1,4 +1,5 @@
 import type { ComponentProps, ReactNode } from 'react'
+import { enterFade, strokeTransition, useCountUp, useGrowIn } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -38,6 +39,12 @@ function Ring({ score, size = 56 }: { score: number; size?: number }) {
   const radiusPx = size / 2 - 4
   const circumference = 2 * Math.PI * radiusPx
 
+  // The arc sweeps out and the number climbs with it. The band — and so the
+  // colour — comes off the real score, not the count, so a failing category
+  // does not spend its entrance looking like a passing one.
+  const drawn = useGrowIn(score)
+  const counted = useCountUp(score, { decimals: 0 })
+
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-hidden="true" className="shrink-0">
       <circle
@@ -56,8 +63,9 @@ function Ring({ score, size = 56 }: { score: number; size?: number }) {
         stroke={meta.color}
         strokeWidth={4}
         strokeLinecap="round"
-        strokeDasharray={`${(score / 100) * circumference} ${circumference}`}
+        strokeDasharray={`${(drawn / 100) * circumference} ${circumference}`}
         transform={`rotate(-90 ${size / 2} ${size / 2})`}
+        className={strokeTransition}
       />
       <text
         x="50%"
@@ -67,7 +75,7 @@ function Ring({ score, size = 56 }: { score: number; size?: number }) {
         fill={meta.ink}
         style={{ fontSize: size * 0.3, fontWeight: 600 }}
       >
-        {Math.round(score)}
+        {Math.round(counted)}
       </text>
     </svg>
   )
@@ -85,7 +93,7 @@ function LighthouseScore({
   return (
     <div
       data-slot="lighthouse-score"
-      className={cn(surface, radius.surface, 'divide-border flex flex-col divide-y', className)}
+      className={cn(enterFade, surface, radius.surface, 'divide-border flex flex-col divide-y', className)}
       {...props}
     >
       {categories.map((category) => {

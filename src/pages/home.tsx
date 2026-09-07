@@ -530,6 +530,64 @@ function Catalogue() {
   )
 }
 
+/**
+ * The width every catalogue preview is laid out at, before it is scaled to fit
+ * the card.
+ *
+ * Cards are around 370px of usable width at four columns, and a component asked
+ * to lay itself out in 370px lays itself out for a phone: the pricing table
+ * collapses its three plans into slivers, summaries wrap their labels away from
+ * their figures, and the preview stops looking like the component it is naming.
+ * Rendering at a fixed 470 and scaling the result down keeps the *layout* the
+ * component was designed for and only shrinks the picture of it.
+ *
+ * 470 rather than something roomier because the scale is the cost: every step
+ * wider is a step smaller on screen, and past here the type in a preview stops
+ * being readable at all.
+ */
+const STAGE_WIDTH = 470
+
+/**
+ * How small a preview may be scaled before it is cropped instead.
+ *
+ * Below this the card is narrow enough — a phone, a single column — that
+ * scaling to fit would make the preview illegible, and a legible slice of a
+ * component says more than an unreadable whole one. The card's own overflow
+ * does the cropping; there is no separate rule for it.
+ */
+const MIN_PREVIEW_SCALE = 0.7
+
+/**
+ * Fit one preview stage to the card it is in.
+ *
+ * A ref callback rather than an effect, and one shared `ResizeObserver` rather
+ * than one per card: the catalogue mounts every component in the kit, and three
+ * hundred observers to answer a question that has the same answer for all of
+ * them is not a trade worth making. React 19 lets a ref callback return its own
+ * cleanup, so unobserving is not a second hook either.
+ */
+let previewObserver: ResizeObserver | undefined
+
+function scalePreview(node: HTMLElement) {
+  const scale = Math.min(1, Math.max(MIN_PREVIEW_SCALE, node.clientWidth / STAGE_WIDTH))
+  node.style.setProperty('--preview-scale', String(scale))
+}
+
+function fitPreview(node: HTMLDivElement | null) {
+  if (!node) return
+  scalePreview(node)
+
+  // No observer during prerender, and none in a browser old enough to lack it;
+  // the measurement above already ran, so the preview is sized either way.
+  if (typeof ResizeObserver === 'undefined') return
+
+  previewObserver ??= new ResizeObserver((entries) => {
+    for (const entry of entries) scalePreview(entry.target as HTMLElement)
+  })
+  previewObserver.observe(node)
+  return () => previewObserver?.unobserve(node)
+}
+
 /** One component, running, in a card that links to its page. */
 function ShowcaseCard({ entry, category }: { entry: ComponentEntry; category: string }) {
   const preview = entry.composer
@@ -548,7 +606,7 @@ function ShowcaseCard({ entry, category }: { entry: ComponentEntry; category: st
         focusRing,
       )}
     >
-      <div className="flex items-baseline justify-between gap-2 px-4 pt-3.5">
+      <div className="flex items-baseline justify-between gap-2 px-4 pt-4">
         <span className="text-muted-foreground/50 truncate text-[10px] tracking-[0.14em] uppercase">
           {category}
         </span>
@@ -565,7 +623,7 @@ function ShowcaseCard({ entry, category }: { entry: ComponentEntry; category: st
         )}
       </div>
 
-      <p className="px-4 pb-3 text-sm font-medium">{entry.label}</p>
+      <p className="px-4 pb-4 text-sm font-medium">{entry.label}</p>
 
       {preview && (
         <LazyMount className="border-border bg-muted/30 border-t">
@@ -582,7 +640,7 @@ function ShowcaseCard({ entry, category }: { entry: ComponentEntry; category: st
             // labels and controls, which is unusable to navigate and skipped
             // the page's own heading levels.
             aria-hidden="true"
-            className="pointer-events-none flex min-h-28 max-h-52 items-start justify-center overflow-hidden p-4"
+            className="pointer-events-none flex min-h-28 max-h-52 items-start justify-start overflow-hidden p-4"
             // A soft bottom edge, so a preview taller than the box reads as
             // continuing rather than as having been chopped. Masked rather
             // than overlaid with a gradient, which would have to know the
@@ -592,14 +650,25 @@ function ShowcaseCard({ entry, category }: { entry: ComponentEntry; category: st
               WebkitMaskImage: 'linear-gradient(to bottom, #000 72%, transparent)',
             }}
           >
-            {/*
-              Centred horizontally, anchored to the top vertically. Centring
-              both ways clipped tall previews at the top as well as the bottom,
-              so a card opened mid-sentence — and the first line is the part
-              that identifies the component. `mx-auto` centres a preview with
-              its own max-width, while a full-width table still fills the card.
-            */}
-            <div className="w-full origin-top scale-[0.85] [&>*]:mx-auto">{preview}</div>
+            <div ref={fitPreview} className="w-full min-w-0">
+              {/*
+                A fixed-width viewport, scaled to the card — not a component
+                squeezed into one. Anchored to the top-left, because centring
+                vertically clipped tall previews at the head as well as the
+                foot, and the first line is the part that identifies the
+                component. `mx-auto` still centres a preview narrower than the
+                stage, while a full-width table fills it.
+              */}
+              <div
+                className="origin-top-left [&>*]:mx-auto"
+                style={{
+                  width: STAGE_WIDTH,
+                  transform: 'scale(var(--preview-scale, 0.8))',
+                }}
+              >
+                {preview}
+              </div>
+            </div>
           </div>
         </LazyMount>
       )}

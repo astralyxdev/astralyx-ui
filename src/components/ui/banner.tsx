@@ -1,6 +1,7 @@
 import { useState, type ComponentProps, type ReactNode } from 'react'
 import { Info, TriangleAlert, X, CircleCheck, CircleAlert } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -78,6 +79,7 @@ function Banner({
       data-slot="banner"
       data-tone={tone}
       className={cn(
+        enterFade,
         'flex w-full items-center gap-3 p-4 text-sm',
         surface,
         sticky && 'sticky top-0 z-40',

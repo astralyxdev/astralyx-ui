@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Spinner } from '@/components/ui/spinner'
 import { Tooltip } from '@/components/ui/tooltip'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -65,6 +66,7 @@ function DeployList({
       // Rows are full-bleed, so the container has to clip or the first and last
       // lose the rounded corners the moment they take a background.
       className={cn(
+        enterFade,
         surface,
         radius.panel,
         'divide-border divide-y overflow-hidden',

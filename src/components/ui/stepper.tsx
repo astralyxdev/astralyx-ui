@@ -1,6 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { Check, X } from 'lucide-react'
 import { Spinner } from '@/components/ui/spinner'
+import { enterFade } from '@/lib/motion'
 import { type Responsive } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -76,6 +77,7 @@ function Stepper({
       data-slot="stepper"
       data-orientation={orientation}
       className={cn(
+        enterFade,
         'flex list-none',
         vertical && 'flex-col',
         !vertical && !stacks && 'flex-row items-start',

@@ -1,5 +1,6 @@
 import { useMemo, type ComponentProps, type ReactNode } from 'react'
 import { Tooltip } from '@/components/ui/tooltip'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -106,7 +107,7 @@ function TopologyMap({
   return (
     <div
       data-slot="topology-map"
-      className={cn(surface, radius.surface, 'w-full overflow-x-auto p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'w-full overflow-x-auto p-4', className)}
       {...props}
     >
       <svg

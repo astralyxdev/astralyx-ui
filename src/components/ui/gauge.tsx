@@ -1,4 +1,5 @@
 import { useId, type ComponentProps, type ReactNode } from 'react'
+import { enterFade, useCountUp, useGrowIn } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -38,6 +39,12 @@ function Gauge({
   const ratio = Math.max(0, Math.min(value / max, 1))
   const percent = Math.round(ratio * 100)
 
+  // The ring sweeps out of nothing on mount; the reading counts with it. The
+  // colour ramp below still reads the true ratio, so a gauge that lands in the
+  // red does not spend its entrance being green.
+  const drawn = useGrowIn(ratio)
+  const counted = useCountUp(percent, { duration: 700, decimals: 0 })
+
   // A 100-unit viewBox keeps the geometry independent of the rendered size.
   const radius = 50 - thickness / 2
   const circumference = 2 * Math.PI * radius
@@ -53,7 +60,7 @@ function Gauge({
   return (
     <div
       data-slot="gauge"
-      className={cn('inline-flex flex-col items-center gap-1', className)}
+      className={cn(enterFade, 'inline-flex flex-col items-center gap-1', className)}
       {...props}
     >
       <div className="relative" style={{ width: size, height: size }}>
@@ -84,14 +91,16 @@ function Gauge({
             strokeWidth={thickness}
             strokeLinecap="round"
             strokeDasharray={circumference}
-            strokeDashoffset={circumference * (1 - ratio)}
-            className="transition-[stroke-dashoffset,stroke] duration-300 ease-out motion-reduce:transition-none"
+            strokeDashoffset={circumference * (1 - drawn)}
+            className="transition-[stroke-dashoffset,stroke] duration-700 ease-out motion-reduce:transition-none"
           />
         </svg>
 
         {showValue && (
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-lg font-semibold tabular-nums">{percent}%</span>
+            <span className="text-lg font-semibold tabular-nums">
+              {Math.round(counted)}%
+            </span>
             {hint && (
               <span className="text-muted-foreground text-[10px]">{hint}</span>
             )}

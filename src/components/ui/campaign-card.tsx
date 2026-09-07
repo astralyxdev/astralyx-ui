@@ -2,6 +2,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Fmt } from '@/components/ui/fmt'
 import { Sparkline } from '@/components/ui/sparkline'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -77,6 +78,7 @@ function CampaignCard({
       data-slot="campaign-card"
       data-status={status}
       className={cn(
+        enterFade,
         surface,
         radius.surface,
         'flex flex-col gap-3 p-4',

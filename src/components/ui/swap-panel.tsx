@@ -1,6 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { ArrowDown, Settings2, TriangleAlert } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -128,7 +129,7 @@ function SwapPanel({
   return (
     <div
       data-slot="swap-panel"
-      className={cn(surface, radius.surface, 'flex w-full flex-col gap-3 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex w-full flex-col gap-3 p-4', className)}
       {...props}
     >
       <div className="flex items-center justify-between gap-2">

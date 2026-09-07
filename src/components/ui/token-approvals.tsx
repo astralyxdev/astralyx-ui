@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Fmt } from '@/components/ui/fmt'
 import { WalletAddress } from '@/components/ui/wallet-address'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -77,7 +78,7 @@ function TokenApprovals({
   return (
     <div
       data-slot="token-approvals"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       <div className="border-border flex flex-wrap items-center gap-2 border-b p-3">

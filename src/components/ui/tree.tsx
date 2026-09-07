@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from 'react'
 import { ChevronRight } from 'lucide-react'
+import { enterFade } from '@/lib/motion'
 import { focusRing, interactive, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -175,7 +176,7 @@ function Tree({
       role="tree"
       data-slot="tree"
       onKeyDown={onKeyDown}
-      className={cn('flex list-none flex-col outline-none', className)}
+      className={cn(enterFade, 'flex list-none flex-col outline-none', className)}
       {...props}
     >
       {rows.map((row, index) => {

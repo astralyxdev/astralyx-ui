@@ -1,5 +1,6 @@
 import { useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -96,7 +97,7 @@ function MergeConflict({
   return (
     <div
       data-slot="merge-conflict"
-      className={cn(surface, radius.surface, 'flex flex-col overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col overflow-hidden', className)}
       {...props}
     >
       <div className="border-border flex flex-wrap items-center gap-2 border-b p-3">

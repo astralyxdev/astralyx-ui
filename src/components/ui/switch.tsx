@@ -48,7 +48,10 @@ const trackVariants = cva(
 const THUMB = [
   'pointer-events-none block rounded-full [corner-shape:round]',
   'bg-muted-foreground size-[var(--thumb)]',
-  'transition-[transform,background-color] duration-150 ease-out',
+  // `translate`, not `transform`: the thumb travels with `translate-x-*`, which
+  // Tailwind v4 compiles to the standalone `translate` property. A transition
+  // naming only `transform` matches nothing and the thumb teleports.
+  'transition-[translate,transform,background-color] duration-150 ease-out',
   'motion-reduce:transition-none',
 ].join(' ')
 

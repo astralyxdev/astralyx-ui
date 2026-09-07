@@ -420,74 +420,88 @@
 }
 
 /*
- * Range input. The native track and thumb only take styles through vendor
- * pseudo-elements, which Tailwind cannot target, so they live here. Size and
- * fill come from variables the Slider component sets per instance.
+ * Range input.
+ *
+ * The input still does all the work — pointer mapping, arrow keys, Home/End,
+ * touch dragging, form submission — but it paints none of it. Track, fill and
+ * thumb are real elements beside it, drawn by the Slider component.
+ *
+ * That split exists for one reason: a native thumb's position is the browser's,
+ * derived from `value`, and there is no property on it to transition. Nothing
+ * can make it trail the pointer. An element positioned from a *registered*
+ * custom property can be interpolated like any other, so the visible thumb is
+ * ours and the invisible one underneath is only a hit target.
+ *
+ * The two must agree on geometry or the thumb sits beside the pointer: a range
+ * input insets the thumb's travel by half its own width at each end, so the
+ * pseudo-elements keep their size — and lose their borders, which would
+ * otherwise grow the box past `--slider-thumb` and shift the mapping by 2px.
  */
+@property --slider-progress {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
 .slider {
   appearance: none;
   background: transparent;
   cursor: pointer;
+  margin: 0;
 }
 
 .slider::-webkit-slider-runnable-track {
   height: var(--slider-track);
-  border-radius: 999px;
-  corner-shape: round;
-  background: linear-gradient(
-    to right,
-    var(--foreground) 0 var(--slider-progress, 0%),
-    var(--secondary) var(--slider-progress, 0%) 100%
-  );
-}
-
-.slider::-moz-range-track {
-  height: var(--slider-track);
-  border-radius: 999px;
-  corner-shape: round;
-  background: var(--secondary);
-}
-
-.slider::-moz-range-progress {
-  height: var(--slider-track);
-  border-radius: 999px;
-  corner-shape: round;
-  background: var(--foreground);
+  background: transparent;
 }
 
 .slider::-webkit-slider-thumb {
   appearance: none;
   width: var(--slider-thumb);
   height: var(--slider-thumb);
-  border-radius: 999px;
-  corner-shape: round;
-  background: var(--background);
-  border: 2px solid var(--foreground);
-  /* Centre the thumb on the track rather than on the input box. */
+  border: 0;
+  background: transparent;
+  /* Centre the hit target on the track rather than on the input box. */
   margin-top: calc((var(--slider-track) - var(--slider-thumb)) / 2);
-  transition: border-color 150ms ease-out;
+}
+
+.slider::-moz-range-track {
+  height: var(--slider-track);
+  background: transparent;
 }
 
 .slider::-moz-range-thumb {
   width: var(--slider-thumb);
   height: var(--slider-thumb);
-  border-radius: 999px;
-  corner-shape: round;
-  background: var(--background);
-  border: 2px solid var(--foreground);
-}
-
-.slider:hover::-webkit-slider-thumb,
-.slider:focus-visible::-webkit-slider-thumb {
-  border-color: var(--border-active);
+  border: 0;
+  background: transparent;
 }
 
 .slider:disabled {
   cursor: not-allowed;
 }
 
+/*
+ * The follow.
+ *
+ * `--slider-progress` is registered as a `<number>` above, which is what makes
+ * it interpolable — an unregistered custom property animates discretely, and
+ * the thumb would jump exactly as it did when the browser owned it. Everything
+ * that reads it (the fill's width, the thumb's offset) inherits the animated
+ * value, so one transition drives the whole control and the parts cannot drift
+ * out of step.
+ *
+ * 130ms: long enough to read as the thumb following the pointer rather than
+ * being nailed to it, short enough that a click on the track still feels like
+ * it landed. Past about 200ms it stops reading as weight and starts reading as
+ * lag.
+ */
+.slider-shell {
+  transition: --slider-progress 130ms ease-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .slider::-webkit-slider-thumb {
+  .slider-shell {
     transition: none;
   }
 }
@@ -705,6 +719,116 @@ dialog[open][data-side='bottom'] {
   .ax-eyelid-r {
     animation: none;
     transform: scaleY(0);
+  }
+}
+
+/*
+ * -------------------------------------------------------------- motion ----
+ *
+ * The keyframes the kit's own components reference by name. Everything else —
+ * entrances, hovers, presses, value transitions — is a utility class composed
+ * in `lib/motion.ts`, so this section only holds what a class cannot express:
+ * a loop, or a two-ended sweep.
+ *
+ * Each is paired with a `prefers-reduced-motion` rule at the point of use
+ * rather than here, because a few of them (the sweep below) still need to leave
+ * something visible when the motion is taken away.
+ */
+
+/*
+ * Skeleton sweep. A band of light crossing a placeholder, left to right.
+ *
+ * Transform rather than `background-position`: the band is a pseudo-element
+ * that is already the size of its parent, so moving it is a composited step
+ * with no repaint, while animating a gradient's position repaints the whole box
+ * every frame — on a screen of forty loading rows that is the difference
+ * between free and not.
+ */
+@keyframes ax-sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/*
+ * The plainest entrance in the kit: opacity, and nothing else.
+ *
+ * Deliberately not `tw-animate-css`'s `animate-in fade-in-0`, which is built on
+ * one shared `enter` keyframe that sets `transform` as well — identity in this
+ * case, but a *computed* transform all the same, and a computed transform makes
+ * the element a containing block for every `position: fixed` descendant while
+ * it runs. This is worn by component roots, and a component root is exactly the
+ * thing a menu inside it is positioned against.
+ */
+@keyframes ax-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/*
+ * A bar arriving out of its own leading edge.
+ *
+ * A clip rather than a `scaleX`, and both rather than an animated `width`.
+ * Width reflows the row on every frame; `scaleX` is free but squashes whatever
+ * the bar contains — and these are worn by segmented tracks that carry their
+ * own percentage labels, which would spend 600ms as illegible smears. A clip
+ * moves no geometry at all and is composited the same way.
+ *
+ * Both ends are written out. `clip-path: none` is not interpolable with a basic
+ * shape, so a keyframe with only a `from` would animate discretely — a jump at
+ * the halfway mark instead of a wipe.
+ */
+@keyframes ax-grow-x {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* The same, for a column standing on a baseline. */
+@keyframes ax-grow-y {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/*
+ * A live indicator: one ring expanding out of a dot and fading as it goes.
+ *
+ * Drawn as a pseudo-element so the dot itself never moves — a status light that
+ * changes size is harder to read at a glance, and it would reflow anything
+ * measured against it.
+ */
+@keyframes ax-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.45;
+  }
+  75%,
+  100% {
+    transform: scale(2.25);
+    opacity: 0;
+  }
+}
+
+/*
+ * A value arriving in place of another: the old one leaves upward, the new one
+ * comes up from below. Used where a figure is *replaced* rather than counted
+ * to — a ticker's last trade, a rank, a status word.
+ */
+@keyframes ax-roll-in {
+  from {
+    transform: translateY(0.4em);
+    opacity: 0;
   }
 }
 

@@ -3,6 +3,7 @@ import { Check, Copy, RefreshCw, ThumbsDown, ThumbsUp, User } from 'lucide-react
 import { Avatar } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Tooltip } from '@/components/ui/tooltip'
+import { enterFade } from '@/lib/motion'
 import { radius } from '@/lib/styles'
 import { useClipboard } from '@/lib/use-clipboard'
 import { cn } from '@/lib/utils'
@@ -69,6 +70,7 @@ function Message({
       data-slot="message"
       data-role={role}
       className={cn(
+        enterFade,
         'flex w-full gap-3',
         user ? 'justify-end' : 'justify-start',
         className,

@@ -3,6 +3,7 @@ import { Check, Clock, Pause, X } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Fmt } from '@/components/ui/fmt'
 import { Spinner } from '@/components/ui/spinner'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -67,7 +68,7 @@ function CronSchedule({
   return (
     <div
       data-slot="cron-schedule"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       <ul className="list-none divide-y divide-[var(--border)]">

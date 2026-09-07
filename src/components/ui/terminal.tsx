@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, type ComponentProps } from 'react'
 import { CopyButton } from '@/components/ui/copy-button'
+import { enterFade } from '@/lib/motion'
 import { radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -124,7 +125,7 @@ function Terminal({
   return (
     <div
       data-slot="terminal"
-      className={cn('border-border overflow-hidden border', radius.surface, className)}
+      className={cn(enterFade, 'border-border overflow-hidden border', radius.surface, className)}
       {...props}
     >
       {(title || copyable) && (

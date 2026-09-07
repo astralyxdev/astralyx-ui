@@ -1,5 +1,7 @@
 import { useMemo, type ComponentProps } from 'react'
 import { CodeBlock } from '@/components/ui/code-block'
+import { enterFade } from '@/lib/motion'
+import { cn } from '@/lib/utils'
 
 /**
  * A request rendered as a runnable curl command.
@@ -69,7 +71,7 @@ function CurlCommand({
   }, [method, url, headers, body, redact, mask, insecure])
 
   return (
-    <div data-slot="curl-command" className={className} {...props}>
+    <div data-slot="curl-command" className={cn(enterFade, className)} {...props}>
       <CodeBlock code={command} language="bash" title={title} />
     </div>
   )

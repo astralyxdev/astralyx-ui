@@ -2,6 +2,7 @@ import { useState, type ComponentProps, type ReactNode } from 'react'
 import {
   ChevronRight, File, FileCode, FileJson, FileText, Folder, FolderOpen,
 } from 'lucide-react'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -75,7 +76,7 @@ function FileTree({
       role="tree"
       aria-label={label}
       data-slot="file-tree"
-      className={cn('text-sm', className)}
+      className={cn(enterFade, 'text-sm', className)}
       onKeyDown={(event) => {
         if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return
         const rows = Array.from(

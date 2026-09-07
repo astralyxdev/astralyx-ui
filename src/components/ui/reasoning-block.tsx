@@ -2,6 +2,7 @@ import { useState, type ComponentProps, type ReactNode } from 'react'
 import { Brain, ChevronDown, ChevronRight } from 'lucide-react'
 import { Fmt } from '@/components/ui/fmt'
 import { Spinner } from '@/components/ui/spinner'
+import { enterFade } from '@/lib/motion'
 import { focusRing, interactive, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -39,7 +40,7 @@ function ReasoningBlock({
     <div
       data-slot="reasoning-block"
       data-streaming={streaming || undefined}
-      className={cn('border-border overflow-hidden border', radius.surface, className)}
+      className={cn(enterFade, 'border-border overflow-hidden border', radius.surface, className)}
       {...props}
     >
       <button

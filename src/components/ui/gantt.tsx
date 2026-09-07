@@ -9,6 +9,7 @@ import {
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
 } from 'react'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -313,7 +314,7 @@ function Gantt({
   return (
     <div
       data-slot="gantt"
-      className={cn('w-full overflow-x-auto', className)}
+      className={cn(enterFade, 'w-full overflow-x-auto', className)}
       aria-labelledby={titleId}
       {...props}
     >

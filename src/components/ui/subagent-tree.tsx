@@ -2,6 +2,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { Bot, TriangleAlert } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Spinner } from '@/components/ui/spinner'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -159,7 +160,7 @@ function SubagentTree({
   return (
     <div
       data-slot="subagent-tree"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       <div className="border-border bg-muted/40 flex items-center justify-between gap-2 border-b px-4 py-2">

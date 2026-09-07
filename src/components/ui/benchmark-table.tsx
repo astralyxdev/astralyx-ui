@@ -1,5 +1,6 @@
 import { useMemo, type ComponentProps, type ReactNode } from 'react'
 import { Badge } from '@/components/ui/badge'
+import { enterFade, growIn } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -87,7 +88,7 @@ function BenchmarkTable({
   return (
     <div
       data-slot="benchmark-table"
-      className={cn(surface, radius.surface, 'flex flex-col overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col overflow-hidden', className)}
       {...props}
     >
       <ul className="divide-border/60 list-none divide-y">
@@ -112,7 +113,7 @@ function BenchmarkTable({
 
             <span className="hidden h-1.5 w-28 shrink-0 overflow-hidden rounded-full bg-[var(--secondary)] sm:block">
               <span
-                className="block h-full"
+                className={cn(growIn, 'block h-full')}
                 style={{
                   width: `${Math.max(2, extent(result.value) * 100)}%`,
                   background: isBest ? 'var(--green)' : inconclusive ? 'var(--muted-foreground)' : 'var(--blue)',

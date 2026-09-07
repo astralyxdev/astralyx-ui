@@ -1,5 +1,6 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { X } from 'lucide-react'
+import { enterFade } from '@/lib/motion'
 import { radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -44,6 +45,7 @@ function BulkActionBar({
       aria-label={barLabel}
       data-slot="bulk-action-bar"
       className={cn(
+        enterFade,
         'bg-foreground text-background flex flex-wrap items-center gap-3 p-3',
         radius.control,
         // Overlaid, so ticking a box never moves the next one.

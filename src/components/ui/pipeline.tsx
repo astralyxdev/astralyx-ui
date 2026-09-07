@@ -2,6 +2,7 @@ import { Fragment, type ComponentProps } from 'react'
 import { Check, ChevronRight, CircleSlash, Clock, X } from 'lucide-react'
 import { Spinner } from '@/components/ui/spinner'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade } from '@/lib/motion'
 import { focusRing, interactive, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -67,7 +68,7 @@ function Pipeline({
   return (
     <div
       data-slot="pipeline"
-      className={cn('w-full overflow-x-auto', className)}
+      className={cn(enterFade, 'w-full overflow-x-auto', className)}
       {...props}
     >
       <ol className="flex list-none flex-col gap-3 md:flex-row md:items-start md:gap-0">

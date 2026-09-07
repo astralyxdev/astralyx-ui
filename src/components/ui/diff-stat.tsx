@@ -1,4 +1,5 @@
 import type { ComponentProps } from 'react'
+import { enterFade } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -28,7 +29,7 @@ function DiffStat({
   return (
     <span
       data-slot="diff-stat"
-      className={cn('inline-flex items-center gap-2 font-mono text-xs', className)}
+      className={cn(enterFade, 'inline-flex items-center gap-2 font-mono text-xs', className)}
       {...props}
     >
       {showCounts && (

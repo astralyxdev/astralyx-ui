@@ -2,6 +2,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { Flag } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -54,7 +55,7 @@ function FeatureFlag({
     <div
       data-slot="feature-flag"
       data-enabled={enabled || undefined}
-      className={cn(surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
       {...props}
     >
       <div className="flex items-start gap-3">

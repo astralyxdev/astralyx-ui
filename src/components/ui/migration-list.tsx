@@ -2,6 +2,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { Check, Clock, TriangleAlert, X } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -104,7 +105,7 @@ function MigrationList({
   return (
     <div
       data-slot="migration-list"
-      className={cn(surface, radius.surface, 'flex flex-col overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col overflow-hidden', className)}
       {...props}
     >
       {pending > 0 && (

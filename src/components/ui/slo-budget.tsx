@@ -1,5 +1,6 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade, growIn } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -63,7 +64,7 @@ function SloBudget({
   return (
     <div
       data-slot="slo-budget"
-      className={cn('flex min-w-0 flex-col gap-2', className)}
+      className={cn(enterFade, 'flex min-w-0 flex-col gap-2', className)}
       {...props}
     >
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
@@ -78,7 +79,7 @@ function SloBudget({
           className="text-2xl font-semibold tabular-nums"
           style={{ color: exhausted ? tone : undefined }}
         >
-          <Fmt type="percent" value={remaining} decimals={0} />
+          <Fmt type="percent" value={remaining} decimals={0} animate />
         </span>
         <span className="text-muted-foreground text-xs whitespace-nowrap">{remainingLabel}</span>
 
@@ -103,7 +104,7 @@ function SloBudget({
         className="bg-secondary h-2 w-full overflow-hidden rounded-full [corner-shape:round]"
       >
         <div
-          className="h-full rounded-full transition-[width,background-color] duration-300 ease-out [corner-shape:round] motion-reduce:transition-none"
+          className={cn(growIn, 'h-full rounded-full transition-[width,background-color] duration-300 ease-out [corner-shape:round] motion-reduce:transition-none')}
           style={{ width: `${remaining * 100}%`, backgroundColor: tone }}
         />
       </div>

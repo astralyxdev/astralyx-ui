@@ -1,5 +1,6 @@
 import type { ComponentProps } from 'react'
 import { Button } from '@/components/ui/button'
+import { enterFade } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -20,7 +21,7 @@ function Suggestions({
   return (
     <div
       data-slot="suggestions"
-      className={cn('flex flex-wrap gap-2', className)}
+      className={cn(enterFade, 'flex flex-wrap gap-2', className)}
       {...props}
     >
       {items.map((item) => (

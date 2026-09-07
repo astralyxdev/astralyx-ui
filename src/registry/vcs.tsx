@@ -400,6 +400,7 @@ export const fmtEntry: ComponentEntry = {
     { name: 'format (currency)', type: "'symbol' | 'code' | 'name'", default: "'symbol'", description: 'Maps to Intl currencyDisplay.' },
     { name: 'currency / decimals / grouping', type: 'string / number / boolean', description: 'ISO 4217 code, fraction digits, thousands separators.' },
     { name: 'now', type: 'Date', description: 'Reference point for relative times. Pass it to keep a render deterministic.' },
+    { name: 'animate', type: 'boolean', default: 'false', description: 'Count to the value instead of printing it. Off by default — a column of forty figures counting at once is noise. Turn it on where the number is the content: a headline, a total, a figure that moves while you watch. Ignored for dates and relative times.' },
     { name: 'output element', type: '<time> or <span>', description: 'Dates and relative times render a <time> with an ISO dateTime, so the machine-readable value travels with the display one. Everything else is a span with tabular figures.' },
     { name: 'helpers', type: 'formatDate, formatBytes, formatDuration, formatRelative', description: 'Exported for use outside JSX.' },
   ],

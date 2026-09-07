@@ -1,5 +1,6 @@
 import type { ComponentProps } from 'react'
 import { Badge } from '@/components/ui/badge'
+import { enterFade } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -59,7 +60,7 @@ function HttpStatus({
       data-status={status}
       color={toneFor(status)}
       size={size}
-      className={cn('font-mono tabular-nums', className)}
+      className={cn(enterFade, 'font-mono tabular-nums', className)}
       {...props}
     >
       {status}

@@ -1,6 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { Check, TriangleAlert } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -61,7 +62,7 @@ function McpCapabilityMatrix({
   return (
     <div
       data-slot="mcp-capability-matrix"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       {conflicts > 0 && (

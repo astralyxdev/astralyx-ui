@@ -3,6 +3,7 @@ import { Check, Clock, TriangleAlert, X } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade, growIn } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -89,7 +90,7 @@ function GovernanceProposal({
     <article
       data-slot="governance-proposal"
       data-state={state}
-      className={cn(surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
       {...props}
     >
       <div className="flex flex-wrap items-center gap-2">
@@ -109,7 +110,7 @@ function GovernanceProposal({
       {summary && <p className="text-muted-foreground text-sm">{summary}</p>}
 
       <div className="flex flex-col gap-2">
-        <div className="flex h-2 w-full overflow-hidden rounded-full [corner-shape:round]">
+        <div className={cn(growIn, 'flex h-2 w-full overflow-hidden rounded-full [corner-shape:round]')}>
           <span
             className="bg-[var(--green)]"
             style={{ width: `${forShare * 100}%` }}
@@ -149,6 +150,7 @@ function GovernanceProposal({
           <div className="bg-secondary h-1 w-full overflow-hidden rounded-full [corner-shape:round]">
             <span
               className={cn(
+                growIn,
                 'block h-full rounded-full [corner-shape:round]',
                 quorumMet ? 'bg-[var(--green)]' : 'bg-[var(--amber)]',
               )}

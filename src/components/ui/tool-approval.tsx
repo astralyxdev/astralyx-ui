@@ -2,6 +2,7 @@ import { useState, type ComponentProps, type ReactNode } from 'react'
 import { ShieldAlert, ShieldCheck } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -75,6 +76,7 @@ function ToolApproval({
       role="alertdialog"
       aria-label={`Approve ${tool}`}
       className={cn(
+        enterFade,
         surface,
         radius.surface,
         'flex flex-col gap-4 p-4',

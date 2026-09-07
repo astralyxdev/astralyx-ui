@@ -1,6 +1,6 @@
 {
   "name": "astralyx-ui",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "homepage": "https://ui.astralyx.dev",
   "items": [
     {
@@ -13,6 +13,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -43,6 +44,7 @@
         "combobox",
         "input",
         "label",
+        "lib-motion",
         "lib-utils"
       ]
     },
@@ -57,6 +59,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "switch"
@@ -76,6 +79,7 @@
         "button",
         "empty",
         "input",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -91,6 +95,7 @@
       ],
       "registryDependencies": [
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "spinner"
@@ -107,6 +112,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -140,6 +146,7 @@
         "button",
         "checkbox",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -154,6 +161,7 @@
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -166,6 +174,7 @@
       "category": "AIOps",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-utils"
       ]
     },
@@ -183,6 +192,7 @@
         "button",
         "copy-button",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -209,6 +219,7 @@
       ],
       "registryDependencies": [
         "image",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "storage-usage"
@@ -225,6 +236,7 @@
       ],
       "registryDependencies": [
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "progress"
@@ -238,6 +250,7 @@
       "category": "Analytics",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -253,6 +266,7 @@
       ],
       "registryDependencies": [
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -272,6 +286,7 @@
         "fmt",
         "input",
         "json-viewer",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -294,7 +309,7 @@
       "name": "back-to-top",
       "type": "registry:ui",
       "title": "Back To Top",
-      "description": "Appears once you have scrolled, driven by an IntersectionObserver sentinel rather than a scroll handler — and it moves focus, not just the viewport.",
+      "description": "Appears once you have scrolled the nearest scrolling ancestor — which it finds itself — and it moves focus, not just the viewport.",
       "category": "Navigation",
       "dependencies": [
         "lucide-react@^1.39.0"
@@ -316,6 +331,7 @@
       "registryDependencies": [
         "badge",
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "storage-usage"
@@ -347,6 +363,7 @@
       ],
       "registryDependencies": [
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -360,6 +377,7 @@
       "dependencies": [],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -375,6 +393,7 @@
       ],
       "registryDependencies": [
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "money-input"
@@ -390,6 +409,7 @@
       "registryDependencies": [
         "avatar",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "tooltip"
@@ -403,6 +423,7 @@
       "category": "Navigation",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -415,6 +436,7 @@
       "category": "Charts",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -443,6 +465,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "primitive-slot"
@@ -459,6 +482,7 @@
       ],
       "registryDependencies": [
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "progress",
@@ -476,6 +500,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "storage-usage"
@@ -492,6 +517,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -506,6 +532,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "spinner",
@@ -522,6 +549,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -535,6 +563,7 @@
       "dependencies": [],
       "registryDependencies": [
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -577,6 +606,7 @@
       "dependencies": [],
       "registryDependencies": [
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "sparkline"
@@ -594,6 +624,7 @@
       "registryDependencies": [
         "button",
         "lib-date",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "select",
@@ -610,6 +641,7 @@
       "registryDependencies": [
         "badge",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "sparkline"
@@ -623,6 +655,7 @@
       "category": "Crypto",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-utils"
       ]
     },
@@ -636,6 +669,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "mask-input"
@@ -651,6 +685,7 @@
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -666,6 +701,7 @@
       ],
       "registryDependencies": [
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -682,6 +718,7 @@
       "registryDependencies": [
         "button",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -696,6 +733,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "primitive-dismissable",
@@ -713,6 +751,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "primitive-dismissable",
@@ -729,6 +768,7 @@
       "registryDependencies": [
         "badge",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -741,6 +781,7 @@
       "category": "Display",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -769,6 +810,7 @@
       "dependencies": [],
       "registryDependencies": [
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -784,6 +826,7 @@
       ],
       "registryDependencies": [
         "hover-card",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -799,6 +842,7 @@
       ],
       "registryDependencies": [
         "lib-highlighter",
+        "lib-motion",
         "lib-styles",
         "lib-use-clipboard",
         "lib-utils"
@@ -815,6 +859,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -827,6 +872,7 @@
       "category": "Analytics",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -858,6 +904,7 @@
       ],
       "registryDependencies": [
         "label-picker",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "primitive-dismissable",
@@ -874,6 +921,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "primitive-dismissable",
@@ -906,6 +954,7 @@
       "registryDependencies": [
         "avatar",
         "fmt",
+        "lib-motion",
         "lib-utils"
       ]
     },
@@ -923,6 +972,7 @@
         "badge",
         "button",
         "diff-stat",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "tooltip"
@@ -936,6 +986,7 @@
       "category": "Media",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -971,6 +1022,7 @@
       "category": "AI",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-utils"
       ]
     },
@@ -984,6 +1036,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1001,6 +1054,7 @@
         "badge",
         "button",
         "copy-button",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1018,6 +1072,7 @@
         "badge",
         "button",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1030,6 +1085,7 @@
       "category": "Overlays",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "primitive-dismissable"
@@ -1061,6 +1117,7 @@
       "category": "Agents",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1075,6 +1132,7 @@
       "registryDependencies": [
         "button",
         "checkbox",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1090,6 +1148,7 @@
         "copy-button",
         "input",
         "label",
+        "lib-motion",
         "lib-utils"
       ]
     },
@@ -1117,6 +1176,7 @@
       "dependencies": [],
       "registryDependencies": [
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1143,6 +1203,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1159,6 +1220,7 @@
       "registryDependencies": [
         "badge",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "spinner"
@@ -1175,6 +1237,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1187,7 +1250,9 @@
       "category": "API",
       "dependencies": [],
       "registryDependencies": [
-        "code-block"
+        "code-block",
+        "lib-motion",
+        "lib-utils"
       ]
     },
     {
@@ -1214,6 +1279,7 @@
       "registryDependencies": [
         "checkbox",
         "empty",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "table"
@@ -1230,6 +1296,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1262,6 +1329,7 @@
       ],
       "registryDependencies": [
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "select",
@@ -1280,6 +1348,7 @@
       "registryDependencies": [
         "badge",
         "input",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1297,6 +1366,7 @@
         "avatar",
         "badge",
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "progress",
@@ -1312,6 +1382,7 @@
       "category": "Display",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-utils"
       ]
     },
@@ -1328,6 +1399,7 @@
         "badge",
         "button",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1361,6 +1433,7 @@
       "registryDependencies": [
         "button",
         "diff-view",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1373,6 +1446,7 @@
       "category": "Development",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-utils"
       ]
     },
@@ -1388,6 +1462,7 @@
       "registryDependencies": [
         "badge",
         "diff-stat",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1400,6 +1475,7 @@
       "category": "Display",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1426,6 +1502,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "primitive-dismissable",
@@ -1474,6 +1551,7 @@
       "category": "Display",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1491,6 +1569,7 @@
         "badge",
         "http-status",
         "input",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1507,6 +1586,7 @@
       "registryDependencies": [
         "badge",
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1524,6 +1604,7 @@
         "badge",
         "button",
         "copy-button",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1554,6 +1635,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1568,6 +1650,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1584,6 +1667,7 @@
       "registryDependencies": [
         "button",
         "input",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1599,6 +1683,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "switch"
@@ -1615,6 +1700,7 @@
       ],
       "registryDependencies": [
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "textarea"
@@ -1632,6 +1718,7 @@
       "registryDependencies": [
         "badge",
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "textarea"
@@ -1664,6 +1751,7 @@
         "button",
         "code-block",
         "image",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "storage-usage"
@@ -1679,6 +1767,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1695,6 +1784,7 @@
       "registryDependencies": [
         "badge",
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1707,6 +1797,7 @@
       "category": "Build & Perf",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1718,7 +1809,9 @@
       "description": "One component for every formatted value — dates, numbers, currency, bytes, durations, relative times — so the locale is a single decision rather than three developers reaching for toLocaleString, toFixed and padStart on one screen.",
       "category": "Display",
       "dependencies": [],
-      "registryDependencies": []
+      "registryDependencies": [
+        "lib-motion"
+      ]
     },
     {
       "name": "form",
@@ -1747,6 +1840,7 @@
         "badge",
         "button",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1759,6 +1853,7 @@
       "category": "Display",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-utils"
       ]
     },
@@ -1770,6 +1865,7 @@
       "category": "Views",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1784,6 +1880,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1796,6 +1893,7 @@
       "category": "Display",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-utils"
       ]
     },
@@ -1812,6 +1910,7 @@
         "badge",
         "button",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1841,6 +1940,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1856,6 +1956,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1871,6 +1972,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "sparkline"
@@ -1884,6 +1986,7 @@
       "category": "Display",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-utils",
         "tooltip"
       ]
@@ -1896,6 +1999,7 @@
       "category": "Overlays",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "primitive-popper"
@@ -1910,6 +2014,7 @@
       "dependencies": [],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-utils"
       ]
     },
@@ -1922,6 +2027,7 @@
       "dependencies": [],
       "registryDependencies": [
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1936,6 +2042,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1953,6 +2060,7 @@
         "avatar",
         "badge",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -1968,6 +2076,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "storage-usage"
@@ -2030,6 +2139,7 @@
       "registryDependencies": [
         "field",
         "input",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "number-input",
@@ -2051,6 +2161,7 @@
         "badge",
         "button",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2066,6 +2177,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2080,6 +2192,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2098,6 +2211,7 @@
         "button",
         "fmt",
         "json-viewer",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2111,6 +2225,7 @@
       "dependencies": [],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2134,6 +2249,7 @@
       "category": "Knowledge",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-use-force-graph",
         "lib-utils"
@@ -2179,6 +2295,7 @@
       "registryDependencies": [
         "avatar",
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2194,6 +2311,7 @@
       ],
       "registryDependencies": [
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2206,6 +2324,7 @@
       "category": "Build & Perf",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2222,6 +2341,7 @@
       "registryDependencies": [
         "badge",
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2266,6 +2386,7 @@
       "registryDependencies": [
         "badge",
         "input",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "select"
@@ -2284,6 +2405,7 @@
         "button",
         "input",
         "label",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "password-input",
@@ -2301,6 +2423,7 @@
       ],
       "registryDependencies": [
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2316,6 +2439,7 @@
       ],
       "registryDependencies": [
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "markdown"
@@ -2349,6 +2473,7 @@
       ],
       "registryDependencies": [
         "input",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "sparkline"
@@ -2388,6 +2513,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2404,6 +2530,7 @@
       "registryDependencies": [
         "badge",
         "code-block",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2420,6 +2547,7 @@
       "registryDependencies": [
         "badge",
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "schema-form",
@@ -2438,6 +2566,7 @@
       "registryDependencies": [
         "badge",
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2455,6 +2584,7 @@
         "badge",
         "empty",
         "input",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2471,6 +2601,7 @@
       "registryDependencies": [
         "badge",
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2487,6 +2618,7 @@
       "registryDependencies": [
         "badge",
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2503,6 +2635,7 @@
       "registryDependencies": [
         "button",
         "copy-button",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "spinner"
@@ -2538,6 +2671,7 @@
       "registryDependencies": [
         "aspect-ratio",
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "primitive-focus-trap",
@@ -2553,6 +2687,7 @@
       "dependencies": [],
       "registryDependencies": [
         "avatar",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "textarea"
@@ -2566,6 +2701,7 @@
       "category": "Navigation",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "primitive-dismissable",
@@ -2581,6 +2717,7 @@
       "dependencies": [],
       "registryDependencies": [
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2597,6 +2734,7 @@
       "registryDependencies": [
         "avatar",
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-use-clipboard",
         "lib-utils",
@@ -2615,6 +2753,7 @@
       "registryDependencies": [
         "badge",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2629,6 +2768,7 @@
       "registryDependencies": [
         "badge",
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "number-input",
@@ -2648,6 +2788,7 @@
         "badge",
         "button",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2680,6 +2821,7 @@
         "button",
         "checkbox",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2692,6 +2834,7 @@
       "category": "Finance",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2706,6 +2849,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "primitive-dismissable",
@@ -2720,6 +2864,7 @@
       "category": "Gaming",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-utils"
       ]
     },
@@ -2733,6 +2878,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "primitive-dismissable",
@@ -2751,6 +2897,7 @@
       "registryDependencies": [
         "badge",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2767,6 +2914,7 @@
       "registryDependencies": [
         "aspect-ratio",
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2791,6 +2939,7 @@
       "category": "Knowledge",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-use-force-graph",
         "lib-utils"
@@ -2810,6 +2959,7 @@
         "badge",
         "button",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2841,6 +2991,7 @@
         "badge",
         "empty",
         "input",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "storage-usage"
@@ -2856,6 +3007,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2873,6 +3025,7 @@
         "avatar",
         "badge",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "tooltip"
@@ -2886,6 +3039,7 @@
       "category": "Crypto",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2900,6 +3054,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2912,6 +3067,7 @@
       "category": "Utility",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-utils"
       ]
     },
@@ -2926,6 +3082,7 @@
       ],
       "registryDependencies": [
         "button",
+        "lib-motion",
         "lib-utils"
       ]
     },
@@ -2955,6 +3112,7 @@
       "registryDependencies": [
         "badge",
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -2971,6 +3129,7 @@
       "registryDependencies": [
         "badge",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "stepper"
@@ -2987,6 +3146,7 @@
       ],
       "registryDependencies": [
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3002,6 +3162,7 @@
       ],
       "registryDependencies": [
         "checkbox",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3029,6 +3190,7 @@
       ],
       "registryDependencies": [
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "spinner"
@@ -3045,6 +3207,7 @@
       ],
       "registryDependencies": [
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "primitive-dismissable",
@@ -3059,6 +3222,7 @@
       "category": "Overlays",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "primitive-dismissable",
@@ -3077,6 +3241,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3092,6 +3257,7 @@
       ],
       "registryDependencies": [
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3110,6 +3276,7 @@
         "copy-button",
         "input",
         "label",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "select"
@@ -3124,6 +3291,7 @@
       "dependencies": [],
       "registryDependencies": [
         "avatar",
+        "lib-motion",
         "lib-utils",
         "tooltip"
       ]
@@ -3138,6 +3306,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-utils",
         "sparkline"
       ]
@@ -3155,6 +3324,7 @@
         "badge",
         "button",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3169,6 +3339,7 @@
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3182,6 +3353,7 @@
       "dependencies": [],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3198,6 +3370,7 @@
       "registryDependencies": [
         "badge",
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "textarea",
@@ -3216,6 +3389,7 @@
         "copy-button",
         "input",
         "label",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3231,6 +3405,7 @@
         "badge",
         "field",
         "input",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "textarea"
@@ -3248,6 +3423,7 @@
       "registryDependencies": [
         "badge",
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3266,6 +3442,7 @@
         "badge",
         "diff-stat",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3278,6 +3455,7 @@
       "category": "Utility",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-qr",
         "lib-styles",
         "lib-utils"
@@ -3297,6 +3475,7 @@
         "code-block",
         "command",
         "input",
+        "lib-motion",
         "lib-sql-select",
         "lib-styles",
         "lib-utils",
@@ -3322,6 +3501,7 @@
         "button",
         "code-block",
         "kbd",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3338,6 +3518,7 @@
       "registryDependencies": [
         "badge",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3352,6 +3533,7 @@
       "registryDependencies": [
         "badge",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "sparkline"
@@ -3365,6 +3547,7 @@
       "category": "Charts",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3405,6 +3588,7 @@
       "dependencies": [],
       "registryDependencies": [
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3434,6 +3618,7 @@
       ],
       "registryDependencies": [
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "spinner"
@@ -3452,6 +3637,7 @@
         "badge",
         "input",
         "label",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "textarea"
@@ -3468,6 +3654,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3483,6 +3670,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3501,6 +3689,7 @@
         "button",
         "collapsible",
         "input",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "select",
@@ -3532,6 +3721,7 @@
       "dependencies": [],
       "registryDependencies": [
         "fmt",
+        "lib-motion",
         "lib-utils"
       ]
     },
@@ -3550,6 +3740,7 @@
         "http-status",
         "json-viewer",
         "lib-highlighter",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3564,6 +3755,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3576,6 +3768,7 @@
       "category": "Analytics",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3592,6 +3785,7 @@
       "registryDependencies": [
         "badge",
         "confidence-meter",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3605,6 +3799,7 @@
       "dependencies": [],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3618,6 +3813,7 @@
       "dependencies": [],
       "registryDependencies": [
         "fmt",
+        "lib-motion",
         "lib-utils",
         "table"
       ]
@@ -3635,6 +3831,7 @@
         "avatar",
         "badge",
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "textarea"
@@ -3648,6 +3845,7 @@
       "category": "Security",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-utils"
       ]
     },
@@ -3660,6 +3858,7 @@
       "dependencies": [],
       "registryDependencies": [
         "confidence-meter",
+        "lib-motion",
         "lib-utils",
         "tree"
       ]
@@ -3673,6 +3872,7 @@
       "dependencies": [],
       "registryDependencies": [
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "tooltip"
@@ -3689,6 +3889,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3705,6 +3906,7 @@
       "registryDependencies": [
         "badge",
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "spinner"
@@ -3722,6 +3924,7 @@
       "registryDependencies": [
         "badge",
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "spinner"
@@ -3738,6 +3941,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "switch"
@@ -3751,6 +3955,7 @@
       "category": "Charts",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3763,6 +3968,7 @@
       "category": "Charts",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3775,6 +3981,7 @@
       "category": "Views",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3790,6 +3997,7 @@
         "button",
         "field",
         "input",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "number-input",
@@ -3810,6 +4018,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3825,6 +4034,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3851,6 +4061,7 @@
       ],
       "registryDependencies": [
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3867,6 +4078,7 @@
       "registryDependencies": [
         "button",
         "input",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "select",
@@ -3896,6 +4108,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "primitive-dismissable",
@@ -3922,6 +4135,7 @@
       "dependencies": [],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "uptime-strip"
@@ -3940,6 +4154,7 @@
         "badge",
         "button",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -3970,6 +4185,7 @@
       "dependencies": [],
       "registryDependencies": [
         "kbd",
+        "lib-motion",
         "lib-utils"
       ]
     },
@@ -4052,6 +4268,7 @@
       "dependencies": [],
       "registryDependencies": [
         "fmt",
+        "lib-motion",
         "lib-utils"
       ]
     },
@@ -4067,6 +4284,7 @@
       "registryDependencies": [
         "badge",
         "code-block",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -4079,6 +4297,7 @@
       "category": "Display",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-utils"
       ]
     },
@@ -4107,6 +4326,7 @@
       "registryDependencies": [
         "badge",
         "copy-button",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -4123,6 +4343,7 @@
       "registryDependencies": [
         "badge",
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "progress"
@@ -4138,6 +4359,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -4153,6 +4375,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "spinner"
@@ -4168,6 +4391,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "spinner"
@@ -4183,6 +4407,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -4213,6 +4438,7 @@
       "dependencies": [],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -4240,6 +4466,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "spinner"
@@ -4256,6 +4483,7 @@
         "badge",
         "button",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -4269,6 +4497,7 @@
       "dependencies": [],
       "registryDependencies": [
         "button",
+        "lib-motion",
         "lib-utils"
       ]
     },
@@ -4283,6 +4512,7 @@
       ],
       "registryDependencies": [
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -4312,6 +4542,7 @@
       ],
       "registryDependencies": [
         "input",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -4324,6 +4555,7 @@
       "category": "Navigation",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -4336,6 +4568,7 @@
       "category": "Display",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -4350,6 +4583,7 @@
         "class-variance-authority@^0.7.1"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "primitive-tabs"
@@ -4378,6 +4612,7 @@
       "dependencies": [],
       "registryDependencies": [
         "copy-button",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -4394,6 +4629,7 @@
       "registryDependencies": [
         "badge",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "spinner"
@@ -4439,6 +4675,7 @@
         "avatar",
         "badge",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -4456,6 +4693,7 @@
         "avatar",
         "badge",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -4470,6 +4708,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "primitive-dismissable",
@@ -4484,6 +4723,7 @@
       "category": "Navigation",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -4536,6 +4776,7 @@
       "category": "Crypto",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-utils"
       ]
     },
@@ -4552,6 +4793,7 @@
         "badge",
         "button",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "wallet-address"
@@ -4566,6 +4808,7 @@
       "dependencies": [],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -4581,6 +4824,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "primitive-dismissable",
@@ -4596,6 +4840,7 @@
       "category": "AI",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-utils",
         "progress",
         "tooltip"
@@ -4613,6 +4858,7 @@
       "registryDependencies": [
         "badge",
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -4629,6 +4875,7 @@
       "registryDependencies": [
         "code-block",
         "collapsible",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "spinner"
@@ -4645,6 +4892,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "tool-schema"
@@ -4658,6 +4906,7 @@
       "category": "Agents",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -4692,6 +4941,7 @@
       "registryDependencies": [
         "badge",
         "copy-button",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -4707,6 +4957,7 @@
       ],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -4719,6 +4970,7 @@
       "category": "Navigation",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-utils",
         "primitive-focus-trap"
       ]
@@ -4731,6 +4983,7 @@
       "category": "Overlays",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-utils",
         "primitive-popper"
       ]
@@ -4743,6 +4996,7 @@
       "category": "AIOps",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "tooltip"
@@ -4759,6 +5013,7 @@
       ],
       "registryDependencies": [
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "primitive-focus-trap",
@@ -4776,6 +5031,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -4789,6 +5045,7 @@
       "dependencies": [],
       "registryDependencies": [
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -4804,6 +5061,7 @@
       ],
       "registryDependencies": [
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "wallet-address"
@@ -4820,6 +5078,7 @@
       ],
       "registryDependencies": [
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "progress",
@@ -4856,6 +5115,7 @@
       "registryDependencies": [
         "checkbox",
         "input",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "primitive-dismissable",
@@ -4872,6 +5132,7 @@
         "lucide-react@^1.39.0"
       ],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -4884,6 +5145,7 @@
       "category": "Charts",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -4901,6 +5163,7 @@
         "button",
         "copy-button",
         "input-otp",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "stepper"
@@ -4941,6 +5204,7 @@
       "registryDependencies": [
         "attachment-preview",
         "button",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "progress"
@@ -4954,6 +5218,7 @@
       "category": "Operations",
       "dependencies": [],
       "registryDependencies": [
+        "lib-motion",
         "lib-utils",
         "tooltip"
       ]
@@ -4988,6 +5253,7 @@
         "copy-button",
         "input",
         "label",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -5004,6 +5270,7 @@
       "registryDependencies": [
         "avatar",
         "badge",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -5020,6 +5287,7 @@
       "registryDependencies": [
         "button",
         "dropdown-menu",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -5058,6 +5326,7 @@
       ],
       "registryDependencies": [
         "copy-button",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -5075,6 +5344,7 @@
         "badge",
         "button",
         "dropdown-menu",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "wallet-address"
@@ -5095,6 +5365,7 @@
         "fmt",
         "http-status",
         "json-viewer",
+        "lib-motion",
         "lib-styles",
         "lib-utils"
       ]
@@ -5111,6 +5382,7 @@
       "registryDependencies": [
         "badge",
         "fmt",
+        "lib-motion",
         "lib-styles",
         "lib-utils",
         "select"
@@ -5229,6 +5501,13 @@
       "registryDependencies": []
     },
     {
+      "name": "lib-motion",
+      "type": "registry:lib",
+      "title": "motion",
+      "dependencies": [],
+      "registryDependencies": []
+    },
+    {
       "name": "lib-qr",
       "type": "registry:lib",
       "title": "qr",
@@ -5247,7 +5526,9 @@
       "type": "registry:lib",
       "title": "styles",
       "dependencies": [],
-      "registryDependencies": []
+      "registryDependencies": [
+        "lib-motion"
+      ]
     },
     {
       "name": "lib-use-clipboard",

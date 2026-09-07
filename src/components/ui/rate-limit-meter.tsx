@@ -1,5 +1,6 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade, growIn } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -69,7 +70,7 @@ function RateLimitMeter({
   return (
     <div
       data-slot="rate-limit-meter"
-      className={cn(surface, radius.surface, 'flex flex-col gap-2 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-2 p-4', className)}
       {...props}
     >
       <div className="flex flex-wrap items-baseline gap-x-2">
@@ -85,7 +86,7 @@ function RateLimitMeter({
 
       <p className="flex items-baseline gap-1.5">
         <span className="text-2xl font-semibold tabular-nums" style={{ color: tone }}>
-          <Fmt type="number" value={remaining} />
+          <Fmt type="number" value={remaining} animate />
         </span>
         <span className="text-muted-foreground text-xs tabular-nums">
           / <Fmt type="number" value={limit} /> {remainingLabel}
@@ -101,7 +102,7 @@ function RateLimitMeter({
         className="bg-secondary relative h-1.5 w-full overflow-hidden rounded-full"
       >
         <div
-          className="h-full transition-[width] duration-300"
+          className={cn(growIn, 'h-full transition-[width] duration-300')}
           style={{ width: `${share * 100}%`, background: tone }}
         />
         {/* Where the window itself has got to, for comparison against spend. */}

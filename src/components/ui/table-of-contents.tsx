@@ -1,4 +1,5 @@
 import { useEffect, useState, type ComponentProps } from 'react'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -92,7 +93,7 @@ function TableOfContents({
     <nav
       data-slot="table-of-contents"
       aria-label={label}
-      className={cn('flex flex-col gap-1 text-sm', className)}
+      className={cn(enterFade, 'flex flex-col gap-1 text-sm', className)}
       {...props}
     >
       <p className="text-muted-foreground mb-1 text-xs font-medium tracking-wide uppercase">

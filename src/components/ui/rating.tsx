@@ -175,7 +175,11 @@ function Rating({
               'flex items-center justify-center p-0.5',
               radius.xs,
               focusRing,
-              'transition-colors duration-150 ease-out motion-reduce:transition-none',
+              // The star lifts under the pointer and dips on the press, which
+              // is the whole interaction: there is no other feedback between
+              // hovering a star and having chosen it.
+              'transition-[color,background-color,fill,stroke,scale] duration-150 ease-out motion-reduce:transition-none',
+              'motion-safe:hover:scale-110 motion-safe:active:scale-95',
             )}
           >
             {stars[index]}

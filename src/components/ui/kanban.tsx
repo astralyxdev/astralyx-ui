@@ -1,5 +1,6 @@
 import { useState, type ComponentProps, type DragEvent, type ReactNode } from 'react'
 import { Badge } from '@/components/ui/badge'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -67,7 +68,7 @@ function Kanban({
   return (
     <div
       data-slot="kanban"
-      className={cn('flex gap-3 overflow-x-auto pb-2', className)}
+      className={cn(enterFade, 'flex gap-3 overflow-x-auto pb-2', className)}
       {...props}
     >
       {columns.map((column, columnIndex) => {

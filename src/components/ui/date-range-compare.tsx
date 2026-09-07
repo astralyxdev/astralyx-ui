@@ -3,6 +3,7 @@ import { ArrowDown, ArrowUp, Minus } from 'lucide-react'
 import { Fmt } from '@/components/ui/fmt'
 import { Select } from '@/components/ui/select'
 import { Sparkline } from '@/components/ui/sparkline'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -75,7 +76,7 @@ function DateRangeCompare({
   return (
     <div
       data-slot="date-range-compare"
-      className={cn(surface, radius.surface, 'flex flex-col gap-2 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-2 p-4', className)}
       {...props}
     >
       <div className="flex items-start justify-between gap-2">
@@ -97,7 +98,7 @@ function DateRangeCompare({
       </div>
 
       <span className="text-2xl font-semibold tabular-nums">
-        <Fmt type={format} value={value} currency={currency} locale={locale} />
+        <Fmt type={format} value={value} currency={currency} locale={locale} animate />
       </span>
 
       <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-xs">

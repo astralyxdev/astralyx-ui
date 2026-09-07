@@ -2384,12 +2384,12 @@
               "name": "showAfter",
               "type": "number",
               "default": "400",
-              "description": "How far down before it appears."
+              "description": "How far down before it appears. `0` shows it immediately, which is what a demo or a permanently docked control wants."
             },
             {
               "name": "targetRef",
               "type": "React.RefObject<HTMLElement | null>",
-              "description": "Scrolled instead of the window. Pass a ref to a scroll container."
+              "description": "The element that scrolls. Defaults to the nearest scrolling ancestor, and to the window when there is none."
             },
             {
               "name": "focusRef",
@@ -10459,6 +10459,12 @@
               "name": "tabular",
               "type": "boolean",
               "description": "Line up in a column. On by default for every numeric type."
+            },
+            {
+              "name": "animate",
+              "type": "boolean",
+              "default": "false",
+              "description": "Count to the value instead of printing it."
             }
           ]
         },
@@ -10513,6 +10519,12 @@
               "name": "tabular",
               "type": "boolean",
               "description": "Line up in a column. On by default for every numeric type."
+            },
+            {
+              "name": "animate",
+              "type": "boolean",
+              "default": "false",
+              "description": "Count to the value instead of printing it."
             }
           ]
         }
@@ -24388,6 +24400,12 @@
               "type": "boolean",
               "default": "true",
               "description": "Draw the card. Off when the caller supplies its own container."
+            },
+            {
+              "name": "animate",
+              "type": "boolean",
+              "default": "true",
+              "description": "Count to the value rather than printing it."
             }
           ]
         }

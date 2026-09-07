@@ -4,6 +4,7 @@ import { Avatar } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { enterFade } from '@/lib/motion'
 import { radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -68,6 +69,7 @@ function ReviewThread({
       data-slot="review-thread"
       data-resolved={resolved || undefined}
       className={cn(
+        enterFade,
         'border-border overflow-hidden border',
         radius.surface,
         resolved && 'opacity-70',

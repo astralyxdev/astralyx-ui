@@ -3,6 +3,7 @@ import { Check } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade } from '@/lib/motion'
 import { radius, surface, type Responsive } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -63,6 +64,7 @@ function ModelComparison({
     <div
       data-slot="model-comparison"
       className={cn(
+        enterFade,
         'grid gap-3',
         responsive === false ? 'grid-cols-2' : RESPONSIVE_ROW[responsive],
         className,

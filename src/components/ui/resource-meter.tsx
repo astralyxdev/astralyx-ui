@@ -1,5 +1,6 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade, growIn } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -46,7 +47,7 @@ function ResourceMeter({
   return (
     <div
       data-slot="resource-meter"
-      className={cn('flex min-w-0 flex-col gap-1.5', className)}
+      className={cn(enterFade, 'flex min-w-0 flex-col gap-1.5', className)}
       {...props}
     >
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
@@ -73,7 +74,7 @@ function ResourceMeter({
         )}
       >
         <div
-          className="h-full rounded-full transition-[width,background-color] duration-300 ease-out [corner-shape:round] motion-reduce:transition-none"
+          className={cn(growIn, 'h-full rounded-full transition-[width,background-color] duration-300 ease-out [corner-shape:round] motion-reduce:transition-none')}
           style={{
             // Clamped for the bar only — the number above still says 130%.
             width: `${Math.min(ratio, 1) * 100}%`,

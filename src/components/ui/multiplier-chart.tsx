@@ -1,4 +1,5 @@
 import { useId, type ComponentProps, type ReactNode } from 'react'
+import { enterFade } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -72,7 +73,7 @@ function MultiplierChart({
   return (
     <figure
       data-slot="multiplier-chart"
-      className={cn('flex min-w-0 flex-col gap-2', className)}
+      className={cn(enterFade, 'flex min-w-0 flex-col gap-2', className)}
       {...props}
     >
       <div className="relative" style={{ height }}>

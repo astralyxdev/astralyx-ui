@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { CopyButton } from '@/components/ui/copy-button'
 import { InputOTP } from '@/components/ui/input-otp'
 import { Stepper } from '@/components/ui/stepper'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -89,7 +90,7 @@ function TwoFactorSetup({
   return (
     <div
       data-slot="two-factor-setup"
-      className={cn(surface, radius.surface, 'flex flex-col gap-4 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-4 p-4', className)}
       {...props}
     >
       <div className="flex items-center gap-2">

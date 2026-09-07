@@ -2,6 +2,7 @@ import { useState, type ComponentProps, type ReactNode } from 'react'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { CopyButton } from '@/components/ui/copy-button'
+import { enterFade } from '@/lib/motion'
 import { focusRing, interactive, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -56,7 +57,7 @@ function StackTrace({
   return (
     <div
       data-slot="stack-trace"
-      className={cn('border-border overflow-hidden border', radius.surface, className)}
+      className={cn(enterFade, 'border-border overflow-hidden border', radius.surface, className)}
       {...props}
     >
       <div className="border-border bg-[color-mix(in_oklab,var(--destructive),transparent_94%)] flex items-start gap-2 border-b p-3">

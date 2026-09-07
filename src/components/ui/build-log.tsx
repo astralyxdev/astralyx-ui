@@ -2,6 +2,7 @@ import { useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { Check, ChevronDown, ChevronRight, Clock, X } from 'lucide-react'
 import { Spinner } from '@/components/ui/spinner'
 import { Terminal } from '@/components/ui/terminal'
+import { enterFade } from '@/lib/motion'
 import { focusRing, interactive, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -74,7 +75,7 @@ function BuildLog({
   return (
     <div
       data-slot="build-log"
-      className={cn(surface, radius.surface, 'flex flex-col overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col overflow-hidden', className)}
       {...props}
     >
       <ul className="divide-border/60 list-none divide-y">

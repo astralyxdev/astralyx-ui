@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react'
+import { pressable } from '@/lib/motion'
 
 /**
  * The kit's global style contract.
@@ -102,15 +103,26 @@ export const buttonText = {
 /**
  * Hover and press feedback shared by every control.
  *
- * Colour only, by design: nothing in this kit moves, resizes or gains elevation
- * on interaction, and clicking animates nothing at all — only hover transitions.
- * State reads through background, border and text colour, so layout is never
- * disturbed by a pointer.
+ * Colour only. Not because nothing in the kit is allowed to move — buttons take
+ * `pressable` from `motion.ts` on top of this — but because this token is also
+ * worn by fields, tracks, indicators and menu rows, and a text input that
+ * shrinks when you click into it is a bug rather than a flourish. Anything that
+ * moves opts in one level up.
  */
 export const interactive = [
-  'transition-colors duration-150 ease-out',
-  // The press colour lands with no transition, so a click feels answered
-  // rather than faded into; the release still eases back over 150ms.
+  // Tailwind's own `transition-colors` list, plus everything `transition-transform`
+  // covers. Written out rather than stacked as two classes on purpose: they are
+  // the same utility group, so `cn()` resolves them against each other and
+  // whichever came last silently wins — which is how a control ends up with a
+  // press animation and no hover colour at all.
+  //
+  // `translate`, `scale` and `rotate` are listed individually because Tailwind
+  // v4 compiles `translate-x-*`, `scale-*` and `rotate-*` to those standalone
+  // properties rather than to `transform`. A transition that names only
+  // `transform` covers none of them, and the element snaps.
+  'transition-[color,background-color,border-color,outline-color,fill,stroke,transform,translate,scale,rotate] duration-150 ease-out',
+  // The press lands with no transition, so a click feels answered rather than
+  // faded into; the release still eases back over 150ms.
   'active:duration-0',
   'motion-reduce:transition-none',
 ].join(' ')
@@ -247,11 +259,19 @@ export const COLOR_SETS = Object.keys(colorSet) as ColorSet[]
 /** Bordered container on the card surface. */
 export const surface = 'border-border bg-card text-card-foreground border'
 
-/** Base every interactive control starts from. */
+/**
+ * Base every interactive control starts from.
+ *
+ * `pressable` is here and not in `interactive`: a button is the one control
+ * whose whole job is to be pressed, and 3% of scale for 100ms is the cheapest
+ * way to answer that press before the app has decided what the click means.
+ * It is a transform, so it costs no layout and cannot reflow the row.
+ */
 export const controlBase = [
   'inline-flex shrink-0 items-center justify-center whitespace-nowrap',
   'font-semibold select-none',
   interactive,
+  pressable,
   focusRing,
   disabledState,
   invalidState,

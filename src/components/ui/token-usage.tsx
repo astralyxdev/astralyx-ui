@@ -1,6 +1,7 @@
 import type { ComponentProps } from 'react'
 import { Progress } from '@/components/ui/progress'
 import { Tooltip } from '@/components/ui/tooltip'
+import { enterFade } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -34,7 +35,7 @@ function TokenUsage({
   return (
     <div
       data-slot="token-usage"
-      className={cn('w-full space-y-1.5', className)}
+      className={cn(enterFade, 'w-full space-y-1.5', className)}
       {...props}
     >
       <div className="flex items-baseline justify-between gap-2">

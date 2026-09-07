@@ -2,6 +2,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { TriangleAlert } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { MoneyInput } from '@/components/ui/money-input'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -78,7 +79,7 @@ function BetInput({
   return (
     <div
       data-slot="bet-input"
-      className={cn(surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
       {...props}
     >
       <div className="flex items-baseline justify-between gap-2">

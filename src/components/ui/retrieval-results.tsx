@@ -2,6 +2,7 @@ import { useState, type ComponentProps, type ReactNode } from 'react'
 import { ChevronDown, ChevronRight, FileText } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { ConfidenceMeter } from '@/components/ui/confidence-meter'
+import { enterFade } from '@/lib/motion'
 import { focusRing, interactive, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -52,7 +53,7 @@ function RetrievalResults({
   return (
     <div
       data-slot="retrieval-results"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       <div className="border-border flex flex-wrap items-center gap-2 border-b p-3">

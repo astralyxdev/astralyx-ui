@@ -1,6 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { Database, TriangleAlert } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -63,7 +64,7 @@ function ReplicationStatus({
   return (
     <div
       data-slot="replication-status"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       <p className="border-border bg-muted/40 text-muted-foreground/70 border-b px-4 py-2 text-[11px] font-medium tracking-[0.14em] uppercase">

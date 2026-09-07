@@ -2,6 +2,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { Check, TriangleAlert, X } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Sparkline } from '@/components/ui/sparkline'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -52,7 +53,7 @@ function HealthChecks({
   return (
     <div
       data-slot="health-checks"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       <ul className="list-none divide-y divide-[var(--border)]">

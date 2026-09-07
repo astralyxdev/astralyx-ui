@@ -1,4 +1,5 @@
 import type { ComponentProps } from 'react'
+import { useCountUp } from '@/lib/motion'
 
 /**
  * One component for every formatted value: dates, numbers, currency, bytes,
@@ -150,6 +151,19 @@ type FmtProps = Omit<ComponentProps<'span'>, 'children'> & {
   now?: Date
   /** Line up in a column. On by default for every numeric type. */
   tabular?: boolean
+  /**
+   * Count to the value instead of printing it.
+   *
+   * Off by default, and meant to stay that way for most call sites: a table of
+   * forty figures that all count at once is noise, and the reader is scanning
+   * the column rather than watching any one cell. Turn it on where the number
+   * *is* the content — the headline on a card, the total on a summary, a figure
+   * that changes while you watch it.
+   *
+   * Ignored for `date` and `relative`, which have nothing to count through, and
+   * for a value that is not a finite number.
+   */
+  animate?: boolean
 }
 
 const DATE_STYLES = new Set(['short', 'medium', 'long', 'full'])
@@ -164,11 +178,29 @@ function Fmt({
   grouping = true,
   now,
   tabular,
+  animate = false,
   className,
   ...props
 }: FmtProps) {
   // Every type except a formatted date is a number in a column.
   const numeric = type !== 'date'
+
+  // The tween runs on the raw value and the formatter runs on the tween's
+  // output, so grouping, currency symbols and unit suffixes are re-derived
+  // every frame. Formatting the final value and interpolating the string
+  // instead would give you "1,2Y4" somewhere in the middle.
+  //
+  // Percentages ask for more precision than they print: `0.42` written with no
+  // decimals still has to pass through 0.13 and 0.28 on the way, and rounding
+  // the tween to the *displayed* two places would make it climb in visible
+  // steps of one per cent.
+  const raw = typeof value === 'number' ? value : Number(value)
+  const counting = animate && numeric && type !== 'relative' && Number.isFinite(raw)
+  const counted = useCountUp(raw, {
+    disabled: !counting,
+    ...(type === 'percent' && { decimals: 6 }),
+  })
+  const shown = counting ? counted : value
   const date =
     value instanceof Date ? value : type === 'date' || type === 'relative' ? new Date(value) : undefined
 
@@ -211,7 +243,7 @@ function Fmt({
           minimumFractionDigits: decimals,
           maximumFractionDigits: decimals,
         }),
-      }).format(Number(value))
+      }).format(Number(shown))
       break
     }
 
@@ -221,16 +253,16 @@ function Fmt({
         useGrouping: grouping,
         minimumFractionDigits: decimals ?? 0,
         maximumFractionDigits: decimals ?? 0,
-      }).format(Number(value))
+      }).format(Number(shown))
       break
     }
 
     case 'bytes':
-      text = formatBytes(Number(value), decimals, locale)
+      text = formatBytes(Number(shown), decimals, locale)
       break
 
     case 'duration':
-      text = formatDuration(Number(value))
+      text = formatDuration(Number(shown))
       break
 
     default: {
@@ -240,7 +272,7 @@ function Fmt({
           minimumFractionDigits: decimals,
           maximumFractionDigits: decimals,
         }),
-      }).format(Number(value))
+      }).format(Number(shown))
     }
   }
 

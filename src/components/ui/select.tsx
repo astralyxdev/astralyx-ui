@@ -9,6 +9,7 @@ import {
 import { Check, ChevronDown, ChevronRight } from 'lucide-react'
 import { useDismissable } from '@/components/primitives/dismissable'
 import { usePopper, type Side } from '@/components/primitives/popper'
+import { overlayIn } from '@/lib/motion'
 import {
   fieldBase,
   fieldSize,
@@ -125,7 +126,7 @@ function Select({
   const triggerRef = useRef<HTMLButtonElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
 
-  const { style } = usePopper({
+  const { style, side: resolvedSide } = usePopper({
     open,
     anchorRef: triggerRef,
     floatingRef: panelRef,
@@ -204,6 +205,7 @@ function Select({
             setOpen(false)
             triggerRef.current?.focus()
           }}
+          side={resolvedSide}
           style={style}
           autoFocus
         />
@@ -225,6 +227,7 @@ function OptionList({
   onChoose,
   onClose,
   style,
+  side,
   autoFocus = false,
   labelledBy,
   emptyMessage,
@@ -235,6 +238,7 @@ function OptionList({
   onChoose: (value: string) => void
   onClose: () => void
   style?: React.CSSProperties
+  side?: Side
   autoFocus?: boolean
   labelledBy?: string
   emptyMessage?: ReactNode
@@ -335,8 +339,9 @@ function OptionList({
       tabIndex={-1}
       aria-labelledby={labelledBy}
       onKeyDown={onKeyDown}
+      data-side={side}
       style={style}
-      className={cn(menuSurface, radius.surface, 'max-h-60 min-w-44 outline-none')}
+      className={cn(overlayIn, menuSurface, radius.surface, 'max-h-60 min-w-44 outline-none')}
     >
       {options.map((option, index) => (
         <OptionRow
@@ -401,7 +406,7 @@ function OptionRow({
   const rowRef = useRef<HTMLDivElement>(null)
   const subRef = useRef<HTMLDivElement>(null)
 
-  const { style } = usePopper({
+  const { style, side: resolvedSubSide } = usePopper({
     open: subOpen,
     anchorRef: rowRef,
     floatingRef: subRef,
@@ -444,6 +449,7 @@ function OptionRow({
           value={value}
           onChoose={onChoose}
           onClose={onCloseSub}
+          side={resolvedSubSide}
           style={style}
           autoFocus
         />

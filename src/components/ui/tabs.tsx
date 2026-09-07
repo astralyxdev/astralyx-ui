@@ -1,6 +1,7 @@
 import type { ComponentProps } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { TabsProvider, tabIds, useTabs } from '@/components/primitives/tabs'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -163,7 +164,7 @@ function TabsContent({
       data-slot="tabs-content"
       aria-labelledby={ids.trigger}
       tabIndex={0}
-      className={cn('outline-none', className)}
+      className={cn(enterFade, 'outline-none', className)}
       {...props}
     />
   )

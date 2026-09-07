@@ -1,6 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { ConfidenceMeter } from '@/components/ui/confidence-meter'
 import { Tree, type TreeNode } from '@/components/ui/tree'
+import { enterFade } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -60,7 +61,7 @@ function RootCauseTree({
   const nodes = toTreeNodes(causes)
 
   return (
-    <div data-slot="root-cause-tree" className={cn('min-w-0', className)} {...props}>
+    <div data-slot="root-cause-tree" className={cn(enterFade, 'min-w-0', className)} {...props}>
       <Tree
         nodes={nodes}
         defaultExpanded={defaultExpanded ?? causes.map((cause) => cause.id)}

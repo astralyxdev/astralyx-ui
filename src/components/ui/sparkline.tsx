@@ -1,4 +1,5 @@
 import type { ComponentProps } from 'react'
+import { enterFade, growIn } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -61,7 +62,7 @@ function Sparkline({
       role="img"
       aria-hidden="true"
       data-slot="sparkline"
-      className={cn('h-8 w-full', className)}
+      className={cn(enterFade, growIn, 'h-8 w-full', className)}
       {...props}
     >
       {variant === 'bar' ? (

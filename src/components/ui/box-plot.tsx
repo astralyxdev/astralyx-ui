@@ -1,4 +1,5 @@
 import { useId, useMemo, type ComponentProps } from 'react'
+import { enterFade } from '@/lib/motion'
 import { dataPalette } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -147,7 +148,7 @@ function BoxPlot({
   return (
     <figure
       data-slot="box-plot"
-      className={cn('flex flex-col gap-3', className)}
+      className={cn(enterFade, 'flex flex-col gap-3', className)}
       aria-labelledby={titleId}
       {...props}
     >

@@ -280,7 +280,7 @@ export const backToTopEntry: ComponentEntry = {
   label: 'Back To Top',
   isNew: true,
   description:
-    'Appears once you have scrolled, driven by an IntersectionObserver sentinel rather than a scroll handler — and it moves focus, not just the viewport.',
+    'Appears once you have scrolled the nearest scrolling ancestor — which it finds itself — and it moves focus, not just the viewport.',
   usage: `import { BackToTop } from '@/components/ui/back-to-top'
 
 <BackToTop showAfter={400}>Top</BackToTop>`,
@@ -298,11 +298,13 @@ export const backToTopEntry: ComponentEntry = {
     code: (state) => `<BackToTop showAfter={${Number(state.showAfter) || 400}}>Back to top</BackToTop>`,
   },
   api: [
-    { name: 'visibility', type: 'a sentinel', description: 'An IntersectionObserver fires twice for the life of the page; a scroll listener runs every frame of every scroll on the main thread to compute a boolean.' },
+    { name: 'visibility', type: 'scroll offset', description: 'A passive scroll listener, coalesced to one read per frame and setting state only when the answer changes. The obvious alternative — an IntersectionObserver on an absolutely positioned sentinel — is cheaper and wrong: the sentinel resolves against the nearest positioned ancestor, so a button rendered at the foot of a page measures the card it sits in and never appears.' },
+    { name: 'scroller', type: 'found, not assumed', description: 'Walks up to the first ancestor that actually scrolls, so it works in a document-scrolling app and in one whose page is a scrolling main beside a fixed rail. `targetRef` overrides the search.' },
     { name: 'prefers-reduced-motion', type: 'honoured', description: 'Smooth-scrolling a long page is exactly the large-field motion that triggers vestibular symptoms, so it drops to an instant jump. `scroll-behavior: smooth` with no media query is the common bug.' },
     { name: 'focus', type: 'follows the scroll', description: 'Moving the viewport without moving focus leaves the next Tab at the bottom of the page you just left.' },
     { name: 'tabIndex', type: '-1 while hidden', description: 'A focusable control nobody can see is a trap.' },
-    { name: 'targetRef', type: 'RefObject', description: 'Scroll a container instead of the window.' },
+    { name: 'targetRef', type: 'RefObject', description: 'Name the scrolling element instead of letting it be found.' },
+    { name: 'showAfter', type: 'number', default: '400', description: 'Pixels of scroll before it appears. `0` shows it straight away.' },
   ],
   demos: [
     {

@@ -1,5 +1,6 @@
 import { useMemo, useState, type ComponentProps } from 'react'
 import { Badge } from '@/components/ui/badge'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -119,7 +120,7 @@ function StreamInspector({
   return (
     <div
       data-slot="stream-inspector"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       <div className="border-border bg-muted/40 flex flex-wrap items-center gap-2 border-b px-4 py-2">

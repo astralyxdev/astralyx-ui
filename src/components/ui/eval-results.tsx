@@ -1,5 +1,6 @@
 import { useMemo, type ComponentProps, type ReactNode } from 'react'
 import { Minus, TrendingDown, TrendingUp } from 'lucide-react'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -84,7 +85,7 @@ function EvalResults({
   return (
     <div
       data-slot="eval-results"
-      className={cn(surface, radius.surface, 'w-full overflow-x-auto', className)}
+      className={cn(enterFade, surface, radius.surface, 'w-full overflow-x-auto', className)}
       {...props}
     >
       <table className="w-full text-sm">

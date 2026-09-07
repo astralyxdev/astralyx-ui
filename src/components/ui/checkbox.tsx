@@ -22,8 +22,14 @@ const boxVariants = cva(
     '[&_svg]:pointer-events-none',
     // `peer-*` only reaches siblings of the input, and the tick is a descendant
     // of the box — so the box carries the variant and targets the svg itself.
-    '[&_svg]:opacity-0',
-    'peer-checked:[&_svg]:opacity-100 peer-indeterminate:[&_svg]:opacity-100',
+    // The mark scales up as it fades in, so a tick reads as being *made*
+    // rather than switched on. 90% and 120ms: any further or any slower and it
+    // becomes something you wait for on a form with twenty of them.
+    '[&_svg]:scale-90 [&_svg]:opacity-0',
+    '[&_svg]:transition-[opacity,scale,transform] [&_svg]:duration-[120ms] [&_svg]:ease-out',
+    'motion-reduce:[&_svg]:transition-none',
+    'peer-checked:[&_svg]:scale-100 peer-checked:[&_svg]:opacity-100',
+    'peer-indeterminate:[&_svg]:scale-100 peer-indeterminate:[&_svg]:opacity-100',
   ].join(' '),
   {
     variants: {

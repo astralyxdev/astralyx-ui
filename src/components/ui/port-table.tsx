@@ -1,6 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { Globe, Lock, TriangleAlert } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -82,7 +83,7 @@ function PortTable({
   return (
     <div
       data-slot="port-table"
-      className={cn(surface, radius.surface, 'flex flex-col overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col overflow-hidden', className)}
       {...props}
     >
       <div className="grid grid-cols-[6rem_minmax(0,1fr)_minmax(0,1fr)_auto]">

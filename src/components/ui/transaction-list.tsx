@@ -2,6 +2,7 @@ import { useMemo, type ComponentProps, type ReactNode } from 'react'
 import { ArrowDownLeft, ArrowUpRight, ExternalLink, RefreshCw, TriangleAlert } from 'lucide-react'
 import { Fmt } from '@/components/ui/fmt'
 import { WalletAddress } from '@/components/ui/wallet-address'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -78,7 +79,7 @@ function TransactionList({
   return (
     <div
       data-slot="transaction-list"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       {transactions.length === 0 ? (

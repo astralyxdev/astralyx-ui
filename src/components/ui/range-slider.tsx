@@ -42,6 +42,24 @@ type RangeValue = [number, number]
  */
 const DEFAULT_FORMAT_VALUE: (value: number) => string = (value: number) => String(value)
 
+/**
+ * The follow: a thumb that trails the pointer instead of being welded to it.
+ *
+ * A pointer drag emits far more moves than the screen has frames, so without a
+ * transition the thumb is simply wherever the last event put it. 130ms of
+ * ease-out gives the travel a little weight, and because the transition
+ * retargets from wherever it currently is, a fast drag never overshoots — it
+ * just arrives a fraction behind. Matches `.slider-shell` in `index.css`, so a
+ * range slider and a plain one feel identical.
+ *
+ * Colours ride the same declaration rather than a second `transition-colors`:
+ * that is one merge group, and a second class would silently replace this one.
+ */
+const FOLLOW = [
+  'transition-[left,width,color,background-color,border-color] duration-[130ms] ease-out',
+  'motion-reduce:transition-none',
+].join(' ')
+
 function RangeSlider({
   min = 0,
   max = 100,
@@ -194,7 +212,10 @@ function RangeSlider({
       >
         <div className="bg-secondary absolute inset-x-0 top-1/2 h-[var(--slider-track)] -translate-y-1/2 rounded-full [corner-shape:round]" />
         <div
-          className="bg-primary absolute top-1/2 h-[var(--slider-track)] -translate-y-1/2 rounded-full [corner-shape:round]"
+          className={cn(
+            'bg-primary absolute top-1/2 h-[var(--slider-track)] -translate-y-1/2 rounded-full [corner-shape:round]',
+            FOLLOW,
+          )}
           style={{ left: `${percent(low)}%`, width: `${percent(high) - percent(low)}%` }}
         />
 
@@ -218,7 +239,7 @@ function RangeSlider({
             style={{ left: `${percent(value[index])}%` }}
             className={cn(
               'border-primary bg-background absolute top-1/2 size-[var(--slider-thumb)] -translate-x-1/2 -translate-y-1/2 rounded-full border-2 [corner-shape:round]',
-              'transition-colors duration-150 ease-out motion-reduce:transition-none',
+              FOLLOW,
               focusRing,
               !disabled && 'hover:bg-secondary cursor-grab active:cursor-grabbing',
             )}

@@ -1,6 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { UptimeStrip, type UptimeBucket } from '@/components/ui/uptime-strip'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -53,7 +54,7 @@ function ServiceStatus({
   return (
     <div
       data-slot="service-status"
-      className={cn('flex flex-col gap-3', className)}
+      className={cn(enterFade, 'flex flex-col gap-3', className)}
       {...props}
     >
       {showBanner && (

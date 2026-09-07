@@ -12,6 +12,7 @@ import { Check } from 'lucide-react'
 import { useDismissable } from '@/components/primitives/dismissable'
 import { usePopper, type Align, type Side } from '@/components/primitives/popper'
 import { Slot } from '@/components/primitives/slot'
+import { overlayIn } from '@/lib/motion'
 import { menuItem, menuSurface, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -176,7 +177,7 @@ function DropdownMenuContent({
           list[list.length - 1]?.focus()
         }
       }}
-      className={cn(menuSurface, radius.surface, 'min-w-48', className)}
+      className={cn(overlayIn, menuSurface, radius.surface, 'min-w-48', className)}
       {...props}
     />
   )

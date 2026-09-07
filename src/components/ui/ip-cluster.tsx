@@ -1,6 +1,7 @@
 import { useMemo, type ComponentProps, type ReactNode } from 'react'
 import { Globe, Monitor, User } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -69,7 +70,7 @@ function IpCluster({
   )
 
   return (
-    <div data-slot="ip-cluster" className={cn('flex flex-col gap-3', className)} {...props}>
+    <div data-slot="ip-cluster" className={cn(enterFade, 'flex flex-col gap-3', className)} {...props}>
       {sorted.map((cluster) => {
         const Icon = KIND_ICON[cluster.kind ?? 'ip']
         const network = cluster.network ? NETWORK_TONE[cluster.network] : undefined

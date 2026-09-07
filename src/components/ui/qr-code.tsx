@@ -1,5 +1,6 @@
 import { useId, useMemo, type ComponentProps } from 'react'
 import { encodeQr, type EccLevel } from '@/lib/qr'
+import { enterFade } from '@/lib/motion'
 import { radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -122,7 +123,7 @@ function QrCode({
       // `crispEdges` keeps module boundaries on pixel lines; antialiasing them
       // blurs the edges a scanner is looking for.
       shapeRendering="crispEdges"
-      className={cn('shrink-0', radius.xs, className)}
+      className={cn(enterFade, 'shrink-0', radius.xs, className)}
       {...props}
     >
       <title id={titleId}>{label}</title>

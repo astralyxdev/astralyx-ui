@@ -3,6 +3,7 @@ import { AlertTriangle, Clock, User } from 'lucide-react'
 import { Avatar } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -67,6 +68,7 @@ function IncidentCard({
       data-slot="incident-card"
       data-severity={severity}
       className={cn(
+        enterFade,
         surface,
         radius.surface,
         'relative overflow-hidden ps-4',

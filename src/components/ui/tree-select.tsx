@@ -4,6 +4,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { useDismissable } from '@/components/primitives/dismissable'
 import { usePopper } from '@/components/primitives/popper'
+import { overlayIn } from '@/lib/motion'
 import { fieldBase, fieldOutline, fieldSize, focusRing, menuSurface, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -191,7 +192,7 @@ function TreeSelect({
   const selected = value ?? internal
   const chosen = useMemo(() => new Set(selected), [selected])
 
-  const { style } = usePopper({
+  const { style, side: resolvedSide } = usePopper({
     open,
     anchorRef,
     floatingRef,
@@ -256,8 +257,9 @@ function TreeSelect({
       {open && (
         <div
           ref={floatingRef}
+          data-side={resolvedSide}
           style={style}
-          className={cn(menuSurface, radius.surface, 'flex max-h-80 flex-col overflow-hidden p-0')}
+          className={cn(overlayIn, menuSurface, radius.surface, 'flex max-h-80 flex-col overflow-hidden p-0')}
         >
           {searchable && (
             <div className="border-border border-b p-2">

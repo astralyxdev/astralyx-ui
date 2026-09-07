@@ -3,6 +3,7 @@ import { Clock, MessageSquare, TriangleAlert } from 'lucide-react'
 import { Avatar } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -100,6 +101,7 @@ function TicketCard({
       data-slot="ticket-card"
       data-status={status}
       className={cn(
+        enterFade,
         surface,
         radius.surface,
         'relative flex flex-col gap-2 overflow-hidden p-4 ps-5',

@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { NumberInput } from '@/components/ui/number-input'
 import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -99,7 +100,7 @@ function MintPanel({
   return (
     <div
       data-slot="mint-panel"
-      className={cn(surface, radius.surface, 'flex flex-col gap-4 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-4 p-4', className)}
       {...props}
     >
       {title && (

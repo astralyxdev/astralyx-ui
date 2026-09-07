@@ -1,6 +1,7 @@
 import { useState, type ComponentProps, type ReactNode } from 'react'
 import { ChevronRight } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -202,7 +203,7 @@ function ToolSchema({
   return (
     <div
       data-slot="tool-schema"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       {(name || description) && (

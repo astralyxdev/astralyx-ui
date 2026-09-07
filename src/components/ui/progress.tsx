@@ -1,5 +1,6 @@
 import type { ComponentProps } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
+import { useCountUp, useGrowIn } from '@/lib/motion'
 import { colorSet, tintStyle } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -43,6 +44,10 @@ function Progress({
 }: ProgressProps) {
   const indeterminate = value === undefined
   const clamped = indeterminate ? 0 : Math.min(100, Math.max(0, value))
+  // The fill grows in from empty on mount and transitions on every change
+  // after; the label counts to the same place over the same 300ms.
+  const drawn = useGrowIn(clamped)
+  const counted = useCountUp(clamped, { duration: 300, decimals: 0 })
 
   const track = (
     <div
@@ -63,7 +68,7 @@ function Progress({
             ? 'w-2/5 animate-[progress-indeterminate_1.4s_ease-in-out_infinite] motion-reduce:w-full motion-reduce:animate-none motion-reduce:opacity-50'
             : 'transition-[width] duration-300 ease-out motion-reduce:transition-none',
         )}
-        style={indeterminate ? undefined : { width: `${clamped}%` }}
+        style={indeterminate ? undefined : { width: `${drawn}%` }}
       />
     </div>
   )
@@ -74,7 +79,7 @@ function Progress({
     <div className="flex w-full items-center gap-3">
       {track}
       <span className="text-muted-foreground w-9 shrink-0 text-right font-mono text-xs tabular-nums">
-        {indeterminate ? '—' : `${Math.round(clamped)}%`}
+        {indeterminate ? '—' : `${Math.round(counted)}%`}
       </span>
     </div>
   )

@@ -1,5 +1,6 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { ArrowDown, ArrowUp } from 'lucide-react'
+import { enterFade } from '@/lib/motion'
 import { focusRing, interactive, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -80,6 +81,7 @@ function OddsDisplay({
       disabled={suspended}
       onClick={onSelect}
       className={cn(
+        enterFade,
         'flex min-w-20 flex-col items-center gap-0.5 px-3 py-2',
         radius.control,
         interactive,

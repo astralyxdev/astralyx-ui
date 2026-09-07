@@ -3,6 +3,7 @@ import { Check, Pipette, X } from 'lucide-react'
 import { useDismissable } from '@/components/primitives/dismissable'
 import { usePopper } from '@/components/primitives/popper'
 import { readableInk } from '@/components/ui/label-picker'
+import { overlayIn } from '@/lib/motion'
 import {
   fieldBase,
   fieldInput,
@@ -100,7 +101,7 @@ function ColorPicker({
   const triggerRef = useRef<HTMLButtonElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
 
-  const { style } = usePopper({
+  const { style, side: resolvedSide } = usePopper({
     open,
     anchorRef: triggerRef,
     floatingRef: panelRef,
@@ -193,10 +194,11 @@ function ColorPicker({
       {open && (
         <div
           ref={panelRef}
+          data-side={resolvedSide}
           style={style}
           role="dialog"
           aria-label={chooseLabel}
-          className={cn(menuSurface, radius.surface, 'w-60 p-2')}
+          className={cn(overlayIn, menuSurface, radius.surface, 'w-60 p-2')}
         >
           <div className="grid grid-cols-5 gap-1.5">
             {swatches.map((swatch) => {

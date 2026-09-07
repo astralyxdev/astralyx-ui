@@ -9,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { enterFade } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -63,7 +64,7 @@ function RevenueShareTable({
   const over = remainder < -0.0001
 
   return (
-    <div data-slot="revenue-share-table" className={cn('flex flex-col gap-2', className)} {...props}>
+    <div data-slot="revenue-share-table" className={cn(enterFade, 'flex flex-col gap-2', className)} {...props}>
       <Table>
         <TableHeader>
           <TableRow>

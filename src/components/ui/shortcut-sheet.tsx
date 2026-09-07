@@ -1,5 +1,6 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { Kbd } from '@/components/ui/kbd'
+import { enterFade } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -37,6 +38,7 @@ function ShortcutSheet({
     <div
       data-slot="shortcut-sheet"
       className={cn(
+        enterFade,
         'grid gap-x-8 gap-y-6',
         columns && 'sm:grid-cols-2',
         className,

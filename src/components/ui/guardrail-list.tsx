@@ -1,6 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { CircleAlert, CircleCheck, CircleSlash, CircleX, Clock } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -99,7 +100,7 @@ function GuardrailList({
   return (
     <div
       data-slot="guardrail-list"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       {summary && (

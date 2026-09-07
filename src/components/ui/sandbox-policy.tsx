@@ -2,6 +2,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { Ban, FolderTree, Globe, ShieldCheck, Terminal, TriangleAlert } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -94,7 +95,7 @@ function SandboxPolicy({
     <ul
       data-slot="sandbox-policy"
       aria-label={label}
-      className={cn(surface, radius.surface, 'divide-border list-none divide-y overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'divide-border list-none divide-y overflow-hidden', className)}
       {...(props as ComponentProps<'ul'>)}
     >
       {scopes.map((scope) => {

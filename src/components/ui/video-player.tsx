@@ -15,6 +15,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -136,7 +137,7 @@ function VideoPlayer({
   return (
     <div
       data-slot="video-player"
-      className={cn('bg-[var(--sidebar)] relative overflow-hidden', radius.surface, className)}
+      className={cn(enterFade, 'bg-[var(--sidebar)] relative overflow-hidden', radius.surface, className)}
       {...props}
     >
       <video

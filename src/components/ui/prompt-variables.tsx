@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge'
 import { Field, FieldLabel, useFieldControl } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -100,7 +101,7 @@ function PromptVariables({
   return (
     <div
       data-slot="prompt-variables"
-      className={cn('grid gap-3 lg:grid-cols-2', className)}
+      className={cn(enterFade, 'grid gap-3 lg:grid-cols-2', className)}
       {...props}
     >
       <div className={cn(surface, radius.surface, 'flex flex-col gap-3.5 p-4')}>

@@ -14,9 +14,10 @@ import { cn } from '@/lib/utils'
 /**
  * Every variant reads the `--ui-*` set, so `color` restyles all of them at once.
  *
- * Press is colour only, like hover, and it lands instantly: `active:duration-0`
- * skips the transition on the way down so the button answers the click, while
- * the release still eases back. Nothing moves, resizes or gains elevation.
+ * Press lands instantly: `active:duration-0` skips the transition on the way
+ * down so the button answers the click, while the release eases back. Colour
+ * carries most of it; `pressable` adds 3% of scale, which is a transform and so
+ * costs no layout and cannot reflow the row it sits in.
  */
 const SOLID = 'bg-[var(--ui)] text-[var(--ui-fg)] hover:bg-[var(--ui-hover)]'
 const SOFT = 'bg-[var(--ui-soft)] text-[var(--ui-soft-fg)] hover:bg-[var(--ui-soft-hover)]'

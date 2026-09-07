@@ -1,5 +1,6 @@
 import { useId, useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { ChevronDown, ChevronRight } from 'lucide-react'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -267,7 +268,7 @@ function OrgChart({
   return (
     <div
       data-slot="org-chart"
-      className={cn('w-full overflow-x-auto', className)}
+      className={cn(enterFade, 'w-full overflow-x-auto', className)}
       aria-labelledby={titleId}
       {...props}
     >

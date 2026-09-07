@@ -2,6 +2,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { Globe, Lock, TriangleAlert } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { formatBytes } from '@/components/ui/storage-usage'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -68,7 +69,7 @@ function BucketList({
     <ul
       data-slot="bucket-list"
       aria-label={label}
-      className={cn(surface, radius.surface, 'divide-border list-none divide-y overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'divide-border list-none divide-y overflow-hidden', className)}
       {...(props as ComponentProps<'ul'>)}
     >
       {buckets.map((bucket) => {

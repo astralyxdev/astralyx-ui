@@ -10,6 +10,7 @@ import {
 import { useDismissable } from '@/components/primitives/dismissable'
 import { usePopper, type Align, type Side } from '@/components/primitives/popper'
 import { Slot } from '@/components/primitives/slot'
+import { overlayIn } from '@/lib/motion'
 import { menuSurface, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -125,7 +126,7 @@ function PopoverContent({
       data-slot="popover-content"
       data-side={resolved}
       style={style}
-      className={cn(menuSurface, radius.surface, 'w-72 p-4 text-sm', className)}
+      className={cn(overlayIn, menuSurface, radius.surface, 'w-72 p-4 text-sm', className)}
       {...props}
     />
   )

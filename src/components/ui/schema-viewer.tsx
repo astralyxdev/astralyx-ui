@@ -1,6 +1,7 @@
 import { useState, type ComponentProps, type ReactNode } from 'react'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { enterFade } from '@/lib/motion'
 import { focusRing, interactive, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -79,7 +80,7 @@ function SchemaViewer({
   return (
     <div
       data-slot="schema-viewer"
-      className={cn(surface, radius.surface, 'overflow-hidden p-2', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden p-2', className)}
       {...props}
     >
       <Node

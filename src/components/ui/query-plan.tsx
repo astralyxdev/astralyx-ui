@@ -2,6 +2,7 @@ import { useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { ChevronDown, ChevronRight, TriangleAlert } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade, growIn } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -96,7 +97,7 @@ function QueryPlan({
   return (
     <div
       data-slot="query-plan"
-      className={cn(surface, radius.surface, 'flex flex-col overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col overflow-hidden', className)}
       {...props}
     >
       <ul className="divide-border/60 list-none divide-y">
@@ -173,7 +174,7 @@ function QueryPlan({
                 {peakSelf > 0 && (
                   <span className="mt-1 hidden h-1.5 w-24 shrink-0 overflow-hidden rounded-full bg-[var(--secondary)] sm:block">
                     <span
-                      className="block h-full"
+                      className={cn(growIn, 'block h-full')}
                       style={{
                         width: `${(self / peakSelf) * 100}%`,
                         background: misestimated ? 'var(--destructive)' : 'var(--blue)',

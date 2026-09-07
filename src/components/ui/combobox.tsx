@@ -8,6 +8,7 @@ import {
 import { Check, ChevronsUpDown, Search } from 'lucide-react'
 import { useDismissable } from '@/components/primitives/dismissable'
 import { usePopper } from '@/components/primitives/popper'
+import { overlayIn } from '@/lib/motion'
 import {
   fieldBase,
   fieldInput,
@@ -89,7 +90,7 @@ function Combobox({
     )
   }, [options, query])
 
-  const { style } = usePopper({
+  const { style, side: resolvedSide } = usePopper({
     open,
     anchorRef: triggerRef,
     floatingRef: panelRef,
@@ -160,8 +161,9 @@ function Combobox({
       {open && (
         <div
           ref={panelRef}
+          data-side={resolvedSide}
           style={style}
-          className={cn(menuSurface, radius.surface, 'p-0')}
+          className={cn(overlayIn, menuSurface, radius.surface, 'p-0')}
         >
           <div className="border-border flex items-center gap-2 border-b px-3">
             <Search className="text-muted-foreground size-3.5 shrink-0" />

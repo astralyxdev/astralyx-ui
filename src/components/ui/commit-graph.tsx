@@ -1,6 +1,7 @@
 import { useMemo, type ComponentProps, type ReactNode } from 'react'
 import { Avatar } from '@/components/ui/avatar'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -103,7 +104,7 @@ function CommitGraph({
   return (
     <div
       data-slot="commit-graph"
-      className={cn('flex flex-col', className)}
+      className={cn(enterFade, 'flex flex-col', className)}
       {...props}
     >
       {rows.map((row, index) => {

@@ -1,5 +1,6 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
+import { enterFade } from '@/lib/motion'
 import { colorSet, radius, tintStyle, type ColorSet } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -57,7 +58,7 @@ function Alert({
       // A destructive message interrupts; anything else waits its turn.
       role={color === 'destructive' ? 'alert' : 'status'}
       data-slot="alert"
-      className={cn(alertVariants({ variant, color, size }), radius.surface, className)}
+      className={cn(enterFade, alertVariants({ variant, color, size }), radius.surface, className)}
       style={tint ? { ...tintStyle(tint), ...style } : style}
       {...props}
     >

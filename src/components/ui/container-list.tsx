@@ -3,6 +3,7 @@ import { Box, Play, RotateCcw, Square } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -97,7 +98,7 @@ function ContainerList({
   return (
     <ul
       data-slot="container-list"
-      className={cn(surface, radius.surface, 'divide-border list-none divide-y', className)}
+      className={cn(enterFade, surface, radius.surface, 'divide-border list-none divide-y', className)}
       {...(props as ComponentProps<'ul'>)}
     >
       {containers.map((container) => {

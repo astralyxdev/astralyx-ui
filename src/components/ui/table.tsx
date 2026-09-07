@@ -1,4 +1,5 @@
 import type { ComponentProps } from 'react'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -25,7 +26,7 @@ function Table({
     >
       <table
         data-slot="table"
-        className={cn('w-full caption-bottom text-sm', className)}
+        className={cn(enterFade, 'w-full caption-bottom text-sm', className)}
         {...props}
       />
     </div>

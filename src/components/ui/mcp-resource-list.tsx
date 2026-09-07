@@ -3,6 +3,7 @@ import { File, FileJson, FileText, Image as ImageIcon, Search } from 'lucide-rea
 import { Badge } from '@/components/ui/badge'
 import { Empty } from '@/components/ui/empty'
 import { Input } from '@/components/ui/input'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -106,7 +107,7 @@ function McpResourceList({
   }
 
   return (
-    <div data-slot="mcp-resource-list" className={cn('flex flex-col gap-3', className)} {...props}>
+    <div data-slot="mcp-resource-list" className={cn(enterFade, 'flex flex-col gap-3', className)} {...props}>
       {searchable && (
         <Input
           size="sm"

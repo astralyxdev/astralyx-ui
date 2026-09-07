@@ -9,6 +9,7 @@ import {
 } from 'react'
 import { Pause, Play, SkipBack, SkipForward, Volume2, VolumeX } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -154,7 +155,7 @@ function AudioPlayer({
     <div
       data-slot="audio-player"
       data-playing={playing || undefined}
-      className={cn(surface, radius.surface, 'flex items-center gap-4 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex items-center gap-4 p-4', className)}
       {...props}
     >
       {/* The real element. Hidden, never removed — it is what actually plays. */}

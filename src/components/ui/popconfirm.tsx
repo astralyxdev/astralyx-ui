@@ -12,6 +12,7 @@ import { AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useDismissable } from '@/components/primitives/dismissable'
 import { usePopper } from '@/components/primitives/popper'
+import { overlayIn } from '@/lib/motion'
 import { menuSurface, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -91,7 +92,7 @@ function Popconfirm({
     if (!next) anchorRef.current?.focus()
   }
 
-  const { style } = usePopper({ open, anchorRef, floatingRef, side, align: 'center', offset: 8 })
+  const { style, side: resolvedSide } = usePopper({ open, anchorRef, floatingRef, side, align: 'center', offset: 8 })
   useDismissable({
     open,
     onDismiss: () => {
@@ -128,8 +129,9 @@ function Popconfirm({
           aria-modal="false"
           aria-labelledby={`${scope}-title`}
           aria-describedby={description ? `${scope}-description` : undefined}
+          data-side={resolvedSide}
           style={style}
-          className={cn(menuSurface, radius.surface, 'w-64 p-3', className)}
+          className={cn(overlayIn, menuSurface, radius.surface, 'w-64 p-3', className)}
           {...props}
         >
           <div className="flex gap-2.5">

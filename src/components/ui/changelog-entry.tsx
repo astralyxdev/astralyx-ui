@@ -1,6 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -68,7 +69,7 @@ function ChangelogEntry({
   return (
     <article
       data-slot="changelog-entry"
-      className={cn(surface, radius.surface, 'flex flex-col gap-3 p-4', yanked && 'opacity-70', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-3 p-4', yanked && 'opacity-70', className)}
       {...props}
     >
       <header className="flex flex-wrap items-baseline gap-2">

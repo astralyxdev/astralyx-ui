@@ -3,6 +3,7 @@ import { Search } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
+import { enterFade } from '@/lib/motion'
 import { radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -137,7 +138,7 @@ function LogViewer({
   return (
     <div
       data-slot="log-viewer"
-      className={cn('border-border overflow-hidden border', radius.surface, className)}
+      className={cn(enterFade, 'border-border overflow-hidden border', radius.surface, className)}
       {...props}
     >
       {(searchable || filterable) && (

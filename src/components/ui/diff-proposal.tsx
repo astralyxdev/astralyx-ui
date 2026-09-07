@@ -2,6 +2,7 @@ import { useState, type ComponentProps, type ReactNode } from 'react'
 import { Check, Sparkles, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DiffView, type DiffFile } from '@/components/ui/diff-view'
+import { enterFade } from '@/lib/motion'
 import { radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -59,6 +60,7 @@ function DiffProposal({
       data-slot="diff-proposal"
       data-decision={decision}
       className={cn(
+        enterFade,
         'border-border overflow-hidden border',
         radius.surface,
         decision && 'opacity-80',

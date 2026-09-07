@@ -6,6 +6,7 @@ import {
   type ComponentProps,
   type ReactNode,
 } from 'react'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -96,7 +97,7 @@ function CompareSlider({
   return (
     <div
       data-slot="compare-slider"
-      className={cn('relative overflow-hidden select-none', surface, radius.surface, className)}
+      className={cn(enterFade, 'relative overflow-hidden select-none', surface, radius.surface, className)}
       style={{ aspectRatio: ratio }}
       {...props}
     >

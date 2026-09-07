@@ -3,6 +3,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade } from '@/lib/motion'
 import { radius, surface, type Responsive } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -61,6 +62,7 @@ function PricingTable({
     <div
       data-slot="pricing-table"
       className={cn(
+        enterFade,
         'grid gap-4',
         responsive === false ? 'grid-cols-3' : RESPONSIVE_COLUMNS[responsive],
         className,

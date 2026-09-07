@@ -1,6 +1,7 @@
 import { useId, useState, type ComponentProps, type ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import { enterRise } from '@/lib/motion'
 import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -120,6 +121,10 @@ function CookieConsent({
       aria-labelledby={`${scope}-title`}
       aria-describedby={`${scope}-description`}
       className={cn(
+        // A consent banner is the one panel that genuinely arrives: it was not
+        // there a moment ago, and sliding it up from the edge it is anchored to
+        // says so without stealing focus, which this deliberately never does.
+        enterRise,
         surface,
         radius.surface,
         'p-4 shadow-lg',

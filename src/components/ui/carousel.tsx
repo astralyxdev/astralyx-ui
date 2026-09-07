@@ -8,6 +8,7 @@ import {
 } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { enterFade } from '@/lib/motion'
 import { focusRing } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -93,7 +94,7 @@ function Carousel({
       aria-roledescription="carousel"
       aria-label={label}
       data-slot="carousel"
-      className={cn('relative w-full', className)}
+      className={cn(enterFade, 'relative w-full', className)}
       {...props}
     >
       <div

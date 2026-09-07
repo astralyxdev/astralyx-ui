@@ -2,6 +2,7 @@ import { useMemo, type ComponentProps, type ReactNode } from 'react'
 import { ArrowRight, TriangleAlert } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import type { JsonSchema } from '@/components/ui/tool-schema'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -157,6 +158,7 @@ function ToolDiff({
     <div
       data-slot="tool-diff"
       className={cn(
+        enterFade,
         surface,
         radius.surface,
         'overflow-hidden',

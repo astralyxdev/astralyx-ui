@@ -1,6 +1,7 @@
 import { useMemo, useState, type ComponentProps } from 'react'
 import { ArrowDownLeft, ArrowUpRight, Bell, ChevronRight, TriangleAlert } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -93,7 +94,7 @@ function RpcConsole({
   return (
     <div
       data-slot="rpc-console"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       {rows.length === 0 ? (

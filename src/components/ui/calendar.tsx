@@ -29,6 +29,7 @@ import {
   withTimeOf,
   type DateRange,
 } from '@/lib/date'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -271,7 +272,7 @@ function Calendar(props: CalendarProps) {
     <div
       data-slot="calendar"
       data-mode={props.mode ?? 'single'}
-      className={cn('w-fit select-none', className)}
+      className={cn(enterFade, 'w-fit select-none', className)}
       onPointerLeave={() => {
         if (!dragging.current) setHover(null)
       }}

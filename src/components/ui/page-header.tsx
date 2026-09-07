@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { enterFade } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -27,7 +28,7 @@ function PageHeader({
   className?: string
 }) {
   return (
-    <header className={cn('border-border mb-10 border-b pb-6', className)}>
+    <header className={cn(enterFade, 'border-border mb-10 border-b pb-6', className)}>
       {eyebrow && <div className="mb-2">{eyebrow}</div>}
       <h1 className="text-3xl font-semibold tracking-tight text-balance">
         {title}

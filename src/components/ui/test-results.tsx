@@ -3,6 +3,7 @@ import { Check, ChevronDown, ChevronRight, CircleSlash, X } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Fmt } from '@/components/ui/fmt'
 import { Spinner } from '@/components/ui/spinner'
+import { enterFade } from '@/lib/motion'
 import { focusRing, interactive, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -68,7 +69,7 @@ function TestResults({
   return (
     <div
       data-slot="test-results"
-      className={cn('border-border overflow-hidden border', radius.surface, className)}
+      className={cn(enterFade, 'border-border overflow-hidden border', radius.surface, className)}
       {...props}
     >
       <div className="border-border bg-muted/40 flex flex-wrap items-center gap-2 border-b p-3">

@@ -2,6 +2,7 @@ import { useState, type ComponentProps, type ReactNode } from 'react'
 import { ChevronRight, MessageSquareText } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -64,7 +65,7 @@ function McpPromptList({
   return (
     <ul
       data-slot="mcp-prompt-list"
-      className={cn(surface, radius.surface, 'divide-border list-none divide-y overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'divide-border list-none divide-y overflow-hidden', className)}
       {...props}
     >
       {prompts.map((prompt) => {

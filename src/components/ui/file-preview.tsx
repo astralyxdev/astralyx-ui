@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { CodeBlock } from '@/components/ui/code-block'
 import { Image } from '@/components/ui/image'
 import { formatBytes } from '@/components/ui/storage-usage'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -91,7 +92,7 @@ function FilePreview({
   return (
     <div
       data-slot="file-preview"
-      className={cn(surface, radius.surface, 'flex flex-col overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col overflow-hidden', className)}
       {...props}
     >
       <div className="border-border bg-muted/40 flex items-center gap-2.5 border-b px-4 py-2.5">

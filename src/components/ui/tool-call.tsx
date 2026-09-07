@@ -3,6 +3,7 @@ import { Check, ChevronDown, TriangleAlert, Wrench } from 'lucide-react'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { CodeBlock } from '@/components/ui/code-block'
 import { Spinner } from '@/components/ui/spinner'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -52,7 +53,7 @@ function ToolCall({
     <Collapsible
       // A failed call opens itself; the others stay out of the way.
       defaultOpen={defaultOpen ?? status === 'error'}
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       <CollapsibleTrigger showChevron={false} className="p-3">

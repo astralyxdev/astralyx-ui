@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ComponentProps, type ReactNode } from 'react'
 import { ArrowDown, ArrowUp } from 'lucide-react'
 import { Sparkline } from '@/components/ui/sparkline'
+import { enterFade } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -75,7 +76,7 @@ function PriceTicker({
   return (
     <div
       data-slot="price-ticker"
-      className={cn('flex min-w-0 items-center gap-3', className)}
+      className={cn(enterFade, 'flex min-w-0 items-center gap-3', className)}
       {...props}
     >
       {icon}

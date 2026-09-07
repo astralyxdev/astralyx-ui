@@ -6,6 +6,7 @@ import {
   type ReactNode,
 } from 'react'
 import { useDismissable } from '@/components/primitives/dismissable'
+import { enterPop } from '@/lib/motion'
 import { menuItem, menuSurface, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -76,7 +77,7 @@ function ContextMenu({
           role="menu"
           data-slot="context-menu"
           style={{ position: 'fixed', top: point.y, left: point.x }}
-          className={cn(menuSurface, radius.surface, 'min-w-48')}
+          className={cn(enterPop, menuSurface, radius.surface, 'min-w-48')}
         >
           {items.map((item) => (
             <div key={item.id}>

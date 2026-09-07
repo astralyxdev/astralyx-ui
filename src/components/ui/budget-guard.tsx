@@ -1,6 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { Ban, TriangleAlert } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { enterFade, growIn } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -57,7 +58,7 @@ function BudgetGuard({
   return (
     <div
       data-slot="budget-guard"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       <p className="border-border bg-muted/40 text-muted-foreground/70 border-b px-4 py-2 text-[11px] font-medium tracking-[0.14em] uppercase">
@@ -118,6 +119,7 @@ function BudgetGuard({
                         : warning
                           ? 'bg-[var(--amber-soft-foreground)]'
                           : 'bg-muted-foreground/50',
+                      growIn,
                     )}
                     style={{ width: `${Math.min(100, (budget.used / ceiling) * 100)}%` }}
                   />

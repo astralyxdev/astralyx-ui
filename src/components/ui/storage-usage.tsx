@@ -1,5 +1,6 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { TriangleAlert } from 'lucide-react'
+import { enterFade, growIn } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -76,7 +77,7 @@ function StorageUsage({
   return (
     <div
       data-slot="storage-usage"
-      className={cn(surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
       {...props}
     >
       <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -96,7 +97,7 @@ function StorageUsage({
         </p>
       </div>
 
-      <div className="bg-muted flex h-2.5 w-full overflow-hidden rounded-full">
+      <div className={cn(growIn, 'bg-muted flex h-2.5 w-full overflow-hidden rounded-full')}>
         {segments.map((segment, index) => (
           <span
             key={segment.id}

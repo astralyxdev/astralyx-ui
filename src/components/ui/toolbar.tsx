@@ -1,5 +1,6 @@
 import { useRef, type ComponentProps, type KeyboardEvent } from 'react'
 import { tabbableWithin } from '@/components/primitives/focus-trap'
+import { enterFade } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -59,6 +60,7 @@ function Toolbar({
       aria-orientation={orientation}
       onKeyDown={handleKeyDown}
       className={cn(
+        enterFade,
         'flex items-center gap-1',
         orientation === 'vertical' && 'flex-col items-stretch',
         className,

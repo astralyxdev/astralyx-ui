@@ -1,6 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { ExternalLink } from 'lucide-react'
 import { HoverCard } from '@/components/ui/hover-card'
+import { enterFade } from '@/lib/motion'
 import { focusRing, interactive, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -95,7 +96,7 @@ function Citations({
   return (
     <section
       data-slot="citations"
-      className={cn('flex flex-col gap-1.5', className)}
+      className={cn(enterFade, 'flex flex-col gap-1.5', className)}
       {...props}
     >
       <h3 className="text-muted-foreground text-xs font-medium tracking-wide uppercase">

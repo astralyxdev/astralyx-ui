@@ -3,6 +3,7 @@ import { RotateCcw, X } from 'lucide-react'
 import { AttachmentPreview, type Attachment } from '@/components/ui/attachment-preview'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -48,7 +49,7 @@ function UploadList({
   return (
     <div
       data-slot="upload-list"
-      className={cn(surface, radius.surface, 'flex flex-col gap-3 p-3', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-3 p-3', className)}
       {...props}
     >
       <div className="flex flex-col gap-1.5">

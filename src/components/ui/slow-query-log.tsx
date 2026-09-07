@@ -2,6 +2,7 @@ import { useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { ChevronRight, TriangleAlert } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { CodeBlock } from '@/components/ui/code-block'
+import { enterFade, growIn } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -80,7 +81,7 @@ function SlowQueryLog({
   return (
     <div
       data-slot="slow-query-log"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       <div className="border-border text-muted-foreground/70 flex items-center gap-3 border-b px-4 py-2 text-[11px] tracking-wide uppercase">
@@ -120,6 +121,7 @@ function SlowQueryLog({
                     <div className="bg-muted/60 mt-1.5 h-1 w-full overflow-hidden rounded-full">
                       <div
                         className={cn(
+                          growIn,
                           'h-full rounded-full',
                           row.seqScan
                             ? 'bg-[var(--amber-soft-foreground)]'

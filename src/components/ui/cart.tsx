@@ -2,6 +2,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { Minus, Plus, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -88,7 +89,7 @@ function Cart({
     return (
       <div
         data-slot="cart"
-        className={cn(surface, radius.surface, 'p-8 text-center', className)}
+        className={cn(enterFade, surface, radius.surface, 'p-8 text-center', className)}
         {...props}
       >
         <p className="text-muted-foreground text-sm">{empty ?? 'Your basket is empty.'}</p>
@@ -99,7 +100,7 @@ function Cart({
   return (
     <ul
       data-slot="cart"
-      className={cn(surface, radius.surface, 'divide-border list-none divide-y', className)}
+      className={cn(enterFade, surface, radius.surface, 'divide-border list-none divide-y', className)}
       {...(props as ComponentProps<'ul'>)}
     >
       {lines.map((line) => {

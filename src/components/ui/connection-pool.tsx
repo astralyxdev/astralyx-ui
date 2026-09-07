@@ -1,5 +1,6 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { TriangleAlert } from 'lucide-react'
+import { enterFade, growIn } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -54,7 +55,7 @@ function ConnectionPool({
   return (
     <div
       data-slot="connection-pool"
-      className={cn(surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
       {...props}
     >
       <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -65,7 +66,7 @@ function ConnectionPool({
       </div>
 
       <div className="flex items-center gap-2">
-        <div className="bg-muted flex h-2.5 min-w-0 flex-1 overflow-hidden rounded-full">
+        <div className={cn(growIn, 'bg-muted flex h-2.5 min-w-0 flex-1 overflow-hidden rounded-full')}>
           <span
             className="h-full bg-[var(--blue-soft-foreground)]"
             style={{ width: `${(active / max) * 100}%`, minWidth: active > 0 ? 2 : 0 }}

@@ -1,6 +1,7 @@
 import type { ComponentProps } from 'react'
 import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react'
 import { Button, type ButtonProps } from '@/components/ui/button'
+import { enterFade } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -109,7 +110,7 @@ function Pagination({
     <nav
       aria-label={label}
       data-slot="pagination"
-      className={cn('flex items-center gap-1', className)}
+      className={cn(enterFade, 'flex items-center gap-1', className)}
       {...props}
     >
       <Button

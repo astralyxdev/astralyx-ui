@@ -1,4 +1,5 @@
 import type { ComponentProps, ReactNode } from 'react'
+import { enterFade } from '@/lib/motion'
 import { radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -17,7 +18,7 @@ function Timeline({ className, ...props }: ComponentProps<'ol'>) {
   return (
     <ol
       data-slot="timeline"
-      className={cn('flex list-none flex-col', className)}
+      className={cn(enterFade, 'flex list-none flex-col', className)}
       {...props}
     />
   )

@@ -25,6 +25,7 @@ import {
   type SqlGroup,
   type SqlJoin,
 } from '@/lib/sql-select'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -384,7 +385,7 @@ function QueryConstructor({
   return (
     <div
       data-slot="query-constructor"
-      className={cn('@container flex flex-col gap-3', className)}
+      className={cn(enterFade, '@container flex flex-col gap-3', className)}
       {...props}
     >
       {/* ------------------------------------------------------ sources */}

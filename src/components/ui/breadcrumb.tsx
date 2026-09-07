@@ -1,6 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { Slot } from '@/components/primitives/slot'
 import { ChevronRight, MoreHorizontal } from 'lucide-react'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -24,7 +25,7 @@ function Breadcrumb({
     <nav
       aria-label={label}
       data-slot="breadcrumb"
-      className={cn('w-full', className)}
+      className={cn(enterFade, 'w-full', className)}
       {...props}
     />
   )

@@ -1,5 +1,6 @@
 import { useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade } from '@/lib/motion'
 import { dataFills, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -122,7 +123,7 @@ function BundleTreemap({
   const totalGzip = modules.reduce((sum, m) => sum + (m.gzip ?? 0), 0)
 
   return (
-    <div data-slot="bundle-treemap" className={cn('flex flex-col gap-2', className)} {...props}>
+    <div data-slot="bundle-treemap" className={cn(enterFade, 'flex flex-col gap-2', className)} {...props}>
       <div
         className={cn(surface, radius.surface, 'relative w-full overflow-hidden')}
         style={{ height }}

@@ -6,11 +6,23 @@ import { cn } from '@/lib/utils'
 /**
  * A placeholder shape for content that has not arrived.
  *
- * The pulse animates opacity only — no size or position — so it sits inside the
- * kit's motion rule, and it stops entirely under `prefers-reduced-motion`.
+ * A band of light crossing the shape, rather than the whole shape pulsing. Both
+ * read as *loading*, but a sweep has a direction, so a column of twelve of them
+ * scans as one surface waking up instead of twelve boxes blinking out of step.
+ *
+ * The band is a pseudo-element that translates, so the animation is composited
+ * and the box itself never repaints. Under `prefers-reduced-motion` the sweep
+ * is dropped entirely and the plain tinted shape is left standing — a
+ * placeholder still has to look like a placeholder when it cannot move.
  */
 const skeletonVariants = cva(
-  'bg-secondary animate-pulse motion-reduce:animate-none',
+  [
+    'bg-secondary relative isolate overflow-hidden',
+    'after:absolute after:inset-0 after:content-[""]',
+    'after:bg-gradient-to-r after:from-transparent after:via-foreground/10 after:to-transparent',
+    'motion-safe:after:animate-[ax-sweep_1.6s_ease-in-out_infinite]',
+    'motion-reduce:after:hidden',
+  ].join(' '),
   {
     variants: {
       shape: {

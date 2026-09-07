@@ -1,5 +1,6 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { Fuel } from 'lucide-react'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -63,7 +64,7 @@ function GasTracker({
   return (
     <div
       data-slot="gas-tracker"
-      className={cn(surface, radius.surface, 'flex flex-col overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col overflow-hidden', className)}
       {...props}
     >
       <div className="border-border flex items-center gap-2 border-b p-3">

@@ -2,6 +2,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { Bot, ShieldAlert } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -73,7 +74,7 @@ function McpSampling({
       data-slot="mcp-sampling"
       role="alertdialog"
       aria-label={`Sampling request from ${server}`}
-      className={cn(surface, radius.surface, 'flex flex-col gap-4 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-4 p-4', className)}
       {...props}
     >
       <div className="flex items-start gap-3">

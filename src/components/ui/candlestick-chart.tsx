@@ -1,4 +1,5 @@
 import { useId, useMemo, type ComponentProps, type ReactNode } from 'react'
+import { enterFade } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -75,7 +76,7 @@ function CandlestickChart({
   return (
     <figure
       data-slot="candlestick-chart"
-      className={cn('flex min-w-0 flex-col gap-2', className)}
+      className={cn(enterFade, 'flex min-w-0 flex-col gap-2', className)}
       {...props}
     >
       <div className="flex min-w-0 gap-2">

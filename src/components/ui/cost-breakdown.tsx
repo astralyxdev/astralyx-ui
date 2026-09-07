@@ -1,5 +1,6 @@
 import { useMemo, type ComponentProps, type ReactNode } from 'react'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade, growIn } from '@/lib/motion'
 import { dataFills, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -79,7 +80,7 @@ function CostBreakdown({
   return (
     <div
       data-slot="cost-breakdown"
-      className={cn(surface, radius.surface, 'flex flex-col overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col overflow-hidden', className)}
       {...props}
     >
       <div className="border-border flex flex-wrap items-baseline gap-x-3 border-b p-3">
@@ -122,7 +123,7 @@ function CostBreakdown({
 
               <div className="bg-secondary h-1.5 w-full overflow-hidden rounded-full [corner-shape:round]">
                 <div
-                  className="h-full rounded-full [corner-shape:round]"
+                  className={cn(growIn, 'h-full rounded-full [corner-shape:round]')}
                   style={{ width: `${(row.cost / maxCost) * 100}%`, backgroundColor: colour }}
                 />
               </div>

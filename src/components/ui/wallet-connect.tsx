@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { WalletAddress } from '@/components/ui/wallet-address'
+import { enterFade } from '@/lib/motion'
 import { focusRing, interactive, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -65,7 +66,7 @@ function WalletConnect({
   // Disconnected — including while a wallet prompt is open elsewhere.
   if (!address) {
     return (
-      <div data-slot="wallet-connect" className={className} {...props}>
+      <div data-slot="wallet-connect" className={cn(enterFade, className)} {...props}>
         <Button onClick={onConnect} disabled={connecting}>
           <Wallet />
           {connecting ? 'Check your wallet…' : connectLabel}
@@ -77,7 +78,7 @@ function WalletConnect({
   // Wrong network outranks everything: no balance from the wrong ledger.
   if (wrongNetwork) {
     return (
-      <div data-slot="wallet-connect" data-state="wrong-network" className={className} {...props}>
+      <div data-slot="wallet-connect" data-state="wrong-network" className={cn(enterFade, className)} {...props}>
         <Button color="destructive" onClick={onSwitchNetwork}>
           <TriangleAlert />
           {wrongNetworkLabel}
@@ -87,7 +88,7 @@ function WalletConnect({
   }
 
   return (
-    <div data-slot="wallet-connect" data-state="connected" className={className} {...props}>
+    <div data-slot="wallet-connect" data-state="connected" className={cn(enterFade, className)} {...props}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button

@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { enterFade } from '@/lib/motion'
 import { focusRing, interactive, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -123,7 +124,7 @@ function DataGrid<Row extends Record<string, unknown>>({
     return (
       <div
         data-slot="data-grid"
-        className={cn(surface, radius.panel, 'w-full', className)}
+        className={cn(enterFade, surface, radius.panel, 'w-full', className)}
         {...props}
       >
         {empty ?? (
@@ -134,7 +135,7 @@ function DataGrid<Row extends Record<string, unknown>>({
   }
 
   return (
-    <div data-slot="data-grid" className={cn('w-full', className)} {...props}>
+    <div data-slot="data-grid" className={cn(enterFade, 'w-full', className)} {...props}>
       <Table>
         <TableHeader>
           <TableRow>

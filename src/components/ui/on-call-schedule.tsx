@@ -4,6 +4,7 @@ import { Avatar } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Fmt } from '@/components/ui/fmt'
 import { Tooltip } from '@/components/ui/tooltip'
+import { enterFade } from '@/lib/motion'
 import { dataPalette, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -97,7 +98,7 @@ function OnCallSchedule({
   return (
     <div
       data-slot="on-call-schedule"
-      className={cn(surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
       {...props}
     >
       <div className="flex flex-wrap items-center gap-2">

@@ -2,6 +2,7 @@ import { useState, type ComponentProps } from 'react'
 import { ChevronRight, TriangleAlert } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { CopyButton } from '@/components/ui/copy-button'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -66,6 +67,7 @@ function ToolResult({
       data-slot="tool-result"
       data-error={isError || undefined}
       className={cn(
+        enterFade,
         surface,
         radius.surface,
         'overflow-hidden',

@@ -8,6 +8,7 @@ import {
 import { ChevronDown } from 'lucide-react'
 import { useDismissable } from '@/components/primitives/dismissable'
 import { usePopper } from '@/components/primitives/popper'
+import { overlayIn } from '@/lib/motion'
 import {
   focusRing,
   interactive,
@@ -122,7 +123,7 @@ function NavigationMenuItem({
   const triggerRef = useRef<HTMLButtonElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
 
-  const { style } = usePopper({
+  const { style, side: resolvedSide } = usePopper({
     open,
     anchorRef: triggerRef,
     floatingRef: panelRef,
@@ -170,9 +171,10 @@ function NavigationMenuItem({
       {open && (
         <div
           ref={panelRef}
+          data-side={resolvedSide}
           style={style}
           onPointerEnter={onHover}
-          className={cn(menuSurface, radius.panel, 'w-max max-w-[min(48rem,calc(100vw-2rem))] p-4')}
+          className={cn(overlayIn, menuSurface, radius.panel, 'w-max max-w-[min(48rem,calc(100vw-2rem))] p-4')}
         >
           {entry.content}
         </div>

@@ -1,5 +1,6 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { ArrowDownRight, ArrowRight, ArrowUpRight } from 'lucide-react'
+import { enterFade, useCountUpText } from '@/lib/motion'
 import { cardPadding, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -30,6 +31,15 @@ type StatProps = Omit<ComponentProps<'div'>, 'title'> & {
   size?: 'sm' | 'default' | 'lg'
   /** Draw the card. Off when the caller supplies its own container. */
   bordered?: boolean
+  /**
+   * Count to the value rather than printing it.
+   *
+   * On by default, and only ever applies when `value` is a plain number — a
+   * Stat is a single figure with a label under it, which is precisely the case
+   * the animation is for. Pass a formatted string (or a `<Fmt>`) as `value` and
+   * this does nothing, because there is no number to count.
+   */
+  animate?: boolean
 }
 
 function Stat({
@@ -43,9 +53,13 @@ function Stat({
   hint,
   size = 'default',
   bordered = true,
+  animate = true,
   className,
   ...props
 }: StatProps) {
+  const counting = animate && typeof value === 'number'
+  const counted = useCountUpText(counting ? value : 0, { disabled: !counting })
+
   const rising = delta !== undefined && delta > 0
   const flat = delta === undefined || delta === 0
   const good =
@@ -59,6 +73,7 @@ function Stat({
     <div
       data-slot="stat"
       className={cn(
+        enterFade,
         'flex min-w-0 flex-col gap-1',
         bordered && [surface, radius.surface, cardPadding[size]],
         className,
@@ -79,7 +94,7 @@ function Stat({
             size === 'sm' ? 'text-xl' : size === 'lg' ? 'text-3xl' : 'text-2xl',
           )}
         >
-          {value}
+          {counting ? counted : value}
         </span>
 
         {delta !== undefined && (

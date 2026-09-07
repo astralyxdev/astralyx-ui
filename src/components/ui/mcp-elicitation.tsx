@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { SchemaForm, schemaFormMissing } from '@/components/ui/schema-form'
 import type { JsonSchema } from '@/components/ui/tool-schema'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -89,7 +90,7 @@ function McpElicitation({
       data-slot="mcp-elicitation"
       role="dialog"
       aria-label={`Request from ${server}`}
-      className={cn(surface, radius.surface, 'flex flex-col gap-4 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-4 p-4', className)}
       {...props}
     >
       {/* Attribution first, outside anything the server controls. */}

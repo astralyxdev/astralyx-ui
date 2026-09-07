@@ -1,5 +1,6 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { Badge } from '@/components/ui/badge'
+import { enterFade, growIn } from '@/lib/motion'
 import { dataPalette } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -45,7 +46,7 @@ function TrafficSplit({
   return (
     <div
       data-slot="traffic-split"
-      className={cn('flex flex-col gap-2', className)}
+      className={cn(enterFade, 'flex flex-col gap-2', className)}
       {...props}
     >
       {(label || shortfall !== 0) && (
@@ -62,7 +63,7 @@ function TrafficSplit({
       )}
 
       <div
-        className="bg-secondary flex h-8 w-full overflow-hidden rounded-lg"
+        className={cn(growIn, 'bg-secondary flex h-8 w-full overflow-hidden rounded-lg')}
         role="img"
         aria-label={targets
           .map((target) => `${target.version ?? target.id}: ${target.weight}%`)

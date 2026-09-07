@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Tooltip } from '@/components/ui/tooltip'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -101,6 +102,7 @@ function PromptInput({
     <div
       data-slot="prompt-input"
       className={cn(
+        enterFade,
         surface,
         radius.panel,
         // No focus outline on the card or the textarea inside it. The caret is

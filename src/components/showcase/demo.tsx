@@ -19,16 +19,22 @@ function Demo({ demo }: { demo: DemoSpec }) {
   return (
     <Tabs defaultValue="preview" className="mb-4 gap-0">
       <Card>
-        <CardHeader className="flex-row items-center justify-between gap-4 py-2">
+        {/* The `action` slot rather than a hand-rolled row: it is the same
+            layout, minus a `py-2` that made the header the one band in the kit
+            whose inset was not square. */}
+        <CardHeader
+          action={
+            <TabsList>
+              <TabsTrigger value="preview" className="px-2.5 py-1 text-xs">
+                Preview
+              </TabsTrigger>
+              <TabsTrigger value="code" className="px-2.5 py-1 text-xs">
+                Code
+              </TabsTrigger>
+            </TabsList>
+          }
+        >
           <CardTitle>{demo.title}</CardTitle>
-          <TabsList>
-            <TabsTrigger value="preview" className="px-2.5 py-1 text-xs">
-              Preview
-            </TabsTrigger>
-            <TabsTrigger value="code" className="px-2.5 py-1 text-xs">
-              Code
-            </TabsTrigger>
-          </TabsList>
         </CardHeader>
 
         <TabsContent value="preview">

@@ -1,5 +1,6 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -65,7 +66,7 @@ function CheckoutSummary({
   return (
     <div
       data-slot="checkout-summary"
-      className={cn(surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
       {...props}
     >
       <dl className="flex flex-col gap-2 text-sm">

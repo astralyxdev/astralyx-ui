@@ -1,6 +1,7 @@
 import { useState, type ComponentProps, type ReactNode } from 'react'
 import { ChevronDown, ChevronRight, FileCode } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { enterFade } from '@/lib/motion'
 import { focusRing, interactive, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -91,7 +92,7 @@ function CodeSearch({
   return (
     <div
       data-slot="code-search"
-      className={cn('flex flex-col gap-2', className)}
+      className={cn(enterFade, 'flex flex-col gap-2', className)}
       {...props}
     >
       <p className="text-muted-foreground text-xs">

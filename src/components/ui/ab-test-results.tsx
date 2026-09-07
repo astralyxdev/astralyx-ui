@@ -1,5 +1,6 @@
 import { useId, useMemo, type ComponentProps, type ReactNode } from 'react'
 import { AlertTriangle } from 'lucide-react'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -174,7 +175,7 @@ function AbTestResults({
   return (
     <div
       data-slot="ab-test-results"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       aria-labelledby={titleId}
       {...props}
     >

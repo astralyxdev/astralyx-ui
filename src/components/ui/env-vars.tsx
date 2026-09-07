@@ -3,6 +3,7 @@ import { Eye, EyeOff, Lock } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { CopyButton } from '@/components/ui/copy-button'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -39,7 +40,7 @@ function EnvVars({
   return (
     <div
       data-slot="env-vars"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       <ul className="list-none divide-y divide-[var(--border)]">

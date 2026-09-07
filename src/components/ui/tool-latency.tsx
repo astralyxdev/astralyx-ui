@@ -1,4 +1,5 @@
 import { useMemo, type ComponentProps, type ReactNode } from 'react'
+import { enterFade, growIn } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -67,7 +68,7 @@ function ToolLatency({
   return (
     <div
       data-slot="tool-latency"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       {rows.length === 0 ? (
@@ -94,6 +95,7 @@ function ToolLatency({
                     <div className="bg-muted/60 mt-1.5 h-1 w-full overflow-hidden rounded-full">
                       <div
                         className={cn(
+                          growIn,
                           'h-full rounded-full',
                           bad ? 'bg-[var(--destructive-soft-foreground)]' : 'bg-muted-foreground/50',
                         )}

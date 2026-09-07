@@ -1,4 +1,5 @@
 import type { ComponentProps, ReactNode } from 'react'
+import { enterFade } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -27,6 +28,7 @@ function DescriptionList({
       data-slot="description-list"
       data-columns={columns}
       className={cn(
+        enterFade,
         'grid gap-x-6 gap-y-3 text-sm',
         columns && 'sm:grid-cols-[minmax(0,12rem)_minmax(0,1fr)]',
         divided && '[&>dd]:border-border [&>dd]:not-last:border-b [&>dd]:not-last:pb-3',

@@ -6,12 +6,20 @@ import { cn } from '@/lib/utils'
 /**
  * A button that appears once you have scrolled, and takes you back up.
  *
- * **Visibility is driven by a sentinel, not a scroll handler.** An
- * `IntersectionObserver` watching an element near the top of the page fires
- * twice — when it leaves and when it returns — where a scroll listener runs on
- * every frame of every scroll, on the main thread, for the entire life of the
- * page, to compute a boolean. On a long document that is the difference between
- * nothing and a measurable jank budget.
+ * **It finds its own scroller.** An app that scrolls the document and an app
+ * whose page is a scrolling `<main>` beside a fixed rail are both normal, and
+ * the component cannot know which it is in. It walks up from itself to the
+ * first ancestor that actually scrolls and listens to that, so it works in
+ * either without being told. `targetRef` overrides the search.
+ *
+ * **A scroll listener, not a sentinel.** An earlier version watched an
+ * absolutely positioned marker with an `IntersectionObserver`, which is cheaper
+ * per frame and quietly wrong: an absolute box resolves against the nearest
+ * *positioned* ancestor, so the marker sat at the top of whatever card the
+ * button happened to be rendered inside rather than at the top of the page —
+ * and a button placed at the foot of a document, which is where this button
+ * goes, never appeared at all. The listener here is passive and coalesced into
+ * one frame, and it only sets state when the answer changes.
  *
  * **It honours `prefers-reduced-motion`.** Smooth-scrolling a long page is
  * exactly the kind of large-field motion that triggers vestibular symptoms, so
@@ -25,9 +33,15 @@ import { cn } from '@/lib/utils'
  * makes it a real skip control rather than a visual one.
  */
 type BackToTopProps = Omit<ComponentProps<'button'>, 'children'> & {
-  /** How far down before it appears. */
+  /**
+   * How far down before it appears. `0` shows it immediately, which is what a
+   * demo or a permanently docked control wants.
+   */
   showAfter?: number
-  /** Scrolled instead of the window. Pass a ref to a scroll container. */
+  /**
+   * The element that scrolls. Defaults to the nearest scrolling ancestor, and
+   * to the window when there is none.
+   */
   targetRef?: React.RefObject<HTMLElement | null>
   /** Focused after scrolling. Defaults to the first heading or the body. */
   focusRef?: React.RefObject<HTMLElement | null>
@@ -35,6 +49,22 @@ type BackToTopProps = Omit<ComponentProps<'button'>, 'children'> & {
   children?: ReactNode
   /** Fixed to the corner of the viewport. */
   fixed?: boolean
+}
+
+/** The first ancestor that can actually scroll, or the window. */
+function scrollParent(node: HTMLElement | null): HTMLElement | Window {
+  for (let element = node?.parentElement; element; element = element.parentElement) {
+    const { overflowY } = getComputedStyle(element)
+    const scrolls = overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay'
+    if (scrolls && element.scrollHeight > element.clientHeight) return element
+  }
+  return window
+}
+
+function offsetOf(scroller: HTMLElement | Window) {
+  return scroller === window
+    ? window.scrollY
+    : (scroller as HTMLElement).scrollTop
 }
 
 function BackToTop({
@@ -48,30 +78,41 @@ function BackToTop({
   ...props
 }: BackToTopProps) {
   const [visible, setVisible] = useState(false)
-  const sentinelRef = useRef<HTMLSpanElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  // Resolved once by the effect and reused by the click handler, so the button
+  // always scrolls the same box it was measuring.
+  const scrollerRef = useRef<HTMLElement | Window | null>(null)
 
   useEffect(() => {
-    const sentinel = sentinelRef.current
-    if (!sentinel || typeof IntersectionObserver === 'undefined') return
+    const scroller = targetRef?.current ?? scrollParent(buttonRef.current)
+    scrollerRef.current = scroller
 
-    // Two callbacks for the life of the page, rather than one per frame.
-    const observer = new IntersectionObserver(
-      ([entry]) => setVisible(!entry.isIntersecting),
-      { root: targetRef?.current ?? null, threshold: 0 },
-    )
-    observer.observe(sentinel)
-    return () => observer.disconnect()
-  }, [targetRef])
+    let frame = 0
+    const read = () => {
+      frame = 0
+      setVisible(offsetOf(scroller) >= showAfter)
+    }
+    // Coalesced to one read per frame: a fast wheel fires far more scroll
+    // events than the screen has frames to show the result in.
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(read)
+    }
+
+    read()
+    scroller.addEventListener('scroll', onScroll, { passive: true })
+
+    return () => {
+      scroller.removeEventListener('scroll', onScroll)
+      if (frame) cancelAnimationFrame(frame)
+    }
+  }, [targetRef, showAfter])
 
   const scrollUp = () => {
-    const reduced =
-      typeof window !== 'undefined' &&
-      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
-
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
     const behavior: ScrollBehavior = reduced ? 'auto' : 'smooth'
-    const scroller = targetRef?.current
-    if (scroller) scroller.scrollTo({ top: 0, behavior })
-    else window.scrollTo({ top: 0, behavior })
+
+    const scroller = scrollerRef.current ?? window
+    scroller.scrollTo({ top: 0, behavior })
 
     // Without this the viewport moves and the keyboard does not.
     const target =
@@ -83,40 +124,33 @@ function BackToTop({
   }
 
   return (
-    <>
-      {/* Watched, never seen: sits at the offset that decides visibility. */}
-      <span
-        ref={sentinelRef}
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 block"
-        style={{ height: showAfter }}
-      />
-
-      <button
-        type="button"
-        data-slot="back-to-top"
-        data-visible={visible || undefined}
-        aria-label={label}
-        // Removed from the tab order while hidden — a focusable control nobody
-        // can see is a trap.
-        tabIndex={visible ? 0 : -1}
-        aria-hidden={!visible}
-        onClick={scrollUp}
-        className={cn(
-          'bg-background border-border flex items-center gap-2 border px-3 py-2 text-sm shadow-lg',
-          radius.control,
-          focusRing,
-          'transition-opacity duration-200 motion-reduce:transition-none',
-          visible ? 'opacity-100' : 'pointer-events-none opacity-0',
-          fixed && 'fixed end-4 bottom-4 z-40',
-          className,
-        )}
-        {...props}
-      >
-        <ArrowUp aria-hidden="true" className="size-4" />
-        {children}
-      </button>
-    </>
+    <button
+      ref={buttonRef}
+      type="button"
+      data-slot="back-to-top"
+      data-visible={visible || undefined}
+      aria-label={label}
+      // Removed from the tab order while hidden — a focusable control nobody
+      // can see is a trap.
+      tabIndex={visible ? 0 : -1}
+      aria-hidden={!visible}
+      onClick={scrollUp}
+      className={cn(
+        'bg-background border-border flex items-center gap-2 border px-3 py-2 text-sm shadow-lg',
+        radius.control,
+        focusRing,
+        // Rises the last few pixels as it fades in, so it reads as arriving
+        // from the edge it is pinned to rather than materialising over it.
+        'transition-[opacity,translate] duration-200 ease-out motion-reduce:transition-none',
+        visible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-2 opacity-0',
+        fixed && 'fixed end-4 bottom-4 z-40',
+        className,
+      )}
+      {...props}
+    >
+      <ArrowUp aria-hidden="true" className="size-4" />
+      {children}
+    </button>
   )
 }
 

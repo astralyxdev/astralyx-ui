@@ -3,6 +3,7 @@ import { ArrowRight, Check, TriangleAlert } from 'lucide-react'
 import { Progress } from '@/components/ui/progress'
 import { Spinner } from '@/components/ui/spinner'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -84,7 +85,7 @@ function BridgeStatus({
   return (
     <div
       data-slot="bridge-status"
-      className={cn(surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
       {...props}
     >
       <div className="flex flex-wrap items-baseline justify-between gap-2">

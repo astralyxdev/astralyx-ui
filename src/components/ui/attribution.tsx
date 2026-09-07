@@ -1,4 +1,5 @@
 import { useId, useMemo, useState, type ComponentProps, type ReactNode } from 'react'
+import { enterFade, growIn } from '@/lib/motion'
 import { dataPalette } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -157,7 +158,7 @@ function Attribution({
   return (
     <div
       data-slot="attribution"
-      className={cn('flex flex-col gap-3', className)}
+      className={cn(enterFade, 'flex flex-col gap-3', className)}
       aria-labelledby={titleId}
       {...props}
     >
@@ -197,7 +198,7 @@ function Attribution({
               <span className="w-28 shrink-0 truncate text-xs">{row.channel}</span>
               <span className="bg-muted relative h-5 min-w-0 flex-1 overflow-hidden rounded-[3px]">
                 <span
-                  className="absolute inset-y-0 start-0 rounded-[3px]"
+                  className={cn(growIn, 'absolute inset-y-0 start-0 rounded-[3px]')}
                   style={{
                     width: `${(row.amount / max) * 100}%`,
                     background: dataPalette[index % dataPalette.length].fill,

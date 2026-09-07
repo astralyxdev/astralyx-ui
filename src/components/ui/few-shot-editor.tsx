@@ -3,6 +3,7 @@ import { GripVertical, Plus, Trash2 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -85,7 +86,7 @@ function FewShotEditor({
   }
 
   return (
-    <div data-slot="few-shot-editor" className={cn('flex flex-col gap-3', className)} {...props}>
+    <div data-slot="few-shot-editor" className={cn(enterFade, 'flex flex-col gap-3', className)} {...props}>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-muted-foreground text-xs">
           {active.length} of {examples.length} in the prompt

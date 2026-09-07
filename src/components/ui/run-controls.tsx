@@ -3,6 +3,7 @@ import { Pause, Play, RotateCcw, SkipForward, Square } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -88,6 +89,7 @@ function RunControls({
       data-slot="run-controls"
       data-status={status}
       className={cn(
+        enterFade,
         surface,
         radius.surface,
         'flex flex-wrap items-center gap-2 p-2.5',

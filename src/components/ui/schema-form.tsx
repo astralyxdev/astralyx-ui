@@ -7,6 +7,7 @@ import { Select } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import type { JsonSchema } from '@/components/ui/tool-schema'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -74,7 +75,7 @@ function SchemaForm({
   return (
     <form
       data-slot="schema-form"
-      className={cn(surface, radius.surface, 'flex flex-col gap-4 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-4 p-4', className)}
       onSubmit={(event) => {
         event.preventDefault()
         onSubmit?.(value)

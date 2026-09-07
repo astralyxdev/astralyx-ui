@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Empty } from '@/components/ui/empty'
 import { Input } from '@/components/ui/input'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -84,7 +85,7 @@ function AgentMemory({
   }, [entries, query])
 
   return (
-    <div data-slot="agent-memory" className={cn('flex flex-col gap-3', className)} {...props}>
+    <div data-slot="agent-memory" className={cn(enterFade, 'flex flex-col gap-3', className)} {...props}>
       {searchable && (
         <Input
           size="sm"

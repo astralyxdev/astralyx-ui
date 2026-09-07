@@ -1,5 +1,6 @@
 import { useState, type ComponentProps, type ReactNode } from 'react'
 import { ChevronRight } from 'lucide-react'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -189,7 +190,7 @@ function TraceWaterfall({
   return (
     <div
       data-slot="trace-waterfall"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       {spans.length === 0 ? (

@@ -3,6 +3,7 @@ import { CircleCheck, CircleSlash, ShieldAlert, TriangleAlert } from 'lucide-rea
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade } from '@/lib/motion'
 import { radius, surface, tintStyle } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -65,7 +66,7 @@ function FraudVerdict({
     <section
       data-slot="fraud-verdict"
       data-verdict={verdict}
-      className={cn(surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
       {...props}
     >
       <header className="flex items-start gap-3">

@@ -2,6 +2,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { Bot, Thermometer, Wrench } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -87,6 +88,7 @@ function AgentCard({
       data-status={status}
       data-selected={selected}
       className={cn(
+        enterFade,
         surface,
         radius.surface,
         'flex flex-col gap-3 p-4',

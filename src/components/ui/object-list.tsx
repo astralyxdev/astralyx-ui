@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Empty } from '@/components/ui/empty'
 import { Input } from '@/components/ui/input'
 import { formatBytes } from '@/components/ui/storage-usage'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -112,7 +113,7 @@ function ObjectList({
   const crumbs = prefix.split('/').filter(Boolean)
 
   return (
-    <div data-slot="object-list" className={cn('flex flex-col gap-3', className)} {...props}>
+    <div data-slot="object-list" className={cn(enterFade, 'flex flex-col gap-3', className)} {...props}>
       {searchable && (
         <Input
           size="sm"

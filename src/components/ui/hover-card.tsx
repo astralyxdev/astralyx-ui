@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from 'react'
 import { usePopper, type Align, type Side } from '@/components/primitives/popper'
+import { overlayIn } from '@/lib/motion'
 import { menuSurface, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -82,7 +83,7 @@ function HoverCard({
           style={style}
           onPointerEnter={() => clearTimeout(timer.current)}
           onPointerLeave={() => schedule(false, closeDelay)}
-          className={cn(menuSurface, radius.surface, 'w-64 p-4 text-sm', className)}
+          className={cn(overlayIn, menuSurface, radius.surface, 'w-64 p-4 text-sm', className)}
           {...props}
         >
           {content}

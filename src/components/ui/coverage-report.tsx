@@ -1,6 +1,7 @@
 import { useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { enterFade, growIn } from '@/lib/motion'
 import { focusRing, interactive, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -89,7 +90,7 @@ function CoverageReport({
   return (
     <div
       data-slot="coverage-report"
-      className={cn(surface, radius.surface, 'flex flex-col overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col overflow-hidden', className)}
       {...props}
     >
       {totals && (
@@ -146,7 +147,7 @@ function CoverageReport({
 
                 <span className="relative hidden h-1.5 w-32 shrink-0 overflow-hidden rounded-full bg-[var(--secondary)] sm:block">
                   <span
-                    className="absolute inset-y-0 start-0"
+                    className={cn(growIn, 'absolute inset-y-0 start-0')}
                     style={{ width: `${value * 100}%`, background: tone(value, threshold) }}
                   />
                   {/* The target, drawn per row so "below" needs no reading. */}

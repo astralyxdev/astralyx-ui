@@ -2,6 +2,7 @@ import { useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { ArrowDown, ArrowUp, ShieldAlert } from 'lucide-react'
 import { Avatar } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -126,7 +127,7 @@ function ValidatorList({
   return (
     <div
       data-slot="validator-list"
-      className={cn(surface, radius.surface, 'w-full overflow-x-auto', className)}
+      className={cn(enterFade, surface, radius.surface, 'w-full overflow-x-auto', className)}
       {...props}
     >
       <table className="w-full text-sm">

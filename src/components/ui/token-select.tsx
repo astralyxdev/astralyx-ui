@@ -4,6 +4,7 @@ import { useDismissable } from '@/components/primitives/dismissable'
 import { usePopper } from '@/components/primitives/popper'
 import { Badge } from '@/components/ui/badge'
 import { WalletAddress } from '@/components/ui/wallet-address'
+import { enterFade, overlayIn } from '@/lib/motion'
 import {
   fieldBase,
   fieldSize,
@@ -83,7 +84,7 @@ function TokenSelect({
   const panelRef = useRef<HTMLDivElement>(null)
   const searchRef = useRef<HTMLInputElement>(null)
 
-  const { style } = usePopper({
+  const { style, side: resolvedSide } = usePopper({
     open,
     anchorRef: triggerRef,
     floatingRef: panelRef,
@@ -188,7 +189,7 @@ function TokenSelect({
   )
 
   return (
-    <div data-slot="token-select" className={cn('relative', className)} {...props}>
+    <div data-slot="token-select" className={cn(enterFade, 'relative', className)} {...props}>
       <button
         ref={triggerRef}
         type="button"
@@ -223,7 +224,12 @@ function TokenSelect({
       </button>
 
       {open && (
-        <div ref={panelRef} style={style} className={cn(menuSurface, radius.surface, 'max-h-80 p-0')}>
+        <div
+          ref={panelRef}
+          data-side={resolvedSide}
+          style={style}
+          className={cn(overlayIn, menuSurface, radius.surface, 'max-h-80 p-0')}
+        >
           <div className="border-border flex items-center gap-2 border-b p-2.5">
             <Search className="text-muted-foreground size-3.5 shrink-0" />
             <input

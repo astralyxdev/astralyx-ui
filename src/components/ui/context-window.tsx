@@ -1,4 +1,5 @@
 import type { ComponentProps, ReactNode } from 'react'
+import { enterFade, growIn } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -80,7 +81,7 @@ function ContextWindow({
   return (
     <div
       data-slot="context-window"
-      className={cn(surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
       {...props}
     >
       <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -98,7 +99,7 @@ function ContextWindow({
 
       {/* Scaled to the window, so free space reads as free space. */}
       <div
-        className="bg-muted flex h-3 w-full overflow-hidden rounded-full"
+        className={cn(growIn, 'bg-muted flex h-3 w-full overflow-hidden rounded-full')}
         role="img"
         aria-label={`${formatTokens(used)} of ${formatTokens(limit)} tokens used`}
       >

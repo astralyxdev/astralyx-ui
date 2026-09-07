@@ -3,6 +3,7 @@ import { Laptop, ShieldCheck, Smartphone, Tablet, TriangleAlert } from 'lucide-r
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Fmt } from '@/components/ui/fmt'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -73,7 +74,7 @@ function DeviceList({
   return (
     <div
       data-slot="device-list"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       <div className="border-border flex items-center gap-2 border-b p-3">

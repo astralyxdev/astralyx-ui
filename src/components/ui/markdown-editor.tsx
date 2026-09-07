@@ -10,6 +10,7 @@ import {
 import { Bold, Code2, Heading2, Italic, Link2, List, ListOrdered, Quote } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Markdown } from '@/components/ui/markdown'
+import { enterFade } from '@/lib/motion'
 import { fieldBase, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -252,7 +253,7 @@ function MarkdownEditor({
     <div
       data-slot="markdown-editor"
       data-mode={mode}
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       {(toolbar || modes.length > 1) && (

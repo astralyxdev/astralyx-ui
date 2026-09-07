@@ -2,6 +2,7 @@ import { useMemo, type ComponentProps } from 'react'
 import { Avatar } from '@/components/ui/avatar'
 import { Fmt } from '@/components/ui/fmt'
 import { Tooltip } from '@/components/ui/tooltip'
+import { enterFade } from '@/lib/motion'
 import { radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -61,6 +62,7 @@ function BlameView({
     <div
       data-slot="blame-view"
       className={cn(
+        enterFade,
         'border-border overflow-x-auto border font-mono text-xs',
         radius.surface,
         className,

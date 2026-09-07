@@ -54,7 +54,8 @@ export const sliderEntry: ComponentEntry = {
     { name: 'label', type: 'string', description: 'Accessible name. A range input without one is announced as just "slider" — pass this or an aria-labelledby.' },
     { name: 'showValue', type: 'boolean', default: 'false', description: 'Render the current value beside the track.' },
     { name: 'formatValue', type: '(value: number) => string', default: 'String', description: 'Format the displayed value — units, percentages, currency.' },
-    { name: 'min / max / step', type: 'number', description: 'Standard range attributes. The fill percentage is derived from them.' },
+    { name: 'min / max / step', type: 'number', description: 'Standard range attributes. The fill and the thumb offset are derived from them.' },
+    { name: 'the thumb', type: 'not the native one', description: "Track, fill and thumb are real elements; the input sits transparently on top and keeps every native behaviour. A native thumb's position is derived from `value` by the browser with no property to transition, so it can only snap — this one is offset from a registered custom property and eases to its value in 130ms, trailing the pointer instead of being welded to it." },
   ],
   demos: [
     {

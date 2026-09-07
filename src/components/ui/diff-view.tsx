@@ -2,6 +2,7 @@ import { useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { ChevronDown, ChevronRight, FileText } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { DiffStat } from '@/components/ui/diff-stat'
+import { enterFade } from '@/lib/motion'
 import { focusRing, interactive, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -169,7 +170,7 @@ function DiffView({
   return (
     <div
       data-slot="diff-view"
-      className={cn('border-border overflow-hidden border', radius.surface, className)}
+      className={cn(enterFade, 'border-border overflow-hidden border', radius.surface, className)}
       {...props}
     >
       {collapsible ? (

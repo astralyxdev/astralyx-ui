@@ -1,6 +1,7 @@
 import type { ComponentProps } from 'react'
 import { Avatar } from '@/components/ui/avatar'
 import { Tooltip } from '@/components/ui/tooltip'
+import { enterFade } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -47,7 +48,7 @@ function Presence({
       data-slot="presence"
       role="group"
       aria-label={`${label}: ${peers.map((peer) => peer.name).join(', ')}`}
-      className={cn('flex items-center -space-x-2', className)}
+      className={cn(enterFade, 'flex items-center -space-x-2', className)}
       {...props}
     >
       {shown.map((peer) => (

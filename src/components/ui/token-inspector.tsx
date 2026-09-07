@@ -1,5 +1,6 @@
 import { useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { Badge } from '@/components/ui/badge'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -66,7 +67,7 @@ function TokenInspector({
   return (
     <div
       data-slot="token-inspector"
-      className={cn(surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
       {...props}
     >
       <div className="flex flex-wrap items-center justify-between gap-2">

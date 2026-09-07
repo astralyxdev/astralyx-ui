@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Fmt } from '@/components/ui/fmt'
 import { JsonViewer, type Json } from '@/components/ui/json-viewer'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -103,7 +104,7 @@ function JwtInspector({
     return (
       <div
         data-slot="jwt-inspector"
-        className={cn(surface, radius.surface, 'p-4', className)}
+        className={cn(enterFade, surface, radius.surface, 'p-4', className)}
         {...props}
       >
         <p className="flex items-start gap-1.5 text-xs text-[var(--destructive-soft-foreground)]">
@@ -117,7 +118,7 @@ function JwtInspector({
   return (
     <div
       data-slot="jwt-inspector"
-      className={cn(surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
       {...props}
     >
       <div className="flex flex-wrap items-center gap-2">

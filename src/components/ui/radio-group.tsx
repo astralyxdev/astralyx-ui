@@ -14,7 +14,8 @@ const dotVariants = cva(
     'peer-checked:border-primary peer-checked:bg-primary',
     'peer-focus-visible:border-ring peer-focus-visible:ring-ring/50 peer-focus-visible:ring-[3px]',
     // The dot is a descendant of this box, so the variant lives here.
-    '[&>span]:opacity-0 peer-checked:[&>span]:opacity-100',
+    '[&>span]:scale-75 [&>span]:opacity-0',
+    'peer-checked:[&>span]:scale-100 peer-checked:[&>span]:opacity-100',
   ].join(' '),
   {
     variants: {
@@ -141,7 +142,12 @@ function Radio({
       <span className={cn(dotVariants({ size, error }), className)}>
         <span
           className={cn(
-            'bg-primary-foreground rounded-full transition-opacity duration-150 ease-out motion-reduce:transition-none',
+            'bg-primary-foreground rounded-full',
+            // Scales up as it fades in, so the dot reads as being placed rather
+            // than switched on — the same 120ms the checkbox tick uses. The
+            // states themselves are set by the box above, which is the element
+            // the input is actually a peer of.
+            'transition-[opacity,scale] duration-[120ms] ease-out motion-reduce:transition-none',
             DOT_SIZE[size ?? 'default'],
           )}
         />

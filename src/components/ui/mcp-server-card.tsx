@@ -3,6 +3,7 @@ import { RefreshCw, TriangleAlert } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CopyButton } from '@/components/ui/copy-button'
 import { Spinner } from '@/components/ui/spinner'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -104,6 +105,7 @@ function McpServerCard({
       data-slot="mcp-server-card"
       data-status={status}
       className={cn(
+        enterFade,
         surface,
         radius.surface,
         // `h-full` + `flex-col` + a footer on `mt-auto` is what keeps a grid of

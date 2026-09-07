@@ -1,5 +1,6 @@
 import { createContext, use, type ComponentProps, type ReactNode } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
+import { enterFade } from '@/lib/motion'
 import { cardPadding, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -44,7 +45,7 @@ function Card({
       <div
         data-slot="card"
         data-size={size}
-        className={cn(cardVariants({ variant }), radius.panel, className)}
+        className={cn(enterFade, cardVariants({ variant }), radius.panel, className)}
         {...props}
       />
     </CardContext>

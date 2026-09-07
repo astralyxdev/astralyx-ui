@@ -1,4 +1,5 @@
 import type { ComponentProps, ReactNode } from 'react'
+import { enterFade, growIn, useCountUp } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /**
@@ -52,6 +53,9 @@ function RiskScore({
   size?: 'sm' | 'md'
 }) {
   const clamped = Math.max(0, Math.min(max, score))
+  const counted = useCountUp(clamped, { decimals: 0 })
+  // The band is read off the true score, not the count: a score that lands in
+  // the red should not spend its first half-second painted green.
   const band = bandFor((clamped / max) * 100, bands)
   // Relative to the biggest signal, so small ones still read.
   const peak = factors?.reduce((top, factor) => Math.max(top, Math.abs(factor.weight)), 0) ?? 0
@@ -60,7 +64,7 @@ function RiskScore({
     <div
       data-slot="risk-score"
       data-band={band.label.toLowerCase()}
-      className={cn('flex flex-col gap-3', className)}
+      className={cn(enterFade, 'flex flex-col gap-3', className)}
       {...props}
     >
       <div className="flex items-baseline gap-2">
@@ -68,7 +72,7 @@ function RiskScore({
           className={cn('font-semibold tabular-nums', size === 'sm' ? 'text-2xl' : 'text-3xl')}
           style={{ color: band.ink }}
         >
-          {Math.round(clamped)}
+          {Math.round(counted)}
         </span>
         <span className="text-muted-foreground text-xs">/ {max}</span>
         {/* Named as well as coloured — this gets screenshotted into tickets. */}
@@ -87,7 +91,7 @@ function RiskScore({
         className={cn('bg-secondary relative h-1.5 w-full overflow-hidden', 'rounded-full')}
       >
         <div
-          className="h-full transition-[width] duration-300"
+          className={cn(growIn, 'h-full transition-[width] duration-300')}
           style={{ width: `${(clamped / max) * 100}%`, background: band.color }}
         />
       </div>
@@ -111,7 +115,7 @@ function RiskScore({
                 </div>
                 <div className={cn('bg-secondary h-1 w-full overflow-hidden', 'rounded-full')}>
                   <div
-                    className="h-full"
+                    className={cn(growIn, 'h-full')}
                     style={{
                       width: `${share * 100}%`,
                       background: negative ? 'var(--green)' : band.color,

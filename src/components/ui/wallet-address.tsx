@@ -1,6 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { ExternalLink } from 'lucide-react'
 import { CopyButton } from '@/components/ui/copy-button'
+import { enterFade } from '@/lib/motion'
 import { focusRing, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -64,6 +65,7 @@ function WalletAddress({
     <span
       data-slot="wallet-address"
       className={cn(
+        enterFade,
         'inline-flex items-center gap-1.5',
         size === 'sm' ? 'text-xs' : 'text-sm',
         className,

@@ -7,6 +7,7 @@ import {
 } from 'react'
 import { useDismissable } from '@/components/primitives/dismissable'
 import { usePopper } from '@/components/primitives/popper'
+import { overlayIn } from '@/lib/motion'
 import {
   focusRing,
   interactive,
@@ -138,7 +139,7 @@ function MenubarTrigger({
   const panelRef = useRef<HTMLDivElement>(null)
   const [highlighted, setHighlighted] = useState(0)
 
-  const { style } = usePopper({
+  const { style, side: resolvedSide } = usePopper({
     open,
     anchorRef: triggerRef,
     floatingRef: panelRef,
@@ -203,9 +204,10 @@ function MenubarTrigger({
           role="menu"
           aria-label={menu.label}
           tabIndex={-1}
+          data-side={resolvedSide}
           style={style}
           onKeyDown={onPanelKeyDown}
-          className={cn(menuSurface, radius.surface, 'min-w-48 outline-none')}
+          className={cn(overlayIn, menuSurface, radius.surface, 'min-w-48 outline-none')}
         >
           {menu.items.map((item) => (
             <div key={item.id}>

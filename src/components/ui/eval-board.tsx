@@ -1,6 +1,7 @@
 import { useMemo, type ComponentProps, type ReactNode } from 'react'
 import { Trophy } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { enterFade, growIn } from '@/lib/motion'
 import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -157,7 +158,7 @@ function EvalBoard({
   }
 
   return (
-    <div data-slot="eval-board" className={cn('flex flex-col gap-4', className)} {...props}>
+    <div data-slot="eval-board" className={cn(enterFade, 'flex flex-col gap-4', className)} {...props}>
       {/* Ranked down the page, so the numbers being compared sit in a column. */}
       <section className={cn(surface, radius.surface, 'overflow-hidden')}>
         <p className="border-border bg-muted/40 text-muted-foreground/70 border-b px-4 py-2 text-[11px] font-medium tracking-[0.14em] uppercase">
@@ -179,7 +180,7 @@ function EvalBoard({
                 </div>
 
                 <div
-                  className="bg-muted flex h-1.5 w-full overflow-hidden rounded-full"
+                  className={cn(growIn, 'bg-muted flex h-1.5 w-full overflow-hidden rounded-full')}
                   role="img"
                   aria-label={ORDER.filter((outcome) => row.counts[outcome] > 0)
                     .map((outcome) => `${row.counts[outcome]} ${OUTCOME[outcome].label}`)

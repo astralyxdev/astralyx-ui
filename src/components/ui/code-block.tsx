@@ -17,6 +17,7 @@ import {
   RotateCcw,
 } from 'lucide-react'
 import type { HighlightOptions, Language } from '@/lib/highlighter'
+import { enterFade } from '@/lib/motion'
 import {
   controlSize,
   focusRingInset,
@@ -163,6 +164,7 @@ function CodeBlock({
       data-slot="code-block"
       data-editable={editable || undefined}
       className={cn(
+        enterFade,
         surface,
         radius.surface,
         'bg-muted/40 relative overflow-hidden text-sm [--code-lh:20px]',

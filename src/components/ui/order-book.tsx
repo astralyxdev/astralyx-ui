@@ -1,4 +1,5 @@
 import { useMemo, type ComponentProps, type ReactNode } from 'react'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -114,7 +115,7 @@ function OrderBook({
   return (
     <div
       data-slot="order-book"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       <div className="border-border text-muted-foreground flex items-center border-b p-3 text-[10px] font-medium tracking-wide uppercase">

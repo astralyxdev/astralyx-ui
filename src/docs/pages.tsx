@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { PageHeader } from '@/components/ui/page-header'
-import { ArrowLeft, ArrowRight, Check, Copy, FolderTree, Palette, Ruler, ShieldCheck, Sparkles, X } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, Copy, FolderTree, Gauge as GaugeIcon, Palette, Ruler, ShieldCheck, Sparkles, X } from 'lucide-react'
 import { Link } from '@/components/primitives/router'
 import { Alert } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
@@ -647,6 +647,126 @@ const colorSet = {
 }
 
 
+/* ------------------------------------------------------------------ motion */
+
+const motion: DocEntry = {
+  id: 'motion',
+  label: 'Motion',
+  description: 'What moves, for how long, and why none of it is decoration.',
+  render: () => (
+    <Doc
+      id="motion"
+      title="Motion"
+      lead="Every animation in the kit answers a question the user just asked. Nothing loops, nothing bounces, and nothing moves an element that was already on screen and unchanged."
+    >
+      <Section title="One file, four kinds of movement">
+        <p>
+          Timing lives in{' '}
+          <code className="font-mono text-xs">lib/motion.ts</code> the way colour
+          and radius live in <code className="font-mono text-xs">lib/styles.ts</code>:
+          components reach for a token rather than spelling out their own
+          duration, so the whole kit can be retuned from one place.
+        </p>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Kind</TableHead>
+              <TableHead>Token</TableHead>
+              <TableHead>What it says</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell>Arrival</TableCell>
+              <TableCell className="font-mono text-xs">enterFade, enterRise, enterPop, overlayIn</TableCell>
+              <TableCell>This was not here a moment ago — and, for a floating layer, which edge it came from.</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Quantity</TableCell>
+              <TableCell className="font-mono text-xs">growIn, growTransition, strokeTransition</TableCell>
+              <TableCell>This box is a number. Watch it get there.</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Response</TableCell>
+              <TableCell className="font-mono text-xs">pressable, interactive</TableCell>
+              <TableCell>Your click landed, before the app has decided what it meant.</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Counting</TableCell>
+              <TableCell className="font-mono text-xs">useCountUp, useCountUpText, useGrowIn</TableCell>
+              <TableCell>A figure arriving at its value rather than appearing at it.</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </Section>
+
+      <Section title="Numbers count, bars grow">
+        <p>
+          Anything whose whole content is a figure counts to it —{' '}
+          <Link className="underline underline-offset-2" to={componentPath('stat')}>Stat</Link>,{' '}
+          <Link className="underline underline-offset-2" to={componentPath('gauge')}>Gauge</Link>,{' '}
+          <Link className="underline underline-offset-2" to={componentPath('donut')}>Donut</Link>,
+          every meter and every score ring. Tables do not: forty cells counting
+          at once is noise, and the reader is scanning the column rather than
+          watching any one cell. <code className="font-mono text-xs">Fmt</code>{' '}
+          takes an <code className="font-mono text-xs">animate</code> prop for
+          the cases in between.
+        </p>
+        <CodeBlock
+          language="tsx"
+          title="Counting a value you already have"
+          code={`import { useCountUpText } from '@/lib/motion'
+
+function Total({ cents }: { cents: number }) {
+  return <span className="tabular-nums">{useCountUpText(cents / 100)}</span>
+}`}
+        />
+        <p>
+          Bars and arcs use a cheaper mechanism.{' '}
+          <code className="font-mono text-xs">useGrowIn</code> returns its start
+          value for exactly one frame, which turns the CSS transition a component
+          already had into a mount animation — one extra render, rather than one
+          per frame for the length of the animation.
+        </p>
+      </Section>
+
+      <Section title="Reduced motion is not a downgrade">
+        <p>
+          Every token here is written with{' '}
+          <code className="font-mono text-xs">motion-safe</code> /{' '}
+          <code className="font-mono text-xs">motion-reduce</code>, and every
+          hook returns its final value immediately when the preference is set.
+          Nothing is left half-drawn: a skeleton keeps its tint when the sweep is
+          taken away, a gauge is simply already full.
+        </p>
+        <Alert color="blue" title="Check it before you ship">
+          Turn on <em>Reduce motion</em> in your OS and reload. Anything that
+          still moves is a bug, and anything that disappeared instead of settling
+          is a worse one.
+        </Alert>
+      </Section>
+
+      <Section title="Where motion is banned">
+        <p>
+          Fields never move. <code className="font-mono text-xs">interactive</code>{' '}
+          is worn by inputs, tracks, indicators and menu rows as well as buttons,
+          which is why press feedback lives in a separate{' '}
+          <code className="font-mono text-xs">pressable</code> token — a text
+          input that shrinks when you click into it is a bug, not a flourish.
+        </p>
+        <p>
+          Floating layers never scale. The popper measures its own painted width
+          to detect a scaling ancestor, so a layer that scaled itself would be
+          measured mid-animation and positioned against a size it is about to
+          stop being. They fade and travel four pixels, from the side they are
+          anchored to.
+        </p>
+      </Section>
+    </Doc>
+  ),
+}
+
+
 /* --------------------------------------------------------- accessibility */
 
 const accessibility: DocEntry = {
@@ -791,6 +911,7 @@ export const DOCS: DocEntry[] = [
   theming,
   structure,
   conventions,
+  motion,
   accessibility,
 ]
 
@@ -804,5 +925,6 @@ export const DOC_ICONS: Record<string, ReactNode> = {
   theming: <Palette />,
   structure: <FolderTree />,
   conventions: <Ruler />,
+  motion: <GaugeIcon />,
   accessibility: <ShieldCheck />,
 }

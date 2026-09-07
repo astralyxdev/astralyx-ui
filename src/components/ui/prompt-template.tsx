@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge'
 import { CopyButton } from '@/components/ui/copy-button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -66,7 +67,7 @@ function PromptTemplate({
   return (
     <div
       data-slot="prompt-template"
-      className={cn(surface, radius.surface, 'flex flex-col overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col overflow-hidden', className)}
       {...props}
     >
       <div className="border-border flex flex-wrap items-center gap-2 border-b p-3">

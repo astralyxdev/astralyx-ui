@@ -1,6 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { Fmt } from '@/components/ui/fmt'
 import { Sparkline } from '@/components/ui/sparkline'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -64,7 +65,7 @@ function CacheStats({
   return (
     <div
       data-slot="cache-stats"
-      className={cn(surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col gap-3 p-4', className)}
       {...props}
     >
       <div className="flex flex-wrap items-baseline gap-x-2">
@@ -76,7 +77,7 @@ function CacheStats({
 
       <p className="flex items-baseline gap-2">
         <span className="text-3xl font-semibold tabular-nums" style={{ color: tone }}>
-          <Fmt type="percent" value={rate} decimals={1} locale={locale} />
+          <Fmt type="percent" value={rate} decimals={1} locale={locale} animate />
         </span>
         <span className="text-muted-foreground text-xs">{hitRateLabel}</span>
       </p>

@@ -2,6 +2,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { Minus, TrendingDown, TrendingUp } from 'lucide-react'
 import { Avatar } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -148,7 +149,7 @@ function LeaderboardTable({
   return (
     <div
       data-slot="leaderboard"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       <div className="border-border text-muted-foreground flex items-center gap-3 border-b p-3 text-xs font-medium">

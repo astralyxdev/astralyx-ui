@@ -1,6 +1,7 @@
 import { useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { Box, Braces, FunctionSquare, Hash, Search, Type, Variable } from 'lucide-react'
 import { Input } from '@/components/ui/input'
+import { enterFade } from '@/lib/motion'
 import { focusRing, interactive, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -120,7 +121,7 @@ function SymbolOutline({
   return (
     <div
       data-slot="symbol-outline"
-      className={cn(surface, radius.surface, 'flex flex-col overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'flex flex-col overflow-hidden', className)}
       {...props}
     >
       {searchable && (

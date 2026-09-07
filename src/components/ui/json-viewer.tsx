@@ -1,5 +1,6 @@
 import { useState, type ComponentProps } from 'react'
 import { ChevronRight } from 'lucide-react'
+import { enterFade } from '@/lib/motion'
 import { focusRing, interactive, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -120,6 +121,7 @@ function JsonViewer({
     <div
       data-slot="json-viewer"
       className={cn(
+        enterFade,
         'border-border bg-card overflow-auto border p-3 font-mono text-xs',
         radius.surface,
         className,

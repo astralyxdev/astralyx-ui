@@ -2,6 +2,7 @@ import type { ComponentProps } from 'react'
 import { FolderOpen, Plus, TriangleAlert, X } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { enterFade } from '@/lib/motion'
 import { radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -69,7 +70,7 @@ function McpRoots({
   return (
     <div
       data-slot="mcp-roots"
-      className={cn(surface, radius.surface, 'overflow-hidden', className)}
+      className={cn(enterFade, surface, radius.surface, 'overflow-hidden', className)}
       {...props}
     >
       <div className="border-border bg-muted/40 flex items-center justify-between gap-2 border-b px-4 py-2">
