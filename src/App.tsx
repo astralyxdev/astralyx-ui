@@ -34,17 +34,54 @@ function App() {
 }
 
 function Shell() {
-  // Dark is the default; the toggle switches to light.
-  const [dark, setDark] = useState(false)
-
   /*
    * The theme class lives on <html>, not on a wrapper div.
    *
    * `.dark` sets the token values on the element it lands on, and everything
    * below inherits them — so a wrapper cannot switch back to light while an
-   * ancestor still carries the class. index.html ships with the class already
-   * set, which also avoids a light flash before React mounts.
+   * ancestor still carries the class. The inline script in index.html has
+   * already resolved the class from storage by the time React mounts, so the
+   * initial state reads the live element instead of asserting a default and
+   * fighting it.
    */
+  const [dark, setDark] = useState(() =>
+    document.documentElement.classList.contains('dark'),
+  )
+
+  /*
+   * Shell owns the class, not ThemeToggle. An example takes the whole viewport
+   * and renders no header, so the toggle is unmounted there — leaving it in
+   * charge meant the class stopped tracking the state the moment you opened
+   * one. Persisting here is what makes the choice survive a reload; without it
+   * every refresh fell back to whatever index.html shipped.
+   */
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', dark)
+    try {
+      localStorage.setItem('astralyx-theme', dark ? 'dark' : 'light')
+    } catch {
+      // Private mode, or storage is full. The class is still applied.
+    }
+  }, [dark])
+
+  /*
+   * The header button is not the only writer.
+   *
+   * The catalogue documents ThemeToggle by rendering live ones, and an
+   * uncontrolled toggle writes the class directly — it has no idea this app is
+   * holding the state. Watching the element instead of assuming sole ownership
+   * keeps the header button, and what gets stored, agreeing with the page.
+   */
+  useEffect(() => {
+    const root = document.documentElement
+    const observer = new MutationObserver(() => {
+      setDark(root.classList.contains('dark'))
+    })
+
+    observer.observe(root, { attributes: true, attributeFilter: ['class'] })
+    return () => observer.disconnect()
+  }, [])
+
   const path = useLocation()
   const mainRef = useRef<HTMLElement>(null)
   const exampleRoute = useRoute('/examples/:id')

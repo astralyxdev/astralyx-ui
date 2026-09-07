@@ -14,6 +14,11 @@ import { Button, type ButtonProps } from '@/components/ui/button'
  * agrees with whatever the page shipped with instead of flashing to its own
  * idea of the default on mount. Pass `dark`/`onDarkChange` when the app owns
  * the state.
+ *
+ * The read happens in the initialiser, not in an effect. Reading in an effect
+ * loses the race against the effect that writes the class: that one ran first
+ * with the default `false` and cleared `.dark` before anything had looked at
+ * it, so merely rendering the component turned a dark page light.
  */
 function ThemeToggle({
   dark: darkProp,
@@ -27,13 +32,9 @@ function ThemeToggle({
   onDarkChange?: (dark: boolean) => void
 }) {
   const controlled = darkProp !== undefined
-  const [uncontrolled, setUncontrolled] = useState(false)
-
-  // Read the live class on mount rather than assuming a default.
-  useEffect(() => {
-    if (controlled) return
-    setUncontrolled(document.documentElement.classList.contains('dark'))
-  }, [controlled])
+  const [uncontrolled, setUncontrolled] = useState(
+    () => typeof document !== 'undefined' && document.documentElement.classList.contains('dark'),
+  )
 
   const dark = controlled ? darkProp : uncontrolled
 

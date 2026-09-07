@@ -79,6 +79,7 @@ export type CanvasEdge = {
   id: string
   from: string
   to: string
+  /** Rides the middle of the curve — which branch this is, what it carries. */
   label?: ReactNode
   /** Draws dashed — for a path that is speculative or inactive. */
   dashed?: boolean
@@ -928,6 +929,36 @@ function NodeCanvas({
             />
           ))}
 
+          {/* Edge labels, in the same graph space as the detach buttons.
+              Positioned rather than drawn into the SVG, because a label is
+              arbitrary content and `<text>` only takes a string.
+
+              They yield to the detach button on hover — both want the middle of
+              the edge, and only one of them is a control. The text is not lost
+              to a screen reader: it goes on that button's accessible name. */}
+          {edges.map((edge) => {
+            if (edge.label == null) return null
+            const points = anchors(edge)
+            if (!points) return null
+            const middle = edgeMidpoint(points.start, points.end)
+            return (
+              <span
+                key={`label-${edge.id}`}
+                aria-hidden="true"
+                style={{ position: 'absolute', left: middle.x, top: middle.y }}
+                className={cn(
+                  'bg-card border-border text-muted-foreground pointer-events-none flex',
+                  '-translate-x-1/2 -translate-y-1/2 items-center whitespace-nowrap',
+                  'rounded-full border px-1.5 py-0.5 text-[10px] leading-none',
+                  'transition-opacity duration-150 ease-out motion-reduce:transition-none',
+                  onRemoveEdge && activeEdge === edge.id ? 'opacity-0' : 'opacity-100',
+                )}
+              >
+                {edge.label}
+              </span>
+            )
+          })}
+
           {/* Detach buttons ride above the nodes, in graph space so they travel
               and scale with the edge they belong to. Real buttons, so a
               connection can be removed without a pointer at all. */}
@@ -940,7 +971,11 @@ function NodeCanvas({
                 <button
                   key={edge.id}
                   type="button"
-                  aria-label={removeEdgeLabel}
+                  aria-label={
+                    typeof edge.label === 'string'
+                      ? `${removeEdgeLabel} (${edge.label})`
+                      : removeEdgeLabel
+                  }
                   data-edge-id={edge.id}
                   style={{ position: 'absolute', left: middle.x, top: middle.y }}
                   className={cn(

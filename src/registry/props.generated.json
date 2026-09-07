@@ -16557,7 +16557,8 @@
             },
             {
               "name": "label",
-              "type": "ReactNode"
+              "type": "ReactNode",
+              "description": "Rides the middle of the curve — which branch this is, what it carries."
             },
             {
               "name": "dashed",

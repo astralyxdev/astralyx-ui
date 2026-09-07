@@ -11,6 +11,22 @@
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- The theme class has to land on <html> before the first paint, or the
+         page shows one palette and then swaps. This runs synchronously, ahead
+         of the bundle: a stored choice wins, and a first visit follows the OS.
+         The class in the tag above is the fallback if this throws. -->
+    <script>
+      try {
+        var stored = localStorage.getItem('astralyx-theme')
+        document.documentElement.classList.toggle(
+          'dark',
+          stored
+            ? stored === 'dark'
+            : !window.matchMedia('(prefers-color-scheme: light)').matches,
+        )
+      } catch (e) {}
+    </script>
+
     <title>Astralyx UI — React components you own</title>
     <meta
       name="description"

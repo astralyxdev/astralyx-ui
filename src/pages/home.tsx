@@ -433,12 +433,14 @@ function Examples() {
       <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
         <div className="max-w-xl">
           <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            Five whole screens.
+            Five whole products.
           </h2>
           <p className="text-muted-foreground mt-4 text-sm leading-relaxed">
-            Not marketing pages. A mail client with a resizable split and a
-            command palette, a repository browser with a file tree and a diff
-            viewer, a settings form with real validation.
+            Not marketing pages, and not one screen each. Every one has a rail,
+            sub-pages, records that open, a command palette, forms that validate
+            and dialogs that commit — a deployment console, an agent studio, a
+            workflow canvas with an agent editing it, an on-call room and the
+            back office of a shop.
           </p>
         </div>
         <Button asChild variant="secondary" size="sm">

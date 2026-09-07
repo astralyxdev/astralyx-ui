@@ -81,9 +81,42 @@ export const themeToggleEntry: ComponentEntry = {
     { name: 'dark / onDarkChange', type: 'boolean / (dark) => void', description: 'Controlled mode. Omit both and it manages itself.' },
     { name: 'target', type: 'document.documentElement', description: 'The class goes on the root, never a wrapper: `.dark` defines the token values on the element it lands on, so a descendant cannot switch a subtree back.' },
     { name: 'variant / size', type: 'ButtonProps', default: "'secondary' / 'icon-sm'", description: 'Passed through to Button.' },
+    { name: 'persistence', type: 'yours to add', description: 'The toggle does not remember the choice — it has no idea where your app keeps state. Store it, and re-apply the class from an inline script in <head> so the page does not paint the wrong palette first. Without both halves, every reload falls back to whatever the HTML shipped with.' },
   ],
   demos: [
     { title: 'Toggle', code: `<ThemeToggle />`, render: () => <ThemeToggle /> },
+    {
+      title: 'Remembering the choice',
+      code: `// Two pieces. The app owns the state and writes it down; a script in
+// <head> reads it back before the first paint, so the page never flashes
+// the other theme while the bundle loads.
+//
+// index.html, in <head>, before the bundle
+<script>
+  try {
+    var stored = localStorage.getItem('theme')
+    document.documentElement.classList.toggle(
+      'dark',
+      stored ? stored === 'dark' : !matchMedia('(prefers-color-scheme: light)').matches,
+    )
+  } catch (e) {}
+</script>
+
+// The app: seed from the live element, persist every change.
+const [dark, setDark] = useState(() =>
+  document.documentElement.classList.contains('dark'),
+)
+
+useEffect(() => {
+  document.documentElement.classList.toggle('dark', dark)
+  try {
+    localStorage.setItem('theme', dark ? 'dark' : 'light')
+  } catch {}
+}, [dark])
+
+<ThemeToggle dark={dark} onDarkChange={setDark} />`,
+      render: () => <ThemeToggle />,
+    },
   ],
 }
 
