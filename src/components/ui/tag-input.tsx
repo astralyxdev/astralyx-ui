@@ -1,3 +1,5 @@
+'use client'
+
 import { useRef, useState, type ComponentProps, type KeyboardEvent } from 'react'
 import { X } from 'lucide-react'
 import {

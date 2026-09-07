@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useRef, useState, type ComponentProps, type ReactNode } from 'react'
 import { ArrowDown, ArrowUp } from 'lucide-react'
 import { Sparkline } from '@/components/ui/sparkline'

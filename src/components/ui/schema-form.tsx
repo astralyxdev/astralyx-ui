@@ -1,3 +1,5 @@
+'use client'
+
 import { useId, type ComponentProps, type ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
 import { Field, FieldLabel, useFieldControl } from '@/components/ui/field'

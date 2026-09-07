@@ -896,3 +896,27 @@ dialog[open][data-side='bottom'] {
 :where(*:has(> .sr-only)) {
   position: relative;
 }
+
+/*
+ * The documentation rail's rows.
+ *
+ * One class rather than the utility list inline, and the only place in this
+ * repo where that trade is worth making. The rail carries 366 links and is
+ * rendered into all 358 exported pages: at roughly 1.2 kB of repeated class
+ * names per row it was 466 kB of every page and about two thirds of the whole
+ * artefact. The markup is identical, and `aria-current` was already the thing
+ * marking the active row, so nothing needed a second attribute to say it twice.
+ */
+@layer components {
+  .rail-link {
+    @apply flex shrink-0 items-center justify-between gap-2 rounded-lg px-3 py-1.5;
+    @apply text-left text-sm whitespace-nowrap;
+    @apply text-muted-foreground hover:text-foreground hover:bg-accent/50;
+    @apply outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px];
+    @apply transition-colors duration-150 ease-out motion-reduce:transition-none;
+  }
+
+  .rail-link[aria-current='page'] {
+    @apply bg-accent text-accent-foreground font-medium;
+  }
+}

@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { Gantt, type GanttTask } from '@/components/ui/gantt'
 import { OrgChart, type OrgNode } from '@/components/ui/org-chart'

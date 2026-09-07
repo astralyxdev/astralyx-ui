@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { File, FileJson, FileText, Image as ImageIcon, Search } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'

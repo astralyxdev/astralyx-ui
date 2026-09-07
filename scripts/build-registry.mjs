@@ -32,11 +32,14 @@ const PEERS = new Set(['react', 'react-dom'])
  *   they cannot have wanted.
  * - `lib-seo` writes this site's document head and hardcodes its canonical
  *   domain. In a consumer's project it is wrong on its face.
+ * - `lib-site-link` is this site's internal link, and the only file in the repo
+ *   that imports `next`. Shipping it would put a Next dependency in the
+ *   registry of a kit whose whole claim is that it has none.
  *
- * Nothing in the registry depends on either, so dropping them leaves the graph
- * closed — `check-registry.mjs` fails the build if that ever stops being true.
+ * Nothing in the registry depends on any of them, so dropping them leaves the
+ * graph closed — `check-registry.mjs` fails the build if that stops being true.
  */
-const PRIVATE = new Set(['logo', 'lib-seo'])
+const PRIVATE = new Set(['logo', 'lib-seo', 'lib-site-link'])
 
 function itemNameFor(specifier) {
   for (const source of SOURCES) {

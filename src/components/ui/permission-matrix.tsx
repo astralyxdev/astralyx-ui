@@ -1,3 +1,5 @@
+'use client'
+
 import { Fragment, useMemo, type ComponentProps, type ReactNode } from 'react'
 import { Check, Minus } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'

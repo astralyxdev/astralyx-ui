@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, useState } from 'react'
 import { ConnectionPool } from '@/components/ui/connection-pool'
 import { CsvPreview, type CsvColumn } from '@/components/ui/csv-preview'

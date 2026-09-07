@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { ArrowDown, ArrowUp, Eye, EyeOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'

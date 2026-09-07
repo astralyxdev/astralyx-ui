@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { enterFade } from '@/lib/motion'

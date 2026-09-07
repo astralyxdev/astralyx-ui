@@ -1,3 +1,5 @@
+'use client'
+
 import { CommitGraph, type GraphCommit } from '@/components/ui/commit-graph'
 import { Fmt } from '@/components/ui/fmt'
 import { LabelChip, LabelPicker, type LabelOption } from '@/components/ui/label-picker'

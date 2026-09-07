@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, type ComponentProps, type ReactNode } from 'react'
 import {
   ChevronRight, File, FileCode, FileJson, FileText, Folder, FolderOpen,

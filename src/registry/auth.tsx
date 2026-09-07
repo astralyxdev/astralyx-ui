@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { DeviceList, type TrustedDevice } from '@/components/ui/device-list'
 import { LoginForm } from '@/components/ui/login-form'

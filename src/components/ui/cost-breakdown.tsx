@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, type ComponentProps, type ReactNode } from 'react'
 import { Fmt } from '@/components/ui/fmt'
 import { enterFade, growIn } from '@/lib/motion'

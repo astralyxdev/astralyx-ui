@@ -1,3 +1,5 @@
+'use client'
+
 import { useId, useMemo, type ComponentProps } from 'react'
 import { encodeQr, type EccLevel } from '@/lib/qr'
 import { enterFade } from '@/lib/motion'

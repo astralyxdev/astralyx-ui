@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, type ComponentProps, type ReactNode } from 'react'
 import { Download, File, FileText, Film, Music, TriangleAlert } from 'lucide-react'
 import { AudioPlayer } from '@/components/ui/audio-player'

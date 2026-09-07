@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { Bell, Home, MessageCircle, Search, Settings, Trash2 } from 'lucide-react'
 import { BackToTop } from '@/components/ui/back-to-top'

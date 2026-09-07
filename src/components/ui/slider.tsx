@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, type ComponentProps } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { focusRing, sliderSize } from '@/lib/styles'

@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { Bold, Italic, Link2, List, Underline } from 'lucide-react'
 import { Banner } from '@/components/ui/banner'

@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { Check, ChevronDown, ChevronRight, Clock, X } from 'lucide-react'
 import { Spinner } from '@/components/ui/spinner'

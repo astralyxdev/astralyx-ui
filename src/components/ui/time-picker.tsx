@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, useRef, useState, type ComponentProps } from 'react'
 import { Clock } from 'lucide-react'
 import { useDismissable } from '@/components/primitives/dismissable'

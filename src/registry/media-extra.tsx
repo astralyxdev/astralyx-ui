@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { ImageCropper, type CropRect } from '@/components/ui/image-cropper'
 import { PdfViewer } from '@/components/ui/pdf-viewer'

@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, type ComponentProps } from 'react'
 import { CodeBlock } from '@/components/ui/code-block'
 import { enterFade } from '@/lib/motion'

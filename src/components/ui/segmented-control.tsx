@@ -1,3 +1,5 @@
+'use client'
+
 import { useId, useRef, useState, type ComponentProps, type ReactNode } from 'react'
 import { focusRing, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'

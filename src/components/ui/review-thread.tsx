@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, type ComponentProps, type ReactNode } from 'react'
 import { Check, MessageSquare } from 'lucide-react'
 import { Avatar } from '@/components/ui/avatar'

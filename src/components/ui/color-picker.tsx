@@ -1,3 +1,5 @@
+'use client'
+
 import { useRef, useState, type ComponentProps } from 'react'
 import { Check, Pipette, X } from 'lucide-react'
 import { useDismissable } from '@/components/primitives/dismissable'

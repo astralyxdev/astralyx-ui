@@ -1,13 +1,14 @@
+'use client'
+
 import { useEffect, useRef, useState } from 'react'
 import { ArrowRight } from 'lucide-react'
-import { Link } from '@/components/primitives/router'
+import { Link } from '@/lib/site-link'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardBody, CardHeader, CardTitle } from '@/components/ui/card'
 import { PageHeader } from '@/components/ui/page-header'
 import { EXAMPLES, examplePath, type ExampleEntry } from '@/examples'
 import { focusRing } from '@/lib/styles'
 import { cn } from '@/lib/utils'
-import { useSeo } from '@/lib/seo'
 
 /**
  * The width a thumbnail is composed at before it is scaled down.
@@ -98,12 +99,6 @@ function Thumbnail({ example }: { example: ExampleEntry }) {
 
 /** Index of the full-page examples. */
 function Examples() {
-  useSeo({
-    title: 'Examples',
-    description:
-      'Whole screens built from the kit — a console, an incident room, a SQL client, an agent studio, a trading desk, a storefront and more. Each is a working page, not a screenshot.',
-    path: '/examples',
-  })
 
   return (
     <div className="mx-auto max-w-4xl pb-8">

@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, type ComponentProps, type ReactNode } from 'react'
 import { Check, FileText, Film, Music } from 'lucide-react'
 import { Image } from '@/components/ui/image'

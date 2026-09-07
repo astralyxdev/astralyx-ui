@@ -1,3 +1,5 @@
+'use client'
+
 import { useId, type ComponentProps, type ReactNode } from 'react'
 import { Field, FieldLabel, useFieldControl } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'

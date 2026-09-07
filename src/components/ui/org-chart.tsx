@@ -1,3 +1,5 @@
+'use client'
+
 import { useId, useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import { enterFade } from '@/lib/motion'

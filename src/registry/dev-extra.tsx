@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { BlameView, type BlameLine } from '@/components/ui/blame-view'
 import { CronSchedule, type CronJob } from '@/components/ui/cron-schedule'

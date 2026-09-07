@@ -1,3 +1,5 @@
+'use client'
+
 import { useRef, useState, type ComponentProps, type ReactNode } from 'react'
 import { AlertTriangle, Check, ChevronDown } from 'lucide-react'
 import { useDismissable } from '@/components/primitives/dismissable'

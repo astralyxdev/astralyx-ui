@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, type ComponentProps, type ReactNode } from 'react'
 import { Info, TriangleAlert, X, CircleCheck, CircleAlert } from 'lucide-react'
 import { Button } from '@/components/ui/button'

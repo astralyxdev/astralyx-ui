@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { TriangleAlert } from 'lucide-react'
 import { CopyButton } from '@/components/ui/copy-button'

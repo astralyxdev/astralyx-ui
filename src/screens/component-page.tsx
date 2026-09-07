@@ -1,5 +1,7 @@
+'use client'
+
 import { ArrowLeft, ArrowRight } from 'lucide-react'
-import { Link } from '@/components/primitives/router'
+import { Link } from '@/lib/site-link'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,12 +14,12 @@ import { ApiReference } from '@/components/showcase/api-table'
 import { PageHeader } from '@/components/ui/page-header'
 import { Composer } from '@/components/ui/composer'
 import { Demo } from '@/components/showcase/demo'
+import { Prose, proseFor } from '@/components/showcase/prose'
 import { Section } from '@/components/showcase/section'
 import { CodeBlock } from '@/components/ui/code-block'
 import { componentPath, ENTRIES, findCategory, isReady, type ComponentEntry } from '@/registry'
 import { focusRing, radius } from '@/lib/styles'
 import { cn } from '@/lib/utils'
-import { useSeo } from '@/lib/seo'
 import { apiDocs, hasApi } from '@/registry/props'
 
 /**
@@ -25,17 +27,11 @@ import { apiDocs, hasApi } from '@/registry/props'
  * playground to feel it out, worked examples, then the full props reference.
  */
 function ComponentPage({ entry }: { entry: ComponentEntry }) {
-  // Above the `isReady` bail-out: hooks cannot sit behind a conditional
-  // return, and an unbuilt component still has a real URL worth describing.
-  useSeo({
-    title: entry.label,
-    description: `${entry.description} Copy it into your project with npx astralyx-ui add ${entry.id}.`,
-    path: componentPath(entry.id),
-  })
 
   if (!isReady(entry)) return <NotBuilt entry={entry} />
 
   const category = findCategory(entry.id)
+  const prose = proseFor(entry.id)
 
   return (
     <article className="mx-auto max-w-4xl pb-8">
@@ -67,6 +63,15 @@ function ComponentPage({ entry }: { entry: ComponentEntry }) {
           </code>
         }
       />
+
+      {prose && (
+        <Section
+          title="About"
+          description="From the component's own source, where it was written."
+        >
+          <Prose paragraphs={prose} />
+        </Section>
+      )}
 
       <Section title="Install">
         <CodeBlock code={`npx astralyx-ui add ${entry.id}`} language="bash" header={false} />

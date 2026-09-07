@@ -1,3 +1,5 @@
+'use client'
+
 import { useId, useMemo, useState, type ComponentProps } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { CopyButton } from '@/components/ui/copy-button'

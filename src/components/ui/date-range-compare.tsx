@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, type ComponentProps, type ReactNode } from 'react'
 import { ArrowDown, ArrowUp, Minus } from 'lucide-react'
 import { Fmt } from '@/components/ui/fmt'

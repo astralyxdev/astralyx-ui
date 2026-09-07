@@ -1,6 +1,9 @@
+'use client'
+
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { ArrowRight, ArrowUpRight, Check, Copy } from 'lucide-react'
-import { Link } from '@/components/primitives/router'
+import { ClientOnly } from '@/components/showcase/client-only'
+import { Link } from '@/lib/site-link'
 import { Avatar, AvatarGroup } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -22,7 +25,6 @@ import { EXAMPLES, examplePath } from '@/examples'
 import { CATEGORIES, componentPath, ENTRIES, type ComponentEntry } from '@/registry'
 import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
-import { useSeo } from '@/lib/seo'
 
 const NOW = new Date('2026-09-03T08:00:00')
 const ago = (minutes: number) => new Date(NOW.getTime() - minutes * 60_000)
@@ -39,11 +41,6 @@ const ago = (minutes: number) => new Date(NOW.getTime() - minutes * 60_000)
  * there are clipped, inert and mounted only when scrolled near.
  */
 function Home() {
-  useSeo({
-    description:
-      'Accessible React components and primitives for React 19 and Tailwind v4. A CLI copies the source into your repo — nothing is imported from a package at runtime.',
-    path: '/',
-  })
 
   return (
     <div className="-mx-4 -mt-4 sm:-mx-6 sm:-mt-6 lg:-mx-8 lg:-mt-8">
@@ -592,9 +589,13 @@ function fitPreview(node: HTMLDivElement | null) {
 
 /** One component, running, in a card that links to its page. */
 function ShowcaseCard({ entry, category }: { entry: ComponentEntry; category: string }) {
-  const preview = entry.composer
-    ? entry.composer.render(composerInitialState(entry.composer.controls))
-    : entry.demos?.[0]?.render()
+  // Built on demand, in the browser. Rendering 343 previews into the exported
+  // HTML made the home page 2.7 MB of markup for a wall of pictures — the card's
+  // name and category are the part worth reading, and they are still here.
+  const preview = () =>
+    entry.composer
+      ? entry.composer.render(composerInitialState(entry.composer.controls))
+      : entry.demos?.[0]?.render()
 
   return (
     <Link
@@ -668,7 +669,7 @@ function ShowcaseCard({ entry, category }: { entry: ComponentEntry; category: st
                   transform: 'scale(var(--preview-scale, 0.8))',
                 }}
               >
-                {preview}
+                <ClientOnly minHeight={120}>{preview}</ClientOnly>
               </div>
             </div>
           </div>

@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useMemo, useRef, type ComponentProps } from 'react'
 import { CopyButton } from '@/components/ui/copy-button'
 import { enterFade } from '@/lib/motion'

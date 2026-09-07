@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useRef, useState, type ComponentProps, type ReactNode } from 'react'
 import { ArrowUp } from 'lucide-react'
 import { focusRing, radius } from '@/lib/styles'

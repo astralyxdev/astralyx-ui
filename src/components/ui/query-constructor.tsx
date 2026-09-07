@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useId, useMemo, useRef, useState, type ComponentProps, type ReactNode } from 'react'
 import { ClipboardPaste, Plus, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'

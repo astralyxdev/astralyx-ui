@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { CurlCommand } from '@/components/ui/curl-command'
 import { EndpointList, type Endpoint } from '@/components/ui/endpoint-list'

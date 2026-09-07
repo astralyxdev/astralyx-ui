@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import {
   Activity, AlarmClock, ArrowLeft, BellRing, Database, HeartPulse, Server, Siren,

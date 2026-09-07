@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, useState, type ComponentProps, type ReactNode } from 'react'
 import { Lock, Search } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'

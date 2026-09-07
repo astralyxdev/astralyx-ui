@@ -1,3 +1,5 @@
+'use client'
+
 import { useId, useState, type ComponentProps, type ReactNode } from 'react'
 import { Download, ExternalLink, Minus, Plus, RotateCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'

@@ -1,3 +1,5 @@
+'use client'
+
 import { useId, useMemo, type ComponentProps } from 'react'
 import { enterFade, useGrowIn } from '@/lib/motion'
 import { dataFills } from '@/lib/styles'

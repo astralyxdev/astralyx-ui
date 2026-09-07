@@ -1,7 +1,9 @@
+'use client'
+
 import type { ReactNode } from 'react'
 import { PageHeader } from '@/components/ui/page-header'
 import { ArrowLeft, ArrowRight, Check, Copy, FolderTree, Gauge as GaugeIcon, Palette, Ruler, ShieldCheck, Sparkles, X } from 'lucide-react'
-import { Link } from '@/components/primitives/router'
+import { Link } from '@/lib/site-link'
 import { Alert } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'

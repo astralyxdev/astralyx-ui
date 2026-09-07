@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { AuditLog, type AuditEvent } from '@/components/ui/audit-log'
 import { BulkActionBar } from '@/components/ui/bulk-action-bar'

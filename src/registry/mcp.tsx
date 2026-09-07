@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { McpCapabilityMatrix, type CapabilityRow } from '@/components/ui/mcp-capability-matrix'
 import { McpConfigEditor, type McpServerConfig } from '@/components/ui/mcp-config-editor'

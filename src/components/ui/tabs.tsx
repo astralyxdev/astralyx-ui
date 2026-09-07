@@ -147,13 +147,29 @@ function TabsTrigger({
   )
 }
 
+/**
+ * A panel.
+ *
+ * Unmounted when it is not selected, which is usually what you want: a panel
+ * that keeps a video playing or a subscription open behind another tab is a
+ * bug, and a fresh mount is the cheapest way to guarantee it cannot happen.
+ *
+ * `keepMounted` is for the case where the content has to exist whether or not
+ * anyone is looking at it — the one that prompted this was documentation, where
+ * the source behind a Code tab is the page's actual content and unmounting it
+ * meant it never reached the HTML a crawler reads. Hidden, not removed: the
+ * panel keeps its markup, and `hidden` takes it out of the view and out of the
+ * accessibility tree just as unmounting did.
+ */
 function TabsContent({
   className,
   value,
+  keepMounted = false,
   ...props
-}: ComponentProps<'div'> & { value: string }) {
+}: ComponentProps<'div'> & { value: string; keepMounted?: boolean }) {
   const { value: selected, baseId } = useTabs()
-  if (selected !== value) return null
+  const active = selected === value
+  if (!active && !keepMounted) return null
 
   const ids = tabIds(baseId, value)
 
@@ -163,8 +179,10 @@ function TabsContent({
       id={ids.panel}
       data-slot="tabs-content"
       aria-labelledby={ids.trigger}
-      tabIndex={0}
-      className={cn(enterFade, 'outline-none', className)}
+      // A panel nobody can see is not a tab stop.
+      tabIndex={active ? 0 : -1}
+      hidden={!active}
+      className={cn(active && enterFade, 'outline-none', className)}
       {...props}
     />
   )

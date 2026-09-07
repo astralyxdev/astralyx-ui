@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { BetInput } from '@/components/ui/bet-input'
 import { LeaderboardTable, type LeaderboardEntry } from '@/components/ui/leaderboard'

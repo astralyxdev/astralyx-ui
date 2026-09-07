@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { Pagination } from '@/components/ui/pagination'
 import type { ComponentEntry, ComposerState } from './types'

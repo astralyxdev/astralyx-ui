@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, type ComponentProps, type DragEvent, type ReactNode } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { enterFade } from '@/lib/motion'

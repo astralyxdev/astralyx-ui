@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import {
   Copy, FileText, Folder, Pencil, Plus, Search, Settings, Trash2, User,

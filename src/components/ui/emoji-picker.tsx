@@ -1,3 +1,5 @@
+'use client'
+
 import { useMemo, useRef, useState, type ComponentProps } from 'react'
 import { Search } from 'lucide-react'
 import { Input } from '@/components/ui/input'

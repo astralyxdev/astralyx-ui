@@ -1,3 +1,5 @@
+'use client'
+
 import { useId, type ComponentProps, type ReactNode } from 'react'
 import { enterFade, strokeTransition, useGrowIn } from '@/lib/motion'
 import { dataFills } from '@/lib/styles'

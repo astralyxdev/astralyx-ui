@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { ConnectionString } from '@/components/ui/connection-string'
 import { MigrationList, type Migration } from '@/components/ui/migration-list'
