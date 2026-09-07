@@ -51,7 +51,7 @@ import {
 } from './product'
 import {
   composerEntry, copyButtonEntry,
-  countdownEntry, errorBoundaryEntry, liveAnnouncerEntry, pageHeaderEntry,
+  countdownEntry, errorBoundaryEntry, liveAnnouncerEntry, logoEntry, pageHeaderEntry,
   skipLinkEntry, themeToggleEntry, visuallyHiddenEntry,
 } from './utility'
 import {
@@ -428,6 +428,7 @@ export const CATEGORIES: Category[] = [
       countdownEntry,
       copyButtonEntry,
       composerEntry,
+      logoEntry,
       themeToggleEntry,
       pageHeaderEntry,
       skipLinkEntry,

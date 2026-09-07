@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ArrowUpRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Logo } from '@/components/ui/logo'
+import { Wordmark } from '@/components/ui/wordmark'
 import { Separator } from '@/components/ui/separator'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { Tooltip } from '@/components/ui/tooltip'
@@ -65,7 +65,7 @@ export function Chrome({ nav, children }: { nav: Nav; children: ReactNode }) {
         <header className="border-border flex h-14 shrink-0 items-center justify-between gap-3 border-b px-4 sm:px-6">
           <div className="flex items-center gap-3">
             <Link href="/" aria-label="Astralyx UI, home" className={cn('px-1 py-1', radius.control, focusRing)}>
-              <Logo className="h-5" />
+              <Wordmark className="h-5" />
             </Link>
             <Separator orientation="vertical" className="h-5" />
             <span className="text-muted-foreground hidden text-xs sm:inline">UI kit</span>

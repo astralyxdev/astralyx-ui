@@ -166,6 +166,7 @@
         "countdown",
         "copy-button",
         "composer",
+        "logo",
         "theme-toggle",
         "page-header",
         "skip-link",
@@ -6551,6 +6552,68 @@
         {
           "title": "Every control type",
           "code": "<Composer controls={controls} render={render} code={code} />"
+        }
+      ],
+      "hasComposer": true
+    },
+    "logo": {
+      "id": "logo",
+      "label": "Logo",
+      "description": "A brand mark that follows the room it has: the full artwork while the rail is open, the square mark once it collapses. Falls back to the product name, and to its initials when only 52px are left.",
+      "category": "Utility",
+      "href": "/components/logo/",
+      "ready": true,
+      "usage": "import { Logo } from '@/components/ui/logo'\n\n<Logo\n  icon=\"/mark.svg\"\n  full=\"/logo.svg\"\n  alt=\"Acme\"\n  fallbackText=\"Acme\"\n/>",
+      "isNew": true,
+      "api": [
+        {
+          "name": "icon",
+          "type": "string | ReactNode",
+          "description": "The square mark, shown once the rail collapses. A URL renders as an image; anything else renders as given."
+        },
+        {
+          "name": "full",
+          "type": "string | ReactNode",
+          "description": "The full artwork, shown while there is room for it."
+        },
+        {
+          "name": "alt",
+          "type": "string",
+          "description": "The accessible name, set on the container so a reader hears it once whichever rendition is showing. Empty means decorative — use that when the product name is already written beside it."
+        },
+        {
+          "name": "fallbackText",
+          "type": "string",
+          "description": "Drawn when there is no artwork or an image fails to load. Collapsed it becomes initials, because a name does not fit in 52px."
+        },
+        {
+          "name": "collapsed",
+          "type": "boolean",
+          "description": "Overrides the sidebar. Left off, the switch is CSS keyed to the rail's `data-state`, so the component needs no context and works outside one."
+        },
+        {
+          "name": "accessibility",
+          "type": "—",
+          "description": "Both renditions are in the DOM when the switch is left to CSS, so the name is on the container and the contents are presentational. Two copies of a logo are one logo."
+        },
+        {
+          "name": "both renditions",
+          "type": "—",
+          "description": "Leaving the switch to CSS puts both images in the document, and a browser fetches both. Pass `collapsed` when you already have the state — then only one renders."
+        }
+      ],
+      "demos": [
+        {
+          "title": "In a rail that collapses",
+          "code": "<Logo icon={<Mark />} full={<Wordmark />} alt=\"Acme\" fallbackText=\"Acme\" />"
+        },
+        {
+          "title": "No artwork — the name, then its initials",
+          "code": "<Logo alt=\"Acme Corp\" fallbackText=\"Acme Corp\" />\n<Logo alt=\"Acme Corp\" fallbackText=\"Acme Corp\" collapsed />"
+        },
+        {
+          "title": "A URL that does not resolve falls through to the text",
+          "code": "<Logo full=\"/does-not-exist.svg\" alt=\"Acme\" fallbackText=\"Acme\" />"
         }
       ],
       "hasComposer": true

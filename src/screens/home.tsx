@@ -13,7 +13,7 @@ import { Cart } from '@/components/ui/cart'
 import { CheckoutSummary } from '@/components/ui/checkout-summary'
 import { Input } from '@/components/ui/input'
 import { composerInitialState } from '@/components/ui/composer'
-import { Logo } from '@/components/ui/logo'
+import { Wordmark } from '@/components/ui/wordmark'
 import { Masonry } from '@/components/ui/masonry'
 import { Message } from '@/components/ui/message'
 import { PromptInput } from '@/components/ui/prompt-input'
@@ -737,7 +737,7 @@ function Footer() {
       <div className="mx-auto w-full max-w-[104rem]">
         <div className="flex flex-wrap items-start justify-between gap-10">
           <div className="max-w-sm">
-            <Logo className="h-6" />
+            <Wordmark className="h-6" />
             <p className="text-muted-foreground mt-4 text-xs leading-relaxed">
               {ENTRIES.length} components, 12 primitives, one style contract.
               MIT licensed. React 19 and Tailwind v4.

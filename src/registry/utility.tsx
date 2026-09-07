@@ -11,6 +11,9 @@ import { ErrorBoundary } from '@/components/ui/error-boundary'
 import { LiveAnnouncer, useAnnouncer } from '@/components/ui/live-announcer'
 import { PageHeader } from '@/components/ui/page-header'
 import { SkipLink } from '@/components/ui/skip-link'
+import { Logo } from '@/components/ui/logo'
+import { radius } from '@/lib/styles'
+import { cn } from '@/lib/utils'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { VisuallyHidden } from '@/components/ui/visually-hidden'
 import { Badge } from '@/components/ui/badge'
@@ -53,6 +56,131 @@ export const copyButtonEntry: ComponentEntry = {
           <CopyButton value="npm i astralyx-ui" showLabel />
         </div>
       ),
+    },
+  ],
+}
+
+/**
+ * A stand-in mark for the composer and the demos.
+ *
+ * Inline SVG rather than a file, because the point of the demos is the
+ * switching, and a `src` that 404s in someone's fork would demonstrate the
+ * fallback instead.
+ */
+function DemoIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className="size-full">
+      <rect x="2" y="2" width="20" height="20" rx="6" className="fill-[var(--violet)]" />
+      <path d="M8 15.5 12 7l4 8.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
+function DemoFull() {
+  return (
+    <span className="flex items-center gap-2">
+      <span className="size-5 shrink-0">
+        <DemoIcon />
+      </span>
+      <span className="text-base font-semibold tracking-tight">Acme</span>
+    </span>
+  )
+}
+
+/** A rail that really collapses, so the switch can be seen doing its job. */
+function LogoInRail() {
+  const [open, setOpen] = useState(true)
+
+  return (
+    <div className="flex w-full flex-col items-start gap-3">
+      <Button size="xs" variant="secondary" onClick={() => setOpen((value) => !value)}>
+        {open ? 'Collapse the rail' : 'Expand the rail'}
+      </Button>
+
+      <div
+        data-state={open ? 'expanded' : 'collapsed'}
+        className={cn(
+          'group/sidebar bg-card border-border flex flex-col gap-2 border p-2 transition-[width] duration-200 ease-out',
+          radius.surface,
+          open ? 'w-56' : 'w-13',
+        )}
+      >
+        <div className="flex h-9 items-center px-1.5">
+          <Logo icon={<DemoIcon />} full={<DemoFull />} alt="Acme" fallbackText="Acme" className="h-5" />
+        </div>
+        <div className="bg-muted/60 h-7 rounded-md" />
+        <div className="bg-muted/60 h-7 rounded-md" />
+      </div>
+    </div>
+  )
+}
+
+export const logoEntry: ComponentEntry = {
+  id: 'logo',
+  label: 'Logo',
+  description:
+    'A brand mark that follows the room it has: the full artwork while the rail is open, the square mark once it collapses. Falls back to the product name, and to its initials when only 52px are left.',
+  isNew: true,
+  usage: `import { Logo } from '@/components/ui/logo'
+
+<Logo
+  icon="/mark.svg"
+  full="/logo.svg"
+  alt="Acme"
+  fallbackText="Acme"
+/>`,
+  composer: {
+    controls: [
+      { type: 'boolean', prop: 'collapsed', label: 'collapsed', default: false },
+      { type: 'boolean', prop: 'artwork', label: 'has artwork', default: true },
+      { type: 'text', prop: 'fallbackText', label: 'fallbackText', default: 'Acme Corp' },
+      { type: 'text', prop: 'alt', label: 'alt', default: 'Acme' },
+    ],
+    render: (state: ComposerState) => (
+      <Logo
+        collapsed={Boolean(state.collapsed)}
+        icon={state.artwork ? <DemoIcon /> : undefined}
+        full={state.artwork ? <DemoFull /> : undefined}
+        alt={String(state.alt ?? '')}
+        fallbackText={String(state.fallbackText ?? '')}
+      />
+    ),
+    code: (state: ComposerState) =>
+      `<Logo\n  collapsed={${Boolean(state.collapsed)}}\n${
+        state.artwork ? '  icon={<Mark />}\n  full={<Wordmark />}\n' : ''
+      }  alt="${state.alt}"\n  fallbackText="${state.fallbackText}"\n/>`,
+  },
+  api: [
+    { name: 'icon', type: 'string | ReactNode', description: 'The square mark, shown once the rail collapses. A URL renders as an image; anything else renders as given.' },
+    { name: 'full', type: 'string | ReactNode', description: 'The full artwork, shown while there is room for it.' },
+    { name: 'alt', type: 'string', description: 'The accessible name, set on the container so a reader hears it once whichever rendition is showing. Empty means decorative — use that when the product name is already written beside it.' },
+    { name: 'fallbackText', type: 'string', description: 'Drawn when there is no artwork or an image fails to load. Collapsed it becomes initials, because a name does not fit in 52px.' },
+    { name: 'collapsed', type: 'boolean', description: 'Overrides the sidebar. Left off, the switch is CSS keyed to the rail\'s `data-state`, so the component needs no context and works outside one.' },
+    { name: 'accessibility', type: '—', description: 'Both renditions are in the DOM when the switch is left to CSS, so the name is on the container and the contents are presentational. Two copies of a logo are one logo.' },
+    { name: 'both renditions', type: '—', description: 'Leaving the switch to CSS puts both images in the document, and a browser fetches both. Pass `collapsed` when you already have the state — then only one renders.' },
+  ],
+  demos: [
+    {
+      title: 'In a rail that collapses',
+      stack: true,
+      code: `<Logo icon={<Mark />} full={<Wordmark />} alt="Acme" fallbackText="Acme" />`,
+      render: () => <LogoInRail />,
+    },
+    {
+      title: 'No artwork — the name, then its initials',
+      code: `<Logo alt="Acme Corp" fallbackText="Acme Corp" />
+<Logo alt="Acme Corp" fallbackText="Acme Corp" collapsed />`,
+      render: () => (
+        <>
+          <Logo alt="Acme Corp" fallbackText="Acme Corp" />
+          <Logo alt="Acme Corp" fallbackText="Acme Corp" collapsed />
+        </>
+      ),
+    },
+    {
+      title: 'A URL that does not resolve falls through to the text',
+      code: `<Logo full="/does-not-exist.svg" alt="Acme" fallbackText="Acme" />`,
+      render: () => <Logo full="/does-not-exist.svg" alt="Acme" fallbackText="Acme" />,
     },
   ],
 }

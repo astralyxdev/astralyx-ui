@@ -4,7 +4,7 @@
 [![Docs](https://img.shields.io/badge/docs-ui.astralyx.dev-0a7cff)](https://ui.astralyx.dev)
 [![License](https://img.shields.io/npm/l/astralyx-ui)](./LICENSE)
 
-**343 accessible React components you copy into your repo** — with a CLI and a
+**344 accessible React components you copy into your repo** — with a CLI and a
 registry that work out what each one needs and bring that too.
 
 **[Browse every component, running, at ui.astralyx.dev →](https://ui.astralyx.dev)**
@@ -20,7 +20,7 @@ npx astralyx-ui add button
 
 ## What you get
 
-- **343 components** across 36 categories — forms, data, overlays, commerce,
+- **344 components** across 36 categories — forms, data, overlays, commerce,
   auth, AI, crypto, observability, developer tooling.
 - **12 primitives** underneath them. Slot, Popper, FocusTrap, Dismissable and
   friends — no headless-UI dependency.

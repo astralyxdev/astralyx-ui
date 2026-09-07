@@ -1,6 +1,6 @@
 {
   "name": "astralyx-ui",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "homepage": "https://ui.astralyx.dev",
   "items": [
     {
@@ -2418,6 +2418,17 @@
         "lib-utils",
         "password-input",
         "separator"
+      ]
+    },
+    {
+      "name": "logo",
+      "type": "registry:ui",
+      "title": "Logo",
+      "description": "A brand mark that follows the room it has: the full artwork while the rail is open, the square mark once it collapses. Falls back to the product name, and to its initials when only 52px are left.",
+      "category": "Utility",
+      "dependencies": [],
+      "registryDependencies": [
+        "lib-utils"
       ]
     },
     {

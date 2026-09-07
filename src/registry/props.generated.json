@@ -14349,25 +14349,53 @@
     },
     "logo": {
       "prose": [
-        "The Astralyx wordmark, with the two eyelids that blink.",
-        "Ported from the Lottie animation on astralyx.dev to inline SVG plus CSS keyframes. The original needs `lottie-web` — roughly 250 KB — to play back a static wordmark and two shapes that scale on the Y axis. Everything here is paths and two `@keyframes`, so it costs nothing at runtime and inherits `currentColor` in both themes.",
-        "`transform-box: view-box` is what makes the CSS transform-origin resolve in viewBox units, so each eyelid pivots on its own hinge instead of the origin."
+        "A brand mark that answers to how much room it has.",
+        "A rail shows a wordmark when it is open and a square mark when it collapses to 52px, and the usual way to get that is two copies of the artwork with opposing visibility classes on them. That works, and it is the thing everyone rewrites per project — including this repo, where the same trick was inlined in the examples' shell and again in the sidebar's own documentation, once with a cropped `viewBox` to fake the square version.",
+        "The switch is CSS by default, keyed off the sidebar's `data-state`. That is deliberate: reading the sidebar's context would make every project that runs `add logo` install a sidebar it may not have, and the mark belongs in headers and login screens too. Outside a rail nothing matches the selector, so the full artwork shows and stays shown.",
+        "`collapsed` overrides it. Pass a boolean when something other than a sidebar decides — a header that shrinks on scroll, a canvas that zooms — and only that one mark renders, which is also the way to avoid fetching both files.",
+        "The accessible name lives on the container and everything inside it is hidden from assistive technology. Two copies of a logo are one logo, and a reader should not hear the company's name twice for a decision made in CSS."
       ],
       "components": [
         {
           "name": "Logo",
-          "description": "The Astralyx wordmark, with the two eyelids that blink.",
           "extends": [
-            "ComponentProps<'svg'>"
+            "Omit<ComponentProps<'span'>, 'children'>"
           ],
           "props": [
             {
-              "name": "label",
+              "name": "icon",
+              "type": "LogoSource",
+              "description": "The square mark, for when the rail is collapsed."
+            },
+            {
+              "name": "full",
+              "type": "LogoSource",
+              "description": "The full artwork — mark and wordmark together."
+            },
+            {
+              "name": "alt",
               "type": "string",
-              "default": "'Astralyx'",
-              "description": "Accessible name for the mark."
+              "required": true,
+              "description": "The accessible name for whichever rendition is showing. Pass an empty string when the product name is already written beside it, which makes the mark decorative rather than announcing it twice."
+            },
+            {
+              "name": "fallbackText",
+              "type": "string",
+              "default": "''",
+              "description": "Drawn when there is no artwork, or when the image fails. Collapsed, it is reduced to initials — a rail is 52px and a name does not fit."
+            },
+            {
+              "name": "collapsed",
+              "type": "boolean",
+              "description": "Overrides the sidebar's own state. Renders one mark instead of both."
             }
           ]
+        }
+      ],
+      "types": [
+        {
+          "name": "LogoSource",
+          "definition": "string | ReactNode"
         }
       ]
     },
@@ -31442,6 +31470,31 @@
               "name": "bytes",
               "type": "number",
               "description": "Payload size. Falls back to the data length."
+            }
+          ]
+        }
+      ]
+    },
+    "wordmark": {
+      "prose": [
+        "The Astralyx wordmark, with the two eyelids that blink.",
+        "Named `Wordmark`, not `Logo`: `Logo` is a real component of the kit that any project points at its own artwork. This is our brand mark and ships to nobody.",
+        "Ported from the Lottie animation on astralyx.dev to inline SVG plus CSS keyframes. The original needs `lottie-web` — roughly 250 KB — to play back a static wordmark and two shapes that scale on the Y axis. Everything here is paths and two `@keyframes`, so it costs nothing at runtime and inherits `currentColor` in both themes.",
+        "`transform-box: view-box` is what makes the CSS transform-origin resolve in viewBox units, so each eyelid pivots on its own hinge instead of the origin."
+      ],
+      "components": [
+        {
+          "name": "Wordmark",
+          "description": "The Astralyx wordmark, with the two eyelids that blink.",
+          "extends": [
+            "ComponentProps<'svg'>"
+          ],
+          "props": [
+            {
+              "name": "label",
+              "type": "string",
+              "default": "'Astralyx'",
+              "description": "Accessible name for the mark."
             }
           ]
         }

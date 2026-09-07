@@ -26,10 +26,10 @@ const PEERS = new Set(['react', 'react-dom'])
 /**
  * Source files that exist for this site and no one else, by registry name.
  *
- * - `logo` is the Astralyx wordmark. It lives in `components/ui` because the
- *   docs site and the examples import it like any other component, but shipping
- *   it would put our brand mark in someone else's repo behind an `add logo`
- *   they cannot have wanted.
+ * - `wordmark` is the Astralyx brand mark. It lives in `components/ui` because
+ *   the docs site and the examples import it like any other component, but
+ *   shipping it would put our brand mark in someone else's repo. The kit's own
+ *   `logo` is the component a project points at its own artwork.
  * - `lib-seo` writes this site's document head and hardcodes its canonical
  *   domain. In a consumer's project it is wrong on its face.
  * - `lib-site-link` is this site's internal link, and the only file in the repo
@@ -39,7 +39,7 @@ const PEERS = new Set(['react', 'react-dom'])
  * Nothing in the registry depends on any of them, so dropping them leaves the
  * graph closed — `check-registry.mjs` fails the build if that stops being true.
  */
-const PRIVATE = new Set(['logo', 'lib-seo', 'lib-site-link'])
+const PRIVATE = new Set(['wordmark', 'lib-seo', 'lib-site-link'])
 
 function itemNameFor(specifier) {
   for (const source of SOURCES) {

@@ -17,6 +17,7 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar'
 import { Logo } from '@/components/ui/logo'
+import { Wordmark } from '@/components/ui/wordmark'
 import type { ComponentEntry, ComposerState } from './types'
 
 const NAV = [
@@ -115,11 +116,12 @@ function SidebarPreview({ defaultOpen = true }: { defaultOpen?: boolean }) {
           <div className="flex h-9 items-center px-2.5">
             {/* The wordmark is ~65px wide and the rail is 52, so the collapsed
                 state shows the mark alone — the same SVG, cropped by viewBox.
-                Only one is ever displayed, so only one is in the a11y tree. */}
-            <Logo className="h-4 w-auto shrink-0 group-data-[state=collapsed]/sidebar:hidden" />
+                `Logo` does the swap and carries the single accessible name. */}
             <Logo
-              viewBox="0 0 42 74"
-              className="hidden h-4 w-auto shrink-0 group-data-[state=collapsed]/sidebar:block"
+              className="h-4"
+              alt="Astralyx"
+              full={<Wordmark />}
+              icon={<Wordmark viewBox="0 0 42 74" />}
             />
           </div>
         </SidebarHeader>

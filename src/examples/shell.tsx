@@ -35,6 +35,7 @@ import { Field, FieldLabel, useFieldControl } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Kbd } from '@/components/ui/kbd'
 import { Logo } from '@/components/ui/logo'
+import { Wordmark } from '@/components/ui/wordmark'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Select } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
@@ -189,11 +190,14 @@ function ShellChrome({
       <Sidebar>
         <SidebarHeader>
           <div className="flex h-9 items-center gap-2 px-2.5">
-            {/* Cropped viewBox on the rail: the wordmark is wider than 52px. */}
-            <Logo className="h-4 w-auto shrink-0 group-data-[state=collapsed]/sidebar:hidden" />
+            {/* `Logo` owns the swap. The cropped viewBox is the square mark:
+                the wordmark is wider than the 52px the rail collapses to. */}
             <Logo
-              viewBox="0 0 42 74"
-              className="hidden h-4 w-auto shrink-0 group-data-[state=collapsed]/sidebar:block"
+              className="h-4"
+              alt=""
+              full={<Wordmark />}
+              icon={<Wordmark viewBox="0 0 42 74" />}
+              fallbackText={product}
             />
             <span className="text-[var(--sidebar-foreground)]/50 truncate text-xs group-data-[state=collapsed]/sidebar:hidden">
               {product}
