@@ -3,12 +3,13 @@ import { consoleExample } from './console'
 import { opsExample } from './ops'
 import { shopExample } from './shop'
 import { studioExample } from './studio'
+import { workbenchExample } from './workbench'
 import type { ExampleEntry } from './types'
 
 /**
  * Whole products, in the order the rail lists them.
  *
- * Five rather than twenty. An example earns its place by being deep enough to
+ * Six rather than twenty. An example earns its place by being deep enough to
  * answer the question people actually arrive with — what does this look like
  * once there are sub-pages, a detail view, a form that validates and a dialog
  * that commits — and twenty shallow screens never answered it.
@@ -19,6 +20,7 @@ export const EXAMPLES: ExampleEntry[] = [
   circuitExample,
   opsExample,
   shopExample,
+  workbenchExample,
 ]
 
 export function examplePath(id: string) {

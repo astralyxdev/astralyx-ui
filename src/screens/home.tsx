@@ -430,14 +430,15 @@ function Examples() {
       <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
         <div className="max-w-xl">
           <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            Five whole products.
+            Six whole products.
           </h2>
           <p className="text-muted-foreground mt-4 text-sm leading-relaxed">
             Not marketing pages, and not one screen each. Every one has a rail,
             sub-pages, records that open, a command palette, forms that validate
             and dialogs that commit — a deployment console, an agent studio, a
-            workflow canvas with an agent editing it, an on-call room and the
-            back office of a shop.
+            workflow canvas with an agent editing it, an on-call room, the back
+            office of a shop, and a review where every page you open stays open
+            as a tab.
           </p>
         </div>
         <Button asChild variant="secondary" size="sm">
@@ -447,7 +448,7 @@ function Examples() {
         </Button>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {EXAMPLES.map((example) => (
           <Link
             key={example.id}

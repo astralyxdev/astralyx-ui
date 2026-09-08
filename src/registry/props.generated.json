@@ -27142,6 +27142,12 @@
               "type": "string | number | readonly string[]"
             },
             {
+              "name": "variant",
+              "type": "TabsVariant",
+              "default": "'solid'",
+              "description": "Sets the look for the list, the triggers and the panel at once."
+            },
+            {
               "name": "value",
               "type": "string"
             },
@@ -27169,7 +27175,7 @@
           "props": [
             {
               "name": "variant",
-              "type": "'solid' | 'underline'"
+              "type": "'solid' | 'underline' | 'browser'"
             },
             {
               "name": "orientation",
@@ -27185,7 +27191,7 @@
           "props": [
             {
               "name": "variant",
-              "type": "'solid' | 'underline'"
+              "type": "'solid' | 'underline' | 'browser'"
             },
             {
               "name": "value",
@@ -27210,6 +27216,10 @@
               "name": "keepMounted",
               "type": "boolean",
               "default": "false"
+            },
+            {
+              "name": "variant",
+              "type": "TabsVariant"
             }
           ]
         }
@@ -27217,11 +27227,11 @@
       "functions": [
         {
           "name": "listVariants",
-          "signature": "(props?: { variant?: 'solid' | 'underline'; orientation?: 'horizontal' | 'vertical' }) => string"
+          "signature": "(props?: { variant?: 'solid' | 'underline' | 'browser'; orientation?: 'horizontal' | 'vertical' }) => string"
         },
         {
           "name": "triggerVariants",
-          "signature": "(props?: { variant?: 'solid' | 'underline' }) => string"
+          "signature": "(props?: { variant?: 'solid' | 'underline' | 'browser' }) => string"
         }
       ]
     },

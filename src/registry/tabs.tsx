@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import type { ComponentEntry, ComposerState } from './types'
 
-const VARIANTS = ['solid', 'underline'] as const
+const VARIANTS = ['solid', 'underline', 'browser'] as const
 const ORIENTATIONS = ['horizontal', 'vertical'] as const
 const ACTIVATION = ['automatic', 'manual'] as const
 
@@ -26,6 +26,61 @@ const PANELS = [
   ['activity', 'Activity', 'Who changed what, and when.'],
   ['settings', 'Settings', 'Configuration for this project.'],
 ] as const
+
+/** The pages in the browser-window demo, in strip order. */
+const WINDOW_TABS = [
+  { value: 'dashboard', label: 'Dashboard', host: 'app.acme.dev', group: 'Work' },
+  { value: 'issues', label: 'Issues · 12', host: 'github.com', group: 'Work' },
+  { value: 'docs', label: 'Docs', host: 'ui.astralyx.dev' },
+] as const
+
+/**
+ * A whole strip rather than three bare triggers.
+ *
+ * `TabsList` had no demo of its own showing what it is for: a group of tabs
+ * that reads as one object, with a coloured run marking the ones that belong
+ * together the way a browser's tab groups do.
+ */
+function BrowserWindow() {
+  return (
+    <div className="bg-background w-full rounded-xl p-4">
+      <Tabs defaultValue="dashboard" variant="browser" className="w-full">
+        <TabsList className="items-end">
+          <span
+            aria-hidden="true"
+            className="mr-1 mb-1.5 flex items-center gap-1.5 self-center rounded-md bg-[var(--blue-soft)] px-2 py-0.5 text-[11px] font-medium text-[var(--blue-soft-foreground)]"
+          >
+            <span className="size-1.5 rounded-full bg-[var(--blue)]" />
+            Work
+          </span>
+
+          {WINDOW_TABS.map((tab) => (
+            <TabsTrigger key={tab.value} value={tab.value} className="max-w-40">
+              <span className="truncate">{tab.label}</span>
+            </TabsTrigger>
+          ))}
+
+          <span
+            aria-hidden="true"
+            className="text-muted-foreground/60 mb-1.5 flex size-6 items-center justify-center self-center rounded-md text-base"
+          >
+            +
+          </span>
+        </TabsList>
+
+        {WINDOW_TABS.map((tab) => (
+          <TabsContent key={tab.value} value={tab.value}>
+            <p className="text-muted-foreground font-mono text-xs">{tab.host}</p>
+            <p className="mt-2 text-sm font-medium">{tab.label}</p>
+            <p className="text-muted-foreground mt-1 text-sm">
+              The panel is the active tab, continued — same fill, no seam between them.
+            </p>
+          </TabsContent>
+        ))}
+      </Tabs>
+    </div>
+  )
+}
 
 export const tabsEntry: ComponentEntry = {
   id: 'tabs',
@@ -84,10 +139,58 @@ export const tabsEntry: ComponentEntry = {
     { name: 'onValueChange', type: '(value: string) => void', description: 'Fires with the newly selected tab.' },
     { name: 'orientation', type: "'horizontal' | 'vertical'", default: "'horizontal'", description: 'Layout direction, and which arrow keys move between tabs.' },
     { name: 'activationMode', type: "'automatic' | 'manual'", default: "'automatic'", description: 'Automatic selects as focus moves; manual waits for Enter or Space.' },
-    { name: 'TabsList variant', type: VARIANTS.map((v) => `'${v}'`).join(' | '), default: "'solid'", description: 'Segmented track, or a rule with the active tab underlined. Pass the same variant to the triggers.' },
+    { name: 'variant', type: VARIANTS.map((v) => `'${v}'`).join(' | '), default: "'solid'", description: 'Set it once on Tabs and the list, the triggers and the panel all follow. Setting it on a child still wins, which is how it was written before the root took the prop.' },
+    { name: 'browser', type: '—', description: 'The connected look: the active tab and the panel are one fill with nothing drawn between them, and two masked flares carve the strip away at the bottom corners. No borders anywhere — a bordered version has to hide one border with another and comes apart at every zoom level.' },
+    { name: 'transition', type: '—', description: 'The panel cross-fades on switch and does not move. Travel on a panel root means a transform, and a transform is a containing block for any fixed layer inside it — a popover opened from a tab would land in the wrong place. The tab shape morphs instead, flares included.' },
     { name: 'TabsTrigger value', type: 'string', description: 'Required. Matches the TabsContent it controls.' },
   ],
   demos: [
+    {
+      title: 'A tab group',
+      stack: true,
+      code: `<Tabs defaultValue="dashboard" variant="browser">
+  <TabsList className="items-end">
+    <GroupChip>Work</GroupChip>
+    <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+    <TabsTrigger value="issues">Issues · 12</TabsTrigger>
+    <TabsTrigger value="docs">Docs</TabsTrigger>
+  </TabsList>
+  <TabsContent value="dashboard">…</TabsContent>
+</Tabs>`,
+      render: () => <BrowserWindow />,
+    },
+    {
+      title: 'Browser',
+      stack: true,
+      code: `<Tabs defaultValue="overview" variant="browser">
+  <TabsList>
+    <TabsTrigger value="overview">Overview</TabsTrigger>
+  </TabsList>
+  <TabsContent value="overview">…</TabsContent>
+</Tabs>`,
+      // On the page's own ground, not a card. The active tab and the panel are
+      // one fill, and a card behind them is that same fill — which hides the
+      // very seam the variant exists to remove.
+      render: () => (
+        <div className="bg-background w-full rounded-xl p-4">
+        <Tabs defaultValue="overview" variant="browser" className="w-full max-w-md">
+          <TabsList>
+            {PANELS.map(([value, label]) => (
+              <TabsTrigger key={value} value={value}>
+                {label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          {PANELS.map(([value, label, body]) => (
+            <TabsContent key={value} value={value}>
+              <p className="text-sm font-medium">{label}</p>
+              <p className="text-muted-foreground mt-1 text-sm">{body}</p>
+            </TabsContent>
+          ))}
+        </Tabs>
+        </div>
+      ),
+    },
     {
       title: 'Solid',
       stack: true,

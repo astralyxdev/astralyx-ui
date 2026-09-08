@@ -143,6 +143,7 @@ function ShellChrome({
   notifications = [],
   user,
   crumbs,
+  tabs,
   actions,
   aside,
   children,
@@ -153,6 +154,16 @@ function ShellChrome({
   notifications?: Notification[]
   user: { name: string; email: string; plan: string }
   crumbs: (nav: Nav) => Crumb[]
+  /**
+   * A tab strip, in the header, instead of the trail.
+   *
+   * For the shape where the whole page is a tab rather than a page that
+   * happens to contain tabs: the strip sits beside the collapse control the way
+   * a browser's does, and what is below it is the panel. A trail would be
+   * saying the same thing twice — the strip already names where you are, and
+   * names everywhere else you left open as well.
+   */
+  tabs?: (nav: Nav) => ReactNode
   actions?: ReactNode
   /**
    * A second rail, on the trailing edge.
@@ -262,9 +273,25 @@ function ShellChrome({
       </Sidebar>
 
       <SidebarInset>
-        <header className="border-border flex h-14 shrink-0 items-center gap-2 border-b px-3 md:px-4">
+        <header
+          className={cn(
+            'flex h-14 shrink-0 items-center gap-2 px-3 md:px-4',
+            // With a strip in it the header is a titlebar: the recessed ground
+            // a tab is lifted out of. It loses its rule as well, because the
+            // active tab has to run into the content and a border across the
+            // seam is the one thing that would stop it.
+            tabs ? 'bg-muted' : 'border-border border-b',
+          )}
+        >
           <SidebarTrigger />
 
+          {tabs ? (
+            // Stretched, not bottom-aligned. A tab has to reach the bottom of
+            // the bar to meet the content, and its label has to sit on the same
+            // line as the collapse control and the search beside it — both are
+            // only true if the tab is the height of the header.
+            <div className="flex min-w-0 flex-1 items-stretch self-stretch">{tabs(nav)}</div>
+          ) : (
           <Breadcrumb className="min-w-0 flex-1">
             <BreadcrumbList>
               {trail.map((crumb, index) => {
@@ -294,6 +321,7 @@ function ShellChrome({
               })}
             </BreadcrumbList>
           </Breadcrumb>
+          )}
 
           {/* A button that opens the palette, not a search field that pretends
               to be one. The field would take focus and then hand it straight to

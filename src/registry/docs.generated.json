@@ -3669,10 +3669,20 @@
           "description": "Automatic selects as focus moves; manual waits for Enter or Space."
         },
         {
-          "name": "TabsList variant",
-          "type": "'solid' | 'underline'",
+          "name": "variant",
+          "type": "'solid' | 'underline' | 'browser'",
           "default": "'solid'",
-          "description": "Segmented track, or a rule with the active tab underlined. Pass the same variant to the triggers."
+          "description": "Set it once on Tabs and the list, the triggers and the panel all follow. Setting it on a child still wins, which is how it was written before the root took the prop."
+        },
+        {
+          "name": "browser",
+          "type": "—",
+          "description": "The connected look: the active tab and the panel are one fill with nothing drawn between them, and two masked flares carve the strip away at the bottom corners. No borders anywhere — a bordered version has to hide one border with another and comes apart at every zoom level."
+        },
+        {
+          "name": "transition",
+          "type": "—",
+          "description": "The panel cross-fades on switch and does not move. Travel on a panel root means a transform, and a transform is a containing block for any fixed layer inside it — a popover opened from a tab would land in the wrong place. The tab shape morphs instead, flares included."
         },
         {
           "name": "TabsTrigger value",
@@ -3681,6 +3691,14 @@
         }
       ],
       "demos": [
+        {
+          "title": "A tab group",
+          "code": "<Tabs defaultValue=\"dashboard\" variant=\"browser\">\n  <TabsList className=\"items-end\">\n    <GroupChip>Work</GroupChip>\n    <TabsTrigger value=\"dashboard\">Dashboard</TabsTrigger>\n    <TabsTrigger value=\"issues\">Issues · 12</TabsTrigger>\n    <TabsTrigger value=\"docs\">Docs</TabsTrigger>\n  </TabsList>\n  <TabsContent value=\"dashboard\">…</TabsContent>\n</Tabs>"
+        },
+        {
+          "title": "Browser",
+          "code": "<Tabs defaultValue=\"overview\" variant=\"browser\">\n  <TabsList>\n    <TabsTrigger value=\"overview\">Overview</TabsTrigger>\n  </TabsList>\n  <TabsContent value=\"overview\">…</TabsContent>\n</Tabs>"
+        },
         {
           "title": "Solid",
           "code": "<Tabs defaultValue=\"overview\">\n  <TabsList>…</TabsList>\n</Tabs>"
@@ -15599,6 +15617,30 @@
         "Avatar"
       ],
       "href": "/examples/storefront/"
+    },
+    {
+      "id": "workbench",
+      "label": "Workbench",
+      "description": "Reviewing a pull request, with the files you open kept as browser tabs across the top — a rail picks what to read, and the strip is the record of where you have been.",
+      "uses": [
+        "Tabs",
+        "File Tree",
+        "Diff View",
+        "Review Thread",
+        "Test Results",
+        "Coverage Report",
+        "Commit List",
+        "Pull Request Card",
+        "Sidebar",
+        "Command",
+        "Alert",
+        "Empty",
+        "Tooltip",
+        "Toast",
+        "Badge",
+        "Card"
+      ],
+      "href": "/examples/workbench/"
     }
   ]
 }

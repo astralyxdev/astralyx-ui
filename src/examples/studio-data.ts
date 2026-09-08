@@ -30,7 +30,7 @@ export type Thread = {
 
 export const THREADS: Thread[] = [
   { id: 't-914', title: 'Why did checkout p95 regress?', model: 'astralyx-large', updated: '2m ago', messages: 14, tokens: 41_200, starred: true },
-  { id: 't-913', title: 'Draft the 0.14.0 release notes', model: 'astralyx-large', updated: '40m ago', messages: 8, tokens: 12_800 },
+  { id: 't-913', title: 'Draft the 0.15.0 release notes', model: 'astralyx-large', updated: '40m ago', messages: 8, tokens: 12_800 },
   { id: 't-912', title: 'Summarise last week’s incidents', model: 'astralyx-small', updated: '3h ago', messages: 22, tokens: 68_400 },
   { id: 't-911', title: 'Find every unowned Terraform module', model: 'astralyx-large', updated: '1d ago', messages: 6, tokens: 9_100 },
   { id: 't-910', title: 'Rewrite the onboarding email', model: 'astralyx-small', updated: '2d ago', messages: 4, tokens: 3_400 },
@@ -59,7 +59,7 @@ export type Run = {
 
 export const RUNS: Run[] = [
   { id: 'r-8841', thread: 'Why did checkout p95 regress?', agent: 'Investigator', status: 'succeeded', model: 'astralyx-large', started: '2m ago', duration: 18_400, tokensIn: 38_100, tokensOut: 3_100, cost: 0.42, steps: 7, tools: 4 },
-  { id: 'r-8840', thread: 'Draft the 0.14.0 release notes', agent: 'Writer', status: 'succeeded', model: 'astralyx-large', started: '40m ago', duration: 9_200, tokensIn: 11_400, tokensOut: 1_400, cost: 0.14, steps: 3, tools: 1 },
+  { id: 'r-8840', thread: 'Draft the 0.15.0 release notes', agent: 'Writer', status: 'succeeded', model: 'astralyx-large', started: '40m ago', duration: 9_200, tokensIn: 11_400, tokensOut: 1_400, cost: 0.14, steps: 3, tools: 1 },
   { id: 'r-8839', thread: 'Migrate the billing schema', agent: 'Engineer', status: 'blocked', model: 'astralyx-large', started: '1h ago', duration: 4_100, tokensIn: 6_200, tokensOut: 210, cost: 0.06, steps: 2, tools: 1 },
   { id: 'r-8838', thread: 'Summarise last week’s incidents', agent: 'Investigator', status: 'failed', model: 'astralyx-small', started: '3h ago', duration: 31_900, tokensIn: 64_800, tokensOut: 3_600, cost: 0.19, steps: 9, tools: 6 },
   { id: 'r-8837', thread: 'Find every unowned Terraform module', agent: 'Engineer', status: 'succeeded', model: 'astralyx-large', started: '1d ago', duration: 12_600, tokensIn: 8_400, tokensOut: 700, cost: 0.09, steps: 4, tools: 3 },
