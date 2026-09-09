@@ -1,9 +1,22 @@
 name: Publish
 
 on:
+  # A tag is enough to ship. `v*` publishes on its own, because a tag that
+  # marks a version and then waits for a second manual step is a version that
+  # sits unpublished until someone remembers.
+  push:
+    tags: ['v*']
+  # Kept alongside it: releasing from a tag that was already pushed fires this
+  # a second time, which the already-published guard below turns into a no-op
+  # rather than a failed duplicate publish.
   release:
     types: [published]
   workflow_dispatch:
+
+# One publish at a time, and never two for the same tag racing each other.
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
 
 permissions:
   contents: read
@@ -44,7 +57,24 @@ jobs:
       - run: npm run build:package
       - run: node scripts/check-registry.mjs
 
+      - name: Version is not on npm yet
+        id: check
+        # Two triggers can point at one version — a tag push and then a release
+        # cut from that same tag. npm refuses the second with an error that
+        # reads like a broken pipeline rather than "this already shipped", so
+        # the duplicate is detected here and skipped instead.
+        run: |
+          version=$(node -p "require('./package.json').version")
+          if npm view "astralyx-ui@$version" version >/dev/null 2>&1; then
+            echo "astralyx-ui@$version is already published — nothing to do"
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "astralyx-ui@$version is new"
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          fi
+
       # No NODE_AUTH_TOKEN and no --provenance flag: OIDC is detected
       # automatically, and npm attaches provenance on its own when a public
       # repo publishes a public package this way.
-      - run: npm publish --access public
+      - if: steps.check.outputs.publish == 'true'
+        run: npm publish --access public
