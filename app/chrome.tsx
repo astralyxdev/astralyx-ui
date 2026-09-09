@@ -28,11 +28,12 @@ import { useTheme } from './use-theme'
 
 export type NavItem = { id: string; label: string; href: string; isNew?: boolean }
 export type NavGroup = { label: string; items: NavItem[] }
+export type NavTier = { id: string; label: string; categories: NavGroup[] }
 
 export type Nav = {
   docs: { id: string; label: string; href: string; icon: ReactNode }[]
   examples: NavItem[]
-  categories: NavGroup[]
+  tiers: NavTier[]
 }
 
 export function Chrome({ nav, children }: { nav: Nav; children: ReactNode }) {
@@ -186,6 +187,30 @@ function GroupLabel({ children }: { children: ReactNode }) {
   )
 }
 
+/**
+ * The heading for one half of the kit.
+ *
+ * Louder than `GroupLabel` — foreground text and a rule — because it sits a
+ * level above it: Basics › Forms › Button. Without the contrast the rail read
+ * as a flat list of thirty-eight headings.
+ *
+ * Horizontally the rail is a scrolling strip rather than a column, so the rule
+ * would cut across the row; it is a left border there instead.
+ */
+function TierLabel({ children }: { children: ReactNode }) {
+  return (
+    <div
+      className={cn(
+        'text-foreground shrink-0 self-center text-[11px] font-semibold tracking-[0.14em] uppercase',
+        'border-border border-l ps-3 md:self-auto md:border-l-0 md:ps-3',
+        'md:border-border md:mt-2 md:mb-1 md:border-t md:pt-4',
+      )}
+    >
+      {children}
+    </div>
+  )
+}
+
 function Sidebar({ nav, path }: { nav: Nav; path: string }) {
   const navRef = useRef<HTMLElement>(null)
 
@@ -258,9 +283,11 @@ function Sidebar({ nav, path }: { nav: Nav; path: string }) {
         </NavLink>
       </div>
 
-      {nav.categories.map((category) => (
+      {nav.tiers.flatMap((tier) => [
+        <TierLabel key={tier.id}>{tier.label}</TierLabel>,
+        ...tier.categories.map((category) => (
         <div
-          key={category.label}
+          key={`${tier.id}:${category.label}`}
           className="flex shrink-0 flex-row items-center gap-1 md:flex-col md:items-stretch"
         >
           <GroupLabel>{category.label}</GroupLabel>
@@ -289,7 +316,8 @@ function Sidebar({ nav, path }: { nav: Nav; path: string }) {
             </NavLink>
           ))}
         </div>
-      ))}
+        )),
+      ])}
     </nav>
   )
 }

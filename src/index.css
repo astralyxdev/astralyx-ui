@@ -171,6 +171,41 @@
   --chart-5: oklch(0.769 0.188 70.08);
 }
 
+/*
+ * The same scale, for browsers without `corner-shape`.
+ *
+ * The control radii above are each half their control's height — the roundest a
+ * squircle goes before the corners meet. A *circular* corner at half the height
+ * is not a squircle, it is a pill: on iOS Safari, which has no `corner-shape`
+ * yet, every input, button and select came out fully rounded, and the group
+ * radii — 42px to 54px, sized to stay concentric with a 30px card — turned
+ * containers into lozenges.
+ *
+ * So where the property is missing the scale steps down to something a circular
+ * corner can express. The concentric rule is kept, just recomputed against the
+ * smaller card: a container's radius is still the inner radius plus the padding
+ * between them, or the gap between the two curves narrows at the corners.
+ *
+ * `--radius-xs` through `--radius-3xl` are `calc()` off `--radius`, so they
+ * follow on their own. The check radii do not move — at 2px to 8px on a 8px to
+ * 24px box there is no visible difference between the two corner shapes.
+ */
+@supports not (corner-shape: squircle) {
+  :root {
+    --radius: 0.875rem; /* 14px, so --radius-3xl lands on 24px */
+
+    --radius-control-sm: 10px; /* h-8  / 32px */
+    --radius-control-md: 11px; /* h-9  / 36px */
+    --radius-control-lg: 12px; /* h-10 / 40px */
+    --radius-control-xl: 14px; /* h-12 / 48px */
+
+    --radius-group-sm: 36px; /* 24 + 12 */
+    --radius-group-md: 42px; /* 24 + 18 */
+    --radius-group-lg: 48px; /* 24 + 24 */
+  }
+}
+
+
 .dark {
   color-scheme: dark;
 

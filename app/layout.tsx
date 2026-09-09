@@ -91,12 +91,20 @@ const nav: Nav = {
     label: example.label,
     href: example.href,
   })),
-  categories: docs.categories.map((category) => ({
-    label: category.label,
-    items: category.items.map((id) => {
-      const entry = docs.components[id as keyof typeof docs.components]
-      return { id, label: entry.label, href: entry.href, isNew: 'isNew' in entry }
-    }),
+  // Grouped into the two tiers here rather than in the rail, so the client
+  // island receives the shape it renders and does no filtering of its own.
+  tiers: docs.tiers.map((tier) => ({
+    id: tier.id,
+    label: tier.label,
+    categories: docs.categories
+      .filter((category) => category.tier === tier.id)
+      .map((category) => ({
+        label: category.label,
+        items: category.items.map((id) => {
+          const entry = docs.components[id as keyof typeof docs.components]
+          return { id, label: entry.label, href: entry.href, isNew: 'isNew' in entry }
+        }),
+      })),
   })),
 }
 

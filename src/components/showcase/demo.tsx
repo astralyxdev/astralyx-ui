@@ -43,7 +43,10 @@ function Demo({ demo }: { demo: DemoSpec }) {
         <TabsContent value="preview">
           <CardBody
             className={cn(
-              'gap-3',
+              // A demo whose content is intrinsically wider than a phone — a
+              // board, a waterfall, a query log — has to be reachable by
+              // scrolling rather than clipped by the page.
+              'gap-3 overflow-x-auto',
               demo.stack ? 'flex flex-col' : 'flex flex-wrap items-center',
             )}
           >

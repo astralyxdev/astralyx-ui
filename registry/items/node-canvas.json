@@ -3,7 +3,7 @@
   "type": "registry:ui",
   "title": "Node Canvas",
   "description": "A pannable, zoomable canvas of draggable nodes and the edges between them — the substrate for an agent pipeline, a retrieval chain or a build DAG. Nodes are real DOM, so you put your own components inside them.",
-  "category": "Agents",
+  "category": "Views",
   "dependencies": [],
   "registryDependencies": [
     "lib-styles",

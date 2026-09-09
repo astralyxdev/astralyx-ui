@@ -36,7 +36,7 @@ globalThis.window ??= {
 }
 
 const server = await createServer({ server: { middlewareMode: true }, appType: 'custom' })
-const { ENTRIES, componentPath, findCategory } = await server.ssrLoadModule('/src/registry/index.ts')
+const { ENTRIES, TIERED, componentPath, findCategory } = await server.ssrLoadModule('/src/registry/index.ts')
 
 /**
  * The counts every description quotes, taken from the registry rather than
@@ -249,14 +249,6 @@ for (const example of EXAMPLES) {
 
 /* --------------------------------------------------------------- llms.txt */
 
-const byCategory = new Map()
-for (const entry of ENTRIES) {
-  const category = findCategory(entry.id)
-  const label = category ? category.label : 'Uncategorised'
-  if (!byCategory.has(label)) byCategory.set(label, [])
-  byCategory.get(label).push(entry)
-}
-
 const llms = [
   `# ${SITE_NAME}`,
   '',
@@ -279,12 +271,23 @@ const llms = [
   '',
 ]
 
-for (const [label, entries] of byCategory) {
-  llms.push(`### ${label}`, '')
-  for (const entry of entries) {
-    llms.push(`- [${entry.label}](${SITE}${componentPath(entry.id)}.md): ${entry.description}`)
+// Grouped Basics-then-Blocks, matching the site, so a reader of this file gets
+// the same first distinction a reader of the rail does: the components that
+// belong in any product, then the ones that already know a domain.
+for (const tier of TIERED) {
+  llms.push(
+    `### ${tier.label}`,
+    '',
+    tier.blurb,
+    '',
+  )
+  for (const category of tier.categories) {
+    llms.push(`#### ${category.label}`, '')
+    for (const entry of category.items) {
+      llms.push(`- [${entry.label}](${SITE}${componentPath(entry.id)}.md): ${entry.description}`)
+    }
+    llms.push('')
   }
-  llms.push('')
 }
 
 write('llms.txt', `${llms.join('\n')}\n`)

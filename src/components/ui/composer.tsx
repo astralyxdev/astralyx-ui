@@ -156,8 +156,12 @@ function Composer({
       >
         <CardBody
           className={cn(
-            'flex items-center justify-center',
-            expanded ? 'min-h-0 overflow-auto' : tall ? 'min-h-80' : 'min-h-48',
+            // `safe center` centres the preview when it fits and falls back to
+            // `start` when it does not. Plain `center` centres the overflow
+            // too, which puts the left edge of a wide component outside the
+            // scroll container where nothing can reach it.
+            'flex items-center justify-center-safe overflow-x-auto',
+            expanded ? 'min-h-0 overflow-y-auto' : tall ? 'min-h-80' : 'min-h-48',
           )}
         >
           {render(state)}

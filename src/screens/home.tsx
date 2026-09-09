@@ -22,7 +22,7 @@ import { Switch } from '@/components/ui/switch'
 import { ToolCall } from '@/components/ui/tool-call'
 import { useClipboard } from '@/lib/use-clipboard'
 import { EXAMPLES, examplePath } from '@/examples'
-import { CATEGORIES, componentPath, ENTRIES, type ComponentEntry } from '@/registry'
+import { componentPath, ENTRIES, TIERED, tierCount, type ComponentEntry } from '@/registry'
 import { focusRing, radius, surface } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
@@ -176,7 +176,14 @@ function Install() {
   return (
     <Bleed className="py-20 lg:py-28">
       <div className="grid gap-12 lg:grid-cols-[22rem_minmax(0,1fr)] lg:gap-20">
-        <div>
+        {/*
+          Both columns carry `min-w-0`. The `lg` track is already
+          `minmax(0,1fr)`, but the implicit single-column track on a phone is
+          not: a grid item defaults to `min-width: auto`, so the widest command
+          below set a ~375px floor, both items grew past the 348px track, and
+          `main`'s `overflow-x-hidden` cropped the right edge of every card.
+        */}
+        <div className="min-w-0">
           <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
             Three commands.
           </h2>
@@ -192,7 +199,7 @@ function Install() {
           </Button>
         </div>
 
-        <ol className="flex list-none flex-col gap-3">
+        <ol className="flex min-w-0 list-none flex-col gap-3">
           {STEPS.map((step, index) => (
             <li key={step.command}>
               <CommandRow index={index + 1} command={step.command} caption={step.caption} />
@@ -413,7 +420,11 @@ function Breadth() {
 
 function Panel({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="space-y-4">
+    // `min-w-0` because a grid item's default `min-width: auto` sizes it to its
+    // min-content, not to its track: the tool-call JSON below sets a floor of
+    // ~396px, and without this the panel grew past the one-column track on a
+    // phone and `main`'s `overflow-x-hidden` quietly cropped it.
+    <div className="min-w-0 space-y-4">
       <p className="text-muted-foreground/70 text-[11px] font-medium tracking-[0.14em] uppercase">
         {label}
       </p>
@@ -507,9 +518,10 @@ function Catalogue() {
             All {ENTRIES.length}, running.
           </h2>
           <p className="text-muted-foreground mt-4 text-sm leading-relaxed">
-            Every component across {CATEGORIES.length} categories — no shortlist, and none of them
-            a screenshot. Each has a page with a live composer, worked examples and a full props
-            table.
+            {tierCount('basic')} basics — the buttons, fields and dialogs every
+            screen needs — and {tierCount('block')} blocks built on them, each
+            already knowing what a commit is, or a wallet, an invoice, a span.
+            None of them a screenshot: every card below is the live component.
           </p>
         </div>
         <Button asChild variant="secondary" size="sm">
@@ -519,13 +531,27 @@ function Catalogue() {
         </Button>
       </div>
 
-      <Masonry columns={{ base: 1, sm: 2, lg: 3, xl: 4 }} gap={3}>
-        {CATEGORIES.flatMap((category) =>
-          category.items.map((entry) => (
-            <ShowcaseCard key={entry.id} entry={entry} category={category.label} />
-          )),
-        )}
-      </Masonry>
+      {TIERED.map((tier) => (
+        <section key={tier.id} className="mt-14 first:mt-0">
+          <div className="border-border mb-6 flex flex-wrap items-baseline gap-x-4 gap-y-1 border-b pb-4">
+            <h3 className="text-lg font-semibold tracking-tight">{tier.label}</h3>
+            <span className="text-muted-foreground/60 text-xs tabular-nums">
+              {tierCount(tier.id)} across {tier.categories.length} categories
+            </span>
+            <p className="text-muted-foreground w-full text-sm leading-relaxed sm:w-auto sm:flex-1">
+              {tier.blurb}
+            </p>
+          </div>
+
+          <Masonry columns={{ base: 1, sm: 2, lg: 3, xl: 4 }} gap={3}>
+            {tier.categories.flatMap((category) =>
+              category.items.map((entry) => (
+                <ShowcaseCard key={entry.id} entry={entry} category={category.label} />
+              )),
+            )}
+          </Masonry>
+        </section>
+      ))}
     </Bleed>
   )
 }
@@ -556,6 +582,23 @@ const STAGE_WIDTH = 470
  * does the cropping; there is no separate rule for it.
  */
 const MIN_PREVIEW_SCALE = 0.7
+
+/**
+ * The height of a catalogue preview box, reserved and final.
+ *
+ * A fixed height rather than a range, because the catalogue is laid out with
+ * CSS columns: `column-count` balances items by total column height, so a
+ * single card changing size repacks every column and cards visibly jump
+ * between them. The previews are unequal by nature — a badge is 0px, a pricing
+ * table 208 — and `LazyMount` reserves its box before knowing which it has, so
+ * any range at all means the grid reflows as cards mount.
+ *
+ * 208 is the tallest a preview was already allowed to be, so nothing is
+ * cropped more tightly than before; short previews simply keep their box. The
+ * placeholder below is given this same constant, which is the whole point of
+ * it being one: a reserved box that does not match the mounted box is the bug.
+ */
+const PREVIEW_HEIGHT = 208
 
 /**
  * Fit one preview stage to the card it is in.
@@ -630,7 +673,7 @@ function ShowcaseCard({ entry, category }: { entry: ComponentEntry; category: st
       <p className="px-4 pb-4 text-sm font-medium">{entry.label}</p>
 
       {preview && (
-        <LazyMount className="border-border bg-muted/30 border-t">
+        <LazyMount className="border-border bg-muted/30 border-t" placeholderHeight={PREVIEW_HEIGHT}>
           {/*
             Inert and clipped. The preview is here to be recognised, not
             operated — a live Input would otherwise swallow the click that is
@@ -644,12 +687,13 @@ function ShowcaseCard({ entry, category }: { entry: ComponentEntry; category: st
             // labels and controls, which is unusable to navigate and skipped
             // the page's own heading levels.
             aria-hidden="true"
-            className="pointer-events-none flex min-h-28 max-h-52 items-start justify-start overflow-hidden p-4"
+            className="pointer-events-none flex items-center-safe justify-start overflow-hidden p-4"
             // A soft bottom edge, so a preview taller than the box reads as
             // continuing rather than as having been chopped. Masked rather
             // than overlaid with a gradient, which would have to know the
             // card's background and would be wrong in the other theme.
             style={{
+              height: PREVIEW_HEIGHT,
               maskImage: 'linear-gradient(to bottom, #000 72%, transparent)',
               WebkitMaskImage: 'linear-gradient(to bottom, #000 72%, transparent)',
             }}
@@ -657,11 +701,20 @@ function ShowcaseCard({ entry, category }: { entry: ComponentEntry; category: st
             <div ref={fitPreview} className="w-full min-w-0">
               {/*
                 A fixed-width viewport, scaled to the card — not a component
-                squeezed into one. Anchored to the top-left, because centring
-                vertically clipped tall previews at the head as well as the
-                foot, and the first line is the part that identifies the
-                component. `mx-auto` still centres a preview narrower than the
-                stage, while a full-width table fills it.
+                squeezed into one.
+
+                Vertically it is `safe center`, which is the one value that
+                suits both halves of a fixed-height box: a short preview sits
+                in the middle of its box rather than at the top of an obvious
+                void, while a preview taller than the box falls back to
+                flex-start instead of overflowing equally at both ends — and
+                the head is the part that identifies the component, so that is
+                the end worth keeping. A browser without `safe` alignment
+                drops the declaration and top-anchors everything, which is
+                what this did before.
+
+                `mx-auto` still centres a preview narrower than the stage,
+                while a full-width table fills it.
               */}
               <div
                 className="origin-top-left [&>*]:mx-auto"
@@ -683,10 +736,14 @@ function ShowcaseCard({ entry, category }: { entry: ComponentEntry; category: st
 /**
  * Renders its children once the box has been near the viewport.
  *
- * A reserved box until then, so the page's scroll height is stable and nothing
- * jumps as cards fill in. `rootMargin` is generous: mounting a component the
- * moment its top edge appears means watching it appear, and the point is for it
- * to be there already.
+ * A reserved box until then. That box only holds the page still if it is the
+ * height the mounted content will actually be — `placeholderHeight` and the
+ * child must agree, or every card that mounts resizes the layout around it.
+ * The caller owns that agreement; see `PREVIEW_HEIGHT`.
+ *
+ * `rootMargin` is generous: mounting a component the moment its top edge
+ * appears means watching it appear, and the point is for it to be there
+ * already.
  *
  * Without an observer — during server rendering, or in a browser that has none
  * — it renders immediately, because a catalogue that shows nothing without

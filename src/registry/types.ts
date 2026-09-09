@@ -63,7 +63,29 @@ export type ComponentEntry = {
   api?: ApiProp[]
 }
 
+/**
+ * Which half of the kit a category belongs to.
+ *
+ * `basic` is the vocabulary: a component you could drop into any product
+ * because it encodes no business concept. A button, a text field, a dialog, a
+ * node canvas — they know about interaction, not about your domain.
+ *
+ * `block` is the other half, and the reason the kit is 344 components rather
+ * than 60. A block knows what a commit is, or a wallet, an invoice, a span, a
+ * tool call. That knowledge is the value — it is the part everyone otherwise
+ * rebuilds badly — but it is also why a block is worth telling apart from a
+ * basic: you reach for a basic constantly and a block when you are building
+ * that particular screen.
+ *
+ * The distinction is about what a component *knows*, not how big it is. A
+ * `data-grid` is large and still basic; a `risk-score` is small and still a
+ * block.
+ */
+export type Tier = 'basic' | 'block'
+
 export type Category = {
   label: string
+  /** Required, so a new category cannot be filed by accident. See `Tier`. */
+  tier: Tier
   items: ComponentEntry[]
 }

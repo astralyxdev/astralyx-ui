@@ -33,6 +33,7 @@ import {
 } from '@/lib/date'
 import { enterFade } from '@/lib/motion'
 import { focusRing, radius } from '@/lib/styles'
+import { useBreakpoint } from '@/components/primitives/media-query'
 import { cn } from '@/lib/utils'
 
 /**
@@ -258,7 +259,19 @@ function Calendar(props: CalendarProps) {
 
   /* ------------------------------------------------------------ render */
 
-  const months = Array.from({ length: Math.max(1, numberOfMonths) }, (_, i) =>
+  /*
+   * One month on a phone, whatever was asked for.
+   *
+   * A range picker defaults to two, and two months of seven columns each do not
+   * fit 390px: they did not overflow, they compressed, and the day numbers ran
+   * into each other until the grid was a smear. Native pickers show one month
+   * and a way to page through it, so that is what this does.
+   *
+   * `useBreakpoint` reads during the first render rather than after it, so the
+   * narrow layout is the one that paints — no flash of two crushed months.
+   */
+  const wide = useBreakpoint('sm')
+  const months = Array.from({ length: wide ? Math.max(1, numberOfMonths) : 1 }, (_, i) =>
     addMonths(month, i),
   )
 
@@ -279,7 +292,7 @@ function Calendar(props: CalendarProps) {
         if (!dragging.current) setHover(null)
       }}
     >
-      <div className="flex gap-5">
+      <div className="flex flex-col gap-4 sm:flex-row sm:gap-5">
         {range && props.presets?.length ? (
           <Presets
             presets={props.presets}
@@ -305,7 +318,7 @@ function Calendar(props: CalendarProps) {
             toDate={toDate}
           />
 
-          <div className="flex gap-6">
+          <div className="flex flex-col gap-6 sm:flex-row">
             {months.map((m) => (
               <Month
                 key={m.toISOString()}
@@ -359,7 +372,15 @@ function Presets({
   onPick: (range: DateRange) => void
 }) {
   return (
-    <div className="border-border flex w-36 shrink-0 flex-col gap-1 border-e pe-3">
+    <div
+      className={cn(
+        'border-border flex shrink-0 gap-1',
+        // Beside the grid when there is room, above it when there is not. At
+        // 390px a fixed 9rem column left the calendar 250px to live in.
+        'flex-row flex-wrap border-b pb-3',
+        'sm:w-36 sm:flex-col sm:flex-nowrap sm:border-e sm:border-b-0 sm:pe-3 sm:pb-0',
+      )}
+    >
       {presets.map((preset) => (
         <Button
           key={preset.label}

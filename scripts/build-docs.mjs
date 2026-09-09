@@ -33,7 +33,7 @@ globalThis.window ??= {
 
 const server = await createServer({ server: { middlewareMode: true }, appType: 'custom' })
 
-const { CATEGORIES, isReady, componentPath } = await server.ssrLoadModule('/src/registry/index.ts')
+const { CATEGORIES, TIERS, isReady, componentPath } = await server.ssrLoadModule('/src/registry/index.ts')
 const { DOCS, docPath } = await server.ssrLoadModule('/src/docs/pages.tsx')
 const { EXAMPLES, examplePath } = await server.ssrLoadModule('/src/examples/index.ts')
 
@@ -46,6 +46,7 @@ for (const category of CATEGORIES) {
       label: entry.label,
       description: entry.description,
       category: category.label,
+      tier: category.tier,
       href: `${componentPath(entry.id)}/`,
       ready: isReady(entry),
       ...(entry.usage ? { usage: entry.usage } : {}),
@@ -68,8 +69,10 @@ for (const category of CATEGORIES) {
 }
 
 const data = {
+  tiers: TIERS.map((tier) => ({ id: tier.id, label: tier.label, blurb: tier.blurb })),
   categories: CATEGORIES.map((category) => ({
     label: category.label,
+    tier: category.tier,
     items: category.items.map((entry) => entry.id),
   })),
   components,
@@ -93,7 +96,8 @@ await server.close()
 
 const ids = Object.keys(components)
 console.log(
-  `docs ok — ${ids.length} components across ${data.categories.length} categories, ` +
+  `docs ok — ${ids.length} components across ${data.categories.length} categories ` +
+    `(${data.tiers.map((t) => `${t.label} ${data.categories.filter((c) => c.tier === t.id).reduce((n, c) => n + c.items.length, 0)}`).join(', ')}), ` +
     `${ids.filter((id) => components[id].demos).length} with demos, ` +
     `${ids.filter((id) => components[id].api).length} with curated API prose, ` +
     `${data.docs.length} docs, ${data.examples.length} examples`,

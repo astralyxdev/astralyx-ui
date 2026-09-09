@@ -261,11 +261,12 @@ import {
   cacheStatsEntry, containerListEntry, envDiffEntry, portTableEntry,
   queueMonitorEntry, rateLimitMeterEntry, webSocketFramesEntry,
 } from './runtime'
-import type { Category, ComponentEntry } from './types'
+import type { Category, ComponentEntry, Tier } from './types'
 
 export const CATEGORIES: Category[] = [
   {
     label: 'Forms',
+    tier: 'basic',
     items: [
       buttonEntry,
       buttonGroupEntry,
@@ -307,6 +308,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Display',
+    tier: 'basic',
     items: [
       cardEntry,
       groupEntry,
@@ -337,6 +339,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Navigation',
+    tier: 'basic',
     items: [
       tabsEntry,
       accordionEntry,
@@ -361,6 +364,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Overlays',
+    tier: 'basic',
     items: [
       storyEntry,
       dialogEntry,
@@ -380,12 +384,14 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Feedback',
+    tier: 'basic',
     items: [alertEntry, bannerEntry, toastEntry, progressEntry, spinnerEntry,
       resultEntry,
     ],
   },
   {
     label: 'Crypto',
+    tier: 'block',
     items: [
       walletConnectEntry,
       walletAddressEntry,
@@ -415,6 +421,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Product',
+    tier: 'block',
     items: [
       notificationInboxEntry,
       userMenuEntry,
@@ -424,6 +431,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Utility',
+    tier: 'basic',
     items: [
       countdownEntry,
       copyButtonEntry,
@@ -442,6 +450,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Operations',
+    tier: 'block',
     items: [
       pipelineEntry,
       serviceStatusEntry,
@@ -457,6 +466,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Development',
+    tier: 'block',
     items: [
       fileTreeEntry,
       commitListEntry,
@@ -483,8 +493,8 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Agents',
+    tier: 'block',
     items: [
-      nodeCanvasEntry,
       inspectorEntry,
       agentCardEntry,
       toolPickerEntry,
@@ -508,6 +518,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'MCP',
+    tier: 'block',
     items: [
       mcpServerCardEntry,
       mcpServerPickerEntry,
@@ -527,6 +538,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Prompts',
+    tier: 'block',
     items: [
       promptVariablesEntry,
       promptVersionsEntry,
@@ -536,6 +548,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'AI',
+    tier: 'block',
     items: [
       promptInputEntry,
       messageEntry,
@@ -560,6 +573,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'AIOps',
+    tier: 'block',
     items: [
       alertTriageEntry,
       anomalyChartEntry,
@@ -572,6 +586,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Finance',
+    tier: 'block',
     items: [
       moneyInputEntry,
       cardInputEntry,
@@ -583,6 +598,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Commerce',
+    tier: 'block',
     items: [
       cartEntry,
       checkoutSummaryEntry,
@@ -592,6 +608,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Auth',
+    tier: 'block',
     items: [
       loginFormEntry,
       twoFactorSetupEntry,
@@ -603,6 +620,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Security',
+    tier: 'block',
     items: [
       riskScoreEntry,
       fraudVerdictEntry,
@@ -612,6 +630,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Analytics',
+    tier: 'block',
     items: [
       dateRangeCompareEntry,
       cohortTableEntry,
@@ -625,6 +644,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Admin',
+    tier: 'block',
     items: [
       auditLogEntry,
       moderationQueueEntry,
@@ -633,6 +653,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Messaging',
+    tier: 'block',
     items: [
       threadListEntry,
       ticketCardEntry,
@@ -642,6 +663,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Media',
+    tier: 'basic',
     items: [
       imageEntry,
       audioPlayerEntry,
@@ -657,6 +679,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Gaming',
+    tier: 'block',
     items: [
       betInputEntry,
       oddsDisplayEntry,
@@ -667,6 +690,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Affiliate',
+    tier: 'block',
     items: [
       campaignCardEntry,
       utmBuilderEntry,
@@ -676,6 +700,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Geo',
+    tier: 'basic',
     items: [
       mapEmbedEntry,
       locationPickerEntry,
@@ -686,6 +711,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'API',
+    tier: 'block',
     items: [
       requestBuilderEntry,
       responseViewerEntry,
@@ -698,18 +724,25 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Knowledge',
+    tier: 'basic',
     items: [noteGraphEntry, knowledgeGraphEntry, markdownEntry, markdownEditorEntry],
   },
   {
     label: 'Charts',
+    tier: 'basic',
     items: [scatterPlotEntry, radarChartEntry, sankeyEntry, treemapEntry, boxPlotEntry],
   },
   {
     label: 'Views',
-    items: [ganttEntry, schedulerEntry, orgChartEntry],
+    tier: 'basic',
+    // `node-canvas` lives here rather than under Agents: a pannable graph of
+    // nodes and edges is a generic surface, and filing it with the agent
+    // components implied it only made sense for one of them.
+    items: [nodeCanvasEntry, ganttEntry, schedulerEntry, orgChartEntry],
   },
   {
     label: 'Storage',
+    tier: 'block',
     items: [
       storageUsageEntry,
       bucketListEntry,
@@ -721,6 +754,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Data',
+    tier: 'block',
     items: [
       slowQueryLogEntry,
       indexListEntry,
@@ -732,6 +766,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Database',
+    tier: 'block',
     items: [
       queryEditorEntry,
       queryConstructorEntry,
@@ -743,6 +778,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Build & Perf',
+    tier: 'block',
     items: [
       buildLogEntry,
       bundleTreemapEntry,
@@ -754,6 +790,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Code Tools',
+    tier: 'block',
     items: [
       regexTesterEntry,
       mergeConflictEntry,
@@ -764,6 +801,7 @@ export const CATEGORIES: Category[] = [
   },
   {
     label: 'Runtime',
+    tier: 'block',
     items: [
       containerListEntry,
       portTableEntry,
@@ -777,6 +815,52 @@ export const CATEGORIES: Category[] = [
 ]
 
 export const ENTRIES: ComponentEntry[] = CATEGORIES.flatMap((c) => c.items)
+
+/**
+ * The two halves of the kit, in the order they are always presented.
+ *
+ * The copy lives here rather than in each screen because the rail, the index
+ * and the landing page all name these groups, and three descriptions that
+ * drift apart is three chances to describe the kit differently.
+ */
+export const TIERS: { id: Tier; label: string; blurb: string }[] = [
+  {
+    id: 'basic',
+    label: 'Basics',
+    blurb:
+      'The vocabulary. Buttons, fields, dialogs, tables, charts — components ' +
+      'that encode no business concept, so they belong in any product.',
+  },
+  {
+    id: 'block',
+    label: 'Blocks',
+    blurb:
+      'Built on the basics, for one job each. A block already knows what a ' +
+      'commit is, or a wallet, an invoice, a span — the part normally rebuilt ' +
+      'from scratch on every project.',
+  },
+]
+
+/**
+ * Categories grouped into the two tiers, preserving the order they are
+ * declared in above.
+ *
+ * Derived rather than stored as two arrays, so a category cannot end up in
+ * both halves or in neither.
+ */
+export const TIERED: { id: Tier; label: string; blurb: string; categories: Category[] }[] =
+  TIERS.map((tier) => ({
+    ...tier,
+    categories: CATEGORIES.filter((category) => category.tier === tier.id),
+  }))
+
+/** Every component in one tier — the count the index and rail both quote. */
+export function tierCount(tier: Tier) {
+  return CATEGORIES.filter((category) => category.tier === tier).reduce(
+    (total, category) => total + category.items.length,
+    0,
+  )
+}
 
 export function findEntry(id: string) {
   return ENTRIES.find((entry) => entry.id === id)
@@ -806,4 +890,4 @@ export function componentPath(id: string) {
   return `/components/${id}`
 }
 
-export type { Category, ComponentEntry, DemoSpec } from './types'
+export type { Category, ComponentEntry, DemoSpec, Tier } from './types'
