@@ -72,6 +72,7 @@ import {
   transactionListEntry, validatorListEntry,
 } from './crypto'
 import { formEntry } from './form'
+import { dateRangeFilterEntry, filterToolbarEntry } from './filters'
 import {
   calendarEntry,
   carouselEntry,
@@ -303,7 +304,8 @@ export const CATEGORIES: Category[] = [
       cascaderEntry,
       treeSelectEntry,
       emojiPickerEntry,
-    
+      filterToolbarEntry,
+      dateRangeFilterEntry,
     ],
   },
   {

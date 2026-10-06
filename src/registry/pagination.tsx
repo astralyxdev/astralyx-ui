@@ -1,7 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { Pagination } from '@/components/ui/pagination'
+import {
+  CursorPagination,
+  OffsetPagination,
+  Pagination,
+  useCursorPagination,
+} from '@/components/ui/pagination'
 import type { ComponentEntry, ComposerState } from './types'
 
 const SIZES = ['icon-xs', 'icon-sm', 'icon'] as const
@@ -41,11 +46,36 @@ function LivePagination({
   )
 }
 
+/** 57 rows, 20 to a page — enough for a short last page. */
+function LiveOffsetPagination() {
+  const [offset, setOffset] = useState(0)
+  return <OffsetPagination offset={offset} pageSize={20} total={57} onOffsetChange={setOffset} />
+}
+
+/** A fake keyset API: the cursor is the index of the next page's first row. */
+function LiveCursorPagination() {
+  const pages = useCursorPagination('all')
+  const start = pages.cursor ? Number(pages.cursor) : 0
+  const next = start + 25 < 10_000 ? String(start + 25) : null
+  return (
+    <CursorPagination
+      page={pages.page}
+      pageSize={25}
+      rows={25}
+      total={10_000}
+      totalCapped
+      nextCursor={next}
+      onNext={pages.next}
+      onPrevious={pages.previous}
+    />
+  )
+}
+
 export const paginationEntry: ComponentEntry = {
   id: 'pagination',
   label: 'Pagination',
   description:
-    'Move between pages of results. The windowing rule — how many neighbours to show and where the gaps fall — is exported as pageItems, so it can be reused or tested on its own.',
+    'Move between pages of results. The windowing rule — how many neighbours to show and where the gaps fall — is exported as pageItems, so it can be reused or tested on its own. OffsetPagination and CursorPagination cover lists that cannot be browsed by page number: a range, Previous and Next.',
   usage: `import { Pagination } from '@/components/ui/pagination'
 
 const [page, setPage] = useState(1)
@@ -77,6 +107,12 @@ const [page, setPage] = useState(1)
     { name: 'size', type: SIZES.map((s) => `'${s}'`).join(' | '), default: "'icon-sm'", description: 'Button size for the controls.' },
     { name: 'compact', type: 'boolean', default: 'false', description: 'Drop the numbers and show "page / count" between the arrows.' },
     { name: 'pageItems', type: '(page, count, siblings) => (number | "gap")[]', description: 'The exported windowing function behind the row.' },
+    { name: 'OffsetPagination', type: 'component', description: '"21–40 of 57" with Previous and Next, for a list paged by `offset` and `pageSize`. Renders nothing while everything fits on one page, and when the total shrinks under the current page — rows deleted, a stale link — moves to the last page that still holds rows.' },
+    { name: 'maxOffset', type: 'number', description: 'The deepest offset the API accepts. Next stops there, and an offset past it is moved back.' },
+    { name: 'CursorPagination', type: 'component', description: 'The same line for a keyset-paged list, which knows only its page index, the rows on it and the next cursor. `totalCapped` shows a total counted up to a cap as "10,000+".' },
+    { name: 'useCursorPagination', type: '(resetKey: string) => { cursor, page, next, previous, first }', description: 'The trail of cursors behind the current page — a cursor API has no way back, so it is remembered here. A new `resetKey` (the filters changed) starts again at the first page.' },
+    { name: 'rangeLabel', type: '({ from, to, total }) => ReactNode', description: 'The range line, from numbers already formatted for `locale`. Defaults to "21–40 of 57".' },
+    { name: 'lastPageOffset', type: '(total, pageSize) => number', description: 'The offset of the last page holding anything.' },
   ],
   demos: [
     {
@@ -102,6 +138,32 @@ const [page, setPage] = useState(1)
       stack: true,
       code: `<Pagination page={page} count={20} compact onPageChange={setPage} />`,
       render: () => <LivePagination count={20} siblings={1} size="icon-sm" compact />,
+    },
+    {
+      title: 'By offset',
+      stack: true,
+      code: `const [offset, setOffset] = useState(0)
+
+<OffsetPagination offset={offset} pageSize={20} total={57} onOffsetChange={setOffset} />`,
+      render: () => <LiveOffsetPagination />,
+    },
+    {
+      title: 'By cursor, with a capped total',
+      stack: true,
+      code: `const pages = useCursorPagination(filtersKey)
+const { data } = useQuery(['rows', filtersKey, pages.cursor], …)
+
+<CursorPagination
+  page={pages.page}
+  pageSize={25}
+  rows={data?.rows.length}
+  total={data?.total}
+  totalCapped={data?.totalCapped}
+  nextCursor={data?.nextCursor}
+  onNext={pages.next}
+  onPrevious={pages.previous}
+/>`,
+      render: () => <LiveCursorPagination />,
     },
   ],
 }

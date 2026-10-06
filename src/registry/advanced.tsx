@@ -12,7 +12,7 @@ import { Combobox } from '@/components/ui/combobox'
 import { CommandDialog, CommandList } from '@/components/ui/command'
 import { ContextMenu } from '@/components/ui/context-menu'
 import { DatePicker } from '@/components/ui/date-picker'
-import { Empty } from '@/components/ui/empty'
+import { Empty, EmptyNote } from '@/components/ui/empty'
 import { Field, FieldLabel, useFieldControl } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Resizable } from '@/components/ui/resizable'
@@ -131,6 +131,7 @@ export const emptyEntry: ComponentEntry = {
     { name: 'icon / title / description', type: 'ReactNode', description: 'The three parts of a useful empty state.' },
     { name: 'action', type: 'ReactNode', description: 'The next step — usually the button that creates the missing thing.' },
     { name: 'bordered', type: 'boolean', default: 'true', description: 'Dashed outline. Turn it off inside a card that already has one.' },
+    { name: 'EmptyNote', type: 'component', description: 'One quiet line for an empty list inside a section that already has a heading, where a centred block would be the loudest thing on the page. `icon` leads it; `inset` puts it on a muted fill in place of the surface the list would have drawn.' },
   ],
   demos: [
     {
@@ -152,6 +153,18 @@ export const emptyEntry: ComponentEntry = {
       code: `<Empty icon={<Search />} title="No matches" description="Try a different term." />`,
       render: () => (
         <Empty icon={<Search />} title="No matches for “astro”" description="Try a different term or clear the filters." />
+      ),
+    },
+    {
+      title: 'Inside a section',
+      stack: true,
+      code: `<EmptyNote icon={<Folder />}>No projects yet.</EmptyNote>
+<EmptyNote inset>Nothing was paid out this month.</EmptyNote>`,
+      render: () => (
+        <div className="flex w-full max-w-md flex-col gap-3">
+          <EmptyNote icon={<Folder />}>No projects yet.</EmptyNote>
+          <EmptyNote inset>Nothing was paid out this month.</EmptyNote>
+        </div>
       ),
     },
   ],

@@ -1343,6 +1343,19 @@
       ]
     },
     {
+      "name": "date-range-filter",
+      "type": "registry:ui",
+      "title": "Date Range Filter",
+      "description": "A date range as a list filter. It reports a range only once both ends are picked — the first click is half a range, and a filter that hears it fetches \"everything since Tuesday\" first — and the range runs to the last millisecond of the end day.",
+      "category": "Forms",
+      "dependencies": [],
+      "registryDependencies": [
+        "calendar",
+        "date-picker",
+        "lib-date"
+      ]
+    },
+    {
       "name": "dependency-list",
       "type": "registry:ui",
       "title": "Dependency List",
@@ -1778,6 +1791,27 @@
         "lib-motion",
         "lib-styles",
         "lib-utils"
+      ]
+    },
+    {
+      "name": "filter-toolbar",
+      "type": "registry:ui",
+      "title": "Filter Toolbar",
+      "description": "The filter row of a list page: a search box, the most used filter inline, the rest behind \"Filters\" — a popover on a wide screen, a bottom sheet on a phone — and what applies as removable chips. Values in, changes out, so it works over state, a store or the URL.",
+      "category": "Forms",
+      "dependencies": [
+        "lucide-react@^1.39.0"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "input",
+        "lib-styles",
+        "lib-utils",
+        "popover",
+        "primitive-media-query",
+        "sheet",
+        "visually-hidden"
       ]
     },
     {
@@ -3096,7 +3130,7 @@
       "name": "pagination",
       "type": "registry:ui",
       "title": "Pagination",
-      "description": "Move between pages of results. The windowing rule — how many neighbours to show and where the gaps fall — is exported as pageItems, so it can be reused or tested on its own.",
+      "description": "Move between pages of results. The windowing rule — how many neighbours to show and where the gaps fall — is exported as pageItems, so it can be reused or tested on its own. OffsetPagination and CursorPagination cover lists that cannot be browsed by page number: a range, Previous and Next.",
       "category": "Navigation",
       "dependencies": [
         "lucide-react@^1.39.0"
@@ -5357,6 +5391,7 @@
         "copy-button",
         "lib-motion",
         "lib-styles",
+        "lib-untrusted-text",
         "lib-utils"
       ]
     },
@@ -5558,6 +5593,13 @@
       "registryDependencies": [
         "lib-motion"
       ]
+    },
+    {
+      "name": "lib-untrusted-text",
+      "type": "registry:lib",
+      "title": "untrusted-text",
+      "dependencies": [],
+      "registryDependencies": []
     },
     {
       "name": "lib-use-clipboard",

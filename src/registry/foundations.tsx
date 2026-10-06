@@ -11,6 +11,8 @@ import {
   DescriptionDetails,
   DescriptionList,
   DescriptionTerm,
+  FactGrid,
+  SummaryList,
 } from '@/components/ui/description-list'
 import { Dropzone } from '@/components/ui/dropzone'
 import type { FileUpload, UploadControl } from '@/lib/use-uploads'
@@ -341,6 +343,8 @@ export const descriptionListEntry: ComponentEntry = {
     { name: 'columns', type: 'boolean', default: 'true', description: 'Term beside value from `sm` up. At phone width a split leaves both halves too narrow, so it stacks below that regardless.' },
     { name: 'divided', type: 'boolean', default: 'false', description: 'Hairline between pairs.' },
     { name: 'DescriptionPairs', type: 'component', description: 'Convenience wrapper taking `items={[{ term, details }]}` for a flat list.' },
+    { name: 'SummaryList', type: 'component', description: 'Label left, figure right, one row each — a quote, a fee breakdown. Values end-aligned with tabular digits so amounts line up, two columns at every width, and `strong` on an item marks the total.' },
+    { name: 'FactGrid', type: 'component', description: 'A few short facts across the width of a card, each a caption over its value — where a two-column list would fill the left third and leave the rest empty. As many 10rem columns as fit, two on a phone.' },
   ],
   demos: [
     {
@@ -362,6 +366,52 @@ export const descriptionListEntry: ComponentEntry = {
             <DescriptionTerm>Deployed by</DescriptionTerm>
             <DescriptionDetails>Ada Lovelace</DescriptionDetails>
           </DescriptionList>
+        </div>
+      ),
+    },
+    {
+      title: 'A breakdown that adds up',
+      stack: true,
+      code: `<SummaryList
+  items={[
+    { term: 'Amount', details: '1,250.00 USDT' },
+    { term: 'Network fee', details: '1.00 USDT' },
+    { term: 'You receive', details: '1,249.00 USDT', strong: true },
+  ]}
+/>`,
+      render: () => (
+        <div className="w-full max-w-sm">
+          <SummaryList
+            items={[
+              { term: 'Amount', details: '1,250.00 USDT' },
+              { term: 'Network fee', details: '1.00 USDT' },
+              { term: 'You receive', details: '1,249.00 USDT', strong: true },
+            ]}
+          />
+        </div>
+      ),
+    },
+    {
+      title: 'Facts across a card',
+      stack: true,
+      code: `<FactGrid
+  items={[
+    { term: 'Status', details: <Badge color="green">Healthy</Badge> },
+    { term: 'Region', details: 'eu-west-1' },
+    { term: 'Instances', details: '12' },
+    { term: 'Last deploy', details: '4 minutes ago' },
+  ]}
+/>`,
+      render: () => (
+        <div className="w-full max-w-2xl">
+          <FactGrid
+            items={[
+              { term: 'Status', details: <Badge size="sm" color="green">Healthy</Badge> },
+              { term: 'Region', details: 'eu-west-1' },
+              { term: 'Instances', details: '12' },
+              { term: 'Last deploy', details: '4 minutes ago' },
+            ]}
+          />
         </div>
       ),
     },

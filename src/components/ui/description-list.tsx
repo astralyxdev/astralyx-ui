@@ -79,9 +79,82 @@ function DescriptionPairs({
   )
 }
 
+/**
+ * Label on the left, figure on the right, one row each — a quote, a fee
+ * breakdown, an order total.
+ *
+ * The values align to the end with tabular digits, so a column of amounts
+ * lines up on the decimal point the way a receipt does. It stays two columns
+ * at every width: a figure is short, and stacking it under its label is what
+ * makes a breakdown hard to add up. `strong` marks the total.
+ */
+function SummaryList({
+  items,
+  className,
+  ...props
+}: Omit<ComponentProps<'dl'>, 'children'> & {
+  items: { term: ReactNode; details: ReactNode; strong?: boolean }[]
+}) {
+  return (
+    <DescriptionList
+      className={cn(
+        'grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-2 sm:grid-cols-[minmax(0,1fr)_auto]',
+        className,
+      )}
+      {...props}
+    >
+      {items.map((item, index) => (
+        <div key={index} className="contents">
+          <DescriptionTerm className={cn(item.strong && 'text-foreground')}>{item.term}</DescriptionTerm>
+          <DescriptionDetails className={cn('text-end tabular-nums', item.strong && 'font-semibold')}>
+            {item.details}
+          </DescriptionDetails>
+        </div>
+      ))}
+    </DescriptionList>
+  )
+}
+
+/**
+ * A handful of short facts — a status, a count, a date — across the width of
+ * a card, each a caption over its value.
+ *
+ * Five facts in a two-column DescriptionList fill the left third of a wide
+ * card and leave the rest empty. Laid across, they read at a glance and the
+ * card is as tall as one row. As many 10rem columns as fit, two on a phone.
+ */
+function FactGrid({
+  items,
+  className,
+  ...props
+}: Omit<ComponentProps<'dl'>, 'children'> & {
+  items: { term: ReactNode; details: ReactNode }[]
+}) {
+  return (
+    <dl
+      data-slot="fact-grid"
+      className={cn(
+        enterFade,
+        'grid grid-cols-2 gap-x-6 gap-y-4 text-sm sm:grid-cols-[repeat(auto-fill,minmax(10rem,1fr))]',
+        className,
+      )}
+      {...props}
+    >
+      {items.map((item, index) => (
+        <div key={index} className="flex min-w-0 flex-col items-start gap-1">
+          <dt className="text-muted-foreground text-xs font-medium">{item.term}</dt>
+          <dd className="ms-0 max-w-full min-w-0 break-words">{item.details}</dd>
+        </div>
+      ))}
+    </dl>
+  )
+}
+
 export {
   DescriptionDetails,
   DescriptionList,
   DescriptionPairs,
   DescriptionTerm,
+  FactGrid,
+  SummaryList,
 }

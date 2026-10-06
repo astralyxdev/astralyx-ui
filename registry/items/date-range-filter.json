@@ -1,0 +1,20 @@
+{
+  "name": "date-range-filter",
+  "type": "registry:ui",
+  "title": "Date Range Filter",
+  "description": "A date range as a list filter. It reports a range only once both ends are picked — the first click is half a range, and a filter that hears it fetches \"everything since Tuesday\" first — and the range runs to the last millisecond of the end day.",
+  "category": "Forms",
+  "dependencies": [],
+  "registryDependencies": [
+    "calendar",
+    "date-picker",
+    "lib-date"
+  ],
+  "files": [
+    {
+      "path": "components/ui/date-range-filter.tsx",
+      "type": "registry:ui",
+      "content": "'use client'\n\nimport { useState } from 'react'\nimport type { CalendarPreset } from '@/components/ui/calendar'\nimport { DatePicker } from '@/components/ui/date-picker'\nimport { addDays, startOfDay, type DateRange } from '@/lib/date'\n\n/**\n * A date range as a list filter: a DatePicker in range mode that reports a\n * range only once it is whole, spanning whole days.\n *\n * A range picker reports every click, and the first click of a range is half\n * of one — `{ from }` with no end. Handed straight to a filter, that half range\n * fires a request for \"everything since Tuesday\", replaces the table, and then\n * fires a second one when the end is picked. Here the half range stays a draft\n * in the picker, and `onChange` hears about the range once, when it is\n * complete — or about `undefined` when it is cleared.\n *\n * The range it reports runs from the start of the first day to the last\n * millisecond of the last one, so \"1 to 5 October\" includes everything on the\n * 5th. A picked day is midnight, and a filter that compares against midnight\n * of the end date quietly drops the whole last day.\n */\ntype DateRangeFilterProps = {\n  value: DateRange | undefined\n  onChange: (range: { from: Date; to: Date } | undefined) => void\n  id?: string\n  /** Quick picks above the grid. Defaults to today, 7 days and 30 days. */\n  presets?: CalendarPreset[]\n  placeholder?: string\n  locale?: string\n  size?: 'sm' | 'md' | 'lg'\n  className?: string\n}\n\n/** The last millisecond of `date`'s day. */\nfunction endOfDay(date: Date) {\n  const copy = new Date(date)\n  copy.setHours(23, 59, 59, 999)\n  return copy\n}\n\nfunction defaultFilterPresets(today: Date): CalendarPreset[] {\n  return [\n    { label: 'Today', range: { from: today, to: today } },\n    { label: 'Last 7 days', range: { from: addDays(today, -6), to: today } },\n    { label: 'Last 30 days', range: { from: addDays(today, -29), to: today } },\n  ]\n}\n\nfunction DateRangeFilter({\n  value,\n  onChange,\n  id,\n  presets,\n  placeholder = 'Any date',\n  locale,\n  size = 'sm',\n  className = 'w-full',\n}: DateRangeFilterProps) {\n  // A range being picked — one end so far — lives here until it is complete.\n  const [draft, setDraft] = useState<DateRange | undefined>(undefined)\n  // A new value from outside (a chip removed, Reset) drops the draft.\n  const [seen, setSeen] = useState(value)\n  if (seen?.from?.getTime() !== value?.from?.getTime() || seen?.to?.getTime() !== value?.to?.getTime()) {\n    setSeen(value)\n    setDraft(undefined)\n  }\n  // Fixed for the life of the picker, so the presets do not shift under a\n  // filter left open across midnight.\n  const [today] = useState(() => startOfDay(new Date()))\n\n  return (\n    <DatePicker\n      id={id}\n      mode=\"range\"\n      size={size}\n      className={className}\n      locale={locale}\n      placeholder={placeholder}\n      presets={presets ?? defaultFilterPresets(today)}\n      // One month: a filter sits in a panel or a sheet, not a page.\n      numberOfMonths={1}\n      value={draft ?? value ?? {}}\n      onValueChange={(range) => {\n        if (!range?.from) {\n          setDraft(undefined)\n          onChange(undefined)\n        } else if (range.to) {\n          setDraft(undefined)\n          onChange({ from: startOfDay(range.from), to: endOfDay(range.to) })\n        } else {\n          setDraft(range)\n        }\n      }}\n    />\n  )\n}\n\nexport { DateRangeFilter, endOfDay }\nexport type { DateRangeFilterProps }\n"
+    }
+  ]
+}

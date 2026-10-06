@@ -8385,6 +8385,65 @@
         }
       ]
     },
+    "date-range-filter": {
+      "prose": [
+        "A date range as a list filter: a DatePicker in range mode that reports a range only once it is whole, spanning whole days.",
+        "A range picker reports every click, and the first click of a range is half of one — `{ from }` with no end. Handed straight to a filter, that half range fires a request for \"everything since Tuesday\", replaces the table, and then fires a second one when the end is picked. Here the half range stays a draft in the picker, and `onChange` hears about the range once, when it is complete — or about `undefined` when it is cleared.",
+        "The range it reports runs from the start of the first day to the last millisecond of the last one, so \"1 to 5 October\" includes everything on the 5th. A picked day is midnight, and a filter that compares against midnight of the end date quietly drops the whole last day."
+      ],
+      "components": [
+        {
+          "name": "DateRangeFilter",
+          "props": [
+            {
+              "name": "value",
+              "type": "DateRange",
+              "required": true
+            },
+            {
+              "name": "onChange",
+              "type": "(range: { from: Date; to: Date }) => void",
+              "required": true
+            },
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "presets",
+              "type": "CalendarPreset[]",
+              "description": "Quick picks above the grid. Defaults to today, 7 days and 30 days."
+            },
+            {
+              "name": "placeholder",
+              "type": "string",
+              "default": "'Any date'"
+            },
+            {
+              "name": "locale",
+              "type": "string"
+            },
+            {
+              "name": "size",
+              "type": "'sm' | 'md' | 'lg'",
+              "default": "'sm'"
+            },
+            {
+              "name": "className",
+              "type": "string",
+              "default": "'w-full'"
+            }
+          ]
+        }
+      ],
+      "functions": [
+        {
+          "name": "endOfDay",
+          "signature": "(date: Date) => Date",
+          "description": "The last millisecond of `date`'s day."
+        }
+      ]
+    },
     "dependency-list": {
       "prose": [
         "Package dependencies with their update and vulnerability state.",
@@ -8641,6 +8700,34 @@
               "name": "divided",
               "type": "boolean"
             },
+            {
+              "name": "items",
+              "type": "{ term: ReactNode; details: ReactNode }[]",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "SummaryList",
+          "description": "Label on the left, figure on the right, one row each — a quote, a fee breakdown, an order total.",
+          "extends": [
+            "Omit<ComponentProps<'dl'>, 'children'>"
+          ],
+          "props": [
+            {
+              "name": "items",
+              "type": "{ term: ReactNode; details: ReactNode; strong?: boolean }[]",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "FactGrid",
+          "description": "A handful of short facts — a status, a count, a date — across the width of a card, each a caption over its value.",
+          "extends": [
+            "Omit<ComponentProps<'dl'>, 'children'>"
+          ],
+          "props": [
             {
               "name": "items",
               "type": "{ term: ReactNode; details: ReactNode }[]",
@@ -9724,6 +9811,25 @@
               "name": "bordered",
               "type": "boolean",
               "default": "true"
+            }
+          ]
+        },
+        {
+          "name": "EmptyNote",
+          "description": "An empty list inside a section: one quiet line where the first row would start.",
+          "extends": [
+            "ComponentProps<'p'>"
+          ],
+          "props": [
+            {
+              "name": "icon",
+              "type": "ReactNode"
+            },
+            {
+              "name": "inset",
+              "type": "boolean",
+              "default": "false",
+              "description": "On a quiet fill, standing in for the surface the list would have drawn."
             }
           ]
         }
@@ -10850,6 +10956,275 @@
               "type": "boolean"
             }
           ]
+        }
+      ]
+    },
+    "filter-toolbar": {
+      "prose": [
+        "The filter pattern of a list page, in one row.",
+        "A search box takes the free width; the filter used most sits inline beside it — a SegmentedControl, a Select; the rest go behind \"Filters\", in a popover on a wide screen and a bottom sheet on a phone; and whatever applies shows underneath as chips that can each be removed. Every list that grows filters one at a time ends up with a row of eight selects that wraps into three lines on a laptop. This is the shape it should have grown into.",
+        "Nothing here knows where filter state lives. Values come in and changes go out, so it works the same over component state, a store or the URL — `useFilterParams` is the URL case, written against a plain `URLSearchParams` so any router can supply one."
+      ],
+      "components": [
+        {
+          "name": "FilterToolbar",
+          "extends": [
+            "Omit<FilterPanelProps, 'activeCount' | 'onReset' | 'children'>",
+            "Omit<FilterChipsProps, 'chips' | 'onClearAll' | 'onEmpty' | 'className'>"
+          ],
+          "props": [
+            {
+              "name": "search",
+              "type": "{ value: string onChange: (value: string) => void placeholder?: string /** Accessible name. Defaults to `searchLabel`. */ label?: string /** Monospace input, for ids and hashes. */ mono?: boolean maxLength?: number }"
+            },
+            {
+              "name": "quick",
+              "type": "ReactNode",
+              "description": "The filter used most, shown inline."
+            },
+            {
+              "name": "panel",
+              "type": "ReactNode",
+              "description": "The rest, behind the Filters button. FilterField each."
+            },
+            {
+              "name": "panelCount",
+              "type": "number",
+              "default": "0",
+              "description": "How many of the panel's filters apply — the count on the button."
+            },
+            {
+              "name": "chips",
+              "type": "FilterChip[]",
+              "default": "[]"
+            },
+            {
+              "name": "onReset",
+              "type": "() => void",
+              "required": true,
+              "description": "Clears every filter in the toolbar."
+            },
+            {
+              "name": "className",
+              "type": "string"
+            },
+            {
+              "name": "searchLabel",
+              "type": "string",
+              "default": "'Search'"
+            },
+            {
+              "name": "filtersLabel",
+              "type": "string",
+              "description": "The button's text and the panel's title."
+            },
+            {
+              "name": "activeCountLabel",
+              "type": "(count: number) => string",
+              "description": "Announced in place of the bare count."
+            },
+            {
+              "name": "resetLabel",
+              "type": "string"
+            },
+            {
+              "name": "doneLabel",
+              "type": "string"
+            },
+            {
+              "name": "closeLabel",
+              "type": "string",
+              "description": "The sheet's close button, on a phone."
+            },
+            {
+              "name": "clearAllLabel",
+              "type": "string"
+            },
+            {
+              "name": "removeLabel",
+              "type": "(label: string) => string",
+              "description": "Accessible name of a chip's remove button."
+            },
+            {
+              "name": "activeLabel",
+              "type": "string",
+              "description": "Accessible name of the group."
+            }
+          ]
+        },
+        {
+          "name": "FilterField",
+          "description": "One labelled control in the filter panel. `wide` spans both columns.",
+          "props": [
+            {
+              "name": "label",
+              "type": "ReactNode",
+              "required": true
+            },
+            {
+              "name": "htmlFor",
+              "type": "string",
+              "description": "The control's id, so the label is a real `<label>`."
+            },
+            {
+              "name": "wide",
+              "type": "boolean",
+              "default": "false"
+            },
+            {
+              "name": "className",
+              "type": "string"
+            },
+            {
+              "name": "children",
+              "type": "ReactNode",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "FilterPanel",
+          "description": "\"Filters (2)\": the filters used less, laid out as a one- or two-column form, with Reset and Done.",
+          "props": [
+            {
+              "name": "activeCount",
+              "type": "number",
+              "required": true,
+              "description": "How many of the panel's filters apply — shown as a count on the button."
+            },
+            {
+              "name": "onReset",
+              "type": "() => void",
+              "required": true
+            },
+            {
+              "name": "children",
+              "type": "ReactNode",
+              "required": true
+            },
+            {
+              "name": "filtersLabel",
+              "type": "string",
+              "default": "'Filters'",
+              "description": "The button's text and the panel's title."
+            },
+            {
+              "name": "activeCountLabel",
+              "type": "(count: number) => string",
+              "default": "DEFAULT_ACTIVE_COUNT",
+              "description": "Announced in place of the bare count."
+            },
+            {
+              "name": "resetLabel",
+              "type": "string",
+              "default": "'Reset'"
+            },
+            {
+              "name": "doneLabel",
+              "type": "string",
+              "default": "'Done'"
+            },
+            {
+              "name": "closeLabel",
+              "type": "string",
+              "default": "'Close'",
+              "description": "The sheet's close button, on a phone."
+            }
+          ]
+        },
+        {
+          "name": "FilterChips",
+          "description": "The filters that apply, each removable, and \"Clear all\". Nothing when none do.",
+          "props": [
+            {
+              "name": "chips",
+              "type": "FilterChip[]",
+              "required": true
+            },
+            {
+              "name": "onClearAll",
+              "type": "() => void",
+              "required": true
+            },
+            {
+              "name": "onEmpty",
+              "type": "() => void",
+              "description": "Where focus goes when the last chip is removed — the search field, say."
+            },
+            {
+              "name": "className",
+              "type": "string"
+            },
+            {
+              "name": "clearAllLabel",
+              "type": "string",
+              "default": "'Clear all'"
+            },
+            {
+              "name": "removeLabel",
+              "type": "(label: string) => string",
+              "default": "DEFAULT_REMOVE",
+              "description": "Accessible name of a chip's remove button."
+            },
+            {
+              "name": "activeLabel",
+              "type": "string",
+              "default": "'Active filters'",
+              "description": "Accessible name of the group."
+            }
+          ]
+        }
+      ],
+      "hooks": [
+        {
+          "name": "useFilterParams",
+          "signature": "<K extends string>(keys: readonly K[], { params, onParamsChange, checks = {}, }: { params: URLSearchParams onParamsChange: (next: URLSearchParams) => void checks?: Partial<Record<K, FilterCheck>> }) => { values: Record<K, string>; offset: number; set: (key: 'offset' | K, value: FilterValue) => void; setMany: (patch: Partial<Record<'offset' | K, FilterValue>>) => void; clear: () => void; active: boolean; }",
+          "description": "List filters kept in the query string, so a filtered list can be linked to and survives a reload."
+        }
+      ],
+      "functions": [
+        {
+          "name": "FILTER_ANY",
+          "signature": "'__any'",
+          "description": "\"Any\" for a Select, which cannot hold an empty value. Treated as unset."
+        },
+        {
+          "name": "filterChecks",
+          "signature": "{ oneOf: (options: readonly string[]) => FilterCheck; matches: (pattern: RegExp) => FilterCheck; maxLength: (max: number) => FilterCheck; uuid: FilterCheck; isoDateTime: FilterCheck; flag: FilterCheck; }",
+          "description": "Ready-made checks for `useFilterParams`."
+        },
+        {
+          "name": "parseOffset",
+          "signature": "(raw: string | null) => number",
+          "description": "`?offset=` as a safe whole number. Anything else is the first page."
+        }
+      ],
+      "types": [
+        {
+          "name": "FilterChip",
+          "description": "One applied filter, as a removable chip: \"Status: failed ×\".",
+          "fields": [
+            {
+              "name": "key",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "onRemove",
+              "type": "() => void",
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "FilterCheck",
+          "description": "Checks one value read from the URL. A value that fails reads as unset.",
+          "definition": "(value: string) => boolean"
         }
       ]
     },
@@ -18408,7 +18783,6 @@
       "components": [
         {
           "name": "Pagination",
-          "description": "Move between pages of results.",
           "extends": [
             "Omit<ComponentProps<'nav'>, 'onChange'>"
           ],
@@ -18467,6 +18841,167 @@
               "description": "Accessible name for a page button."
             }
           ]
+        },
+        {
+          "name": "OffsetPagination",
+          "description": "Offset paging. Renders nothing while everything fits on one page.",
+          "extends": [
+            "Omit<ComponentProps<'nav'>, 'onChange'>"
+          ],
+          "props": [
+            {
+              "name": "pageSize",
+              "type": "number",
+              "required": true,
+              "description": "Rows per page."
+            },
+            {
+              "name": "size",
+              "type": "ButtonProps['size']"
+            },
+            {
+              "name": "label",
+              "type": "string",
+              "description": "Accessible name for the nav landmark."
+            },
+            {
+              "name": "previousLabel",
+              "type": "ReactNode"
+            },
+            {
+              "name": "nextLabel",
+              "type": "ReactNode"
+            },
+            {
+              "name": "rangeLabel",
+              "type": "(range: RangeParts) => ReactNode",
+              "description": "The range line, from numbers already formatted for `locale`."
+            },
+            {
+              "name": "unknownLabel",
+              "type": "ReactNode",
+              "description": "Shown in place of the range while the total is still loading."
+            },
+            {
+              "name": "locale",
+              "type": "string",
+              "description": "Formats the numbers in the range line."
+            },
+            {
+              "name": "offset",
+              "type": "number",
+              "required": true
+            },
+            {
+              "name": "total",
+              "type": "number",
+              "required": true,
+              "description": "Undefined while it loads."
+            },
+            {
+              "name": "onOffsetChange",
+              "type": "(offset: number) => void",
+              "required": true
+            },
+            {
+              "name": "maxOffset",
+              "type": "number",
+              "description": "The deepest offset the API accepts. No Next past it, and an offset beyond it — a stale link — is moved back to the last page it allows."
+            }
+          ]
+        },
+        {
+          "name": "CursorPagination",
+          "description": "Cursor (keyset) paging. A cursor only knows the way forward, so the range is worked out from the page index and the rows on it, and the total — when the API counts at all — is taken as given, capped or not.",
+          "extends": [
+            "Omit<ComponentProps<'nav'>, 'onChange'>"
+          ],
+          "props": [
+            {
+              "name": "pageSize",
+              "type": "number",
+              "required": true,
+              "description": "Rows per page."
+            },
+            {
+              "name": "size",
+              "type": "ButtonProps['size']"
+            },
+            {
+              "name": "label",
+              "type": "string",
+              "description": "Accessible name for the nav landmark."
+            },
+            {
+              "name": "previousLabel",
+              "type": "ReactNode"
+            },
+            {
+              "name": "nextLabel",
+              "type": "ReactNode"
+            },
+            {
+              "name": "rangeLabel",
+              "type": "(range: RangeParts) => ReactNode",
+              "description": "The range line, from numbers already formatted for `locale`."
+            },
+            {
+              "name": "unknownLabel",
+              "type": "ReactNode",
+              "description": "Shown in place of the range while the total is still loading."
+            },
+            {
+              "name": "locale",
+              "type": "string",
+              "description": "Formats the numbers in the range line."
+            },
+            {
+              "name": "page",
+              "type": "number",
+              "required": true,
+              "description": "Zero-based page index, from `useCursorPagination`."
+            },
+            {
+              "name": "rows",
+              "type": "number",
+              "required": true,
+              "description": "Rows on the page shown. Undefined while it loads."
+            },
+            {
+              "name": "total",
+              "type": "number",
+              "required": true
+            },
+            {
+              "name": "totalCapped",
+              "type": "boolean",
+              "default": "false",
+              "description": "The total was counted only up to a cap — shown as \"10,000+\"."
+            },
+            {
+              "name": "nextCursor",
+              "type": "string",
+              "required": true,
+              "description": "The cursor of the page after this one. None means this is the last."
+            },
+            {
+              "name": "onNext",
+              "type": "(cursor: string) => void",
+              "required": true
+            },
+            {
+              "name": "onPrevious",
+              "type": "() => void",
+              "required": true
+            }
+          ]
+        }
+      ],
+      "hooks": [
+        {
+          "name": "useCursorPagination",
+          "signature": "(resetKey: string) => { cursor: string; page: number; next: (cursor: string) => void; previous: () => void; first: () => void; }",
+          "description": "The trail of cursors behind a cursor-paged list."
         }
       ],
       "functions": [
@@ -18474,12 +19009,22 @@
           "name": "pageItems",
           "signature": "(page: number, count: number, siblings = 1) => PageItem[]",
           "description": "Pages to render for `page` of `count`, with `siblings` neighbours either side and the first and last always present. Gaps collapse to a single ellipsis, and the window is only ever elided when it saves at least one slot — so the row never shows \"… 4 …\" where the number itself would have been shorter."
+        },
+        {
+          "name": "lastPageOffset",
+          "signature": "(total: number, pageSize: number) => number",
+          "description": "The offset of the last page that holds anything — 0 when there is nothing."
         }
       ],
       "types": [
         {
           "name": "PageItem",
+          "description": "Move between pages of results.",
           "definition": "number | 'gap'"
+        },
+        {
+          "name": "RangePaginationProps",
+          "definition": "Omit<ComponentProps<'nav'>, 'onChange'> & {\n  /** Rows per page. */\n  pageSize: number\n  size?: ButtonProps['size']\n  /** Accessible name for the nav landmark. */\n  label?: string\n  previousLabel?: ReactNode\n  nextLabel?: ReactNode\n  /** The range line, from numbers already formatted for `locale`. */\n  rangeLabel?: (range: RangeParts) => ReactNode\n  /** Shown in place of the range while the total is still loading. */\n  unknownLabel?: ReactNode\n  /** Formats the numbers in the range line. */\n  locale?: string\n}"
         }
       ]
     },
@@ -28337,6 +28882,11 @@
           "description": "Split base units into whole and fraction on the digit string."
         },
         {
+          "name": "parseUnits",
+          "signature": "(value: string, decimals: number) => bigint",
+          "description": "A decimal string — \"12.5\", \"-0.000001\", what an API usually sends — as base units at `decimals`. Digits past `decimals` are cut, never rounded up, for the same reason the display rounds down. Throws on anything that is not a plain decimal, so a malformed amount is caught where it is parsed."
+        },
+        {
           "name": "formatUnits",
           "signature": "(value: bigint, decimals: number, precision: number, trim: boolean, locale: string) => string"
         }
@@ -31163,7 +31713,8 @@
         "An address, shortened for display but never for copying.",
         "The truncation is the security-relevant part. Addresses are compared by their ends, so an attacker generates a lookalike sharing the first and last few characters — \"address poisoning\". Showing too few characters makes that attack trivial, which is why the minimum here is 6 leading and 4 trailing and `chars` cannot go below it.",
         "Copy always yields the full address. A UI that copies what it displays is how funds get sent to a truncated string.",
-        "A `name` (ENS or similar) replaces the address visually but never replaces it for copying — names are re-registrable and are not identity."
+        "A `name` (ENS or similar) replaces the address visually but never replaces it for copying — names are re-registrable and are not identity. A string name is also stripped of bidi overrides and zero-width characters before it is drawn: whoever registered it chose every character, and a right-to-left override can make one name read as another.",
+        "`variant=\"block\"` is for the moment the whole address has to be checked by eye — a deposit address, the destination in a withdrawal review. It shows every character, in groups of four on a muted inset, wrapping; grouped, the eye can compare it with another copy four characters at a time instead of losing its place in forty-two."
       ],
       "components": [
         {
@@ -31223,6 +31774,12 @@
               "name": "copyLabel",
               "type": "string",
               "default": "'Copy address'"
+            },
+            {
+              "name": "variant",
+              "type": "'inline' | 'block'",
+              "default": "'inline'",
+              "description": "`block`: the full address, grouped by four, on its own inset."
             }
           ]
         }
@@ -31232,6 +31789,11 @@
           "name": "shortenAddress",
           "signature": "(address: string, chars = 6) => string",
           "description": "Middle ellipsis, with a floor that keeps lookalikes distinguishable."
+        },
+        {
+          "name": "chunkAddress",
+          "signature": "(address: string, size = 4) => string[]",
+          "description": "\"TQn9Y2kh…\" as `['TQn9', 'Y2kh', …]` — groups for reading, never for copying."
         }
       ]
     },

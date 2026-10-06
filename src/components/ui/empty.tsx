@@ -54,4 +54,40 @@ function Empty({
   )
 }
 
-export { Empty }
+/**
+ * An empty list inside a section: one quiet line where the first row would
+ * start.
+ *
+ * `Empty` is for a page or a whole panel with nothing in it. Inside a card
+ * that already has a heading — "Recent payouts", "API keys" — a centred block
+ * with an icon in a circle is the loudest thing on the page and says the least,
+ * and in a wide column it floats a long way from the heading it belongs to.
+ */
+function EmptyNote({
+  className,
+  icon,
+  inset = false,
+  children,
+  ...props
+}: ComponentProps<'p'> & {
+  icon?: ReactNode
+  /** On a quiet fill, standing in for the surface the list would have drawn. */
+  inset?: boolean
+}) {
+  return (
+    <p
+      data-slot="empty-note"
+      className={cn(
+        'text-muted-foreground flex items-center gap-2 text-sm [&_svg]:size-4 [&_svg]:shrink-0',
+        inset && cn('bg-muted/50 px-3 py-2.5', radius.control),
+        className,
+      )}
+      {...props}
+    >
+      {icon}
+      <span className="min-w-0">{children}</span>
+    </p>
+  )
+}
+
+export { Empty, EmptyNote }
