@@ -49,6 +49,30 @@ function splitUnits(value: bigint, decimals: number) {
   return { negative, whole, fraction }
 }
 
+/**
+ * A decimal string — "12.5", "-0.000001", what an API usually sends — as base
+ * units at `decimals`. Digits past `decimals` are cut, never rounded up, for
+ * the same reason the display rounds down. Throws on anything that is not a
+ * plain decimal, so a malformed amount is caught where it is parsed.
+ */
+function parseUnits(value: string, decimals: number) {
+  const match = /^(-)?(\d+)(?:\.(\d+))?$/.exec(value.trim())
+  if (!match) throw new Error(`Not a decimal amount: "${value}"`)
+  const [, minus, whole, fraction = ''] = match
+  const units =
+    BigInt(whole) * 10n ** BigInt(decimals) +
+    BigInt(fraction.slice(0, decimals).padEnd(decimals, '0') || '0')
+  return minus ? -units : units
+}
+
+/** The locale's decimal mark — a comma in most of Europe. */
+function decimalMark(locale: string) {
+  return (
+    new Intl.NumberFormat(locale).formatToParts(1.5).find((part) => part.type === 'decimal')
+      ?.value ?? '.'
+  )
+}
+
 function formatUnits(
   value: bigint,
   decimals: number,
@@ -63,7 +87,9 @@ function formatUnits(
   if (trim) shown = shown.replace(/0+$/, '')
 
   const grouped = new Intl.NumberFormat(locale, { useGrouping: true }).format(BigInt(whole))
-  return (negative ? '-' : '') + grouped + (shown ? '.' + shown : '')
+  // The grouping came from the locale, so the decimal mark has to as well:
+  // "1.234.5" in German reads as a malformed number, not as 1234.5.
+  return (negative ? '-' : '') + grouped + (shown ? decimalMark(locale) + shown : '')
 }
 
 function TokenAmount({
@@ -132,4 +158,4 @@ function TokenAmount({
   )
 }
 
-export { TokenAmount, formatUnits, splitUnits }
+export { TokenAmount, formatUnits, parseUnits, splitUnits }

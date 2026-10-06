@@ -3,6 +3,7 @@ import { ExternalLink } from 'lucide-react'
 import { CopyButton } from '@/components/ui/copy-button'
 import { enterFade } from '@/lib/motion'
 import { focusRing, radius } from '@/lib/styles'
+import { cleanUntrustedText } from '@/lib/untrusted-text'
 import { cn } from '@/lib/utils'
 
 /**
@@ -18,7 +19,16 @@ import { cn } from '@/lib/utils'
  * funds get sent to a truncated string.
  *
  * A `name` (ENS or similar) replaces the address visually but never replaces it
- * for copying — names are re-registrable and are not identity.
+ * for copying — names are re-registrable and are not identity. A string name
+ * is also stripped of bidi overrides and zero-width characters before it is
+ * drawn: whoever registered it chose every character, and a right-to-left
+ * override can make one name read as another.
+ *
+ * `variant="block"` is for the moment the whole address has to be checked by
+ * eye — a deposit address, the destination in a withdrawal review. It shows
+ * every character, in groups of four on a muted inset, wrapping; grouped,
+ * the eye can compare it with another copy four characters at a time instead
+ * of losing its place in forty-two.
  */
 export type WalletAddressProps = Omit<ComponentProps<'span'>, 'children'> & {
   address: string
@@ -35,6 +45,8 @@ export type WalletAddressProps = Omit<ComponentProps<'span'>, 'children'> & {
   /** Accessible name for the explorer link. */
   explorerLabel?: string
   copyLabel?: string
+  /** `block`: the full address, grouped by four, on its own inset. */
+  variant?: 'inline' | 'block'
 }
 
 /** Middle ellipsis, with a floor that keeps lookalikes distinguishable. */
@@ -43,6 +55,15 @@ function shortenAddress(address: string, chars = 6) {
   const tail = 4
   if (address.length <= lead + tail + 1) return address
   return `${address.slice(0, lead)}…${address.slice(-tail)}`
+}
+
+/** "TQn9Y2kh…" as `['TQn9', 'Y2kh', …]` — groups for reading, never for copying. */
+function chunkAddress(address: string, size = 4) {
+  const chunks: string[] = []
+  for (let index = 0; index < address.length; index += size) {
+    chunks.push(address.slice(index, index + size))
+  }
+  return chunks
 }
 
 function WalletAddress({
@@ -56,10 +77,62 @@ function WalletAddress({
   size = 'default',
   explorerLabel = 'View on block explorer',
   copyLabel = 'Copy address',
+  variant = 'inline',
   className,
   ...props
 }: WalletAddressProps) {
-  const shown = name ?? shortenAddress(address, chars)
+  if (variant === 'block') {
+    return (
+      <span
+        data-slot="wallet-address"
+        data-variant="block"
+        className={cn(
+          enterFade,
+          'bg-muted flex items-start gap-2 py-2 ps-3 pe-1.5',
+          radius.control,
+          className,
+        )}
+        {...props}
+      >
+        {avatar}
+        {/* Spans, not spaces: a selection or a copy still yields the exact value. */}
+        <code
+          className={cn(
+            'flex min-w-0 flex-1 flex-wrap gap-x-1.5 gap-y-0.5 py-0.5 leading-relaxed break-all',
+            mono && 'font-mono',
+            size === 'sm' ? 'text-xs' : 'text-sm',
+          )}
+          aria-label={address}
+        >
+          {chunkAddress(address).map((chunk, index) => (
+            <span key={index}>{chunk}</span>
+          ))}
+        </code>
+        {href && (
+          <a
+            href={href}
+            target="_blank"
+            rel="noreferrer noopener"
+            aria-label={explorerLabel}
+            className={cn(
+              'text-muted-foreground hover:text-foreground mt-1 shrink-0',
+              radius.xs,
+              focusRing,
+            )}
+          >
+            <ExternalLink className="size-3.5" />
+          </a>
+        )}
+        {copyable && (
+          <CopyButton value={address} label={copyLabel} size="icon-sm" className="shrink-0" />
+        )}
+      </span>
+    )
+  }
+
+  const shown =
+    (typeof name === 'string' ? cleanUntrustedText(name) || undefined : name) ??
+    shortenAddress(address, chars)
 
   return (
     <span
@@ -104,4 +177,4 @@ function WalletAddress({
   )
 }
 
-export { WalletAddress, shortenAddress }
+export { WalletAddress, chunkAddress, shortenAddress }

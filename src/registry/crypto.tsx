@@ -71,6 +71,8 @@ export const tokenAmountEntry: ComponentEntry = {
     { name: 'fiat / fiatCurrency', type: 'number / string', description: 'Converted value, shown alongside.' },
     { name: 'signed', type: 'boolean', default: 'false', description: 'Colour and sign by direction, for a delta rather than a balance.' },
     { name: 'formatUnits / splitUnits', type: 'helpers', description: 'Exported. The split is done on the digit string — padding and slicing is exact at any magnitude.' },
+    { name: 'parseUnits', type: '(value: string, decimals: number) => bigint', description: 'A decimal string from an API — "12.5" — as base units, for `value`. Digits past `decimals` are cut, never rounded up; anything that is not a plain decimal throws.' },
+    { name: 'locale', type: 'string', default: "'en-GB'", description: 'Grouping and the decimal mark both follow it, so a German amount reads 1.234,5 rather than a mix of the two conventions.' },
   ],
   demos: [
     {
@@ -126,6 +128,9 @@ export const walletAddressEntry: ComponentEntry = {
     { name: 'name', type: 'ReactNode', description: 'ENS or label, shown instead of the address. It never replaces the address for copying: names are re-registrable and are not identity.' },
     { name: 'href', type: 'string', description: 'Block explorer link.' },
     { name: 'shortenAddress', type: '(address, chars) => string', description: 'Exported, with the same floor applied.' },
+    { name: 'variant', type: "'inline' | 'block'", default: "'inline'", description: '`block` shows the whole address in groups of four on a muted inset, wrapping — for a deposit address or a withdrawal\'s destination, where it has to be checked by eye. Copying still yields the exact value, with no spaces.' },
+    { name: 'chunkAddress', type: '(address, size?) => string[]', description: 'The grouping behind `block`, exported.' },
+    { name: 'name sanitising', type: 'string names', description: 'A string `name` is drawn without bidi overrides, isolates or zero-width characters — a right-to-left override can make one registered name read as another.' },
   ],
   demos: [
     {
@@ -138,6 +143,16 @@ export const walletAddressEntry: ComponentEntry = {
           <WalletAddress address={ADDRESS} href="#" />
           <WalletAddress address={ADDRESS} name="vitalik.eth" avatar={<Avatar size="xs" name="V" />} />
           <WalletAddress address={ADDRESS} chars={12} copyable={false} />
+        </div>
+      ),
+    },
+    {
+      title: 'To check by eye',
+      stack: true,
+      code: `<WalletAddress variant="block" address={depositAddress} />`,
+      render: () => (
+        <div className="w-full max-w-sm">
+          <WalletAddress variant="block" address={ADDRESS} />
         </div>
       ),
     },
