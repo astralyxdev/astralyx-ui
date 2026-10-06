@@ -27,11 +27,11 @@ function Demo({ demo }: { demo: DemoSpec }) {
             whose inset was not square. */}
         <CardHeader
           action={
-            <TabsList>
-              <TabsTrigger value="preview" className="px-2.5 py-1 text-xs">
+            <TabsList size="xs">
+              <TabsTrigger value="preview" className="px-2.5 text-xs">
                 Preview
               </TabsTrigger>
-              <TabsTrigger value="code" className="px-2.5 py-1 text-xs">
+              <TabsTrigger value="code" className="px-2.5 text-xs">
                 Code
               </TabsTrigger>
             </TabsList>
