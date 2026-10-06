@@ -43,11 +43,24 @@ type ToastContextValue = {
   dismiss: (id: number) => void
 }
 
+type ToastActions = Pick<ToastContextValue, 'toast' | 'dismiss'>
+
 const ToastContext = createContext<ToastContextValue | null>(null)
+// The stable half on its own. `useToast` hands back the list too, so every
+// component that only ever raises a toast — a save button, a form — re-rendered
+// each time any toast appeared or left. Through this one it never does.
+const ToastActionsContext = createContext<ToastActions | null>(null)
 
 export function useToast() {
   const context = use(ToastContext)
   if (!context) throw new Error('useToast must be used inside <ToastProvider>')
+  return context
+}
+
+/** `toast` and `dismiss` only — never re-renders when the list of toasts changes. */
+export function useToastActions() {
+  const context = use(ToastActionsContext)
+  if (!context) throw new Error('useToastActions must be used inside <ToastProvider>')
   return context
 }
 
@@ -102,16 +115,19 @@ function ToastProvider({
     }
   }, [])
 
+  const actions = useMemo(() => ({ toast, dismiss }), [toast, dismiss])
   const context = useMemo(
     () => ({ toasts, toast, dismiss }),
     [toasts, toast, dismiss],
   )
 
   return (
-    <ToastContext value={context}>
-      {children}
-      <ToastRegion position={position} />
-    </ToastContext>
+    <ToastActionsContext value={actions}>
+      <ToastContext value={context}>
+        {children}
+        <ToastRegion position={position} />
+      </ToastContext>
+    </ToastActionsContext>
   )
 }
 

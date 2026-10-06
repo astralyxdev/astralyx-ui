@@ -2084,6 +2084,12 @@
           "type": "boolean",
           "default": "false",
           "description": "Fill the container, splitting the width evenly."
+        },
+        {
+          "name": "size",
+          "type": "'xs' | 'sm' | 'default' | 'lg' | 'xl' | 'md'",
+          "default": "'default'",
+          "description": "The Button's scale: the track is the height of the Button of the same size, so a segmented control sits level in a toolbar. `md` is kept as another name for `default`."
         }
       ],
       "demos": [
@@ -2439,6 +2445,11 @@
           "name": "CardHeader / CardFooter",
           "type": "section",
           "description": "Optional. Each draws its own divider, so omitting them leaves no stray rule."
+        },
+        {
+          "name": "CardHeader action",
+          "type": "ReactNode",
+          "description": "Controls beside the title. When the two cannot share a line — a phone, a row of several buttons — the controls wrap under the title instead of crushing it or running off the card."
         },
         {
           "name": "CardBody",
@@ -3794,6 +3805,12 @@
           "description": "The panel cross-fades on switch and does not move. Travel on a panel root means a transform, and a transform is a containing block for any fixed layer inside it — a popover opened from a tab would land in the wrong place. The tab shape morphs instead, flares included."
         },
         {
+          "name": "size",
+          "type": "'xs' | 'sm' | 'default' | 'lg' | 'xl'",
+          "default": "'default'",
+          "description": "The Button's size scale. A solid track takes the Button's height and corner, so a tab list in a toolbar lines up with the Buttons and Inputs of the same size; every variant takes its label and icon size. Set on Tabs or TabsList and the triggers inherit it; a size on a trigger still wins."
+        },
+        {
           "name": "TabsTrigger value",
           "type": "string",
           "description": "Required. Matches the TabsContent it controls."
@@ -4425,7 +4442,7 @@
           "name": "SidebarMenuButton asChild",
           "type": "boolean",
           "default": "false",
-          "description": "Render a router link instead of a button, keeping the row styling."
+          "description": "Render a router link instead of a button, keeping the row styling. Pass the link with the label as its children — `<SidebarMenuButton asChild icon={<Home />}><Link to=\"/\">Home</Link></SidebarMenuButton>` — and the icon, label and trailing slot are placed inside it."
         },
         {
           "name": "SidebarMenuButton tooltip",
@@ -4753,7 +4770,18 @@
           "name": "dismissable",
           "type": "boolean",
           "default": "true",
-          "description": "Whether a backdrop press closes the dialog. Escape always works."
+          "description": "On DialogContent: whether a backdrop press closes the dialog. Escape still works."
+        },
+        {
+          "name": "Dialog dismissable",
+          "type": "boolean",
+          "default": "true",
+          "description": "On the root: false refuses Escape and backdrop presses together, for a dialog whose action is in flight. Its own buttons still close it, and a browser that closes the element anyway — repeated Escapes can skip `cancel` — finds it shown again while `open` stays true."
+        },
+        {
+          "name": "closed state",
+          "type": "not-open:hidden",
+          "description": "A display utility in `className` (`flex`, `grid`) used to beat the UA's `display: none` and leave a closed dialog drawn in the page. The closed rule is re-applied above it."
         },
         {
           "name": "DialogTrigger asChild",
@@ -4802,6 +4830,12 @@
           "name": "dismissal",
           "type": "Escape only",
           "description": "No backdrop click and no close button, by design. Escape still works — trapping someone in a modal is worse."
+        },
+        {
+          "name": "AlertDialog dismissable",
+          "type": "boolean",
+          "default": "true",
+          "description": "False refuses Escape too, for the moments after the action was confirmed and while it is in flight. The dialog's own buttons still close it."
         }
       ],
       "demos": [
@@ -4843,6 +4877,12 @@
           "type": "boolean",
           "default": "true",
           "description": "Corner close button, and whether a backdrop press closes."
+        },
+        {
+          "name": "Sheet dismissable",
+          "type": "boolean",
+          "default": "true",
+          "description": "On the root: false refuses Escape and backdrop presses together, while the sheet's action is in flight."
         },
         {
           "name": "width",
@@ -5390,6 +5430,11 @@
           "name": "dismiss(id)",
           "type": "(id: number) => void",
           "description": "Removes a toast early."
+        },
+        {
+          "name": "useToastActions",
+          "type": "() => { toast, dismiss }",
+          "description": "The same two functions without the list. A component that only raises toasts should use this: `useToast` also returns `toasts`, so it re-renders every time one appears or leaves."
         }
       ],
       "demos": [
@@ -11577,7 +11622,7 @@
         {
           "name": "roles",
           "type": "PermissionRole[]",
-          "description": "`{ id, label, granted, inherited?, locked? }` — one column each."
+          "description": "`{ id, label, granted, inherited?, locked?, lockedPermissions? }` — one column each."
         },
         {
           "name": "inherited",
@@ -11588,6 +11633,16 @@
           "name": "locked",
           "type": "boolean",
           "description": "For a role that cannot be edited at all — an Owner that must keep every permission."
+        },
+        {
+          "name": "lockedPermissions",
+          "type": "string[]",
+          "description": "Permissions one role can never hold. Those cells are read-only while the rest of the column stays editable — a Viewer that must not be handed billing."
+        },
+        {
+          "name": "lockedPermissionTitle",
+          "type": "string",
+          "description": "Tooltip on a cell locked by `lockedPermissions`, saying why it cannot be granted."
         },
         {
           "name": "onToggle",

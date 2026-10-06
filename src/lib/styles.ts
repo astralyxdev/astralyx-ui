@@ -101,6 +101,71 @@ export const buttonText = {
 } as const
 
 /**
+ * The Button's size scale, for controls built out of segments — Tabs and
+ * SegmentedControl — keyed by the Button's own size names.
+ *
+ * A tab strip in a toolbar sits between Buttons and Inputs, and before this it
+ * was a few pixels taller or shorter than both whatever size they were. Each
+ * step carries what a segmented control needs that `controlSize` does not:
+ *
+ * - `height`: the control's outer height — a filled track, an underline tab.
+ * - `radius`: the outer corner, the same as `controlSize`.
+ * - `inner`: a segment inside a filled track, which is inset 3px. Its corner is
+ *   the track's minus that inset, so the two curves stay concentric rather than
+ *   pinching at the corners.
+ * - `padX`: a segment's side padding — the Button's padding with an icon.
+ * - `icon`: icon size, as the Button's.
+ */
+export const segmentSize = {
+  xs: {
+    height: 'h-7',
+    radius: 'rounded-full [corner-shape:round]',
+    inner: 'rounded-full [corner-shape:round]',
+    padX: 'px-3',
+    icon: "[&_svg:not([class*='size-'])]:size-3.5",
+  },
+  sm: {
+    height: 'h-8',
+    radius: 'rounded-[var(--radius-control-sm)]',
+    inner: 'rounded-[calc(var(--radius-control-sm)-3px)]',
+    padX: 'px-3',
+    icon: "[&_svg:not([class*='size-'])]:size-4",
+  },
+  default: {
+    height: 'h-9',
+    radius: 'rounded-[var(--radius-control-md)]',
+    inner: 'rounded-[calc(var(--radius-control-md)-3px)]',
+    padX: 'px-3.5',
+    icon: "[&_svg:not([class*='size-'])]:size-4",
+  },
+  lg: {
+    height: 'h-10',
+    radius: 'rounded-[var(--radius-control-lg)]',
+    inner: 'rounded-[calc(var(--radius-control-lg)-3px)]',
+    padX: 'px-4.5',
+    icon: "[&_svg:not([class*='size-'])]:size-4",
+  },
+  xl: {
+    height: 'h-12',
+    radius: 'rounded-[var(--radius-control-xl)]',
+    inner: 'rounded-[calc(var(--radius-control-xl)-3px)]',
+    padX: 'px-6',
+    icon: "[&_svg:not([class*='size-'])]:size-5",
+  },
+} as const
+
+export type SegmentSize = keyof typeof segmentSize
+
+/** `buttonText` under the Button's size names — its `md` is the Button's `default`. */
+export const segmentText: Record<SegmentSize, string> = {
+  xs: buttonText.xs,
+  sm: buttonText.sm,
+  default: buttonText.md,
+  lg: buttonText.lg,
+  xl: buttonText.xl,
+}
+
+/**
  * Hover and press feedback shared by every control.
  *
  * Colour only. Not because nothing in the kit is allowed to move — buttons take

@@ -220,6 +220,10 @@ function CommandDialogContent({
         radius.panel,
         'text-card-foreground mx-auto mt-[12vh] mb-auto w-[min(36rem,100vw-2rem)] p-0',
         'backdrop:bg-transparent',
+        // The UA hides a closed <dialog> with `display: none`, and any display
+        // utility in `className` (`flex`, `grid`) outranks it — leaving a
+        // closed dialog drawn in the page. This puts the rule back on top.
+        'not-open:hidden',
       )}
     >
       <CommandList items={items} onRun={() => setOpen(false)} {...props} />

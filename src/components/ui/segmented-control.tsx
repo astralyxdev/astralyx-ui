@@ -1,7 +1,7 @@
 'use client'
 
 import { useId, useRef, useState, type ComponentProps, type ReactNode } from 'react'
-import { focusRing, radius } from '@/lib/styles'
+import { focusRing, segmentSize, segmentText, type SegmentSize } from '@/lib/styles'
 import { cn } from '@/lib/utils'
 
 /**
@@ -31,6 +31,8 @@ export type Segment = {
   disabled?: boolean
 }
 
+type SegmentedControlSize = SegmentSize | 'md'
+
 type SegmentedControlProps = Omit<ComponentProps<'fieldset'>, 'onChange' | 'defaultValue'> & {
   options: Segment[]
   value?: string
@@ -38,18 +40,27 @@ type SegmentedControlProps = Omit<ComponentProps<'fieldset'>, 'onChange' | 'defa
   onValueChange?: (value: string) => void
   /** Accessible name for the group. Required unless one is supplied elsewhere. */
   label?: string
-  size?: 'sm' | 'md' | 'lg'
+  /** The Button size this control matches. `md` is the older name for `default`. */
+  size?: SegmentedControlSize
   /** Fill the container, splitting the width evenly. */
   fullWidth?: boolean
   name?: string
   disabled?: boolean
 }
 
-const SIZES = {
-  sm: 'h-8 text-xs',
-  md: 'h-9 text-sm',
-  lg: 'h-10 text-sm',
-} as const
+/**
+ * Sizes are the Button's — `xs`, `sm`, `default`, `lg`, `xl` — and `md` stays
+ * as another name for `default`, so code written against the old three sizes
+ * keeps compiling.
+ *
+ * The old scale padded a fixed-height option inside the track, which made
+ * every size 8px taller than the Button of the same name. Now the track has the
+ * Button's height and corner and the options fill it, inset 3px, with the
+ * indicator's corner the track's minus that inset so the two stay concentric.
+ */
+function resolveSize(size: SegmentedControlSize): SegmentSize {
+  return size === 'md' ? 'default' : size
+}
 
 function SegmentedControl({
   options,
@@ -57,13 +68,15 @@ function SegmentedControl({
   defaultValue,
   onValueChange,
   label,
-  size = 'md',
+  size: sizeProp = 'default',
   fullWidth = false,
   name,
   disabled,
   className,
   ...props
 }: SegmentedControlProps) {
+  const size = segmentSize[resolveSize(sizeProp)]
+  const text = segmentText[resolveSize(sizeProp)]
   const scope = useId()
   const groupName = name ?? scope
   const [internal, setInternal] = useState(defaultValue ?? options[0]?.value)
@@ -89,11 +102,10 @@ function SegmentedControl({
       <div
         ref={listRef}
         className={cn(
-          'bg-muted relative inline-grid auto-cols-fr grid-flow-col gap-1 p-1',
-          radius.control,
+          'bg-muted relative inline-grid auto-cols-fr grid-flow-col gap-[3px] p-[3px]',
+          size.height,
+          size.radius,
           fullWidth && 'flex w-full',
-          SIZES[size],
-          'h-auto',
         )}
       >
         {/* The indicator, positioned by index. Percentages of the track rather
@@ -101,13 +113,13 @@ function SegmentedControl({
         <span
           aria-hidden="true"
           className={cn(
-            'bg-background pointer-events-none absolute inset-y-1 shadow-sm transition-[inset-inline-start] duration-150 ease-out',
-            radius.control,
+            'bg-background pointer-events-none absolute inset-y-[3px] shadow-sm transition-[inset-inline-start] duration-150 ease-out',
+            size.inner,
             'motion-reduce:transition-none',
           )}
           style={{
-            insetInlineStart: `calc(${(index / options.length) * 100}% + 0.25rem)`,
-            width: `calc(${100 / options.length}% - 0.5rem)`,
+            insetInlineStart: `calc(${(index / options.length) * 100}% + 3px)`,
+            width: `calc(${100 / options.length}% - 6px)`,
           }}
         />
 
@@ -120,9 +132,11 @@ function SegmentedControl({
               key={option.value}
               htmlFor={id}
               className={cn(
-                'relative z-10 flex cursor-pointer items-center justify-center gap-1.5 px-3 font-medium whitespace-nowrap select-none',
-                SIZES[size],
-                radius.control,
+                'relative z-10 flex h-full cursor-pointer items-center justify-center gap-1.5 font-semibold [&_svg]:shrink-0 whitespace-nowrap select-none',
+                size.padX,
+                size.icon,
+                text,
+                size.inner,
                 'text-muted-foreground transition-colors',
                 checked && 'text-foreground',
                 option.disabled && 'pointer-events-none opacity-50',
@@ -153,4 +167,4 @@ function SegmentedControl({
 }
 
 export { SegmentedControl }
-export type { SegmentedControlProps }
+export type { SegmentedControlProps, SegmentedControlSize }

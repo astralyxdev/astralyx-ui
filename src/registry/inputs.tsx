@@ -14,7 +14,15 @@ import type { ComponentEntry } from './types'
 
 /* --------------------------------------------------- segmented control */
 
-function SegmentedDemo({ size = 'md', fullWidth = false }: { size?: 'sm' | 'md' | 'lg'; fullWidth?: boolean }) {
+const SEGMENT_SIZES = ['xs', 'sm', 'default', 'lg', 'xl'] as const
+
+function SegmentedDemo({
+  size = 'default',
+  fullWidth = false,
+}: {
+  size?: (typeof SEGMENT_SIZES)[number]
+  fullWidth?: boolean
+}) {
   const [view, setView] = useState('board')
   return (
     <SegmentedControl
@@ -47,13 +55,16 @@ export const segmentedControlEntry: ComponentEntry = {
         type: 'select',
         prop: 'size',
         label: 'size',
-        default: 'md',
-        options: ['sm', 'md', 'lg'],
+        default: 'default',
+        options: SEGMENT_SIZES,
       },
       { type: 'boolean', prop: 'fullWidth', label: 'fullWidth', default: false },
     ],
     render: (state) => (
-      <SegmentedDemo size={state.size as 'sm' | 'md' | 'lg'} fullWidth={Boolean(state.fullWidth)} />
+      <SegmentedDemo
+        size={state.size as (typeof SEGMENT_SIZES)[number]}
+        fullWidth={Boolean(state.fullWidth)}
+      />
     ),
     code: (state) =>
       `<SegmentedControl\n  label="View"\n  options={options}\n  size="${state.size}"\n  fullWidth={${Boolean(state.fullWidth)}}\n/>`,
@@ -64,6 +75,7 @@ export const segmentedControlEntry: ComponentEntry = {
     { name: 'vs ButtonGroup / Tabs', type: 'different jobs', description: 'A button group is independent actions; tabs switch a visible panel and carry aria-controls. This sets a value.' },
     { name: 'indicator', type: 'one element', description: 'Positioned by index rather than a background on the selected item, so it slides instead of blinking and there is one thing to animate.' },
     { name: 'fullWidth', type: 'boolean', default: 'false', description: 'Fill the container, splitting the width evenly.' },
+    { name: 'size', type: "'xs' | 'sm' | 'default' | 'lg' | 'xl' | 'md'", default: "'default'", description: 'The Button\'s scale: the track is the height of the Button of the same size, so a segmented control sits level in a toolbar. `md` is kept as another name for `default`.' },
   ],
   demos: [
     { title: 'Choosing a view', code: `<SegmentedControl label="View" options={options} />`, render: () => <SegmentedDemo /> },

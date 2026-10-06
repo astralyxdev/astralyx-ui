@@ -294,7 +294,7 @@ const ROLES: PermissionRole[] = [
   { id: 'owner', label: 'Owner', granted: PERMISSIONS.map((p) => p.id), locked: true },
   { id: 'admin', label: 'Admin', granted: ['read', 'write', 'delete', 'export', 'invite', 'audit'], inherited: ['roles'] },
   { id: 'member', label: 'Member', granted: ['read', 'write'] },
-  { id: 'viewer', label: 'Viewer', granted: ['read'] },
+  { id: 'viewer', label: 'Viewer', granted: ['read'], lockedPermissions: ['roles', 'billing'] },
 ]
 
 /**
@@ -309,6 +309,7 @@ function PermissionMatrixDemo({ editable }: { editable: boolean }) {
     <PermissionMatrix
       permissions={PERMISSIONS}
       roles={roles}
+      lockedPermissionTitle="Viewers cannot hold this permission"
       onToggle={
         editable
           ? (roleId, permissionId, granted) =>
@@ -350,9 +351,11 @@ export const permissionMatrixEntry: ComponentEntry = {
   },
   api: [
     { name: 'permissions', type: 'Permission[]', description: '`{ id, label, group?, description? }`. Groups become labelled row sections.' },
-    { name: 'roles', type: 'PermissionRole[]', description: '`{ id, label, granted, inherited?, locked? }` — one column each.' },
+    { name: 'roles', type: 'PermissionRole[]', description: '`{ id, label, granted, inherited?, locked?, lockedPermissions? }` — one column each.' },
     { name: 'inherited', type: 'string[]', description: 'Held via implication. Rendered distinctly and not directly revocable, because revoking it here would silently do nothing.' },
     { name: 'locked', type: 'boolean', description: 'For a role that cannot be edited at all — an Owner that must keep every permission.' },
+    { name: 'lockedPermissions', type: 'string[]', description: 'Permissions one role can never hold. Those cells are read-only while the rest of the column stays editable — a Viewer that must not be handed billing.' },
+    { name: 'lockedPermissionTitle', type: 'string', description: 'Tooltip on a cell locked by `lockedPermissions`, saying why it cannot be granted.' },
     { name: 'onToggle', type: '(roleId, permissionId, granted) => void', description: 'Omit for a read-only matrix, which is the right thing for a permissions reference page.' },
   ],
   demos: [

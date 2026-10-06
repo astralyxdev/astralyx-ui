@@ -126,6 +126,7 @@ export const alertDialogEntry: ComponentEntry = {
     { name: 'AlertDialogCancel', type: 'Button', description: 'Outline button that closes without acting. Rendered first in DOM order so it is the safer default.' },
     { name: 'AlertDialogAction', type: 'Button', description: 'Confirms and closes. Takes every Button prop, including color="destructive".' },
     { name: 'dismissal', type: 'Escape only', description: 'No backdrop click and no close button, by design. Escape still works — trapping someone in a modal is worse.' },
+    { name: 'AlertDialog dismissable', type: 'boolean', default: 'true', description: 'False refuses Escape too, for the moments after the action was confirmed and while it is in flight. The dialog\'s own buttons still close it.' },
   ],
   demos: [{ title: 'Destructive confirmation', code: `<AlertDialog>…</AlertDialog>`, render: () => <AlertDialogPreview /> }],
 }

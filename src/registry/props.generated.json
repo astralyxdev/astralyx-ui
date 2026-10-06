@@ -1266,6 +1266,11 @@
               "type": "(open: boolean) => void"
             },
             {
+              "name": "dismissable",
+              "type": "boolean",
+              "description": "False refuses Escape too, while the confirmed action is in flight — an answer already given should not be withdrawn halfway through."
+            },
+            {
               "name": "children",
               "type": "ReactNode",
               "required": true
@@ -8798,6 +8803,11 @@
               "type": "(open: boolean) => void"
             },
             {
+              "name": "dismissable",
+              "type": "boolean",
+              "description": "False refuses Escape and backdrop presses, for a dialog whose action is in flight. Its own buttons still close it."
+            },
+            {
               "name": "children",
               "type": "ReactNode",
               "required": true
@@ -8846,7 +8856,7 @@
               "name": "dismissable",
               "type": "boolean",
               "default": "true",
-              "description": "Clicking the backdrop closes the dialog."
+              "description": "Clicking the backdrop closes the dialog. `Dialog dismissable={false}` overrides it."
             },
             {
               "name": "size",
@@ -18868,6 +18878,11 @@
               "description": "Tooltip on an inherited grant."
             },
             {
+              "name": "lockedPermissionTitle",
+              "type": "string",
+              "description": "Tooltip on a cell locked by `lockedPermissions` — why it cannot be granted."
+            },
+            {
               "name": "grantedLabel",
               "type": "string",
               "default": "'Granted'"
@@ -18933,6 +18948,11 @@
               "name": "locked",
               "type": "boolean",
               "description": "Cannot be changed here at all."
+            },
+            {
+              "name": "lockedPermissions",
+              "type": "string[]",
+              "description": "Permissions this role can never hold — a guest that cannot be given billing, say. Those cells render read-only, like a locked role, while the rest of the row stays editable."
             }
           ]
         }
@@ -24382,8 +24402,9 @@
             },
             {
               "name": "size",
-              "type": "'sm' | 'md' | 'lg'",
-              "default": "'md'"
+              "type": "SegmentedControlSize",
+              "default": "'default'",
+              "description": "The Button size this control matches. `md` is the older name for `default`."
             },
             {
               "name": "fullWidth",
@@ -24419,6 +24440,10 @@
               "type": "boolean"
             }
           ]
+        },
+        {
+          "name": "SegmentedControlSize",
+          "definition": "SegmentSize | 'md'"
         }
       ]
     },
@@ -24808,6 +24833,11 @@
               "type": "(open: boolean) => void"
             },
             {
+              "name": "dismissable",
+              "type": "boolean",
+              "description": "False refuses Escape and backdrop presses, for a sheet whose action is in flight. Its own buttons still close it."
+            },
+            {
               "name": "children",
               "type": "ReactNode",
               "required": true
@@ -25075,7 +25105,7 @@
         },
         {
           "name": "SidebarGroupLabel",
-          "description": "A section heading. It collapses to nothing rather than to an icon, since a heading has no icon to fall back to — but it keeps its height, so the rows either side of it do not close up as the rail narrows.",
+          "description": "A section heading. It collapses to nothing rather than to an icon, since a heading has no icon to fall back to — and it gives its height back (and the group's gap under it), so on the icon rail the icons sit in one even column instead of in clumps with holes where the headings were. Height and opacity ease with the rail's own width transition, and return when it expands.",
           "extends": [
             "ComponentProps<'div'>"
           ],
@@ -27148,6 +27178,12 @@
               "description": "Sets the look for the list, the triggers and the panel at once."
             },
             {
+              "name": "size",
+              "type": "SegmentSize",
+              "default": "'default'",
+              "description": "The Button size the tabs match (`xs`, `sm`, `default`, `lg`, `xl`)."
+            },
+            {
               "name": "value",
               "type": "string"
             },
@@ -27178,6 +27214,11 @@
               "type": "'solid' | 'underline' | 'browser'"
             },
             {
+              "name": "size",
+              "type": "'sm' | 'default' | 'xs' | 'lg' | 'xl'",
+              "description": "The Button's sizes. A filled track takes the Button's height and corner, so a tab list in a row of Buttons and Inputs of one size lines up with them."
+            },
+            {
               "name": "orientation",
               "type": "'horizontal' | 'vertical'"
             }
@@ -27192,6 +27233,11 @@
             {
               "name": "variant",
               "type": "'solid' | 'underline' | 'browser'"
+            },
+            {
+              "name": "size",
+              "type": "'sm' | 'default' | 'xs' | 'lg' | 'xl'",
+              "description": "The Button's sizes: label and icon everywhere, height and padding per variant."
             },
             {
               "name": "value",
@@ -27227,11 +27273,11 @@
       "functions": [
         {
           "name": "listVariants",
-          "signature": "(props?: { variant?: 'solid' | 'underline' | 'browser'; orientation?: 'horizontal' | 'vertical' }) => string"
+          "signature": "(props?: { variant?: 'solid' | 'underline' | 'browser'; orientation?: 'horizontal' | 'vertical'; size?: 'sm' | 'default' | 'xs' | 'lg' | 'xl' }) => string"
         },
         {
           "name": "triggerVariants",
-          "signature": "(props?: { variant?: 'solid' | 'underline' | 'browser' }) => string"
+          "signature": "(props?: { variant?: 'solid' | 'underline' | 'browser'; size?: 'sm' | 'default' | 'xs' | 'lg' | 'xl' }) => string"
         }
       ]
     },
@@ -28068,6 +28114,11 @@
         {
           "name": "useToast",
           "signature": "() => ToastContextValue"
+        },
+        {
+          "name": "useToastActions",
+          "signature": "() => ToastActions",
+          "description": "`toast` and `dismiss` only — never re-renders when the list of toasts changes."
         }
       ],
       "types": [

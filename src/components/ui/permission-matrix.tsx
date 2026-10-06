@@ -41,6 +41,12 @@ export type PermissionRole = {
   inherited?: string[]
   /** Cannot be changed here at all. */
   locked?: boolean
+  /**
+   * Permissions this role can never hold — a guest that cannot be given
+   * billing, say. Those cells render read-only, like a locked role, while the
+   * rest of the row stays editable.
+   */
+  lockedPermissions?: string[]
 }
 
 function PermissionMatrix({
@@ -51,6 +57,7 @@ function PermissionMatrix({
   lockedLabel = 'locked',
   inheritedLabel = 'Inherited',
   inheritedTitle = 'Inherited from another permission',
+  lockedPermissionTitle,
   grantedLabel = 'Granted',
   notGrantedLabel = 'Not granted',
   className,
@@ -66,6 +73,8 @@ function PermissionMatrix({
   inheritedLabel?: string
   /** Tooltip on an inherited grant. */
   inheritedTitle?: string
+  /** Tooltip on a cell locked by `lockedPermissions` — why it cannot be granted. */
+  lockedPermissionTitle?: string
   grantedLabel?: string
   notGrantedLabel?: string
 }) {
@@ -143,15 +152,24 @@ function PermissionMatrix({
                           >
                             <Check className="size-4" aria-label={inheritedLabel} />
                           </span>
-                        ) : role.locked || !onToggle ? (
-                          direct ? (
-                            <Check className="mx-auto size-4" aria-label={grantedLabel} />
-                          ) : (
-                            <Minus
-                              className="text-muted-foreground/30 mx-auto size-4"
-                              aria-label={notGrantedLabel}
-                            />
-                          )
+                        ) : role.locked || !onToggle || role.lockedPermissions?.includes(permission.id) ? (
+                          <span
+                            className="inline-flex items-center justify-center"
+                            title={
+                              !role.locked && role.lockedPermissions?.includes(permission.id)
+                                ? lockedPermissionTitle
+                                : undefined
+                            }
+                          >
+                            {direct ? (
+                              <Check className="mx-auto size-4" aria-label={grantedLabel} />
+                            ) : (
+                              <Minus
+                                className="text-muted-foreground/30 mx-auto size-4"
+                                aria-label={notGrantedLabel}
+                              />
+                            )}
+                          </span>
                         ) : (
                           <Checkbox
                             checked={direct}

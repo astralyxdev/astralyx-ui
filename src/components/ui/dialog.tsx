@@ -17,11 +17,17 @@ function Dialog({
   open,
   defaultOpen,
   onOpenChange,
+  dismissable,
   children,
 }: {
   open?: boolean
   defaultOpen?: boolean
   onOpenChange?: (open: boolean) => void
+  /**
+   * False refuses Escape and backdrop presses, for a dialog whose action is in
+   * flight. Its own buttons still close it.
+   */
+  dismissable?: boolean
   children: ReactNode
 }) {
   return (
@@ -29,6 +35,7 @@ function Dialog({
       open={open}
       defaultOpen={defaultOpen}
       onOpenChange={onOpenChange}
+      dismissable={dismissable}
     >
       {children}
     </DialogProvider>
@@ -78,7 +85,7 @@ function DialogClose({
 type DialogContentProps = ComponentProps<'dialog'> & {
   /** Show the corner close button. */
   showClose?: boolean
-  /** Clicking the backdrop closes the dialog. */
+  /** Clicking the backdrop closes the dialog. `Dialog dismissable={false}` overrides it. */
   dismissable?: boolean
   size?: 'sm' | 'default' | 'lg' | 'xl'
   /** Accessible name for the close button. */
@@ -101,7 +108,7 @@ function DialogContent({
   closeLabel = 'Close',
   ...props
 }: DialogContentProps) {
-  const { dialogRef, setOpen, ids } = useDialog()
+  const { dialogRef, setOpen, ids, dismissable: rootDismissable } = useDialog()
 
   return (
     <dialog
@@ -111,7 +118,7 @@ function DialogContent({
       // The backdrop is part of the dialog's own box, so a press is "outside"
       // only when it lands beyond the element's rectangle.
       onClick={(event) => {
-        if (!dismissable || event.target !== event.currentTarget) return
+        if (!dismissable || !rootDismissable || event.target !== event.currentTarget) return
         const rect = event.currentTarget.getBoundingClientRect()
         const inside =
           event.clientX >= rect.left &&
@@ -126,6 +133,10 @@ function DialogContent({
         'text-card-foreground m-auto w-[calc(100vw-2rem)] p-0',
         WIDTH[size],
         'backdrop:bg-transparent',
+        // The UA hides a closed <dialog> with `display: none`, and any display
+        // utility in `className` (`flex`, `grid`) outranks it — leaving a
+        // closed dialog drawn in the page. This puts the rule back on top.
+        'not-open:hidden',
         className,
       )}
       {...props}

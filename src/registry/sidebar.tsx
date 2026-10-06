@@ -355,7 +355,8 @@ export const sidebarEntry: ComponentEntry = {
       name: 'SidebarMenuButton asChild',
       type: 'boolean',
       default: 'false',
-      description: 'Render a router link instead of a button, keeping the row styling.',
+      description:
+        "Render a router link instead of a button, keeping the row styling. Pass the link with the label as its children — `<SidebarMenuButton asChild icon={<Home />}><Link to=\"/\">Home</Link></SidebarMenuButton>` — and the icon, label and trailing slot are placed inside it.",
     },
     {
       name: 'SidebarMenuButton tooltip',

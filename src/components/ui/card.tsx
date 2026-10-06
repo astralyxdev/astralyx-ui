@@ -87,7 +87,10 @@ function CardHeader({
         // A shade darker than the body, so the header reads as a distinct band
         // without needing a heavier rule under it.
         'border-border bg-[var(--card-header)] flex gap-1 border-b',
-        action ? 'flex-row items-center justify-between gap-3' : 'flex-col',
+        // `flex-wrap`: when title and controls cannot share a line (a phone, a
+        // row of several buttons), the controls drop under the title instead of
+        // crushing it to nothing or running off the card.
+        action ? 'flex-row flex-wrap items-center justify-between gap-3' : 'flex-col',
         useCardPadding(size),
         className,
       )}
@@ -95,7 +98,7 @@ function CardHeader({
     >
       {action ? <div className="flex min-w-0 flex-col gap-1">{children}</div> : children}
       {action && (
-        <div className="flex shrink-0 items-center gap-1.5">{action}</div>
+        <div className="flex max-w-full shrink-0 flex-wrap items-center gap-1.5">{action}</div>
       )}
     </div>
   )

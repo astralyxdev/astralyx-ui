@@ -2,14 +2,41 @@ import { createContext, use, type ComponentProps } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { TabsProvider, tabIds, useTabs } from '@/components/primitives/tabs'
 import { enterFade } from '@/lib/motion'
-import { focusRing, radius } from '@/lib/styles'
+import { focusRing, radius, segmentSize, segmentText, type SegmentSize } from '@/lib/styles'
 import { cn } from '@/lib/utils'
+
+type TabsVariantName = 'solid' | 'underline' | 'browser'
+
+const SIZES = Object.keys(segmentSize) as SegmentSize[]
+
+/** One compound class per (variant, size) pair, read off the shared scale. */
+function bySize(
+  variant: TabsVariantName,
+  classes: (size: SegmentSize) => string,
+  extra: Record<string, string> = {},
+) {
+  return SIZES.map((size) => ({ variant, size, ...extra, class: classes(size) }))
+}
+
+/**
+ * A vertical filled list has no fixed height for its segments to fill, so each
+ * takes the control height as a minimum instead. Spelled out rather than
+ * derived from `segmentSize[size].height`: Tailwind only generates classes it
+ * can find written in the source.
+ */
+const MIN_HEIGHT: Record<SegmentSize, string> = {
+  xs: 'min-h-7',
+  sm: 'min-h-8',
+  default: 'min-h-9',
+  lg: 'min-h-10',
+  xl: 'min-h-12',
+}
 
 const listVariants = cva('flex', {
   variants: {
     variant: {
       /** Segmented control: a filled track with the active tab lifted out. */
-      solid: 'bg-muted gap-0.5 p-0.5',
+      solid: 'bg-muted gap-[3px] p-[3px]',
       /** A rule with the active tab underlined. */
       underline: 'border-border gap-4 border-b',
       /**
@@ -25,17 +52,32 @@ const listVariants = cva('flex', {
       horizontal: 'flex-row items-center',
       vertical: 'flex-col items-stretch',
     },
+    /**
+     * The Button's sizes. A filled track takes the Button's height and corner,
+     * so a tab list in a row of Buttons and Inputs of one size lines up with
+     * them.
+     */
+    size: { xs: '', sm: '', default: '', lg: '', xl: '' },
   },
   compoundVariants: [
-    { variant: 'underline', orientation: 'vertical', class: 'border-b-0 border-r' },
+    // The rule moves to the inline end when the list stands up. Logical, not
+    // `border-r`: a physical side cannot be overridden with `border-e-0` from
+    // `className` and would sit on the wrong side in a right-to-left layout.
+    { variant: 'underline', orientation: 'vertical', class: 'border-b-0 border-e' },
+    ...bySize(
+      'solid',
+      (size) => cn(segmentSize[size].height, segmentSize[size].radius),
+      { orientation: 'horizontal' },
+    ),
+    ...bySize('solid', (size) => segmentSize[size].radius, { orientation: 'vertical' }),
   ],
-  defaultVariants: { variant: 'solid', orientation: 'horizontal' },
+  defaultVariants: { variant: 'solid', orientation: 'horizontal', size: 'default' },
 })
 
 const triggerVariants = cva(
   [
     'inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap',
-    'text-sm font-medium',
+    'font-semibold [&_svg]:pointer-events-none [&_svg]:shrink-0',
     'transition-colors duration-150 ease-out motion-reduce:transition-none',
     'disabled:pointer-events-none disabled:opacity-50',
     focusRing,
@@ -44,13 +86,11 @@ const triggerVariants = cva(
     variants: {
       variant: {
         solid: cn(
-          radius.control,
-          'px-3 py-1.5',
           'text-muted-foreground hover:text-foreground',
           'data-[state=active]:bg-background data-[state=active]:text-foreground',
         ),
         underline: cn(
-          'border-b-2 border-transparent px-1 py-2',
+          'border-b-2 border-transparent px-1',
           'text-muted-foreground hover:text-foreground',
           'data-[state=active]:border-foreground data-[state=active]:text-foreground',
         ),
@@ -73,7 +113,7 @@ const triggerVariants = cva(
           // fills its titlebar; at the default control padding it came out
           // shorter than the collapse control beside it and read as something
           // dropped into the bar rather than part of it.
-          'relative h-9 rounded-t-lg px-4',
+          'relative rounded-t-lg',
           'text-muted-foreground hover:text-foreground',
           'data-[state=active]:bg-card data-[state=active]:text-foreground',
           'data-[state=active]:before:bg-card data-[state=active]:after:bg-card',
@@ -89,8 +129,19 @@ const triggerVariants = cva(
           'after:[mask-image:radial-gradient(circle_at_top_right,transparent_8px,black_8.5px)]',
         ),
       },
+      /** The Button's sizes: label and icon everywhere, height and padding per variant. */
+      size: Object.fromEntries(
+        SIZES.map((size) => [size, cn(segmentText[size], segmentSize[size].icon)]),
+      ) as Record<SegmentSize, string>,
     },
-    defaultVariants: { variant: 'solid' },
+    compoundVariants: [
+      // A segment fills the track's height, inset 3px and concentric with it.
+      ...bySize('solid', (size) => cn('h-full', segmentSize[size].padX, segmentSize[size].inner)),
+      // An underline tab is the control's full height, its rule included.
+      ...bySize('underline', (size) => segmentSize[size].height),
+      ...bySize('browser', (size) => cn(segmentSize[size].height, segmentSize[size].padX)),
+    ],
+    defaultVariants: { variant: 'solid', size: 'default' },
   },
 )
 
@@ -110,6 +161,12 @@ type TabsVariant = NonNullable<VariantProps<typeof listVariants>['variant']>
  */
 const VariantContext = createContext<TabsVariant>('solid')
 
+/**
+ * The size, shared down the same way: set on `Tabs`, or on a `TabsList` which
+ * passes it to its triggers. A size on the trigger itself still wins.
+ */
+const SizeContext = createContext<SegmentSize>('default')
+
 function useTabsVariant(override: TabsVariant | null | undefined) {
   const inherited = use(VariantContext)
   return override ?? inherited
@@ -118,6 +175,8 @@ function useTabsVariant(override: TabsVariant | null | undefined) {
 type TabsProps = Omit<ComponentProps<'div'>, 'onChange'> & {
   /** Sets the look for the list, the triggers and the panel at once. */
   variant?: TabsVariant
+  /** The Button size the tabs match (`xs`, `sm`, `default`, `lg`, `xl`). */
+  size?: SegmentSize
   value?: string
   defaultValue?: string
   onValueChange?: (value: string) => void
@@ -133,6 +192,7 @@ function Tabs({
   orientation = 'horizontal',
   activationMode = 'automatic',
   variant = 'solid',
+  size = 'default',
   ...props
 }: TabsProps) {
   return (
@@ -144,19 +204,21 @@ function Tabs({
       activationMode={activationMode}
     >
       <VariantContext value={variant}>
-        <div
-          data-slot="tabs"
-          data-variant={variant}
-          className={cn(
-            'flex',
-            // The strip and the panel are one surface, so there is nothing to
-            // space apart. Every other variant reads as two things.
-            variant === 'browser' ? 'gap-0' : 'gap-3',
-            orientation === 'vertical' ? 'flex-row' : 'flex-col',
-            className,
-          )}
-          {...props}
-        />
+        <SizeContext value={size}>
+          <div
+            data-slot="tabs"
+            data-variant={variant}
+            className={cn(
+              'flex',
+              // The strip and the panel are one surface, so there is nothing to
+              // space apart. Every other variant reads as two things.
+              variant === 'browser' ? 'gap-0' : 'gap-3',
+              orientation === 'vertical' ? 'flex-row' : 'flex-col',
+              className,
+            )}
+            {...props}
+          />
+        </SizeContext>
       </VariantContext>
     </TabsProvider>
   )
@@ -165,39 +227,47 @@ function Tabs({
 function TabsList({
   className,
   variant,
+  size,
   ...props
 }: ComponentProps<'div'> & VariantProps<typeof listVariants>) {
   const { orientation, onListKeyDown } = useTabs()
   const look = useTabsVariant(variant)
+  const inheritedSize = use(SizeContext)
+  const sized = size ?? inheritedSize
 
   return (
-    <div
-      role="tablist"
-      data-slot="tabs-list"
-      aria-orientation={orientation}
-      onKeyDown={onListKeyDown}
-      className={cn(
-        listVariants({ variant: look, orientation }),
-        look === 'underline' ? '' : radius.control,
-        // A browser strip spans its container and is only round on top; the
-        // panel below finishes the shape.
-        look === 'browser' ? 'w-full rounded-b-none' : 'w-fit',
-        className,
-      )}
-      {...props}
-    />
+    <SizeContext value={sized}>
+      <div
+        role="tablist"
+        data-slot="tabs-list"
+        aria-orientation={orientation}
+        onKeyDown={onListKeyDown}
+        className={cn(
+          listVariants({ variant: look, orientation, size: sized }),
+          look === 'browser' ? radius.control : '',
+          // A browser strip spans its container and is only round on top; the
+          // panel below finishes the shape.
+          look === 'browser' ? 'w-full rounded-b-none' : 'w-fit',
+          className,
+        )}
+        {...props}
+      />
+    </SizeContext>
   )
 }
 
 function TabsTrigger({
   className,
   variant,
+  size,
   value,
   ...props
 }: Omit<ComponentProps<'button'>, 'value'> &
   VariantProps<typeof triggerVariants> & { value: string }) {
-  const { value: selected, select, baseId } = useTabs()
+  const { value: selected, select, baseId, orientation } = useTabs()
   const look = useTabsVariant(variant)
+  const inheritedSize = use(SizeContext)
+  const sized = size ?? inheritedSize
   const active = selected === value
   const ids = tabIds(baseId, value)
 
@@ -217,7 +287,16 @@ function TabsTrigger({
       // Only the active tab is in the tab order; arrows move between the rest.
       tabIndex={active ? 0 : -1}
       onClick={() => select(value)}
-      className={cn(triggerVariants({ variant: look }), className)}
+      className={cn(
+        triggerVariants({ variant: look, size: sized }),
+        look === 'solid' && orientation === 'vertical' && cn('h-auto', MIN_HEIGHT[sized]),
+        // A standing underline list marks the active tab on the inline end,
+        // against the list's own rule, and lines the labels up on the start.
+        look === 'underline' &&
+          orientation === 'vertical' &&
+          'justify-start border-b-0 border-e-2 pe-3',
+        className,
+      )}
       {...props}
     />
   )

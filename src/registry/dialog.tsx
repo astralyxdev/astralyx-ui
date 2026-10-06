@@ -129,7 +129,9 @@ export const dialogEntry: ComponentEntry = {
     { name: 'onOpenChange', type: '(open: boolean) => void', description: 'Fires on every change, including Escape and backdrop dismissal.' },
     { name: 'size', type: SIZES.map((s) => `'${s}'`).join(' | '), default: "'default'", description: 'Maximum width of the panel.' },
     { name: 'showClose', type: 'boolean', default: 'true', description: 'Corner close button.' },
-    { name: 'dismissable', type: 'boolean', default: 'true', description: 'Whether a backdrop press closes the dialog. Escape always works.' },
+    { name: 'dismissable', type: 'boolean', default: 'true', description: 'On DialogContent: whether a backdrop press closes the dialog. Escape still works.' },
+    { name: 'Dialog dismissable', type: 'boolean', default: 'true', description: 'On the root: false refuses Escape and backdrop presses together, for a dialog whose action is in flight. Its own buttons still close it, and a browser that closes the element anyway — repeated Escapes can skip `cancel` — finds it shown again while `open` stays true.' },
+    { name: 'closed state', type: 'not-open:hidden', description: 'A display utility in `className` (`flex`, `grid`) used to beat the UA\'s `display: none` and leave a closed dialog drawn in the page. The closed rule is re-applied above it.' },
     { name: 'DialogTrigger asChild', type: 'boolean', description: 'Render your own element as the trigger instead of a bare button.' },
   ],
   demos: [

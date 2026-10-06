@@ -91,6 +91,7 @@ export const cardEntry: ComponentEntry = {
     { name: 'variant', type: VARIANTS.map((v) => `'${v}'`).join(' | '), default: "'default'", description: 'Bordered surface, filled, or outline with no fill.' },
     { name: 'size', type: SIZES.map((s) => `'${s}'`).join(' | '), default: "'default'", description: 'Section padding. Reaches header, body and footer through context, so one prop re-pads the whole card.' },
     { name: 'CardHeader / CardFooter', type: 'section', description: 'Optional. Each draws its own divider, so omitting them leaves no stray rule.' },
+    { name: 'CardHeader action', type: 'ReactNode', description: 'Controls beside the title. When the two cannot share a line — a phone, a row of several buttons — the controls wrap under the title instead of crushing it or running off the card.' },
     { name: 'CardBody', type: 'section', description: 'Grows to fill. The only section a Card needs.' },
     { name: 'CardTitle / CardDescription', type: 'text', description: 'Heading and secondary line, normally inside CardHeader.' },
     { name: 'CardHeader / CardBody / CardFooter size', type: SIZES.map((s) => `'${s}'`).join(' | '), description: 'Overrides the inherited padding for one section.' },

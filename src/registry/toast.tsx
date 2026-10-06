@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { ToastProvider, useToast } from '@/components/ui/toast'
+import { ToastProvider, useToastActions } from '@/components/ui/toast'
 import { COLOR_SETS } from '@/lib/styles'
 import type { ComponentEntry, ComposerState } from './types'
 
@@ -10,7 +10,7 @@ function Trigger({ color, duration, description }: {
   duration: number
   description: boolean
 }) {
-  const { toast } = useToast()
+  const { toast } = useToastActions()
 
   return (
     <div className="flex flex-wrap gap-2">
@@ -78,6 +78,7 @@ toast({ title: 'Saved', description: 'Your changes are live.', color: 'green' })
     { name: 'options.duration', type: 'number', default: '4000', description: 'Milliseconds before auto-dismiss. 0 keeps it until dismissed.' },
     { name: 'options.color', type: 'ColorSet', description: 'Tints the title.' },
     { name: 'dismiss(id)', type: '(id: number) => void', description: 'Removes a toast early.' },
+    { name: 'useToastActions', type: '() => { toast, dismiss }', description: 'The same two functions without the list. A component that only raises toasts should use this: `useToast` also returns `toasts`, so it re-renders every time one appears or leaves.' },
   ],
   demos: [
     {

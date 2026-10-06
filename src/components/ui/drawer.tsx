@@ -102,6 +102,9 @@ function Drawer({
         radius.panel,
         'rounded-b-none',
         'backdrop:bg-black/50',
+        // The UA's `display: none` for a closed <dialog> loses to any display
+        // utility in `className`; this keeps a closed drawer out of the page.
+        'not-open:hidden',
         offset === 0 && 'transition-transform duration-200 ease-out motion-reduce:transition-none',
         className,
       )}

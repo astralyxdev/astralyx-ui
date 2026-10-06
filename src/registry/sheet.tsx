@@ -75,6 +75,7 @@ export const sheetEntry: ComponentEntry = {
     { name: 'open / defaultOpen', type: 'boolean', description: 'Controlled and uncontrolled open state.' },
     { name: 'onOpenChange', type: '(open: boolean) => void', description: 'Fires on every change, including Escape.' },
     { name: 'showClose / dismissable', type: 'boolean', default: 'true', description: 'Corner close button, and whether a backdrop press closes.' },
+    { name: 'Sheet dismissable', type: 'boolean', default: 'true', description: 'On the root: false refuses Escape and backdrop presses together, while the sheet\'s action is in flight.' },
     { name: 'width', type: 'string', default: "'min(24rem, 100vw - 2rem)'", description: 'Any CSS length. Applies to a left or right sheet.' },
     { name: 'height', type: 'string', description: 'Any CSS length, for a top or bottom sheet.' },
     { name: 'edges', type: 'no border', description: 'A sheet meets the viewport on three sides, so it draws no outline — a border would only be a line down the middle of the screen.' },

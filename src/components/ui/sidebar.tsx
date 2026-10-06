@@ -1,7 +1,9 @@
 'use client'
 
 import {
+  cloneElement,
   createContext,
+  isValidElement,
   use,
   useCallback,
   useEffect,
@@ -366,6 +368,11 @@ function SidebarContent({ className, ...props }: ComponentProps<'div'>) {
       data-slot="sidebar-content"
       className={cn(
         'flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-2',
+        // Collapsed to the icon rail, the groups have no headings left to
+        // space apart: the icons run in one even column, each group as far
+        // from the next as one row is from another.
+        'transition-[row-gap] duration-200 ease-out motion-reduce:transition-none',
+        'group-data-[state=collapsed]/sidebar:gap-1',
         className,
       )}
       {...props}
@@ -397,8 +404,10 @@ function SidebarGroup({ className, ...props }: ComponentProps<'div'>) {
 
 /**
  * A section heading. It collapses to nothing rather than to an icon, since a
- * heading has no icon to fall back to — but it keeps its height, so the rows
- * either side of it do not close up as the rail narrows.
+ * heading has no icon to fall back to — and it gives its height back (and the
+ * group's gap under it), so on the icon rail the icons sit in one even column
+ * instead of in clumps with holes where the headings were. Height and opacity
+ * ease with the rail's own width transition, and return when it expands.
  */
 function SidebarGroupLabel({ className, ...props }: ComponentProps<'div'>) {
   const { variant } = useSidebar()
@@ -414,6 +423,12 @@ function SidebarGroupLabel({ className, ...props }: ComponentProps<'div'>) {
         // measured against its own fixed black ground.
         variant === 'page' ? 'text-muted-foreground' : sidebarInk.label,
         'truncate whitespace-nowrap',
+        'transition-[height,opacity,margin,visibility] duration-200 ease-out motion-reduce:transition-none',
+        // `-mb-1` takes back the group's `gap-1` below the heading.
+        'group-data-[state=collapsed]/sidebar:-mb-1 group-data-[state=collapsed]/sidebar:h-0',
+        'group-data-[state=collapsed]/sidebar:opacity-0',
+        // Out of the accessibility tree too; `visibility` flips once the fade
+        // is done, since it transitions as a discrete step.
         'group-data-[state=collapsed]/sidebar:invisible',
         className,
       )}
@@ -482,39 +497,49 @@ function SidebarMenuButton({
         active: sidebarInk.active,
         ring: sidebarInk.ring,
       }
-  const Comp = asChild ? Slot : 'button'
-
-  const row = (
-    <Comp
-      data-slot="sidebar-menu-button"
-      data-active={isActive}
-      // `aria-current` is the part a screen reader announces; `data-active`
-      // only styles.
-      aria-current={isActive ? 'page' : undefined}
-      // `px-2.5` is (rail − icon) / 2, so the icon sits on the rail's centre
-      // line in both states and the label grows out to its right.
-      className={cn(
-        'flex h-9 w-full items-center gap-2 px-2.5 text-sm font-medium',
-        radius.control,
-        iconChild,
-        interactive,
-        ink.ring,
-        disabledState,
-        isActive ? ink.active : cn(ink.row, ink.hover),
-        className,
-      )}
-      {...props}
-    >
+  const rowProps = {
+    'data-slot': 'sidebar-menu-button',
+    'data-active': isActive,
+    // `aria-current` is the part a screen reader announces; `data-active`
+    // only styles.
+    'aria-current': isActive ? ('page' as const) : undefined,
+    // `px-2.5` is (rail − icon) / 2, so the icon sits on the rail's centre
+    // line in both states and the label grows out to its right.
+    className: cn(
+      'flex h-9 w-full items-center gap-2 px-2.5 text-sm font-medium',
+      radius.control,
+      iconChild,
+      interactive,
+      ink.ring,
+      disabledState,
+      isActive ? ink.active : cn(ink.row, ink.hover),
+      className,
+    ),
+    ...props,
+  }
+  const content = (label: ReactNode) => (
+    <>
       {icon}
       <span className="min-w-0 flex-1 truncate whitespace-nowrap text-start group-data-[state=collapsed]/sidebar:sr-only">
-        {children}
+        {label}
       </span>
       {trailing && (
         <span className="shrink-0 group-data-[state=collapsed]/sidebar:hidden">
           {trailing}
         </span>
       )}
-    </Comp>
+    </>
+  )
+
+  // `asChild`: the child — a router link — becomes the row, and its own
+  // children become the label. Slot takes exactly one element, so the icon and
+  // the label have to go *inside* the child. Passing them to Slot alongside it
+  // handed `Children.only` three nodes, and every `asChild` row threw.
+  const child = asChild && isValidElement<{ children?: ReactNode }>(children) ? children : null
+  const row = child ? (
+    <Slot {...rowProps}>{cloneElement(child, undefined, content(child.props.children))}</Slot>
+  ) : (
+    <button {...rowProps}>{content(children)}</button>
   )
 
   if (open) return row
@@ -523,7 +548,10 @@ function SidebarMenuButton({
   // is what puts it back for a pointer. It opens away from the rail, so a
   // right-hand one points inward rather than off the edge of the window.
   return (
-    <Tooltip content={tooltip ?? children} side={side === 'right' ? 'left' : 'right'}>
+    <Tooltip
+      content={tooltip ?? (child ? child.props.children : children)}
+      side={side === 'right' ? 'left' : 'right'}
+    >
       {row}
     </Tooltip>
   )

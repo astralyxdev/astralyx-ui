@@ -4,11 +4,13 @@ import type { ComponentEntry, ComposerState } from './types'
 const VARIANTS = ['solid', 'underline', 'browser'] as const
 const ORIENTATIONS = ['horizontal', 'vertical'] as const
 const ACTIVATION = ['automatic', 'manual'] as const
+const SIZES = ['xs', 'sm', 'default', 'lg', 'xl'] as const
 
 function composeTabs(state: ComposerState) {
   const attrs = ['defaultValue="overview"']
   if (state.orientation !== 'horizontal') attrs.push(`orientation="${state.orientation}"`)
   if (state.activationMode !== 'automatic') attrs.push(`activationMode="${state.activationMode}"`)
+  if (state.size !== 'default') attrs.push(`size="${state.size}"`)
   const listVariant = state.variant !== 'solid' ? ` variant="${state.variant}"` : ''
 
   return `<Tabs ${attrs.join(' ')}>
@@ -103,6 +105,7 @@ export const tabsEntry: ComponentEntry = {
       { type: 'select', prop: 'variant', label: 'variant', options: VARIANTS, default: 'solid' },
       { type: 'select', prop: 'orientation', label: 'orientation', options: ORIENTATIONS, default: 'horizontal' },
       { type: 'select', prop: 'activationMode', label: 'activationMode', options: ACTIVATION, default: 'automatic' },
+      { type: 'select', prop: 'size', label: 'size', options: SIZES, default: 'default' },
     ],
     render: (state) => {
       const variant = String(state.variant) as (typeof VARIANTS)[number]
@@ -111,6 +114,7 @@ export const tabsEntry: ComponentEntry = {
           defaultValue="overview"
           orientation={String(state.orientation) as (typeof ORIENTATIONS)[number]}
           activationMode={String(state.activationMode) as (typeof ACTIVATION)[number]}
+          size={String(state.size) as (typeof SIZES)[number]}
           className="w-full max-w-md"
         >
           <TabsList variant={variant}>
@@ -142,6 +146,7 @@ export const tabsEntry: ComponentEntry = {
     { name: 'variant', type: VARIANTS.map((v) => `'${v}'`).join(' | '), default: "'solid'", description: 'Set it once on Tabs and the list, the triggers and the panel all follow. Setting it on a child still wins, which is how it was written before the root took the prop.' },
     { name: 'browser', type: '—', description: 'The connected look: the active tab and the panel are one fill with nothing drawn between them, and two masked flares carve the strip away at the bottom corners. No borders anywhere — a bordered version has to hide one border with another and comes apart at every zoom level.' },
     { name: 'transition', type: '—', description: 'The panel cross-fades on switch and does not move. Travel on a panel root means a transform, and a transform is a containing block for any fixed layer inside it — a popover opened from a tab would land in the wrong place. The tab shape morphs instead, flares included.' },
+    { name: 'size', type: SIZES.map((s) => `'${s}'`).join(' | '), default: "'default'", description: 'The Button\'s size scale. A solid track takes the Button\'s height and corner, so a tab list in a toolbar lines up with the Buttons and Inputs of the same size; every variant takes its label and icon size. Set on Tabs or TabsList and the triggers inherit it; a size on a trigger still wins.' },
     { name: 'TabsTrigger value', type: 'string', description: 'Required. Matches the TabsContent it controls.' },
   ],
   demos: [

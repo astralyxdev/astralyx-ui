@@ -17,11 +17,17 @@ function AlertDialog({
   open,
   defaultOpen,
   onOpenChange,
+  dismissable,
   children,
 }: {
   open?: boolean
   defaultOpen?: boolean
   onOpenChange?: (open: boolean) => void
+  /**
+   * False refuses Escape too, while the confirmed action is in flight — an
+   * answer already given should not be withdrawn halfway through.
+   */
+  dismissable?: boolean
   children: ReactNode
 }) {
   return (
@@ -29,6 +35,7 @@ function AlertDialog({
       open={open}
       defaultOpen={defaultOpen}
       onOpenChange={onOpenChange}
+      dismissable={dismissable}
     >
       {children}
     </DialogProvider>
@@ -74,6 +81,10 @@ function AlertDialogContent({
         radius.panel,
         'text-card-foreground m-auto w-[calc(100vw-2rem)] max-w-md p-0',
         'backdrop:bg-transparent',
+        // The UA hides a closed <dialog> with `display: none`, and any display
+        // utility in `className` (`flex`, `grid`) outranks it — leaving a
+        // closed dialog drawn in the page. This puts the rule back on top.
+        'not-open:hidden',
         className,
       )}
       {...props}
